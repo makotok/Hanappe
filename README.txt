@@ -6,4 +6,3 @@
 -------------------------------------------------------------------
 
 This framework is a framework for a simple game that runs on MOAISDK.
-Has been created in order to wrap the troublesome part of MoaiSDK.
