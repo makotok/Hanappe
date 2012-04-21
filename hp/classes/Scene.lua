@@ -31,6 +31,7 @@ function M:new()
     self.visible = true
     self.sceneManager = require("hp/classes/SceneManager")
     self.sceneHandler = {}
+    self.touchDownFlag = false
 
     --self:setCenterPiv()
     self:setPiv(Application.screenWidth / 2, Application.screenHeight / 2, 0)
@@ -158,6 +159,7 @@ end
 -- 画面をタッチした時のイベント処理です.
 ---------------------------------------
 function I:onTouchDown(event)
+    self.touchDownFlag = true
     if self.sceneHandler.onTouchDown then
         self.sceneHandler.onTouchDown(event)
     end
@@ -167,6 +169,7 @@ end
 -- 画面をタッチした時のイベント処理です.
 ---------------------------------------
 function I:onTouchUp(event)
+    self.touchDownFlag = false
     if self.sceneHandler.onTouchUp then
         self.sceneHandler.onTouchUp(event)
     end
@@ -176,7 +179,7 @@ end
 -- 画面をタッチした時のイベント処理です.
 ---------------------------------------
 function I:onTouchMove(event)
-    if self.sceneHandler.onTouchMove then
+    if self.sceneHandler.onTouchMove and self.touchDownFlag then
         self.sceneHandler.onTouchMove(event)
     end
 end
