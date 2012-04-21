@@ -1,15 +1,16 @@
 module(..., package.seeall)
 
 function onCreate(params)
+    print("onCreate(params)")
     layer = Layer:new({scene = scene})
     sprite1 = Sprite:new({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0})
 end
 
-function onStart(params)
+function onStart()
     print("onStart()")
 end
 
-function onResume(params)
+function onResume()
     print("onResume()")
 end
 
@@ -26,6 +27,7 @@ function onDestroy()
 end
 
 function onEnterFrame()
+    --print("onEnterFrame()")
 end
 
 function onKeyDown(event)

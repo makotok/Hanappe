@@ -122,9 +122,9 @@ end
 ---------------------------------------
 -- フレーム毎の処理を行います.
 ---------------------------------------
-function I:onEnterFrame(event)
+function I:onEnterFrame()
     if self.sceneHandler.onEnterFrame then
-        self.sceneHandler.onEnterFrame(event)
+        self.sceneHandler.onEnterFrame()
     end
 end
 
@@ -134,6 +134,15 @@ end
 function I:onKeyDown(event)
     if self.sceneHandler.onKeyDown then
         self.sceneHandler.onKeyDown(event)
+    end
+end
+
+---------------------------------------
+-- キーボード入力時の処理を行います.
+---------------------------------------
+function I:onKeyUp(event)
+    if self.sceneHandler.onKeyUp then
+        self.sceneHandler.onKeyUp(event)
     end
 end
 

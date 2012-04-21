@@ -63,10 +63,10 @@ local function onKeyUp(e)
     end
 end
 
-local function onEnterFrame(e)
+local function onEnterFrame()
     local currentScene = currentScene
-    if currentScene then
-        currentScene:onEnterFrame(e)
+    if currentScene and not transitioning then
+        currentScene:onEnterFrame()
     end
 end
 
@@ -83,9 +83,7 @@ end
 local function addScene(scene)
     if table.indexOf(scenes, scene) == 0 then
         table.insert(scenes, scene)
-        if scene.visible then
-            table.insert(renderTable, scene:getRenderTable())
-        end
+        resetRenderTable()
     end
 end
 
@@ -119,8 +117,8 @@ local function openComplete()
     
     transitioning = false
     currentScene = nextScene
-    currentScene:onStart(params)
-    currentScene:onResume(params)
+    currentScene:onStart()
+    currentScene:onResume()
 end
 
 local function closeComplete()
@@ -129,9 +127,9 @@ local function closeComplete()
     currentScene:onDestroy()
     currentScene = nextScene
     
-    collectgarbage("collect")
+    --collectgarbage("collect")
     if nextScene then
-        nextScene:onResume(params)
+        nextScene:onResume()
     end
 end
 
@@ -141,6 +139,16 @@ InputManager:addEventListener(Event.TOUCH_MOVE, onTouchMove)
 InputManager:addEventListener(Event.TOUCH_CANCEL, onTouchCancel)
 InputManager:addEventListener(Event.KEY_DOWN, onKeyDown)
 InputManager:addEventListener(Event.KEY_UP, onKeyUp)
+
+local thread = MOAICoroutine.new()
+thread:run(
+    function()
+        while true do
+            onEnterFrame()
+            coroutine.yield()
+        end
+    end
+)
 
 ----------------------------------------------------------------
 -- public functions
