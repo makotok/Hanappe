@@ -104,7 +104,7 @@ local function createSpriteSheet(tmxMap, object)
     local tileRow = math.floor((th + spacing) / tileheight)
     
     local spriteSheet = SpriteSheet:new({texture = texture})
-    spriteSheet:loadTiledSheets(tilewidth, tileheight, tileCol, tileRow)
+    spriteSheet:setTiledSheets(tilewidth, tileheight, tileCol, tileRow)
     spriteSheet.mapObject = object
     spriteSheet:setLeft(object.x)
     spriteSheet:setTop(object.y)
