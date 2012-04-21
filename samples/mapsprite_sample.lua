@@ -20,3 +20,8 @@ function onCreate()
         
     print(mapsprite:getBounds())
 end
+
+function onTouchDown()
+    SceneManager:closeScene({animation = "slideToRight"})
+end
+

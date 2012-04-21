@@ -8,13 +8,19 @@ local Animation = require("hp/classes/Animation")
 local M = {}
 local defaultSecond = 0.5
 
+local function createShowAnimation(scene, sec)
+    return Animation:new({scene}, sec)
+        :setColor(1, 1, 1, 1):setVisible(true)
+        :setLeft(0):setTop(0):setScl(1, 1, 0):setRot(0, 0, 0)
+end
+
 ---------------------------------------
 -- 即座に表示します.
 ---------------------------------------
-function M.none(currentScene, nextScene, params)
+function M.changeNow(currentScene, nextScene, params)
     return Animation:new():parallel(
-        Animation:new({currentScene}, sec):setVisible(false),
-        Animation:new({nextScene}, sec):setVisible(true):setLeft(0):setTop(0)
+        Animation:new({currentScene}, 0):setVisible(false),
+        createShowAnimation(nextScene, 0)
     )
 end
 
@@ -26,9 +32,8 @@ function M.popIn(currentScene, nextScene, params)
     return Animation:new():parallel(
         Animation:new({currentScene}, sec)
             :seekColor(-0.5, -0.5, -0.5, -0.5),
-        Animation:new({nextScene}, sec)
-            :setVisible(true):setLeft(0):setTop(0):setScl(0, 0, 0)
-            :seekScl(1, 1, 0)
+        createShowAnimation(nextScene, sec)
+            :setScl(0, 0, 0):seekScl(1, 1, 0)
     )
 end
 
@@ -51,8 +56,8 @@ function M.fade(currentScene, nextScene, params)
     local sec = params.sec and params.sec or M.defaultSecond
     return Animation:new():sequence(
         Animation:new({nextScene}, sec):setColor(0, 0, 0, 0),
-        Animation:new({currentScene}, sec):fadeOut(),
-        Animation:new({nextScene}, sec):fadeIn()
+        Animation:new({currentScene}, sec):setVisible(true):fadeOut():setVisible(false),
+        createShowAnimation(nextScene, sec):fadeIn()
     )
 end
 
@@ -62,8 +67,8 @@ end
 function M.crossFade(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
     return Animation:new():parallel(
-        Animation:new(currentScene, sec):fadeOut(),
-        Animation:new(nextScene, sec):fadeIn()
+        Animation:new({currentScene}, sec):setVisible(true):fadeOut():setVisible(false),
+        createShowAnimation(nextScene, sec):fadeIn()
     )
 end
 
@@ -72,16 +77,16 @@ end
 ---------------------------------------
 function M.slideToTop(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
-    local sw, sh = currentScene.width, currentScene.height
+    local sw, sh = currentScene:getWidth(), currentScene:getHeight()
     return Animation:new():parallel(
-        Animation:new(currentScene, sec)
-            :copy({x = 0, y = 0, z = 0})
-            :moveLocation(0, -sh, 0)
-            :copy({visible = false}),
-        Animation:new(nextScene, sec)
-            :copy({x = 0, y = sh, z = 0, visible = true})
-            :moveLocation(0, -sh, 0)
-            :copy({y = 0})
+        Animation:new({currentScene}, sec)
+            :setVisible(true)
+            :moveLoc(0, -sh, 0)
+            :setVisible(false),
+        createShowAnimation(nextScene, sec)
+            :setLeft(0):setTop(sh)
+            :moveLoc(0, -sh, 0)
+            :setTop(0)
     )
 end
 
@@ -90,16 +95,15 @@ end
 ---------------------------------------
 function M.slideToBottom(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
-    local sw, sh = currentScene.width, currentScene.height
+    local sw, sh = currentScene:getWidth(), currentScene:getHeight()
     return Animation:new():parallel(
-        Animation:new(currentScene, sec)
-            :copy({x = 0, y = 0})
-            :moveLocation(0, sh, 0)
-            :copy({visible = false}),
-        Animation:new(nextScene, sec)
-            :copy({x = 0, y = -sh, visible = true})
-            :moveLocation(0, sh, 0)
-            :copy({y = 0})
+        Animation:new({currentScene}, sec)
+            :moveLoc(0, sh, 0)
+            :setVisible(false),
+        createShowAnimation(nextScene, sec)
+            :setLeft(0):setTop(-sh)
+            :moveLoc(0, sh, 0)
+            :setTop(0)
     )
 end
 
@@ -108,18 +112,18 @@ end
 ---------------------------------------
 function M.slideToLeft(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
-    local sw, sh = currentScene.width, currentScene.height
+    local sw, sh = currentScene:getWidth(), currentScene:getHeight()
     return Animation:new():parallel(
-        Animation:new(currentScene, sec)
+        Animation:new({currentScene}, sec)
             :setLeft(0):setTop(0)
             :moveLoc(-sw, 0, 0)
             :setVisible(false),
-        Animation:new(nextScene, sec)
+        createShowAnimation(nextScene, sec)
             :setLeft(sw):setTop(0)
-            :setVisible(true)
             :moveLoc(-sw, 0, 0)
             :setLeft(0)
     )
+    
 end
 
 ---------------------------------------
@@ -127,15 +131,14 @@ end
 ---------------------------------------
 function M.slideToRight(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
-    local sw, sh = currentScene.width, currentScene.height
+    local sw, sh = currentScene:getWidth(), currentScene:getHeight()
     return Animation:new():parallel(
-        Animation:new(currentScene, sec)
+        Animation:new({currentScene}, sec)
             :setLeft(0):setTop(0)
             :moveLoc(sw, 0, 0)
             :setVisible(false),
-        Animation:new(nextScene, sec)
+        createShowAnimation(nextScene, sec)
             :setLeft(-sw):setTop(0)
-            :setVisible(true)
             :moveLoc(sw, 0, 0)
             :setLeft(0)
     )

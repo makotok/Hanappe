@@ -1,17 +1,17 @@
 module(..., package.seeall)
 
 local sceneItems = {
-    {text = "graphics", scene = "samples/graphics_sample"},
-    {text = "group", scene = "samples/group_sample"},
-    {text = "input", scene = "samples/input_sample"},
-    {text = "sprite", scene = "samples/sprite_sample"},
-    {text = "spritesheet", scene = "samples/spritesheet_sample"},
-    {text = "mapsprite", scene = "samples/mapsprite_sample"},
-    {text = "text", scene = "samples/text_sample"},
-    {text = "animation", scene = "samples/animation_sample"},
-    {text = "scene", scene = "samples/scene_sample"},
+    {text = "graphics", scene = "samples/graphics_sample", animation = "changeNow"},
+    {text = "group", scene = "samples/group_sample", animation = "fade"},
+    {text = "input", scene = "samples/input_sample", animation = "crossFade"},
+    {text = "sprite", scene = "samples/sprite_sample", animation = "slideToTop"},
+    {text = "spritesheet", scene = "samples/spritesheet_sample", animation = "slideToBottom"},
+    {text = "mapsprite", scene = "samples/mapsprite_sample", animation = "slideToLeft"},
+    {text = "text", scene = "samples/text_sample", animation = "slideToRight"},
+    {text = "animation", scene = "samples/animation_sample", animation = "fade"},
+    {text = "scene", scene = "samples/scene_sample", animation = "popIn"},
     {text = "moai", scene = "samples/moai_sample"},
-    {text = "tiledmap", scene = "samples/tiledmap_sample"},
+    {text = "tiledmap", scene = "samples/tiledmap_sample", animation = "fade"},
 }
 
 function onCreate(params)
@@ -28,6 +28,7 @@ function onCreate(params)
         
         local text = TextLabel:new({text = item.text, width = Application.screenWidth, height = 30, layer = layer})
         text.sceneName = item.scene
+        text.sceneAnimation = item.animation
         text:setLeft(5)
         text:setTop(0)
         
@@ -43,6 +44,6 @@ function onTouchDown(event)
     local worldX, worldY, worldZ = layer:wndToWorld(event.x, event.y, 0)
     local touchProp = partition:propForPoint ( worldX, worldY )
     if touchProp and touchProp.sceneName then
-        SceneManager:openScene(touchProp.sceneName, {animation = "fade"})
+        SceneManager:openScene(touchProp.sceneName, {animation = touchProp.sceneAnimation})
     end
 end

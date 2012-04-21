@@ -25,4 +25,6 @@ function onStart()
     group:moveColor(-1, -1, -1, 0, 3)
 end
 
-
+function onTouchDown()
+    SceneManager:closeScene({animation = "fade"})
+end

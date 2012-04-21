@@ -22,6 +22,7 @@ local nextScene = nil
 local transitioning = false
 local sceneAnimation = nil
 local renderTable = {}
+local updateRenderFlag = false
 
 ----------------------------------------------------------------
 -- private functions
@@ -70,7 +71,7 @@ local function onEnterFrame()
     end
 end
 
-local function resetRenderTable()
+local function updateRender()
     renderTable = {}
     for i, scene in ipairs(scenes) do
         if scene.visible then
@@ -83,7 +84,6 @@ end
 local function addScene(scene)
     if table.indexOf(scenes, scene) == 0 then
         table.insert(scenes, scene)
-        resetRenderTable()
     end
 end
 
@@ -91,11 +91,29 @@ local function removeScene(scene)
     local i = table.indexOf(scenes, scene)
     if i > 0 then
         table.remove(scenes, i)
-        resetRenderTable()
+    end
+end
+
+local function hideScene(scene)
+    if scene then
+        scene:setVisible(false)
+    end
+end
+
+local function showScene(scene)
+    if scene then
+        scene:setVisible(true)
+        scene:setLeft(0)
+        scene:setTop(0)
+        scene:setColor(1, 1, 1, 1)
+        scene:setScl(1, 1, 1)
+        scene:setRot(0, 0, 0)
     end
 end
 
 local function animateScene(params, completeFunc)
+    updateRenderFlag = true
+    
     local animation = params.animation
     if animation then
         if type(animation) == "string" then
@@ -104,6 +122,9 @@ local function animateScene(params, completeFunc)
         transitioning = true
         animation(currentScene, nextScene, params):play({onComplete = completeFunc})
     else
+        hideScene(currentScene)
+        showScene(nextScene)
+        
         completeFunc()
     end    
 end
@@ -112,13 +133,13 @@ local function openComplete()
     if currentScene and currentClosing then
         self:removeScene(currentScene)
         currentScene:onDestroy()
-        collectgarbage("collect")
     end
     
     transitioning = false
     currentScene = nextScene
     currentScene:onStart()
     currentScene:onResume()
+    updateRenderFlag = true
 end
 
 local function closeComplete()
@@ -131,6 +152,8 @@ local function closeComplete()
     if nextScene then
         nextScene:onResume()
     end
+    
+    updateRender()
 end
 
 InputManager:addEventListener(Event.TOUCH_DOWN, onTouchDown)
@@ -144,6 +167,10 @@ local thread = MOAICoroutine.new()
 thread:run(
     function()
         while true do
+            if updateRenderFlag then
+                updateRenderFlag = false
+                updateRender()
+            end
             onEnterFrame()
             coroutine.yield()
         end
@@ -231,6 +258,21 @@ function M:closeScene(params)
 end
 
 ---------------------------------------
+-- 描画を更新します.
+---------------------------------------
+function M:updateRender()
+    updateRenderFlag = true
+end
+
+---------------------------------------
+-- 描画を更新します.
+---------------------------------------
+function M:forceUpdateRender()
+    updateRender()
+end
+
+
+---------------------------------------
 -- シーン名からシーンを検索して返します.
 -- 見つからない場合はnilを返します.
 ---------------------------------------
@@ -256,7 +298,7 @@ function M:orderToFront(scene)
         table.remove(scenes, i)
         table.insert(scenes, scene)
         currentScene = scene
-        resetRenderTable()
+        self:updateRender()
     end
 end
 
@@ -272,7 +314,7 @@ function M:orderToBack(scene)
         table.remove(scenes, i)
         table.insert(scenes, 1, scene)
         currentScene = scenes[#scenes]
-        resetRenderTable()
+        self:updateRender()
     end
 end
 

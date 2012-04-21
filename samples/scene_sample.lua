@@ -44,7 +44,7 @@ end
 
 function onTouchUp(event)
     print("onTouchUp(event)")
-    SceneManager:closeScene({animation = "fade"})
+    SceneManager:closeScene({animation = "popOut"})
 end
 
 function onTouchMove(event)

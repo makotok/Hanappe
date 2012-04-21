@@ -34,3 +34,8 @@ function onStart(params)
     -- Animation can be performed to standard MOAIProp.
     Animation:new({prop}, 3):moveLoc(40, 40, 0):moveColor(-0.5, -0.5, -0.5, -0.5):play()
 end
+
+function onTouchDown()
+    SceneManager:closeScene()
+end
+

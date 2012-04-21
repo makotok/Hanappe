@@ -51,3 +51,6 @@ function onStart()
     anim2:play()
 end
 
+function onTouchDown()
+    SceneManager:closeScene({animation = "fade"})
+end

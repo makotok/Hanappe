@@ -14,3 +14,7 @@ function onCreate()
     sprite3:setTop(sprite2:getBottom())
     layer:insertProp(sprite3)
 end
+
+function onTouchDown()
+    SceneManager:closeScene({animation = "slideToBottom"})
+end

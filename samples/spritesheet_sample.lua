@@ -50,3 +50,7 @@ function onStart()
     sprite4:playAnim("walkUp")
 end
 
+function onTouchDown()
+    SceneManager:closeScene({animation = "slideToTop"})
+end
+

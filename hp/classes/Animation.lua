@@ -381,6 +381,21 @@ function I:seekColor(red, green, blue, alpha, sec, mode)
 end
 
 ---------------------------------------
+-- 対象オブジェクトのvisibleを設定します.
+---------------------------------------
+function I:setVisible(value)
+    local playFunc = function(obj, callback)
+        for i, v in ipairs(self.internal.targets) do
+            v:setVisible(value)
+        end
+        callback(obj)
+    end
+    local command = self:newCommand(playFunc)
+    self:addCommand(command)
+    return self
+end
+
+---------------------------------------
 -- 指定されたアニメーションを並列実行します.
 ---------------------------------------
 function I:parallel(...)

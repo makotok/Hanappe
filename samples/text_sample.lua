@@ -11,3 +11,8 @@ function onCreate()
     textbox2:setLeft(0)
     textbox2:setTop(textbox1:getHeight() + textbox1:getLeft())
 end
+
+function onTouchDown()
+    SceneManager:closeScene({animation = "slideToLeft"})
+end
+

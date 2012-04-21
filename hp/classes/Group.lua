@@ -31,10 +31,10 @@ end
 
 local function copyParams(prop, params)
     if params.width then
-        prop:setWidth(width)
+        prop:setWidth(params.width)
     end
     if params.height then
-        prop:setHeight(height)
+        prop:setHeight(params.height)
     end
 end
 
@@ -118,6 +118,18 @@ end
 ----------------------------------------------------------------
 function I:getHeight()
     return self.height
+end
+
+----------------------------------------------------------------
+-- visibleを設定します.
+----------------------------------------------------------------
+function I:setVisible(value)
+    self.visible = value
+    for i, v in ipairs(self.children) do
+        if v.setVisible then
+            v:setVisible(value)
+        end
+    end
 end
 
 ----------------------------------------------------------------
