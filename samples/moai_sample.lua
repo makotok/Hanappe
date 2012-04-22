@@ -12,7 +12,8 @@ function onCreate(params)
     -- layer
     local layer = MOAILayer.new()
     layer:setViewport(viewport)
-    MOAIRenderMgr.pushRenderPass(layer)
+    -- You do not need to add to the Scene.
+    --MOAIRenderMgr.pushRenderPass(layer)
     
     -- deck
     local deck = MOAIGfxQuad2D.new()
