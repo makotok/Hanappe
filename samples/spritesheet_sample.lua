@@ -22,7 +22,7 @@ local sheetAnims = {
     {name = "walkUp", indexes = {11, 10, 11, 12, 11}, sec = 0.25},
 }
 
-function onCreate()
+function onCreate(params)
     layer = Layer:new({scene = scene})
 
     local spriteParams = {texture = "samples/assets/actor.png", sheets = sheets, sheetAnims = sheetAnims, layer = layer}

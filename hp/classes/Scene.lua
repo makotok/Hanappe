@@ -1,11 +1,10 @@
+local table = require("hp/lang/table")
+local Application = require("hp/Application")
+local Group = require("hp/classes/Group")
+
 ----------------------------------------------------------------
 -- Sceneはシーングラフを構築するトップレベルコンテナです.<br>
--- Sceneは複数のLayerを管理します.<br>
 -- このクラスを使用して、画面を構築します.<br>
--- <br>
--- デフォルトのレイヤー（topLayer）を持ちます.<br>
--- DisplayObjectの親に直接指定された場合、実際に追加される先はtopLayerになります.<br>
--- <br>
 -- Sceneのライフサイクルについて<br>
 -- 1. onCreate()  ... 生成時に呼ばれます.<br>
 -- 2. onStart()   ... 開始時に呼ばれます.<br>
@@ -18,9 +17,6 @@
 ----------------------------------------------------------------
 local M = {}
 local I = {}
-local table = require("hp/lang/table")
-local Application = require("hp/Application")
-local Group = require("hp/classes/Group")
 
 ---------------------------------------
 -- コンストラクタです
@@ -82,9 +78,9 @@ end
 ---------------------------------------
 -- シーンの開始時に一度だけ呼ばれます.
 ---------------------------------------
-function I:onStart(params)
+function I:onStart()
     if self.sceneHandler.onStart then
-        self.sceneHandler.onStart(params)
+        self.sceneHandler.onStart()
     end
 end
 
@@ -92,9 +88,9 @@ end
 -- シーンの再開時に呼ばれます.
 -- pauseした場合に、再開処理で呼ばれます.
 ---------------------------------------
-function I:onResume(params)
+function I:onResume()
     if self.sceneHandler.onResume then
-        self.sceneHandler.onResume(params)
+        self.sceneHandler.onResume()
     end
 end
 

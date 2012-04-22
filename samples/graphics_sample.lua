@@ -1,6 +1,6 @@
 module(..., package.seeall)
 
-function onCreate()
+function onCreate(params)
     layer = Layer:new({scene = scene})
     
     g1 = Graphics:new({width = 50, height = 50, layer = layer})

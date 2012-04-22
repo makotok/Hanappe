@@ -1,0 +1,714 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../../../luadoc.css" type="text/css" />
+	<!--meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/-->
+</head>
+
+<body>
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+<div id="main">
+
+<div id="navigation">
+
+
+<h1>LuaDoc</h1>
+<ul>
+	
+	<li><a href="../../../index.html">Index</a></li>
+	
+</ul>
+
+
+<!-- Module list -->
+
+
+
+<!-- File list -->
+
+<h1>Files</h1>
+<ul>
+
+	<li>
+		<a href="../../../files/hp/Application.html">hp/Application.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/Animation.html">hp/classes/Animation.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/Display.html">hp/classes/Display.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/Event.html">hp/classes/Event.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/EventDispatcher.html">hp/classes/EventDispatcher.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/EventListener.html">hp/classes/EventListener.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/FontManager.html">hp/classes/FontManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/Graphics.html">hp/classes/Graphics.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/Group.html">hp/classes/Group.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/InputManager.html">hp/classes/InputManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/Layer.html">hp/classes/Layer.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/MOAIPropUtil.html">hp/classes/MOAIPropUtil.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/MapSprite.html">hp/classes/MapSprite.lua</a>
+	</li>
+
+	<li><strong>hp/classes/Scene.lua</strong></li>
+	
+	<li>
+		<a href="../../../files/hp/classes/SceneAnimation.html">hp/classes/SceneAnimation.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/SceneFactory.html">hp/classes/SceneFactory.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/SceneManager.html">hp/classes/SceneManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/Sprite.html">hp/classes/Sprite.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/SpriteSheet.html">hp/classes/SpriteSheet.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/TMXDisplay.html">hp/classes/TMXDisplay.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/TMXLayer.html">hp/classes/TMXLayer.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/TMXMap.html">hp/classes/TMXMap.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/TMXMapFactory.html">hp/classes/TMXMapFactory.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/TMXMapLoader.html">hp/classes/TMXMapLoader.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/TMXObject.html">hp/classes/TMXObject.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/TMXObjectGroup.html">hp/classes/TMXObjectGroup.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/TMXTileset.html">hp/classes/TMXTileset.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/TextLabel.html">hp/classes/TextLabel.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/classes/TextureManager.html">hp/classes/TextureManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/lang/delegate.html">hp/lang/delegate.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/lang/math.html">hp/lang/math.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
+	</li>
+
+</ul>
+
+
+
+
+
+
+</div> <!-- id="navigation" -->
+
+<div id="content">
+
+<h1>File <code>hp/classes/Scene.lua</code></h1>
+
+
+
+
+
+
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#I:getRenderTable">I:getRenderTable</a>&nbsp;()</td>
+	<td class="summary">描画テーブルを返します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onCreate">I:onCreate</a>&nbsp;(params)</td>
+	<td class="summary">シーンの生成処理時に一度だけ呼ばれます.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onDestroy">I:onDestroy</a>&nbsp;()</td>
+	<td class="summary">シーンの破棄時に呼ばれます.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onEnterFrame">I:onEnterFrame</a>&nbsp;()</td>
+	<td class="summary">フレーム毎の処理を行います.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onKeyDown">I:onKeyDown</a>&nbsp;(event)</td>
+	<td class="summary">キーボード入力時の処理を行います.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onKeyUp">I:onKeyUp</a>&nbsp;(event)</td>
+	<td class="summary">キーボード入力時の処理を行います.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onPause">I:onPause</a>&nbsp;()</td>
+	<td class="summary">シーンの一時停止時に呼ばれます.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onResume">I:onResume</a>&nbsp;()</td>
+	<td class="summary">シーンの再開時に呼ばれます.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onSceneTouchCancel">I:onSceneTouchCancel</a>&nbsp;(event)</td>
+	<td class="summary">画面をタッチした時のイベント処理です.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onStart">I:onStart</a>&nbsp;()</td>
+	<td class="summary">シーンの開始時に一度だけ呼ばれます.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onStop">I:onStop</a>&nbsp;()</td>
+	<td class="summary">シーンの停止時に呼ばれます.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onTouchDown">I:onTouchDown</a>&nbsp;(event)</td>
+	<td class="summary">画面をタッチした時のイベント処理です.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onTouchMove">I:onTouchMove</a>&nbsp;(event)</td>
+	<td class="summary">画面をタッチした時のイベント処理です.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:onTouchUp">I:onTouchUp</a>&nbsp;(event)</td>
+	<td class="summary">画面をタッチした時のイベント処理です.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:orderToBack">I:orderToBack</a>&nbsp;()</td>
+	<td class="summary">シーンを最背面に表示します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:orderToFront">I:orderToFront</a>&nbsp;()</td>
+	<td class="summary">シーンを最前面に表示します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#I:setVisible">I:setVisible</a>&nbsp;(value)</td>
+	<td class="summary">visibleを設定します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:new">M:new</a>&nbsp;()</td>
+	<td class="summary">コンストラクタです  </td>
+	</tr>
+
+</table>
+
+
+
+
+<h2>Tables</h2>
+<table class="table_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#Scene ">Scene </a></td>
+	<td class="summary">Sceneはシーングラフを構築するトップレベルコンテナです.<br> このクラスを使用して、画面を構築します.<br> Sceneのライフサイクルについて<br> 1.</td>
+	</tr>
+
+</table>
+
+
+
+<br/>
+<br/>
+
+
+
+
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="I:getRenderTable"></a><strong>I:getRenderTable</strong>&nbsp;()</dt>
+<dd>
+描画テーブルを返します. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onCreate"></a><strong>I:onCreate</strong>&nbsp;(params)</dt>
+<dd>
+シーンの生成処理時に一度だけ呼ばれます. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  params: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onDestroy"></a><strong>I:onDestroy</strong>&nbsp;()</dt>
+<dd>
+シーンの破棄時に呼ばれます. この時点でシーンは破棄されて使用できなくなります. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onEnterFrame"></a><strong>I:onEnterFrame</strong>&nbsp;()</dt>
+<dd>
+フレーム毎の処理を行います. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onKeyDown"></a><strong>I:onKeyDown</strong>&nbsp;(event)</dt>
+<dd>
+キーボード入力時の処理を行います. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  event: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onKeyUp"></a><strong>I:onKeyUp</strong>&nbsp;(event)</dt>
+<dd>
+キーボード入力時の処理を行います. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  event: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onPause"></a><strong>I:onPause</strong>&nbsp;()</dt>
+<dd>
+シーンの一時停止時に呼ばれます. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onResume"></a><strong>I:onResume</strong>&nbsp;()</dt>
+<dd>
+シーンの再開時に呼ばれます. pauseした場合に、再開処理で呼ばれます. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onSceneTouchCancel"></a><strong>I:onSceneTouchCancel</strong>&nbsp;(event)</dt>
+<dd>
+画面をタッチした時のイベント処理です. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  event: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onStart"></a><strong>I:onStart</strong>&nbsp;()</dt>
+<dd>
+シーンの開始時に一度だけ呼ばれます. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onStop"></a><strong>I:onStop</strong>&nbsp;()</dt>
+<dd>
+シーンの停止時に呼ばれます. 停止された後、他シーン遷移が完了した後に onDestoryが呼ばれます. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onTouchDown"></a><strong>I:onTouchDown</strong>&nbsp;(event)</dt>
+<dd>
+画面をタッチした時のイベント処理です. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  event: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onTouchMove"></a><strong>I:onTouchMove</strong>&nbsp;(event)</dt>
+<dd>
+画面をタッチした時のイベント処理です. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  event: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:onTouchUp"></a><strong>I:onTouchUp</strong>&nbsp;(event)</dt>
+<dd>
+画面をタッチした時のイベント処理です. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  event: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:orderToBack"></a><strong>I:orderToBack</strong>&nbsp;()</dt>
+<dd>
+シーンを最背面に表示します. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:orderToFront"></a><strong>I:orderToFront</strong>&nbsp;()</dt>
+<dd>
+シーンを最前面に表示します. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="I:setVisible"></a><strong>I:setVisible</strong>&nbsp;(value)</dt>
+<dd>
+visibleを設定します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  value: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:new"></a><strong>M:new</strong>&nbsp;()</dt>
+<dd>
+コンストラクタです 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+<h2><a name="tables"></a>Tables</h2>
+<dl class="table">
+
+<dt><a name="Scene "></a><strong>Scene </strong></dt>
+<dd>Sceneはシーングラフを構築するトップレベルコンテナです.<br> このクラスを使用して、画面を構築します.<br> Sceneのライフサイクルについて<br> 1. onCreate()  ... 生成時に呼ばれます.<br> 2. onStart()   ... 開始時に呼ばれます.<br> 3. onResume()   ... 再開時に呼ばれます.<br> 4. onPause()   ... 一時停止時に呼ばれます.<br> 5. onStop()     ... 終了時に呼ばれます.<br> 6. onDestroy() ... 破棄時に呼ばれます.<br>
+
+
+
+</dd>
+
+
+</dl>
+
+
+
+
+</div> <!-- id="content" -->
+
+</div> <!-- id="main" -->
+
+<div id="about">
+	<p><a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0!" height="31" width="88" /></a></p>
+</div> <!-- id="about" -->
+
+</div> <!-- id="container" -->	
+</body>
+</html>

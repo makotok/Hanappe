@@ -3,8 +3,7 @@ local MOAIPropUtil = require("hp/classes/MOAIPropUtil")
 local TextureManager = require("hp/classes/TextureManager")
 
 ----------------------------------------------------------------
--- 描画オブジェクトを生成するモジュールです.<br>
--- オブジェクトの生成を簡単に行う事ができるようになります。
+-- Gridを描画するモジュールです.<br>
 -- @class table
 -- @name MapSprite
 ----------------------------------------------------------------

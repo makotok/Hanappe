@@ -1,6 +1,6 @@
 module(..., package.seeall)
 
-function onCreate()
+function onCreate(params)
     layer = Layer:new({scene = scene})
 
     mapsprite = MapSprite:new({texture = "samples/assets/numbers.png", layer = layer, left = 0, top = 0})

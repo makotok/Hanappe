@@ -1,4 +1,3 @@
--- import
 local EventListener = require("hp/classes/EventListener")
 
 ----------------------------------------------------------------

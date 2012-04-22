@@ -3,10 +3,10 @@ local MOAIPropUtil = require("hp/classes/MOAIPropUtil")
 local FontManager = require("hp/classes/FontManager")
 
 ----------------------------------------------------------------
--- 描画オブジェクトを生成するモジュールです.<br>
--- オブジェクトの生成を簡単に行う事ができるようになります。
+-- テキストを描画するモジュールです.<br>
+-- MOAITextBoxを生成して返します.
 -- @class table
--- @name display
+-- @name TextLabel
 ----------------------------------------------------------------
 local M = {}
 local I = {}

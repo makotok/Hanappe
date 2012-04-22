@@ -1,6 +1,6 @@
 module(..., package.seeall)
 
-function onCreate()
+function onCreate(params)
     -- layer
     layer1 = Layer:new({scene = scene})
     layer2 = Layer:new({scene = scene})

@@ -1,3 +1,8 @@
+local Layer = require("hp/classes/Layer")
+local MapSprite = require("hp/classes/MapSprite")
+local SpriteSheet = require("hp/classes/SpriteSheet")
+local TextureManager = require("hp/classes/TextureManager")
+
 --------------------------------------------------------------------------------
 -- タイルマップ形式のデータを保持するTMXMapクラスです.<br>
 -- タイルマップエディタについては、以下を参照してください.<br>
@@ -8,11 +13,6 @@
 
 local M = {}
 local I = {}
-
-local Layer = require("hp/classes/Layer")
-local MapSprite = require("hp/classes/MapSprite")
-local SpriteSheet = require("hp/classes/SpriteSheet")
-local TextureManager = require("hp/classes/TextureManager")
 
 --------------------------------------------------------------------------------
 -- private functions

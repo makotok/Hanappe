@@ -2,7 +2,7 @@ module(..., package.seeall)
 
 local touchX, touchY = 0, 0
 
-function onCreate()
+function onCreate(params)
     mapData = TMXMapFactory:loadMap("samples/assets/platform.tmx")
     mapData.resourceDirectory = "samples/assets/"
 

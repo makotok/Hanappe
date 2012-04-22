@@ -6,7 +6,7 @@ local Event = require("hp/classes/Event")
 local EventDispatcher = require("hp/classes/EventDispatcher")
 
 ----------------------------------------------------------------
--- Sceneを管理するマネージャクラスです
+-- Sceneを管理するマネージャクラスです.<br>
 -- シーンのライフサイクルの管理やイベント制御を行います.
 -- @class table
 -- @name SceneManager

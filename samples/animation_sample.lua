@@ -4,7 +4,7 @@ local completeHandler = function(self)
     print("animation complete!")
 end    
 
-function onCreate()
+function onCreate(params)
     layer = Layer:new({scene = scene})
     
     sprite1 = Sprite:new({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0})

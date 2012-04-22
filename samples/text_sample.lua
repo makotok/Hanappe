@@ -1,6 +1,6 @@
 module(..., package.seeall)
 
-function onCreate()
+function onCreate(params)
     layer = Layer:new({scene = scene})
     
     textbox1 = TextLabel:new({text = "hello world!", width = Application.screenWidth, height = 25, layer = layer})
