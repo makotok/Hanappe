@@ -1,5 +1,5 @@
 local config = {
-    title = "hana2d samples",
+    title = "hanappe samples",
     screenWidth = 320,
     screenHeight = 480,
     viewWidth = 320,
