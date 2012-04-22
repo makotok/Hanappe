@@ -3,5 +3,6 @@
 -------------------------------------------------------------------
 
 Added:luadoc.
+Added:Add the "useInputManager" option in the config
 Fixed:Refactoring(Scene, Samples).
 
