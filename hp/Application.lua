@@ -1,5 +1,5 @@
 ----------------------------------------------------------------
--- アプリケーションのエントリーポイントです.<br>
+-- アプリケーションの初期化処理を行うモジュールです.<br>
 -- アプリケーションの開始処理を行います.
 -- @class table
 -- @name Application
@@ -13,7 +13,8 @@ local defaultConfig = {
     viewWidth = 320,
     viewHeight = 480,
     landscape = false,
-    showWindow = true
+    showWindow = true,
+    useInputManager = true,
 }
 
 local function getScreenSize(self, config)
@@ -47,6 +48,7 @@ function M:appStart(config)
     local title = config.title
     local screenWidth, screenHeight = getScreenSize(self, config)
     local viewWidth, viewHeight = getViewSize(self, config)
+    local inputManager = require("hp/classes/InputManager")
     
     self.title = title
     self.screenWidth = screenWidth
@@ -57,6 +59,9 @@ function M:appStart(config)
     
     if self.showWindow then
         MOAISim.openWindow(title, screenWidth, screenHeight)
+    end
+    if config.useInputManager then
+        inputManager:initialize()
     end
 end
 

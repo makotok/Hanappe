@@ -99,6 +99,4 @@ function M:initialize()
     end
 end
 
-M:initialize()
-
 return M

@@ -5,6 +5,7 @@ local config = {
     viewWidth = 320,
     viewHeight = 480,
     landscape = false,
-    showWindow = true
+    showWindow = true,
+    useInputManager = true,
 }
 return config
