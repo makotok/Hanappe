@@ -87,6 +87,8 @@ function M:importClasses(t, prefix)
     -- manager classes
     t[prefix .. "SceneManager"] = require("hp/classes/SceneManager")
     t[prefix .. "InputManager"] = require("hp/classes/InputManager")
+    t[prefix .. "TextureManager"] = require("hp/classes/TextureManager")
+    t[prefix .. "FontManager"] = require("hp/classes/FontManager")
 
     -- tmx classes
     t[prefix .. "TMXMapFactory"] = require("hp/classes/TMXMapFactory")
