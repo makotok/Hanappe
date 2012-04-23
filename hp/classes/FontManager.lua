@@ -1,3 +1,5 @@
+local Logger = require("hp/classes/Logger")
+
 ----------------------------------------------------------------
 -- Fontのキャッシュです.
 -- フレームワーク内部で使用します.
@@ -7,29 +9,33 @@
 
 local M = {
     config = {
-        font = "font_ipag.ttf",
+        fontPath = "font_ipag.ttf",
         textSize = 24,
     }
 }
 local cache = {}
+setmetatable(cache, {__mode = "v"})
 
-function M:request(ttf)
-    ttf = ttf or self.config.font
+local function gcHandler(udata)
+    Logger.debug("[FontManager] destroyed => " .. udata.path)
+end
 
-    for i, v in ipairs(cache) do
-        if v.ttf == ttf then
-            v.requestCount = v.requestCount + 1
-            return v.font
+function M:request(path)
+    path = path or self.config.fontPath
+    
+    for i, font in ipairs(cache) do
+        if font.path == path then
+            return font
         end
     end
 
     local font = MOAIFont.new()
-    font:load(ttf)
-    
-    local obj = {font = font, requestCount = 1}
-    table.insert(cache, obj)
+    font:load(path)
+    font.__gc = gcHandler
+    font.path = path
+    table.insert(cache, font)
 
-    return obj.font
+    return font
 end
 
 return M

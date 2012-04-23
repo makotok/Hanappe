@@ -76,7 +76,6 @@ local function createDisplayLayer(tmxMap, layer)
     
     for key, tileset in pairs(displayTilesets) do
         if tileset.texture then
-            print("mapsprite")
             local mapSprite = createMapSprite(tmxMap, displayLayer, tileset)
         end
     end
@@ -110,16 +109,11 @@ local function createSpriteSheet(tmxMap, object)
     spriteSheet:setTop(object.y)
     spriteSheet:setIndex(object.gid - tileset.firstgid + 1)
     
-    for k, v in ipairs(object.properties) do
-        print("sprite:", k)
-    end
     if object.properties.sheetAnims then
         local sheetAnims = assert(loadstring("return {" .. object.properties.sheetAnims .. "}"))()
-        print(sheetAnims)
         spriteSheet:setSheetAnims(sheetAnims)
     end
     if object.properties.playAnim then
-        print(object.properties.playAnim)
         spriteSheet:playAnim(object.properties.playAnim)
     end
     
