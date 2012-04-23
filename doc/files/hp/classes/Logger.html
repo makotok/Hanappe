@@ -50,8 +50,10 @@
 		<a href="../../../files/hp/classes/Display.html">hp/classes/Display.lua</a>
 	</li>
 
-	<li><strong>hp/classes/Event.lua</strong></li>
-	
+	<li>
+		<a href="../../../files/hp/classes/Event.html">hp/classes/Event.lua</a>
+	</li>
+
 	<li>
 		<a href="../../../files/hp/classes/EventDispatcher.html">hp/classes/EventDispatcher.lua</a>
 	</li>
@@ -80,10 +82,8 @@
 		<a href="../../../files/hp/classes/Layer.html">hp/classes/Layer.lua</a>
 	</li>
 
-	<li>
-		<a href="../../../files/hp/classes/Logger.html">hp/classes/Logger.lua</a>
-	</li>
-
+	<li><strong>hp/classes/Logger.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/classes/MOAIPropUtil.html">hp/classes/MOAIPropUtil.lua</a>
 	</li>
@@ -179,7 +179,7 @@
 
 <div id="content">
 
-<h1>File <code>hp/classes/Event.lua</code></h1>
+<h1>File <code>hp/classes/Logger.lua</code></h1>
 
 
 
@@ -191,24 +191,29 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:new">M:new</a>&nbsp;(eventType, target)</td>
-	<td class="summary">コンストラクタです  </td>
+	<td class="name" nowrap><a href="#M.debug">M.debug</a>&nbsp;(...)</td>
+	<td class="summary">デバッグログを出力します.</td>
 	</tr>
-
-</table>
-
-
-
-
-<h2>Tables</h2>
-<table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#Event ">Event </a></td>
-	<td class="summary">Eventの基本クラスです.<br> Eventのタイプ、送信元などの情報を保持します.</td>
+	<td class="name" nowrap><a href="#M.error">M.error</a>&nbsp;(...)</td>
+	<td class="summary">エラーログを出力します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.info">M.info</a>&nbsp;(...)</td>
+	<td class="summary">通常ログを出力します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.warn">M.warn</a>&nbsp;(...)</td>
+	<td class="summary">警告ログを出力します.</td>
 	</tr>
 
 </table>
+
+
+
 
 
 
@@ -223,20 +228,94 @@
 
 
 
-<dt><a name="M:new"></a><strong>M:new</strong>&nbsp;(eventType, target)</dt>
+<dt><a name="M.debug"></a><strong>M.debug</strong>&nbsp;(...)</dt>
 <dd>
-コンストラクタです 
+デバッグログを出力します. 
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  eventType: 
+	  ...: 
 	</li>
 	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.error"></a><strong>M.error</strong>&nbsp;(...)</dt>
+<dd>
+エラーログを出力します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
 	<li>
-	  target: 
+	  ...: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.info"></a><strong>M.info</strong>&nbsp;(...)</dt>
+<dd>
+通常ログを出力します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  ...: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.warn"></a><strong>M.warn</strong>&nbsp;(...)</dt>
+<dd>
+警告ログを出力します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  ...: 
 	</li>
 	
 </ul>
@@ -255,19 +334,6 @@
 
 
 
-
-<h2><a name="tables"></a>Tables</h2>
-<dl class="table">
-
-<dt><a name="Event "></a><strong>Event </strong></dt>
-<dd>Eventの基本クラスです.<br> Eventのタイプ、送信元などの情報を保持します.
-
-
-
-</dd>
-
-
-</dl>
 
 
 
