@@ -10,7 +10,7 @@ local M = {}
 local I = {}
 
 -- constraints
-local ATTRIBUTE_NAMES = {
+M.ATTRIBUTE_NAMES = {
     "version", "orientation", "width", "height", "tilewidth", "tileheight"
 }
 
@@ -42,7 +42,7 @@ function I:printDebug()
     print("<TMXMap>")
     
     -- attributes
-    for i, attr in ipairs(ATTRIBUTE_NAMES) do
+    for i, attr in ipairs(self.ATTRIBUTE_NAMES) do
         local value = self[attr]
         value = value and value or ""
         print(attr .. " = " .. value)

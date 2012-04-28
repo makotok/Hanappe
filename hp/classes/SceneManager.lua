@@ -197,7 +197,7 @@ function M:openScene(sceneName, params)
         return
     end
 
-    params = params and params or {}
+    params = params or {}
     
     -- get next scene
     nextScene = self:findSceneByName(sceneName)

@@ -50,6 +50,7 @@ local function createMapSprite(tmxMap, displayLayer, tileset)
     local tilewidth, tileheight = tileset.tilewidth, tileset.tileheight
     local tileCol = math.floor((tw + spacing) / tilewidth)
     local tileRow = math.floor((th + spacing) / tileheight)
+    local tileSize = tileCol * tileRow
     
     -- make sprite
     local mapSprite = MapSprite:new({texture = texture, layer = displayLayer})
@@ -61,7 +62,8 @@ local function createMapSprite(tmxMap, displayLayer, tileset)
         for x = 1, mapLayer.width do
             local gid = mapLayer.tiles[(y - 1) * mapLayer.width + x]
             local tileNo = gid == 0 and gid or gid - tileset.firstgid + 1
-            table.insert(rowData, tileNo)                        
+            tileNo = tileNo > tileSize and 0 or tileNo
+            table.insert(rowData, tileNo)
         end
         mapSprite:setRow(y, unpack(rowData))
     end
