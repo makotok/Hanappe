@@ -1,4 +1,5 @@
 #!/bin/bash
 cd `dirname $0`
 rm -rf doc/*
-luadoc -d doc hp/*.lua hp/*/*.lua
+cd src/main
+luadoc -d ../../doc hp/*.lua hp/*/*.lua

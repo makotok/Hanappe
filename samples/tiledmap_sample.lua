@@ -3,11 +3,12 @@ module(..., package.seeall)
 local touchX, touchY = 0, 0
 
 function onCreate(params)
-    mapData = TMXMapFactory:loadMap("samples/assets/platform.tmx")
-    mapData.resourceDirectory = "samples/assets/"
+    mapLoader = TMXMapLoader:new()
+    mapData = mapLoader:loadFile("samples/assets/platform.tmx")
 
-    gameMap = TMXMapFactory:createDisplay(mapData)
-    gameMap:setScene(scene)
+    mapView = TMXMapView:new("samples/assets/")
+    mapView:loadMap(mapData)
+    mapView:setScene(scene)
 end
 
 function onTouchDown(e)
@@ -16,6 +17,6 @@ end
 
 function onTouchMove(e)
     local moveX, moveY = touchX - e.x, touchY - e.y
-    gameMap.camera:addLoc(moveX, moveY, 0)
+    mapView.camera:addLoc(moveX, moveY, 0)
     touchX, touchY = e.x, e.y
 end

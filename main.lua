@@ -1,6 +1,6 @@
 -- requires
-local Application = require("hp/Application")
 local config = require("config")
+local Application = require("hp/Application")
 
 -- application start
 Application:appStart(config)

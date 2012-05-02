@@ -1,3 +1,8 @@
+-- package config
+-- To specify the directory in the source.
+package.path = package.path .. ';src/main/?.lua'
+
+-- Hanappe Application config
 local config = {
     title = "hanappe samples",
     screenWidth = 320,

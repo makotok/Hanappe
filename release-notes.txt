@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+-- Version:1.1.0
+-------------------------------------------------------------------
+
+Added:Animation clear function.
+Added:class base system.
+Added:RPGMapView.
+Fixed:TMXDisplay Fixed a bug in the Y coordinate of the SpriteSheet.
+Modify:internal logic.
+Modify:Change the structure of the directory of the package.
+Deleted:TMXMapFactory
+
+-------------------------------------------------------------------
 -- Version:1.0.0
 -------------------------------------------------------------------
 
