@@ -27,6 +27,9 @@ function onCreate(params)
 end
 
 function onStickChanged(e)
+    print("-----------------------------")
     print("stick old :", e.oldX, e.oldY)
     print("stick new :", e.newX, e.newY)
+    print("stick dir :", e.direction)
+    print("stick down:", e.down)
 end

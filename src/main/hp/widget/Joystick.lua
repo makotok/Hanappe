@@ -14,6 +14,12 @@ local Logger = require("hp/util/Logger")
 local M = class(Group, EventDispatcher)
 
 -- constraints
+M.STICK_CENTER = "center"
+M.STICK_LEFT = "left"
+M.STICK_TOP = "top"
+M.STICK_RIGHT = "right"
+M.STICK_BOTTOM = "bottom"
+
 M.MODE_ANALOG = 1
 M.MODE_DIGITAL = 2
 
@@ -105,7 +111,7 @@ function M:onSceneTouchUp(e)
     end
 
     self.touchDownFlag = false
-    local cx, cy = self:getWidth() / 2, self:getHeight() / 2
+    local cx, cy = self:getCenterLoc()
     self:updateKnob(cx, cy)
 end
 
@@ -142,6 +148,8 @@ function M:updateKnob(x, y)
     local event = self.changedEvent
     event.oldX, event.oldY = self:getKnobInputRate(oldX, oldY)
     event.newX, event.newY = self:getKnobInputRate(newX, newY)
+    event.direction = self:getStickDirection()
+    event.down = self.touchDownFlag
     self:dispatchEvent(event)
 end
 
@@ -222,6 +230,25 @@ function M:getKnobInputRate(x, y)
     local cx, cy = self:getCenterLoc()
     local rateX, rateY = (x - cx) / cx, (y - cy) / cy
     return rateX, rateY
+end
+
+--------------------------------------------------------------------------------
+-- Knobの入力の比を返します.
+--------------------------------------------------------------------------------
+function M:getStickDirection()
+    local x, y = self.knobSprite:getLoc()
+    local cx, cy = self:getCenterLoc()
+    local radian = math.atan2(math.abs(x - cx), math.abs(y - cy))
+
+    local dir
+    if x == cx and y == cy then
+        dir = M.STICK_CENTER
+    elseif math.cos(radian) < math.sin(radian) then
+        dir = x < cx and M.STICK_LEFT or M.STICK_RIGHT
+    else
+        dir = y < cy and M.STICK_TOP or M.STICK_BOTTOM
+    end
+    return dir
 end
     
 return M
