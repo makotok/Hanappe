@@ -27,6 +27,6 @@ function onCreate(params)
 end
 
 function onStickChanged(e)
-    
-    
+    print("stick old :", e.oldX, e.oldY)
+    print("stick new :", e.newX, e.newY)
 end

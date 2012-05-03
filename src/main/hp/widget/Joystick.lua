@@ -2,6 +2,7 @@ local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local Sprite = require("hp/display/Sprite")
 local Group = require("hp/display/Group")
+local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
 local Logger = require("hp/util/Logger")
 
@@ -13,12 +14,6 @@ local Logger = require("hp/util/Logger")
 local M = class(Group, EventDispatcher)
 
 -- constraints
-M.STICK_CENTER = 0
-M.STICK_LEFT = 1
-M.STICK_RIGHT = 2
-M.STICK_TOP = 3
-M.STICK_BOTTOM = 4
-
 M.MODE_ANALOG = 1
 M.MODE_DIGITAL = 2
 
@@ -45,8 +40,8 @@ function M:new(params)
     obj:addChild(knobSprite)
     
     obj.stickMode = params.stickMode or M.MODE_ANALOG
-    obj.currentStickPos = M.STICK_CENTER
     obj.rangeOfCenterRate = M.RANGE_OF_CENTER_RATE
+    obj.changedEvent = Event:new("stickChanged")
     
     obj:setWidth(baseSprite:getWidth())
     obj:setHeight(baseSprite:getHeight())
@@ -143,6 +138,11 @@ function M:updateKnob(x, y)
     local newX, newY = self:getKnobNewLoc(x, y)
 
     self.knobSprite:setLoc(newX, newY, 0)
+    
+    local event = self.changedEvent
+    event.oldX, event.oldY = self:getKnobInputRate(oldX, oldY)
+    event.newX, event.newY = self:getKnobInputRate(newX, newY)
+    self:dispatchEvent(event)
 end
 
 --------------------------------------------------------------------------------
@@ -151,7 +151,6 @@ end
 function M:setCenterKnob()
     local cx, cy = self:getWidth() / 2, self:getHeight() / 2
     self.knobSprite:setLoc(cx, cy, 0)
-    self.currentStickPos = M.STICK_CENTER
 end
 
 --------------------------------------------------------------------------------
@@ -216,4 +215,13 @@ function M:getKnobNewLocForDigital(x, y)
     return x, y
 end
 
+--------------------------------------------------------------------------------
+-- Knobの入力の比を返します.
+--------------------------------------------------------------------------------
+function M:getKnobInputRate(x, y)
+    local cx, cy = self:getCenterLoc()
+    local rateX, rateY = (x - cx) / cx, (y - cy) / cy
+    return rateX, rateY
+end
+    
 return M
