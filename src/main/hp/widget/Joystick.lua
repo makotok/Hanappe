@@ -143,14 +143,17 @@ function M:updateKnob(x, y)
     local oldX, oldY = self.knobSprite:getLoc()
     local newX, newY = self:getKnobNewLoc(x, y)
 
-    self.knobSprite:setLoc(newX, newY, 0)
+    -- change loc
+    if oldX ~= newX or oldY ~= newY then
+        self.knobSprite:setLoc(newX, newY, 0)
     
-    local event = self.changedEvent
-    event.oldX, event.oldY = self:getKnobInputRate(oldX, oldY)
-    event.newX, event.newY = self:getKnobInputRate(newX, newY)
-    event.direction = self:getStickDirection()
-    event.down = self.touchDownFlag
-    self:dispatchEvent(event)
+        local event = self.changedEvent
+        event.oldX, event.oldY = self:getKnobInputRate(oldX, oldY)
+        event.newX, event.newY = self:getKnobInputRate(newX, newY)
+        event.direction = self:getStickDirection()
+        event.down = self.touchDownFlag
+        self:dispatchEvent(event)
+    end
 end
 
 --------------------------------------------------------------------------------
