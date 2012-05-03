@@ -145,6 +145,11 @@ end
 -- 子オブジェクトを追加します.
 ----------------------------------------------------------------
 function M:addChild(child)
+    local index = table.indexOf(self.children, child)
+    if index > 0 then
+        return
+    end
+    
     table.insert(self.children, child)
     if child.isGroup then
         child:setAttrLink(MOAITransform.INHERIT_TRANSFORM, self, MOAITransform.TRANSFORM_TRAIT)
@@ -152,6 +157,12 @@ function M:addChild(child)
     else
         child:setAttrLink(MOAITransform.INHERIT_TRANSFORM, self, MOAITransform.TRANSFORM_TRAIT)
         child:setAttrLink(MOAIColor.INHERIT_COLOR, self.color, MOAIColor.COLOR_TRAIT)
+    end
+    
+    if self.layer then
+        if child.setLayer then
+            child:setLayer(self.layer)
+        end
     end
 end
 
@@ -174,6 +185,18 @@ function M:removeChild(child)
     end
     
     table.remove(children, index)
+end
+
+--------------------------------------------------------------------------------
+-- レイヤーを設定します.
+--------------------------------------------------------------------------------
+function M:setLayer(layer)
+    self.layer = layer
+    for i, child in ipairs(self.children) do
+        if child.setLayer then
+            child:setLayer(layer)
+        end
+    end
 end
 
 return M

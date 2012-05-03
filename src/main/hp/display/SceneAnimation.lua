@@ -11,7 +11,7 @@ local defaultSecond = 0.5
 local function createShowAnimation(scene, sec)
     return Animation:new({scene}, sec)
         :setColor(1, 1, 1, 1):setVisible(true)
-        :setLeft(0):setTop(0):setScl(1, 1, 0):setRot(0, 0, 0)
+        :setLeft(0):setTop(0):setScl(1, 1, 1):setRot(0, 0, 0)
 end
 
 ---------------------------------------
@@ -33,7 +33,7 @@ function M.popIn(currentScene, nextScene, params)
         Animation:new({currentScene}, sec)
             :seekColor(-0.5, -0.5, -0.5, -0.5),
         createShowAnimation(nextScene, sec)
-            :setScl(0, 0, 0):seekScl(1, 1, 0)
+            :setScl(0, 0, 1):seekScl(1, 1, 1)
     )
 end
 
@@ -44,7 +44,7 @@ end
 function M.popOut(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
     return Animation:new():parallel(
-        Animation:new({currentScene}, sec):seekScl(0, 0, 0):setVisible(false),
+        Animation:new({currentScene}, sec):seekScl(0, 0, 1):setVisible(false),
         Animation:new({nextScene}, sec):seekColor(1, 1, 1, 1)
     )
 end

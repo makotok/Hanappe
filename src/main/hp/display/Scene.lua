@@ -1,6 +1,8 @@
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local Group = require("hp/display/Group")
+local Event = require("hp/event/Event")
+local EventDispatcher = require("hp/event/EventDispatcher")
 local Application = require("hp/Application")
 
 ----------------------------------------------------------------
@@ -16,13 +18,15 @@ local Application = require("hp/Application")
 -- @class table
 -- @name Scene
 ----------------------------------------------------------------
-local M = class(Group)
+local M = class(Group, EventDispatcher)
 
 ---------------------------------------
 -- コンストラクタです
 ---------------------------------------
 function M:new()
     local obj = Group.new(self, {width = Application.screenWidth, height = Application.screenHeight})
+    EventDispatcher.init(obj)
+    
     obj.name = ""
     obj.visible = true
     obj.sceneManager = require("hp/manager/SceneManager")
@@ -140,6 +144,9 @@ function M:onKeyDown(event)
     if self.sceneHandler.onKeyDown then
         self.sceneHandler.onKeyDown(event)
     end
+    if self:hasEventListener(Event.KEY_DOWN) then
+        self:dispatchEvent(table.copy(event, Event:new()))
+    end
 end
 
 ---------------------------------------
@@ -148,6 +155,9 @@ end
 function M:onKeyUp(event)
     if self.sceneHandler.onKeyUp then
         self.sceneHandler.onKeyUp(event)
+    end
+    if self:hasEventListener(Event.KEY_UP) then
+        self:dispatchEvent(table.copy(event, Event:new()))
     end
 end
 
@@ -159,15 +169,21 @@ function M:onTouchDown(event)
     if self.sceneHandler.onTouchDown then
         self.sceneHandler.onTouchDown(event)
     end
+    if self:hasEventListener(Event.TOUCH_DOWN) then
+        self:dispatchEvent(table.copy(event, Event:new()))
+    end
 end
 
 ---------------------------------------
 -- 画面をタッチした時のイベント処理です.
 ---------------------------------------
 function M:onTouchUp(event)
-    self.touchDownFlag = false
-    if self.sceneHandler.onTouchUp then
+    if self.sceneHandler.onTouchUp and self.touchDownFlag then
+        self.touchDownFlag = false
         self.sceneHandler.onTouchUp(event)
+    end
+    if self:hasEventListener(Event.TOUCH_UP) then
+        self:dispatchEvent(table.copy(event, Event:new()))
     end
 end
 
@@ -178,6 +194,9 @@ function M:onTouchMove(event)
     if self.sceneHandler.onTouchMove and self.touchDownFlag then
         self.sceneHandler.onTouchMove(event)
     end
+    if self:hasEventListener(Event.TOUCH_MOVE) then
+        self:dispatchEvent(table.copy(event, Event:new()))
+    end
 end
 
 ---------------------------------------
@@ -186,6 +205,9 @@ end
 function M:onSceneTouchCancel(event)
     if self.sceneHandler.onSceneTouchCancel then
         self.sceneHandler.onSceneTouchCancel(event)
+    end
+    if self:hasEventListener(Event.TOUCH_CANCEL) then
+        self:dispatchEvent(table.copy(event, Event:new()))
     end
 end
 

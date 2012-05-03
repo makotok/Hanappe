@@ -27,30 +27,11 @@ M.DIR_RIGHT = 3
 M.DIR_DOWN = 4
 
 --
-M.MOVE_SEC = 0.5
+M.MOVE_SPEED = 2
 
 --
 M.MOVE_NONE = "moveTypeNone"
 M.MOVE_RANDOM = "moveTypeRandom"
-
-local function moveMapCommon(self, moveX, moveY, moveAnim)
-    if self:isMoving() then
-        return false
-    end
-    self.moveAction = self:moveLoc(moveX, moveY, 0, M.MOVE_SEC, MOAIEaseType.LINEAR)
-    
-    if not self:isCurrentAnim(moveAnim) then
-        self:playAnim(moveAnim)
-    end
-    
-    self.moveAction:setListener(MOAIAction.EVENT_STOP,
-        function()
-            self.moveAction = nil
-            self.moveComplete = true
-        end)
-    
-    return true
-end
 
 ----------------------------------------------------------------
 -- インスタンスを生成して返します.<br>
@@ -64,6 +45,12 @@ function M:new(params)
     obj.mapTileWidth = obj.mapView.tmxMap.tilewidth
     obj.mapTileHeight = obj.mapView.tmxMap.tileheight
     
+    obj.moveSpeed = self.MOVE_SPEED
+    
+    obj.currentMoveX = 0
+    obj.currentMoveY = 0
+    obj.currentMoveCount = 0
+    
     return obj
 end
 
@@ -71,31 +58,14 @@ end
 -- フレーム更新処理を行います.
 ----------------------------------------------------------------
 function M:onEnterFrame()
-    if self:isMoving() then
-        return
-    end
-    if self.moveComplete then
-        self.moveComplete = false
-        self:onMoveComplete()
-    end
-    
+    -- 移動ロジックの処理
     local moveTypeFunc = self[self.moveType]
     if moveTypeFunc then
         moveTypeFunc(self)
     end
-end
-
-----------------------------------------------------------------
--- 浮動小数点による座標のずれを調整します.
-----------------------------------------------------------------
-function M:adjustLoc()
-    local x, y, z = self:getLoc()
-    x, y  = math.floor(x + 0.5), math.floor(y + 0.5)
-    self:setLoc(x, y, z)
-end
-
-function M:onMoveComplete()
-    self:adjustLoc()
+    
+    -- 移動処理
+    self:moveStep()
 end
 
 ----------------------------------------------------------------
@@ -142,6 +112,37 @@ function M:moveTypeRandom()
 end
 
 ----------------------------------------------------------------
+-- ステップ毎の移動処理を行います.
+-- moveLocではいまいちなので、自前で移動する.
+----------------------------------------------------------------
+function M:moveStep()
+    if self:isMoving() then
+        self:addLoc(self.currentMoveX, self.currentMoveY, 0)
+        self.currentMoveCount = self.currentMoveCount - 1
+    end
+end
+
+----------------------------------------------------------------
+-- マップ上の座標を移動する共通処理です.
+----------------------------------------------------------------
+function M:moveMapCommon(mapX, mapY, moveAnim)
+    if self:isMoving() then
+        return false
+    end
+    if not self.mapView:collisionWith(self, self:getMapX() + mapX, self:getMapY() + mapY) then
+        self.currentMoveX = mapX * self.moveSpeed
+        self.currentMoveY = mapY * self.moveSpeed
+        self.currentMoveCount = self.mapTileWidth / self.moveSpeed
+    end
+    
+    if not self:isCurrentAnim(moveAnim) then
+        self:playAnim(moveAnim)
+    end
+        
+    return true
+end
+
+----------------------------------------------------------------
 -- マップ上の座標を移動します.
 ----------------------------------------------------------------
 function M:moveMap(dir)
@@ -163,35 +164,35 @@ end
 -- マップ上の座標を移動します.
 ----------------------------------------------------------------
 function M:moveMapLeft()
-    return moveMapCommon(self, -self.mapTileWidth, 0, "walkLeft")
+    return self:moveMapCommon(-1, 0, "walkLeft")
 end
 
 ----------------------------------------------------------------
 -- マップ上の座標を移動します.
 ----------------------------------------------------------------
 function M:moveMapUp()
-    return moveMapCommon(self, 0, -self.mapTileHeight, "walkUp")
+    return self:moveMapCommon(0, -1, "walkUp")
 end
 
 ----------------------------------------------------------------
 -- マップ上の座標を移動します.
 ----------------------------------------------------------------
 function M:moveMapRight()
-    return moveMapCommon(self, self.mapTileWidth, 0, "walkRight")
+    return self:moveMapCommon(1, 0, "walkRight")
 end
 
 ----------------------------------------------------------------
 -- マップ上の座標を移動します.
 ----------------------------------------------------------------
 function M:moveMapDown()
-    return moveMapCommon(self, 0, self.mapTileHeight, "walkDown")
+    return self:moveMapCommon(0, 1, "walkDown")
 end
 
 ----------------------------------------------------------------
 -- マップ上の座標を移動しているか返します.
 ----------------------------------------------------------------
 function M:isMoving()
-    return self.moveAction ~= nil
+    return self.currentMoveCount > 0
 end
 
 return M

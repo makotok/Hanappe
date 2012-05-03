@@ -25,7 +25,7 @@ end
 ---------------------------------------
 -- テーブルをコピーします.
 ---------------------------------------
-function M.copy(src, dest, includeFields, excludeFields)
+function M.copy(src, dest)
     dest = dest and dest or {}
     for i, v in pairs(src) do
         dest[i] = v

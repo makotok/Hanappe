@@ -1,5 +1,6 @@
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
+local Application = require("hp/Application")
 local TMXMapView = require("hp/tmx/TMXMapView")
 local RPGSprite = require("hp/rpg/RPGSprite")
 
@@ -10,6 +11,16 @@ local RPGSprite = require("hp/rpg/RPGSprite")
 -- @name RPGMapView
 --------------------------------------------------------------------------------
 local M = class(TMXMapView)
+
+--------------------------------------------------------------------------------
+-- コンストラクタです.
+-- この段階では表示オブジェクトは生成しません.
+-- loadMap関数を使用する事で、表示オブジェクトを生成します.
+--------------------------------------------------------------------------------
+function M:init(resourceDirectory)
+    TMXMapView.init(self, resourceDirectory)
+    self.cameraToPlayerEnabled = true
+end
 
 --------------------------------------------------------------------------------
 -- 表示オブジェクトを作成します.
@@ -42,11 +53,27 @@ function M:createDisplayObject(object)
     if object.properties.moveType then
         sprite:setMoveType(object.properties.moveType)
     end
+    if object.properties.visible then
+        sprite:setVisible(toboolean(object.properties.visible))
+    end
     
     return sprite
 end
 
+--------------------------------------------------------------------------------
+-- マップ読み込み後、カメラの位置をプレイヤーの座標に設定します.
+--------------------------------------------------------------------------------
+function M:loadMap(tmxMap)
+    TMXMapView.loadMap(self, tmxMap)
+    self:moveCameraToPlayer()
+    self.collisionLayer = self:findCollisionLayer()
+end
+
+--------------------------------------------------------------------------------
+-- フレーム毎の処理を行います.
+--------------------------------------------------------------------------------
 function M:onEnterFrame()
+    -- object move
     for i, layer in ipairs(self.objectLayers) do
         for i, object in ipairs(layer.objects) do
             if object.onEnterFrame then
@@ -54,6 +81,118 @@ function M:onEnterFrame()
             end
         end
     end
+    
+    -- camera move
+    self:moveCameraToPlayer()
+end
+
+--------------------------------------------------------------------------------
+-- 指定した位置の衝突判定を行います.
+--------------------------------------------------------------------------------
+function M:collisionWith(object, x, y)
+    if self:collisionWithMap(x, y) then
+        return true
+    end
+    if self:collisionWithObjects(x, y) then
+        return true
+    end
+    return false
+end
+--------------------------------------------------------------------------------
+-- 指定した位置と衝突判定レイヤーが衝突するか判定します.
+--------------------------------------------------------------------------------
+function M:collisionWithMap(x, y)
+    if not self.collisionLayer then
+        return false
+    end
+    
+    local gid = self.collisionLayer:getGid(x, y)
+    return gid and gid > 0
+end
+
+--------------------------------------------------------------------------------
+-- 指定した位置とオブジェクトが衝突するか判定します.
+--------------------------------------------------------------------------------
+function M:collisionWithObjects(x, y)
+    for i, objectLayer in ipairs(self.objectLayers) do
+        for j, object in ipairs(objectLayer.objects) do
+--            if object:getMapX() >= x and x < object:getMapX() + object:getMapWidth() and 
+--               object:getMapY() >= y and y < object:getMapY() + object:getMapHeight() then
+            if object:getMapX() == x and 
+               object:getMapY() == y then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+--------------------------------------------------------------------------------
+-- Playerというnameのオブジェクトを検索して返します.
+--------------------------------------------------------------------------------
+function M:findPlayerObject()
+    return self:findObjectByName("Player")
+end
+
+--------------------------------------------------------------------------------
+-- Collisionというnameのレイヤーを検索して返します.
+--------------------------------------------------------------------------------
+function M:findCollisionLayer()
+    return self.tmxMap:findLayerByName("Collision")
+end
+
+function M:findObjectsByPosition(x, y)
+    local objects = {}
+    for i, objectLayer in ipairs(self.objectLayers) do
+        for j, object in ipairs(objectLayer.objects) do
+            if object:getMapX() >= x and object:getMapX() + object:getMapWidth() < x and 
+               object:getMapY() >= y and object:getMapY() + object:getMapHeight() < y then
+                table.insert(objects, object)
+            end
+        end
+    end
+    return objects
+end
+
+--------------------------------------------------------------------------------
+-- カメラの位置をプレイヤーの座標まで移動します.
+--------------------------------------------------------------------------------
+function M:moveCameraToPlayer()
+    if not self.cameraToPlayerEnabled then
+        return
+    end
+    
+    local player = self:findPlayerObject()
+    if not player then
+        return
+    end
+    
+    local playerX, playerY = player:getLeft(), player:getTop()
+    local cameraX, cameraY = (-Application.viewWidth / 2 + playerX), (-Application.viewHeight / 2 + playerY)
+    cameraX, cameraY = self:getAdjustCameraLoc(cameraX, cameraY)
+    
+    self.camera:setLoc(cameraX, cameraY, 0)
+end
+
+--------------------------------------------------------------------------------
+-- カメラ座標が画面外に飛び出している場合、画面内に収まるように調整します.
+--------------------------------------------------------------------------------
+function M:getAdjustCameraLoc(cameraX, cameraY)
+    local viewWidth, viewHeight = self:getViewSize()
+
+    if cameraX < 0 then
+        cameraX = 0
+    end
+    if cameraX > viewWidth - Application.viewWidth then
+        cameraX = viewWidth - Application.viewWidth
+    end
+    if cameraY < 0 then
+        cameraY = 0
+    end
+    if cameraY > viewHeight - Application.viewHeight then
+        cameraY = viewHeight - Application.viewHeight
+    end
+    return cameraX, cameraY
 end
 
 return M

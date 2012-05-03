@@ -18,17 +18,23 @@ function M:new(params)
     params = params or {}
 
     -- layer
-    local viewport = MOAIViewport.new()
     local layer = MOAILayer.new()
     table.copy(self, layer)
-    layer.viewport = viewport
-    layer:setViewport(viewport)
+    
+    -- partition
+    local partition = MOAIPartition.new()
+    layer:setPartition(partition)
+    layer.partition = partition
 
     -- viewport
+    local viewport = MOAIViewport.new()
+    layer:setViewport(viewport)
+    layer.viewport = viewport
+    
     layer:setScreenSize(Application.screenWidth, Application.screenHeight)
     layer:setViewSize(Application.viewWidth, Application.viewHeight)
     layer:setOffset(-1, 1)
-
+    
     -- set params
     layer:copyParams(params)
     

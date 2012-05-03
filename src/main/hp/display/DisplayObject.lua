@@ -20,7 +20,17 @@ function M:copyParams(params)
         self:setTop(params.top)
     end
     if params.layer then
-        params.layer:insertProp(self)
+        self:setLayer(params.layer)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- レイヤーを設定します.
+--------------------------------------------------------------------------------
+function M:setLayer(layer)
+    if self.layer ~= layer then
+        self.layer = layer
+        layer:insertProp(self)
     end
 end
 

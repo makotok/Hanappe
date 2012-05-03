@@ -58,12 +58,19 @@ function M:removeEventListener(eventType, callback, source)
 end
 
 ---------------------------------------
---- イベントリスナを登録済か返します.
+-- イベントリスナが登録済か返します.
 ---------------------------------------
 function M:hasEventListener(eventType, callback, source)
+    assert(eventType)
     for key, obj in ipairs(self.eventlisteners) do
-        if obj.type == eventType and obj.callback == callback and obj.source == source then
-            return true
+        if obj.type == eventType then
+            if callback or source then
+                if obj.callback == callback and obj.source == source then
+                    return true
+                end
+            else
+                return true
+            end
         end
     end
     return false
@@ -74,7 +81,7 @@ end
 ---------------------------------------
 function M:dispatchEvent(event)
     event.stoped = false
-    event.target = event.target or self
+    event.target = self.eventTarget or self
     for key, obj in ipairs(self.eventlisteners) do
         if obj.type == event.type then
             event:setListener(obj.callback, obj.source)

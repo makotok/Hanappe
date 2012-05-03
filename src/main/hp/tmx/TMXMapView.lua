@@ -74,7 +74,9 @@ function M:createDisplayLayers()
     local tmxMap = self.tmxMap
     local displayLayers = {}
     for i, layer in ipairs(tmxMap.layers) do
-        table.insert(displayLayers, self:createDisplayLayer(layer))
+        if layer.visible ~= 0 and layer.properties.visible ~= "false" then
+            table.insert(displayLayers, self:createDisplayLayer(layer))
+        end
     end
     return displayLayers
 end
@@ -212,6 +214,9 @@ function M:createDisplayObject(object)
     if object.properties.playAnim then
         sprite:playAnim(object.properties.playAnim)
     end
+    if object.properties.visible then
+        sprite:setVisible(toboolean(object.properties.visible))
+    end
     
     return sprite
 end
@@ -270,4 +275,16 @@ function M:findLayerByName(name)
     end
 end
 
+--------------------------------------------------------------------------------
+-- MapViewのサイズを返します.
+--------------------------------------------------------------------------------
+function M:getViewSize()
+    if not self.tmxMap then
+        return 0, 0
+    end
+    local width = self.tmxMap.width * self.tmxMap.tilewidth
+    local height = self.tmxMap.height * self.tmxMap.tileheight
+    return width, height
+end
+    
 return M

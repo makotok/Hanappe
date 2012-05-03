@@ -99,6 +99,9 @@ function M:importClasses(t, prefix)
     t[prefix .. "TMXObjectGroup"]   = require("hp/tmx/TMXObjectGroup")
     t[prefix .. "TMXTileset"]       = require("hp/tmx/TMXTileset")
     
+    -- widget classes
+    t[prefix .. "Joystick"] = require("hp/widget/Joystick")
+    
     -- rpg classes
     t[prefix .. "RPGMapView"] = require("hp/rpg/RPGMapView")
     t[prefix .. "RPGSprite"] = require("hp/rpg/RPGSprite")

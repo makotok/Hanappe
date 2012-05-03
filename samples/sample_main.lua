@@ -11,13 +11,12 @@ local sceneItems = {
     {text = "animation", scene = "samples/animation_sample", animation = "fade"},
     {text = "scene", scene = "samples/scene_sample", animation = "popIn"},
     {text = "moai", scene = "samples/moai_sample"},
+    {text = "joystick", scene = "samples/stick_sample"},
     {text = "tiledmap", scene = "samples/tiledmap_sample", animation = "fade"},
 }
 
 function onCreate(params)
     layer = Layer:new({scene = scene})
-    partition = MOAIPartition.new()
-    layer:setPartition(partition)
     
     for i, item in ipairs(sceneItems) do
         local graphics = Graphics:new({width = Application.screenWidth + 1, height = 30, layer = layer})
@@ -42,7 +41,7 @@ end
 
 function onTouchDown(event)
     local worldX, worldY, worldZ = layer:wndToWorld(event.x, event.y, 0)
-    local touchProp = partition:propForPoint ( worldX, worldY )
+    local touchProp = layer.partition:propForPoint ( worldX, worldY )
     if touchProp and touchProp.sceneName then
         SceneManager:openScene(touchProp.sceneName, {animation = touchProp.sceneAnimation})
     end
