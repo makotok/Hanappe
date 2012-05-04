@@ -180,6 +180,10 @@
 		<a href="../../../files/hp/util/MOAIPropUtil.html">hp/util/MOAIPropUtil.lua</a>
 	</li>
 
+	<li>
+		<a href="../../../files/hp/widget/Joystick.html">hp/widget/Joystick.lua</a>
+	</li>
+
 </ul>
 
 
@@ -201,11 +205,6 @@
 
 <h2>Functions</h2>
 <table class="function_list">
-
-	<tr>
-	<td class="name" nowrap><a href="#M:adjustLoc">M:adjustLoc</a>&nbsp;()</td>
-	<td class="summary">浮動小数点による座標のずれを調整します.</td>
-	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getMapHeight">M:getMapHeight</a>&nbsp;()</td>
@@ -238,6 +237,11 @@
 	</tr>
 
 	<tr>
+	<td class="name" nowrap><a href="#M:moveMapCommon">M:moveMapCommon</a>&nbsp;(mapX, mapY, moveAnim)</td>
+	<td class="summary">マップ上の座標を移動する共通処理です.</td>
+	</tr>
+
+	<tr>
 	<td class="name" nowrap><a href="#M:moveMapDown">M:moveMapDown</a>&nbsp;()</td>
 	<td class="summary">マップ上の座標を移動します.</td>
 	</tr>
@@ -255,6 +259,11 @@
 	<tr>
 	<td class="name" nowrap><a href="#M:moveMapUp">M:moveMapUp</a>&nbsp;()</td>
 	<td class="summary">マップ上の座標を移動します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:moveStep">M:moveStep</a>&nbsp;()</td>
+	<td class="summary">ステップ毎の移動処理を行います.</td>
 	</tr>
 
 	<tr>
@@ -302,23 +311,6 @@
 
 <h2><a name="functions"></a>Functions</h2>
 <dl class="function">
-
-
-
-<dt><a name="M:adjustLoc"></a><strong>M:adjustLoc</strong>&nbsp;()</dt>
-<dd>
-浮動小数点による座標のずれを調整します. 
-
-
-
-
-
-
-
-
-
-</dd>
-
 
 
 
@@ -433,6 +425,40 @@
 
 
 
+<dt><a name="M:moveMapCommon"></a><strong>M:moveMapCommon</strong>&nbsp;(mapX, mapY, moveAnim)</dt>
+<dd>
+マップ上の座標を移動する共通処理です. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  mapX: 
+	</li>
+	
+	<li>
+	  mapY: 
+	</li>
+	
+	<li>
+	  moveAnim: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
 <dt><a name="M:moveMapDown"></a><strong>M:moveMapDown</strong>&nbsp;()</dt>
 <dd>
 マップ上の座標を移動します. 
@@ -487,6 +513,23 @@
 <dt><a name="M:moveMapUp"></a><strong>M:moveMapUp</strong>&nbsp;()</dt>
 <dd>
 マップ上の座標を移動します. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:moveStep"></a><strong>M:moveStep</strong>&nbsp;()</dt>
+<dd>
+ステップ毎の移動処理を行います. moveLocではいまいちなので、自前で移動する. 
 
 
 

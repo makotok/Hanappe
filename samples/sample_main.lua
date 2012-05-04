@@ -13,6 +13,7 @@ local sceneItems = {
     {text = "moai", scene = "samples/moai_sample"},
     {text = "joystick", scene = "samples/stick_sample"},
     {text = "tiledmap", scene = "samples/tiledmap_sample", animation = "fade"},
+    {text = "rpgmap", scene = "samples/rpgmap_sample", animation = "fade"},
 }
 
 function onCreate(params)
