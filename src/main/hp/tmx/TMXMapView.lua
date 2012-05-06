@@ -3,6 +3,8 @@ local class = require("hp/lang/class")
 local Layer = require("hp/display/Layer")
 local MapSprite = require("hp/display/MapSprite")
 local SpriteSheet = require("hp/display/SpriteSheet")
+local Event = require("hp/event/Event")
+local EventDispatcher = require("hp/event/EventDispatcher")
 local TextureManager = require("hp/manager/TextureManager")
 
 --------------------------------------------------------------------------------
@@ -11,7 +13,7 @@ local TextureManager = require("hp/manager/TextureManager")
 -- @name TMXMapView
 --------------------------------------------------------------------------------
 
-local M = class()
+local M = class(EventDispatcher)
 
 --------------------------------------------------------------------------------
 -- コンストラクタです.
@@ -19,6 +21,7 @@ local M = class()
 -- loadMap関数を使用する事で、表示オブジェクトを生成します.
 --------------------------------------------------------------------------------
 function M:init(resourceDirectory)
+    EventDispatcher.init(self)
     self.resourceDirectory = assert(resourceDirectory)
 end
 
@@ -233,6 +236,31 @@ function M:setScene(scene)
     for i, layer in ipairs(self.objectLayers) do
         scene:addChild(layer)
     end
+end
+
+--------------------------------------------------------------------------------
+-- カメラをスクロールします.
+-- 範囲外の領域が指定された表示されないように位置を調整します
+--------------------------------------------------------------------------------
+function M:scrollCamera(x, y)
+    local viewWidth, viewHeight = self:getViewSize()
+    local maxX, maxY = viewWidth - Application.viewWidth, viewWidth - Application.viewHeight
+    
+    x = x < 0 and 0 or x
+    x = x > maxX and maxX or x
+    y = y < 0 and 0 or y
+    y = y > maxY and maxY or y
+    
+    self.camera:setLoc(x, y, 0)
+end
+
+--------------------------------------------------------------------------------
+-- カメラを指定された位置の中央にスクロールします.
+-- 範囲外の領域が指定された表示されないように位置を調整します
+--------------------------------------------------------------------------------
+function M:scrollCameraToCenter(x, y)
+    local cx, cy = Application.viewWidth / 2, Application.viewHeight / 2
+    self:scrollCamera(x - cx, y - cy)
 end
 
 --------------------------------------------------------------------------------

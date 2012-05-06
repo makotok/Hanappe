@@ -19,7 +19,7 @@ local M = class(TMXMapView)
 --------------------------------------------------------------------------------
 function M:init(resourceDirectory)
     TMXMapView.init(self, resourceDirectory)
-    self.cameraToPlayerEnabled = true
+    self.cameraToFocusObjectEnabled = true
 end
 
 --------------------------------------------------------------------------------
@@ -65,8 +65,10 @@ end
 --------------------------------------------------------------------------------
 function M:loadMap(tmxMap)
     TMXMapView.loadMap(self, tmxMap)
-    self:moveCameraToPlayer()
+    self.focusObject = self:findPlayerObject()
     self.collisionLayer = self:findCollisionLayer()
+    
+    self:scrollCameraToFocusObject()
 end
 
 --------------------------------------------------------------------------------
@@ -83,7 +85,7 @@ function M:onEnterFrame()
     end
     
     -- camera move
-    self:moveCameraToPlayer()
+    self:scrollCameraToFocusObject()
 end
 
 --------------------------------------------------------------------------------
@@ -157,42 +159,16 @@ end
 --------------------------------------------------------------------------------
 -- カメラの位置をプレイヤーの座標まで移動します.
 --------------------------------------------------------------------------------
-function M:moveCameraToPlayer()
-    if not self.cameraToPlayerEnabled then
+function M:scrollCameraToFocusObject()
+    if not self.cameraToFocusObjectEnabled then
+        return
+    end
+    if not self.focusObject then
         return
     end
     
-    local player = self:findPlayerObject()
-    if not player then
-        return
-    end
-    
-    local playerX, playerY = player:getLeft(), player:getTop()
-    local cameraX, cameraY = (-Application.viewWidth / 2 + playerX), (-Application.viewHeight / 2 + playerY)
-    cameraX, cameraY = self:getAdjustCameraLoc(cameraX, cameraY)
-    
-    self.camera:setLoc(cameraX, cameraY, 0)
-end
-
---------------------------------------------------------------------------------
--- カメラ座標が画面外に飛び出している場合、画面内に収まるように調整します.
---------------------------------------------------------------------------------
-function M:getAdjustCameraLoc(cameraX, cameraY)
-    local viewWidth, viewHeight = self:getViewSize()
-
-    if cameraX < 0 then
-        cameraX = 0
-    end
-    if cameraX > viewWidth - Application.viewWidth then
-        cameraX = viewWidth - Application.viewWidth
-    end
-    if cameraY < 0 then
-        cameraY = 0
-    end
-    if cameraY > viewHeight - Application.viewHeight then
-        cameraY = viewHeight - Application.viewHeight
-    end
-    return cameraX, cameraY
+    local x, y = self.focusObject:getLoc()
+    self:scrollCameraToCenter(x, y)
 end
 
 return M

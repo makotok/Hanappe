@@ -28,8 +28,17 @@ end
 -- レイヤーを設定します.
 --------------------------------------------------------------------------------
 function M:setLayer(layer)
-    if self.layer ~= layer then
-        self.layer = layer
+    if self.layer == layer then
+        return
+    end
+
+    if self.layer then
+        self.layer:removeProp(self)
+    end
+
+    self.layer = layer
+
+    if self.layer then
         layer:insertProp(self)
     end
 end

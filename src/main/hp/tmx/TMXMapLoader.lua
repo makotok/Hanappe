@@ -14,6 +14,10 @@ local TMXObjectGroup = require("hp/tmx/TMXObjectGroup")
 ----------------------------------------------------------------
 local M = class()
 
+-- data encoding
+M.ENCODING_CSV = "csv"
+M.ENCODING_BASE64 = "base64"
+
 ---------------------------------------
 -- コンストラクタです
 ---------------------------------------
@@ -145,16 +149,59 @@ end
 -- dataのノードを読み込みます。
 ---------------------------------------
 function M:parseNodeData(node, layer)
-    if node.children.data == nil then
+    if node.children.data == nil or #node.children.data < 1 then
         return
     end
     
-    for i, data in ipairs(node.children.data) do
-        for j, tile in ipairs(data.children.tile) do
-            layer.tiles[j] = tonumber(tile.attributes.gid)
-        end
+    local data = node.children.data[1]
+    
+    if not data.attributes or not data.attributes.encoding then
+        self:parseNodeDataForPlane(node, layer, data)
+    elseif data.attributes.encoding == M.ENCODING_BASE64 then
+        self:parseNodeDataForBase64(node, layer, data)
+    elseif data.attributes.encoding == M.ENCODING_CSV then
+        self:parseNodeDataForCsv(node, layer, data)
+    else
+        self:parseNodeDataForPlane(node, layer, data)
     end
     
+end
+
+---------------------------------------
+-- 無圧縮形式のdataのノードを読み込みます。
+---------------------------------------
+function M:parseNodeDataForPlane(node, layer, data)
+    for j, tile in ipairs(data.children.tile) do
+        layer.tiles[j] = tonumber(tile.attributes.gid)
+    end
+end
+
+---------------------------------------
+-- csv形式のdataのノードを読み込みます。
+---------------------------------------
+function M:parseNodeDataForCsv(node, layer, data)
+    layer.tiles = assert(loadstring("return {" .. data.value .. "}"))()
+end
+
+---------------------------------------
+-- base64形式のdataのノードを読み込みます。
+---------------------------------------
+function M:parseNodeDataForBase64(node, layer, data)
+    local decodedData = MOAIDataBuffer.base64Decode(data.value)
+    
+    if data.attributes.compression then
+        -- TODO:zip解凍する方法が見つからない
+        --decodedData = MOAIDataBuffer.inflate(decodedData)
+        error("Unsupported compression")
+    end
+    
+    local tileSize = #decodedData / 4
+    for i = 1, tileSize do
+        local start = (i - 1) * 4 + 1
+        local a0, a1, a2, a3 = string.byte(decodedData, start, start + 3)
+        local gid = a3 * 256 * 3 + a2 * 256 * 2 + a1 * 256 + a0
+        layer.tiles[i] = gid
+    end
 end
 
 ---------------------------------------

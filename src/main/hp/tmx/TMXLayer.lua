@@ -18,7 +18,7 @@ function M:init(tmxMap)
     self.width = 0
     self.height = 0
     self.opacity = 0
-    self.visible = true
+    self.visible = 1
     self.properties = {}
     self.tiles = {}
 end
