@@ -190,9 +190,7 @@ function M:parseNodeDataForBase64(node, layer, data)
     local decodedData = MOAIDataBuffer.base64Decode(data.value)
     
     if data.attributes.compression then
-        -- TODO:zip解凍する方法が見つからない
-        --decodedData = MOAIDataBuffer.inflate(decodedData)
-        error("Unsupported compression")
+        decodedData = MOAIDataBuffer.inflate(decodedData, 47)
     end
     
     local tileSize = #decodedData / 4
