@@ -31,15 +31,15 @@ function M:new(params)
     deck:reserveUVRects(1)
     deck:setUVRect(1, 0, 0, 1, 1)
 
-    deck:reserveRows ( 3 )
-    deck:setRow ( 1, 0.25, false )
-    deck:setRow ( 2, 0.50, true )
-    deck:setRow ( 3, 0.25, false )
+    deck:reserveRows(3)
+    deck:setRow(1, 1 / 3, false)
+    deck:setRow(2, 1 / 3, true)
+    deck:setRow(3, 1 / 3, false)
     
-    deck:reserveColumns ( 3 )
-    deck:setColumn ( 1, 0.25, false )
-    deck:setColumn ( 2, 0.50, true )
-    deck:setColumn ( 3, 0.25, false )
+    deck:reserveColumns(3)
+    deck:setColumn(1, 1 / 3, false)
+    deck:setColumn(2, 1 / 3, true)
+    deck:setColumn(3, 1 / 3, false)
     
     prop.setOrignScl = assert(interface.setScl)
     prop.getOrignScl = assert(interface.getScl)
@@ -81,6 +81,11 @@ function M:setSize(width, height)
     self:setPrivate("width", width)
     self:setPrivate("height", height)
     
+    print("---------------------------------")
+    print("ninepatch", width, height)
+    print("ninepatch", tw, th)
+    print("ninepatch", oSclX, oSclY, oSclZ)
+    
     self.deck:setRect(-tw / 2, -th / 2, tw / 2, th / 2)
     self:setOrignScl(oSclX, oSclY, oSclZ)
     self:setLeft(left)
@@ -101,6 +106,24 @@ end
 function M:getScl()
     -- TODO
     return 1, 1, 1
+end
+
+--------------------------------------------------------------------------------
+-- 固定的な列の長さを設定します.
+--------------------------------------------------------------------------------
+function M:setStretchColumns(col1, col2, col3)
+    self.deck:setColumn ( 1, col1, false )
+    self.deck:setColumn ( 2, col2, true )
+    self.deck:setColumn ( 3, col3, false )
+end
+
+--------------------------------------------------------------------------------
+-- 固定的な行の長さを設定します.
+--------------------------------------------------------------------------------
+function M:setStretchRows(row1, row2, row3)
+    self.deck:setRow ( 1, row1, false )
+    self.deck:setRow ( 2, row2, true )
+    self.deck:setRow ( 3, row3, false )
 end
 
 --------------------------------------------------------------------------------
