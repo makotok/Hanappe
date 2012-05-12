@@ -37,26 +37,43 @@ end
 function M:copyParams(params)
     if params.texture and self.setTexture then
         self:setTexture(params.texture)
-        self:setRectSize()
+        self:setSize()
     end
     if params.width and params.height then
-        self:setRectSize(params.width, params.height)
+        self:setSize(params.width, params.height)
     end
 
     DisplayObject.copyParams(self, params)
 end
 
 --------------------------------------------------------------------------------
--- 四角形のサイズを設定します.
+-- 幅を設定します.
 --------------------------------------------------------------------------------
-function M:setRectSize(width, height)
+function M:setWidth(width)
+    self:setSize(width, self:getHeight())
+end
+
+--------------------------------------------------------------------------------
+-- 高さを設定します.
+--------------------------------------------------------------------------------
+function M:setHeight(height)
+    self:setSize(self:getWidth(), height)
+end
+
+--------------------------------------------------------------------------------
+--サイズを設定します.
+--------------------------------------------------------------------------------
+function M:setSize(width, height)
     if self.texture then
         local tw, th = self.texture:getSize()
         width = width or tw
         height = height or th
     end
     
+    local left, top = self:getLeft(), self:getTop()
     self.deck:setRect(-width / 2, -height / 2, width / 2, height / 2)
+    self:setLeft(left)
+    self:setTop(top)
 end
 
 return M

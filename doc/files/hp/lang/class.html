@@ -67,15 +67,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/Scene.html">hp/display/Scene.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/display/SceneAnimation.html">hp/display/SceneAnimation.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/display/SceneFactory.html">hp/display/SceneFactory.lua</a>
 	</li>
 
 	<li>
@@ -106,6 +106,18 @@
 		<a href="../../../files/hp/event/EventListener.html">hp/event/EventListener.lua</a>
 	</li>
 
+	<li>
+		<a href="../../../files/hp/factory/DisplayFactory.html">hp/factory/DisplayFactory.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/factory/SceneFactory.html">hp/factory/SceneFactory.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/factory/WidgetFactory.html">hp/factory/WidgetFactory.lua</a>
+	</li>
+
 	<li><strong>hp/lang/class.lua</strong></li>
 	
 	<li>
@@ -134,6 +146,10 @@
 
 	<li>
 		<a href="../../../files/hp/manager/TextureManager.html">hp/manager/TextureManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
 	</li>
 
 	<li>
@@ -181,7 +197,27 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/widget/Button.html">hp/widget/Button.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/Joystick.html">hp/widget/Joystick.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/RadioButton.html">hp/widget/RadioButton.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/RadioGroup.html">hp/widget/RadioGroup.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/Widget.html">hp/widget/Widget.lua</a>
 	</li>
 
 </ul>
@@ -212,8 +248,23 @@
 	</tr>
 
 	<tr>
+	<td class="name" nowrap><a href="#M:getPrivate">M:getPrivate</a>&nbsp;(name)</td>
+	<td class="summary">metatableからプライベートな変数を返します.<br> 擬似的に変数をカプセル化してします.<br> この関数はクラス内から使用する事を目的とする為、 基本的に外部から呼ばないでください.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:getPrivates">M:getPrivates</a>&nbsp;()</td>
+	<td class="summary">metatableからプライベートな変数の一覧を返します.<br> 擬似的に変数をカプセル化してします.<br> この関数はクラス内から使用する事を目的とする為、 基本的に外部から呼ばないでください.</td>
+	</tr>
+
+	<tr>
 	<td class="name" nowrap><a href="#M:new">M:new</a>&nbsp;(...)</td>
 	<td class="summary">コンストラクタ関数です.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setPrivate">M:setPrivate</a>&nbsp;(name, value)</td>
+	<td class="summary">metatableからプライベートな変数を設定します.<br> 擬似的に変数をカプセル化してします.<br> この関数はクラス内から使用する事を目的とする為、 基本的に外部から呼ばないでください.</td>
 	</tr>
 
 </table>
@@ -226,7 +277,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#class ">class </a></td>
-	<td class="summary">クラスベースなオブジェクト指向を簡単に実現するためのクラスです.<br> クラスの基本的な機能を有します.<br> setmetatableによる継承ではなく、テーブルに展開する事で<br> 継承が多くなった場合でもパフォーマンスが劣化しません.<br> </td>
+	<td class="summary">クラスベースなオブジェクト指向を簡単に実現するためのクラスです.<br> クラスの基本的な機能を有します.<br> setmetatableによる継承ではなく、テーブルに展開する事で<br> 継承が多くなった場合でもパフォーマンスが劣化しません.<br>  カプセル化の仕組みとして、getPrivate、setPrivateを用意しています.<br> この関数を使用すると、外部から隠したい一時変数等をmetatableに隠す事ができます.<br> </td>
 	</tr>
 
 </table>
@@ -273,6 +324,49 @@ class
 
 
 
+<dt><a name="M:getPrivate"></a><strong>M:getPrivate</strong>&nbsp;(name)</dt>
+<dd>
+metatableからプライベートな変数を返します.<br> 擬似的に変数をカプセル化してします.<br> この関数はクラス内から使用する事を目的とする為、 基本的に外部から呼ばないでください. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  name: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:getPrivates"></a><strong>M:getPrivates</strong>&nbsp;()</dt>
+<dd>
+metatableからプライベートな変数の一覧を返します.<br> 擬似的に変数をカプセル化してします.<br> この関数はクラス内から使用する事を目的とする為、 基本的に外部から呼ばないでください. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
 <dt><a name="M:new"></a><strong>M:new</strong>&nbsp;(...)</dt>
 <dd>
 コンストラクタ関数です. デフォルトではテーブルを生成して、メタテーブルによる参照を設定します.
@@ -300,6 +394,36 @@ class
 </dd>
 
 
+
+
+<dt><a name="M:setPrivate"></a><strong>M:setPrivate</strong>&nbsp;(name, value)</dt>
+<dd>
+metatableからプライベートな変数を設定します.<br> 擬似的に変数をカプセル化してします.<br> この関数はクラス内から使用する事を目的とする為、 基本的に外部から呼ばないでください. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  name: 
+	</li>
+	
+	<li>
+	  value: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
 </dl>
 
 
@@ -309,7 +433,7 @@ class
 <dl class="table">
 
 <dt><a name="class "></a><strong>class </strong></dt>
-<dd>クラスベースなオブジェクト指向を簡単に実現するためのクラスです.<br> クラスの基本的な機能を有します.<br> setmetatableによる継承ではなく、テーブルに展開する事で<br> 継承が多くなった場合でもパフォーマンスが劣化しません.<br>
+<dd>クラスベースなオブジェクト指向を簡単に実現するためのクラスです.<br> クラスの基本的な機能を有します.<br> setmetatableによる継承ではなく、テーブルに展開する事で<br> 継承が多くなった場合でもパフォーマンスが劣化しません.<br>  カプセル化の仕組みとして、getPrivate、setPrivateを用意しています.<br> この関数を使用すると、外部から隠したい一時変数等をmetatableに隠す事ができます.<br>
 
 
 

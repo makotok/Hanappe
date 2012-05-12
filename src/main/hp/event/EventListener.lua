@@ -1,4 +1,5 @@
 local class = require("hp/lang/class")
+local Event = require("hp/event/Event")
 
 --------------------------------------------------------------------------------
 -- イベントリスナーです.
@@ -12,7 +13,7 @@ function M:init(eventType, callback, source, priority)
     self.type = eventType
     self.callback = callback
     self.source = source
-    self.priority = priority and priority or 0
+    self.priority = priority and priority or Event.PRIORITY_DEFAULT
 end
 
 function M:call(event)

@@ -27,13 +27,18 @@ M.TOUCH_DOWN = "touchDown"
 M.TOUCH_UP = "touchUp"
 M.TOUCH_MOVE = "touchMove"
 M.TOUCH_CANCEL = "touchCancel"
+M.BUTTON_DOWN = "buttonDown"
+M.BUTTON_UP = "buttonUp"
+
+M.PRIORITY_MIN = 0
+M.PRIORITY_DEFAULT = 1000
+M.PRIORITY_MAX = 10000000
 
 ---------------------------------------
 --- コンストラクタです
 ---------------------------------------
-function M:init(eventType, target)
+function M:init(eventType)
     self.type = eventType
-    self.target = target
     self.stoped = false
 end
 

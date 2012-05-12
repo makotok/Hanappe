@@ -67,15 +67,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/Scene.html">hp/display/Scene.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/display/SceneAnimation.html">hp/display/SceneAnimation.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/display/SceneFactory.html">hp/display/SceneFactory.lua</a>
 	</li>
 
 	<li>
@@ -104,6 +104,18 @@
 
 	<li>
 		<a href="../../../files/hp/event/EventListener.html">hp/event/EventListener.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/factory/DisplayFactory.html">hp/factory/DisplayFactory.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/factory/SceneFactory.html">hp/factory/SceneFactory.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/factory/WidgetFactory.html">hp/factory/WidgetFactory.lua</a>
 	</li>
 
 	<li>
@@ -136,6 +148,10 @@
 
 	<li>
 		<a href="../../../files/hp/manager/TextureManager.html">hp/manager/TextureManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
 	</li>
 
 	<li><strong>hp/rpg/RPGMapView.lua</strong></li>
@@ -181,7 +197,27 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/widget/Button.html">hp/widget/Button.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/Joystick.html">hp/widget/Joystick.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/RadioButton.html">hp/widget/RadioButton.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/RadioGroup.html">hp/widget/RadioGroup.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/Widget.html">hp/widget/Widget.lua</a>
 	</li>
 
 </ul>
@@ -237,11 +273,6 @@
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:getAdjustCameraLoc">M:getAdjustCameraLoc</a>&nbsp;(cameraX, cameraY)</td>
-	<td class="summary">カメラ座標が画面外に飛び出している場合、画面内に収まるように調整します.</td>
-	</tr>
-
-	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(resourceDirectory)</td>
 	<td class="summary">コンストラクタです.</td>
 	</tr>
@@ -252,13 +283,13 @@
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:moveCameraToPlayer">M:moveCameraToPlayer</a>&nbsp;()</td>
-	<td class="summary">カメラの位置をプレイヤーの座標まで移動します.</td>
+	<td class="name" nowrap><a href="#M:onEnterFrame">M:onEnterFrame</a>&nbsp;()</td>
+	<td class="summary">フレーム毎の処理を行います.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:onEnterFrame">M:onEnterFrame</a>&nbsp;()</td>
-	<td class="summary">フレーム毎の処理を行います.</td>
+	<td class="name" nowrap><a href="#M:scrollCameraToFocusObject">M:scrollCameraToFocusObject</a>&nbsp;()</td>
+	<td class="summary">カメラの位置をプレイヤーの座標まで移動します.</td>
 	</tr>
 
 </table>
@@ -443,36 +474,6 @@ Playerというnameのオブジェクトを検索して返します.
 
 
 
-<dt><a name="M:getAdjustCameraLoc"></a><strong>M:getAdjustCameraLoc</strong>&nbsp;(cameraX, cameraY)</dt>
-<dd>
-カメラ座標が画面外に飛び出している場合、画面内に収まるように調整します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  cameraX: 
-	</li>
-	
-	<li>
-	  cameraY: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(resourceDirectory)</dt>
 <dd>
 コンストラクタです. この段階では表示オブジェクトは生成しません. loadMap関数を使用する事で、表示オブジェクトを生成します. 
@@ -525,9 +526,9 @@ Playerというnameのオブジェクトを検索して返します.
 
 
 
-<dt><a name="M:moveCameraToPlayer"></a><strong>M:moveCameraToPlayer</strong>&nbsp;()</dt>
+<dt><a name="M:onEnterFrame"></a><strong>M:onEnterFrame</strong>&nbsp;()</dt>
 <dd>
-カメラの位置をプレイヤーの座標まで移動します. 
+フレーム毎の処理を行います. 
 
 
 
@@ -542,9 +543,9 @@ Playerというnameのオブジェクトを検索して返します.
 
 
 
-<dt><a name="M:onEnterFrame"></a><strong>M:onEnterFrame</strong>&nbsp;()</dt>
+<dt><a name="M:scrollCameraToFocusObject"></a><strong>M:scrollCameraToFocusObject</strong>&nbsp;()</dt>
 <dd>
-フレーム毎の処理を行います. 
+カメラの位置をプレイヤーの座標まで移動します. 
 
 
 

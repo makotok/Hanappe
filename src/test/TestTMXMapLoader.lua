@@ -25,19 +25,15 @@ function M:test3()
 end
 
 function M:test4()
-    --[[
     local mapLoader = TMXMapLoader:new()
     local mapData = mapLoader:loadFile("assets/map_base64_gzip.tmx")
     self:commonAssertEquals(mapData)
-    --]]
 end
 
 function M:test5()
-    --[[
     local mapLoader = TMXMapLoader:new()
     local mapData = mapLoader:loadFile("assets/map_base64_zlib.tmx")
     self:commonAssertEquals(mapData)
-    --]]
 end
 
 function M:commonAssertEquals(mapData)

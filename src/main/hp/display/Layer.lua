@@ -90,4 +90,20 @@ function M:setOffset(offsetX, offsetY)
     self.viewport:setOffset(offsetX, offsetY)
 end
 
+--------------------------------------------------------------------------------
+-- Sceneをレイヤーに設定します.
+--------------------------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- シーンを設定します.
+--------------------------------------------------------------------------------
+function M:setScene(scene)
+    if self.scene == scene then
+        self.scene:removeChild(self)
+    end
+    self.scene = scene
+    if self.scene then
+        self.scene:addChild(self)
+    end
+end
+
 return M

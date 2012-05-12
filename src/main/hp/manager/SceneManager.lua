@@ -1,6 +1,6 @@
 local table = require("hp/lang/table")
-local SceneFactory = require("hp/display/SceneFactory")
 local SceneAnimation = require("hp/display/SceneAnimation")
+local SceneFactory = require("hp/factory/SceneFactory")
 local InputManager = require("hp/manager/InputManager")
 local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
@@ -215,7 +215,7 @@ function M:openScene(sceneName, params)
     end
     
     -- create scene
-    local scene = sceneFactory:createScene(sceneName, params)
+    local scene = sceneFactory.createScene(sceneName, params)
     scene:onCreate(params)
     addScene(scene)
     nextScene = scene
@@ -323,6 +323,13 @@ end
 ---------------------------------------
 function M:setSceneFactory(factory)
     sceneFactory = assert(factory, "sceneFactory is nil!")
+end
+
+---------------------------------------
+-- currentSceneを返します.<br>
+---------------------------------------
+function M:getCurrentScene()
+    return currentScene
 end
 
 return M

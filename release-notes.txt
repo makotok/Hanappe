@@ -1,4 +1,12 @@
 -------------------------------------------------------------------
+-- Hanappe Framework Version:1.2.0
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+Modify:Modify the name of the function of DisplayObjects. (setRectSize -> setSize)
+Added:NinePatch
+Added:Widget classes(Button,RadioButton)
+
+-------------------------------------------------------------------
 -- Hanappe Framework Version:1.1.5
 -- Moai SDK Version 1.0 Revision 3
 -------------------------------------------------------------------

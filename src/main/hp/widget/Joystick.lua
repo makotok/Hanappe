@@ -3,15 +3,15 @@ local class = require("hp/lang/class")
 local Sprite = require("hp/display/Sprite")
 local Group = require("hp/display/Group")
 local Event = require("hp/event/Event")
-local EventDispatcher = require("hp/event/EventDispatcher")
+local Widget = require("hp/widget/Widget")
 local Logger = require("hp/util/Logger")
 
 ----------------------------------------------------------------
 -- ゲームの仮想ジョイスティックのウィジットクラスです.<br>
 -- @class table
--- @name Sprite
+-- @name Joystick
 ----------------------------------------------------------------
-local M = class(Group, EventDispatcher)
+local M = class(Widget)
 
 -- constraints
 M.STICK_CENTER = "center"
@@ -28,71 +28,34 @@ M.RANGE_OF_CENTER_RATE = 0.5
 ----------------------------------------------------------------
 -- インスタンスを生成して返します.
 ----------------------------------------------------------------
-function M:new(params)
-    local obj = Group.new(self, params)
-    EventDispatcher.init(obj)
-
+function M:init(params)
     assert(params)
     assert(params.baseTexture)
     assert(params.knobTexture)
 
-    local baseSprite = Sprite:new({texture = params.baseTexture, layer = params.layer, left = 0, top = 0})
-    local knobSprite = Sprite:new({texture = params.knobTexture, layer = params.layer, left = 0, top = 0})
+    local baseSprite = Sprite:new({texture = params.baseTexture, left = 0, top = 0})
+    local knobSprite = Sprite:new({texture = params.knobTexture, left = 0, top = 0})
     
-    obj.baseSprite = baseSprite
-    obj.knobSprite = knobSprite
+    self.baseSprite = baseSprite
+    self.knobSprite = knobSprite
     
-    obj:addChild(baseSprite)
-    obj:addChild(knobSprite)
+    self:addChild(baseSprite)
+    self:addChild(knobSprite)
     
-    obj.stickMode = params.stickMode or M.MODE_ANALOG
-    obj.rangeOfCenterRate = M.RANGE_OF_CENTER_RATE
-    obj.changedEvent = Event:new("stickChanged")
+    self.stickMode = params.stickMode or M.MODE_ANALOG
+    self.rangeOfCenterRate = M.RANGE_OF_CENTER_RATE
+    self.changedEvent = Event:new("stickChanged")
     
-    obj:setWidth(baseSprite:getWidth())
-    obj:setHeight(baseSprite:getHeight())
-    obj:setCenterKnob()
+    self:setSize(baseSprite:getWidth(), baseSprite:getHeight())
+    self:setCenterKnob()
 
     return obj
 end
 
 --------------------------------------------------------------------------------
--- レイヤーを設定します.
+-- タッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
-function M:setLayer(layer)
-    if not layer.partition then
-        local partition = MOAIPartition.new()
-        layer:setPartition(partition)
-        layer.partition = partition
-    end
-    Group.setLayer(self, layer)
-end
-
---------------------------------------------------------------------------------
--- シーンを設定します.
---------------------------------------------------------------------------------
-function M:setScene(scene)
-    if self.scene then
-        self.scene:removeEventListener("touchDown", self.onSceneTouchDown, self)
-        self.scene:removeEventListener("touchUp", self.onSceneTouchUp, self)
-        self.scene:removeEventListener("touchMove", self.onSceneTouchMove, self)
-        self.scene:removeEventListener("touchCancel", self.onSceneTouchCancel, self)
-    end
-    
-    self.scene = scene
-    
-    if self.scene then
-        self.scene:addEventListener("touchDown", self.onSceneTouchDown, self)
-        self.scene:addEventListener("touchUp", self.onSceneTouchUp, self)
-        self.scene:addEventListener("touchMove", self.onSceneTouchMove, self)
-        self.scene:addEventListener("touchCancel", self.onSceneTouchCancel, self)
-    end
-end
-
---------------------------------------------------------------------------------
--- シーンをタッチした時のイベントリスナです.
---------------------------------------------------------------------------------
-function M:onSceneTouchDown(e)
+function M:onTouchDown(e)
     local wx, wy = self.layer:wndToWorld(e.x, e.y, 0)
     local mx, my = self:worldToModel(wx, wy, 0)
     
@@ -105,7 +68,7 @@ end
 --------------------------------------------------------------------------------
 -- シーンをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
-function M:onSceneTouchUp(e)
+function M:onTouchUp(e)
     if not self.touchDownFlag then
         return
     end
@@ -118,7 +81,7 @@ end
 --------------------------------------------------------------------------------
 -- シーンをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
-function M:onSceneTouchMove(e)
+function M:onTouchMove(e)
     if not self.touchDownFlag then
         return
     end
@@ -131,7 +94,7 @@ end
 --------------------------------------------------------------------------------
 -- シーンをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
-function M:onSceneTouchCancel(e)
+function M:onTouchCancel(e)
     self.touchDownFlag = false
     self:setCenterKnob()
 end

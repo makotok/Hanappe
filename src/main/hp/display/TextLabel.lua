@@ -11,6 +11,8 @@ local FontManager = require("hp/manager/FontManager")
 --------------------------------------------------------------------------------
 local M = class(DisplayObject)
 
+local interface = MOAITextBox.getInterfaceTable()
+
 --------------------------------------------------------------------------------
 -- TextLabelインスタンスを生成して返します.
 --------------------------------------------------------------------------------
@@ -34,7 +36,7 @@ end
 --------------------------------------------------------------------------------
 function M:copyParams(params)
     if params.width and params.height then
-        self:setRectSize(params.width, params.height)
+        self:setSize(params.width, params.height)
     end
     if params.textSize then
         self:setTextSize(params.textSize)
@@ -48,13 +50,46 @@ function M:copyParams(params)
 end
 
 --------------------------------------------------------------------------------
--- 四角形のサイズを設定します.
+-- テキストサイズを設定します.
 --------------------------------------------------------------------------------
-function M:setRectSize(width, height)
+function M:setTextSize(points, dpi)
+    self:setPrivate("textSizePoints", points)
+    self:setPrivate("textSizeDpi", dpi)
+    interface.setTextSize(self, points, dpi)
+end
+
+--------------------------------------------------------------------------------
+-- テキストサイズを返します.
+--------------------------------------------------------------------------------
+function M:getTextSize()
+    return self:getPrivate("textSizePoints"), self:getPrivate("textSizeDpi")
+end
+
+--------------------------------------------------------------------------------
+-- 幅を設定します.
+--------------------------------------------------------------------------------
+function M:setWidth(width)
+    self:setSize(width, self:getHeight())
+end
+
+--------------------------------------------------------------------------------
+-- 高さを設定します.
+--------------------------------------------------------------------------------
+function M:setHeight(height)
+    self:setSize(self:getWidth(), height)
+end
+
+--------------------------------------------------------------------------------
+-- サイズを設定します.
+--------------------------------------------------------------------------------
+function M:setSize(width, height)
     width = width or self:getWidth()
     height = height or self:getHeight()
     
+    local left, top = self:getLeft(), self:getTop()
     self:setRect(-width / 2, -height / 2, width / 2, height / 2)
+    self:setLeft(left)
+    self:setTop(top)
 end
 
 return M

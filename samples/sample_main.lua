@@ -9,9 +9,11 @@ local sceneItems = {
     {text = "mapsprite", scene = "samples/mapsprite_sample", animation = "slideToLeft"},
     {text = "text", scene = "samples/text_sample", animation = "slideToRight"},
     {text = "animation", scene = "samples/animation_sample", animation = "fade"},
+    {text = "ninepatch", scene = "samples/ninepatch_sample", animation = "fade"},
     {text = "scene", scene = "samples/scene_sample", animation = "popIn"},
     {text = "moai", scene = "samples/moai_sample"},
     {text = "joystick", scene = "samples/stick_sample"},
+    {text = "button", scene = "samples/button_sample", animation = "fade"},
     {text = "tiledmap", scene = "samples/tiledmap_sample", animation = "fade"},
     {text = "rpgmap", scene = "samples/rpgmap_sample", animation = "fade"},
 }

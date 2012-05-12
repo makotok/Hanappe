@@ -67,15 +67,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/Scene.html">hp/display/Scene.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/display/SceneAnimation.html">hp/display/SceneAnimation.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/display/SceneFactory.html">hp/display/SceneFactory.lua</a>
 	</li>
 
 	<li>
@@ -104,6 +104,18 @@
 
 	<li>
 		<a href="../../../files/hp/event/EventListener.html">hp/event/EventListener.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/factory/DisplayFactory.html">hp/factory/DisplayFactory.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/factory/SceneFactory.html">hp/factory/SceneFactory.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/factory/WidgetFactory.html">hp/factory/WidgetFactory.lua</a>
 	</li>
 
 	<li>
@@ -136,6 +148,10 @@
 
 	<li>
 		<a href="../../../files/hp/manager/TextureManager.html">hp/manager/TextureManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
 	</li>
 
 	<li>
@@ -182,8 +198,28 @@
 		<a href="../../../files/hp/util/MOAIPropUtil.html">hp/util/MOAIPropUtil.lua</a>
 	</li>
 
+	<li>
+		<a href="../../../files/hp/widget/Button.html">hp/widget/Button.lua</a>
+	</li>
+
 	<li><strong>hp/widget/Joystick.lua</strong></li>
 	
+	<li>
+		<a href="../../../files/hp/widget/RadioButton.html">hp/widget/RadioButton.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/RadioGroup.html">hp/widget/RadioGroup.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/Widget.html">hp/widget/Widget.lua</a>
+	</li>
+
 </ul>
 
 
@@ -237,43 +273,33 @@
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:new">M:new</a>&nbsp;(params)</td>
+	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
 	<td class="summary">インスタンスを生成して返します.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:onSceneTouchCancel">M:onSceneTouchCancel</a>&nbsp;(e)</td>
+	<td class="name" nowrap><a href="#M:onTouchCancel">M:onTouchCancel</a>&nbsp;(e)</td>
 	<td class="summary">シーンをタッチした時のイベントリスナです.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:onSceneTouchDown">M:onSceneTouchDown</a>&nbsp;(e)</td>
+	<td class="name" nowrap><a href="#M:onTouchDown">M:onTouchDown</a>&nbsp;(e)</td>
+	<td class="summary">タッチした時のイベントリスナです.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:onTouchMove">M:onTouchMove</a>&nbsp;(e)</td>
 	<td class="summary">シーンをタッチした時のイベントリスナです.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:onSceneTouchMove">M:onSceneTouchMove</a>&nbsp;(e)</td>
-	<td class="summary">シーンをタッチした時のイベントリスナです.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:onSceneTouchUp">M:onSceneTouchUp</a>&nbsp;(e)</td>
+	<td class="name" nowrap><a href="#M:onTouchUp">M:onTouchUp</a>&nbsp;(e)</td>
 	<td class="summary">シーンをタッチした時のイベントリスナです.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setCenterKnob">M:setCenterKnob</a>&nbsp;()</td>
 	<td class="summary">knobSpriteの座標を中心点に設定します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setLayer">M:setLayer</a>&nbsp;(layer)</td>
-	<td class="summary">レイヤーを設定します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setScene">M:setScene</a>&nbsp;(scene)</td>
-	<td class="summary">シーンを設定します.</td>
 	</tr>
 
 	<tr>
@@ -290,7 +316,7 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#Sprite ">Sprite </a></td>
+	<td class="name" nowrap><a href="#Joystick ">Joystick </a></td>
 	<td class="summary">ゲームの仮想ジョイスティックのウィジットクラスです.<br> </td>
 	</tr>
 
@@ -463,7 +489,7 @@ Knobの入力の比を返します.
 
 
 
-<dt><a name="M:new"></a><strong>M:new</strong>&nbsp;(params)</dt>
+<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
 <dd>
 インスタンスを生成して返します. 
 
@@ -489,7 +515,7 @@ Knobの入力の比を返します.
 
 
 
-<dt><a name="M:onSceneTouchCancel"></a><strong>M:onSceneTouchCancel</strong>&nbsp;(e)</dt>
+<dt><a name="M:onTouchCancel"></a><strong>M:onTouchCancel</strong>&nbsp;(e)</dt>
 <dd>
 シーンをタッチした時のイベントリスナです. 
 
@@ -515,7 +541,33 @@ Knobの入力の比を返します.
 
 
 
-<dt><a name="M:onSceneTouchDown"></a><strong>M:onSceneTouchDown</strong>&nbsp;(e)</dt>
+<dt><a name="M:onTouchDown"></a><strong>M:onTouchDown</strong>&nbsp;(e)</dt>
+<dd>
+タッチした時のイベントリスナです. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  e: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:onTouchMove"></a><strong>M:onTouchMove</strong>&nbsp;(e)</dt>
 <dd>
 シーンをタッチした時のイベントリスナです. 
 
@@ -541,33 +593,7 @@ Knobの入力の比を返します.
 
 
 
-<dt><a name="M:onSceneTouchMove"></a><strong>M:onSceneTouchMove</strong>&nbsp;(e)</dt>
-<dd>
-シーンをタッチした時のイベントリスナです. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  e: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:onSceneTouchUp"></a><strong>M:onSceneTouchUp</strong>&nbsp;(e)</dt>
+<dt><a name="M:onTouchUp"></a><strong>M:onTouchUp</strong>&nbsp;(e)</dt>
 <dd>
 シーンをタッチした時のイベントリスナです. 
 
@@ -597,58 +623,6 @@ Knobの入力の比を返します.
 <dd>
 knobSpriteの座標を中心点に設定します. 
 
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setLayer"></a><strong>M:setLayer</strong>&nbsp;(layer)</dt>
-<dd>
-レイヤーを設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  layer: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setScene"></a><strong>M:setScene</strong>&nbsp;(scene)</dt>
-<dd>
-シーンを設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  scene: 
-	</li>
-	
-</ul>
 
 
 
@@ -698,7 +672,7 @@ knobSpriteの更新処理を行います.
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="Sprite "></a><strong>Sprite </strong></dt>
+<dt><a name="Joystick "></a><strong>Joystick </strong></dt>
 <dd>ゲームの仮想ジョイスティックのウィジットクラスです.<br>
 
 

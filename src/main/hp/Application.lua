@@ -82,6 +82,7 @@ function M:importClasses(t, prefix)
     t[prefix .. "Graphics"]     = require("hp/display/Graphics")
     t[prefix .. "Group"]        = require("hp/display/Group")
     t[prefix .. "TextLabel"]    = require("hp/display/TextLabel")
+    t[prefix .. "NinePatch"]    = require("hp/display/NinePatch")
     t[prefix .. "Animation"]    = require("hp/display/Animation")
     
     -- manager classes
@@ -89,6 +90,7 @@ function M:importClasses(t, prefix)
     t[prefix .. "InputManager"]     = require("hp/manager/InputManager")
     t[prefix .. "TextureManager"]   = require("hp/manager/TextureManager")
     t[prefix .. "FontManager"]      = require("hp/manager/FontManager")
+    t[prefix .. "WidgetManager"]      = require("hp/manager/WidgetManager")
 
     -- tmx classes
     t[prefix .. "TMXLayer"]         = require("hp/tmx/TMXLayer")
@@ -100,12 +102,16 @@ function M:importClasses(t, prefix)
     t[prefix .. "TMXTileset"]       = require("hp/tmx/TMXTileset")
     
     -- widget classes
+    t[prefix .. "View"] = require("hp/widget/View")
+    t[prefix .. "Button"] = require("hp/widget/Button")
+    t[prefix .. "RadioButton"] = require("hp/widget/RadioButton")
     t[prefix .. "Joystick"] = require("hp/widget/Joystick")
     
     -- rpg classes
     t[prefix .. "RPGMapView"] = require("hp/rpg/RPGMapView")
     t[prefix .. "RPGSprite"] = require("hp/rpg/RPGSprite")
-
+    
+    return t
 end
 
 ---------------------------------------
@@ -121,6 +127,13 @@ end
 ---------------------------------------
 function M:isDesktop()
     return not self:isMobile()
+end
+
+---------------------------------------
+--- フレーム開始時の色を設定します.
+---------------------------------------
+function M:setClearColor(r, g, b, a)
+    MOAIGfxDevice.setClearColor(r, g, b, a)
 end
 
 return M

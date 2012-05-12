@@ -67,7 +67,15 @@ end
 -- 描画テーブルを返します.
 ---------------------------------------
 function M:getRenderTable()
-    return self.children
+    local renderTable = {}
+    for i, v in ipairs(self.children) do
+        if v.getRenderTable then
+            table.insert(renderTable, v:getRenderTable())
+        else
+            table.insert(renderTable, v)
+        end
+    end
+    return renderTable
 end
 
 ---------------------------------------

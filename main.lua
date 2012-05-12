@@ -8,6 +8,9 @@ Application:appStart(config)
 -- classes import
 Application:importClasses(_G, "")
 
+-- widget theme
+WidgetManager:setDefaultTheme("assets/themes/basic/Themes")
+
 -- If you are using the SceneManager.
 SceneManager:openScene("samples/sample_main", {animation = "fade"})
 
