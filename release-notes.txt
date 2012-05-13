@@ -3,8 +3,6 @@
 -- Moai SDK Version 1.0 Revision 3
 -------------------------------------------------------------------
 Fixed:samples
-Added:NinePatch
-Added:Widget classes(Button,RadioButton)
 
 -------------------------------------------------------------------
 -- Hanappe Framework Version:1.2.0
