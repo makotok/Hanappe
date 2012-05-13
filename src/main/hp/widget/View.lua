@@ -1,5 +1,6 @@
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
+local Application = require("hp/Application")
 local Layer = require("hp/display/Layer")
 local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
@@ -14,6 +15,8 @@ local EventDispatcher = require("hp/event/EventDispatcher")
 -- @name View
 ----------------------------------------------------------------
 local M = class(Layer, EventDispatcher)
+
+local super = Layer
 
 --------------------------------------------------------------------------------
 -- インスタンスを生成して返します.
@@ -56,7 +59,18 @@ function M:excludeFunctions()
 end
 
 --------------------------------------------------------------------------------
+-- 画面上のサイズを設定します.
+-- サイズを設定すると、Viewのサイズも設定されます.
+--------------------------------------------------------------------------------
+function M:setScreenSize(width, height)
+    super.setScreenSize(self, width, height)
+    local sclX, sclY = Application:getViewScale()
+    self.viewport:setSize(width * sclX, height * sclY)
+end
+
+--------------------------------------------------------------------------------
 -- シーンを設定します.
+-- 親のViewが存在する場合は、Sceneを設定するとよくないので無効化されます.
 --------------------------------------------------------------------------------
 function M:setScene(scene)
     if self:getParentView() then

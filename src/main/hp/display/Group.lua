@@ -39,7 +39,6 @@ function M:new(params)
     table.copy(self, group)
     local color = MOAIColor.new()
     group.color = color
-    group.isGroup = true
     group.width = 0
     group.height = 0
     group.children = {}
@@ -48,29 +47,6 @@ function M:new(params)
     delegate(group, color, "moveColor")
     delegate(group, color, "seekColor")
     delegate(group, color, "setColor")
-    
-    -- extendes functions
-    local super = {}
-    
-    --[[
-    super.clearAttrLink = group.clearAttrLink
-    group.clearAttrLink = function(self, attrID)
-        super.clearAttrLink(self, attrID)
-        self.color.clearAttrLink(color, attrID)
-    end
-
-    super.clearAttrLink = group.clearAttrLink
-    group.clearAttrLink = function(self, attrID)
-        super.clearAttrLink(self, attrID)
-        self.color.clearAttrLink(color, attrID)
-    end
-    
-    super.clearNodeLink = group.clearNodeLink
-    group.clearNodeLink = function(self, attrID)
-        super.clearNodeLink(self, attrID)
-        self.color.clearNodeLink(color, attrID)
-    end
-    --]]
     
     -- set params
     group:copyParams(params)
@@ -222,6 +198,14 @@ function M:setLayer(layer)
             child:setLayer(layer)
         end
     end
+end
+
+--------------------------------------------------------------------------------
+-- グループかどうか返します.
+-- 内部判定で使用されます.
+--------------------------------------------------------------------------------
+function M:isGroup()
+    return true
 end
 
 return M

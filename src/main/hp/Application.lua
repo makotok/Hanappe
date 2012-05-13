@@ -136,4 +136,12 @@ function M:setClearColor(r, g, b, a)
     MOAIGfxDevice.setClearColor(r, g, b, a)
 end
 
+---------------------------------------
+-- スクリーンとViewportのベーススケールを返します.
+-- 
+---------------------------------------
+function M:getViewScale()
+    return self.screenWidth / self.viewWidth, self.screenHeight / self.viewHeight
+end
+
 return M

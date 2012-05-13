@@ -81,11 +81,6 @@ function M:setSize(width, height)
     self:setPrivate("width", width)
     self:setPrivate("height", height)
     
-    print("---------------------------------")
-    print("ninepatch", width, height)
-    print("ninepatch", tw, th)
-    print("ninepatch", oSclX, oSclY, oSclZ)
-    
     self.deck:setRect(-tw / 2, -th / 2, tw / 2, th / 2)
     self:setOrignScl(oSclX, oSclY, oSclZ)
     self:setLeft(left)

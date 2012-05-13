@@ -36,24 +36,40 @@ function onCreate(params)
     player.moveSpeed = 4
     
     -- widget
-    widgetLayer = Layer:new({scene = scene})
+    view = View:new()
+    view:setScene(scene)
     joystick = Joystick:new({
         baseTexture = "samples/assets/control_base.png",
         knobTexture = "samples/assets/control_knob.png",
         stickMode = Joystick.MODE_DIGITAL,
-        layer = widgetLayer,
     })
     joystick:setLeft(0)
-    joystick:setTop(widgetLayer.viewHeight - joystick:getHeight())
+    joystick:setTop(view.viewHeight - joystick:getHeight())
     joystick:setColor(0.8, 0.8, 0.8, 0.8)
-    joystick:setScene(scene)
     joystick:addEventListener("stickChanged", onStickChanged)
+    view:addChild(joystick)
     
+    buttonA = Button:new({
+        upSkin = "samples/assets/button_a.png",
+        downSkin = "samples/assets/button_a.png",
+        upColor = {red = 1, green = 1, blue = 1, alpha = 1},
+        downColor = {red = 0.5, green = 0.5, blue = 0.5, alpha = 1},
+    })
+    buttonA:setLeft(view.viewWidth - buttonA:getWidth() - 10)
+    buttonA:setTop(view.viewHeight - buttonA:getHeight() - 10)
+    buttonA:setColor(0.8, 0.8, 0.8, 0.8)
+    buttonA:addEventListener("buttonDown", onButtonATouchDown)
+    view:addChild(buttonA)
+
 end
 
 function onEnterFrame()
     mapView:onEnterFrame()
     player:moveMap(playerMoveDir)
+end
+
+function onButtonATouchDown(e)
+    
 end
 
 function onStickChanged(e)

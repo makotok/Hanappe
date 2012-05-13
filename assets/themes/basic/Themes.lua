@@ -34,9 +34,16 @@ local Themes = {
         onStateChanged = function(self)
         end,
     },
+    Panel = {
+        skin = "assets/themes/basic/skins/panel.png",
+    },
+    ScrollView = {
+        vScrollEnabled = true,
+        hScrollEnabled = true,
+    },
     ListView = {
-    
-    
+        vScrollEnabled = true,
+        hScrollEnabled = false,
     },
     TextView = {
     
@@ -44,12 +51,6 @@ local Themes = {
     ScrollBar = {
     
     },
-    
-    
-
-
-
 }
-
 
 return Themes
