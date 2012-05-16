@@ -20,26 +20,30 @@ local sceneItems = {
     {text = "rpgmap", scene = "samples/rpgmap_sample", animation = "fade"},
 }
 
+local selectedItem = nil
+
 function onCreate(params)
+    -- TODO:そのうちListViewに入れ替わる
     scrollView = ScrollView()
     scrollView:setScene(scene)
     
     for i, item in ipairs(sceneItems) do
-        local graphics = Graphics:new({width = Application.screenWidth - 60, height = 50})
-        graphics:setPenColor(0.5, 0.5, 0.5, 1):fillRect()
-        graphics:setPenColor(1, 1, 1, 1):drawRect()
+        local graphics = Graphics:new({width = Application.screenWidth + 1, height = 50})
+        setItemDefaultColor(graphics)
         graphics:setPos(0, 0)
         
-        local text = TextLabel:new({text = item.text, width = graphics:getWidth(), height = 50})
+        local text = TextLabel:new({text = item.text, width = graphics:getWidth() - 1, height = 50})
         text:setPos(5, 0)
         text:setAlignment(MOAITextBox.LEFT_JUSTIFY, MOAITextBox.CENTER_JUSTIFY)
         text.sceneName = item.scene
         text.sceneAnimation = item.animation
+        text.background = graphics
+        text:setColor(0, 0, 0, 1)
         
-        local group = Group:new({width = graphics:getWidth(), height = 50})
+        local group = Group:new({width = graphics:getWidth() - 1, height = 50})
         group:addChild(graphics)
         group:addChild(text)
-        group:setPos(30, (i - 1) * 50)
+        group:setPos(0, (i - 1) * 50)
         
         scrollView:addChild(group)
     end
@@ -49,6 +53,38 @@ function onTouchDown(event)
     local worldX, worldY, worldZ = scrollView:wndToWorld(event.x, event.y, 0)
     local touchProp = scrollView.partition:propForPoint ( worldX, worldY )
     if touchProp and touchProp.sceneName then
-        SceneManager:openScene(touchProp.sceneName, {animation = touchProp.sceneAnimation})
+        selectedItem = touchProp
+        setItemSelectedColor(selectedItem.background)
     end
+end
+
+function onTouchUp(event)
+    if selectedItem then
+        setItemDefaultColor(selectedItem.background)
+        SceneManager:openScene(selectedItem.sceneName, {animation = selectedItem.sceneAnimation})
+    end
+end
+
+function onTouchMove(event)
+    if not selectedItem then
+        return
+    end
+    
+    if selectedItem.background then
+        setItemDefaultColor(selectedItem.background)
+    end
+    selectedItem = nil
+    
+end
+
+function setItemDefaultColor(g)
+    g:clear()
+    g:setPenColor(1.0, 1.0, 0.9, 1):fillRect()
+    g:setPenColor(0.5, 0.5, 0.5, 1):drawRect()
+end
+
+function setItemSelectedColor(g)
+    g:clear()
+    g:setPenColor(0.5, 0.5, 1.0, 1):fillRect()
+    g:setPenColor(0.5, 0.5, 0.5, 1):drawRect()
 end
