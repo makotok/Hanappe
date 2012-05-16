@@ -103,8 +103,12 @@ function M:importClasses(t, prefix)
     
     -- widget classes
     t[prefix .. "View"] = require("hp/widget/View")
+    t[prefix .. "ScrollView"] = require("hp/widget/ScrollView")
+    t[prefix .. "Widget"] = require("hp/widget/Widget")
     t[prefix .. "Button"] = require("hp/widget/Button")
     t[prefix .. "RadioButton"] = require("hp/widget/RadioButton")
+    t[prefix .. "Panel"] = require("hp/widget/Panel")
+    t[prefix .. "MessageBox"] = require("hp/widget/MessageBox")
     t[prefix .. "Joystick"] = require("hp/widget/Joystick")
     
     -- rpg classes

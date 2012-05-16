@@ -20,6 +20,8 @@ local Application = require("hp/Application")
 ----------------------------------------------------------------
 local M = class(Group, EventDispatcher)
 
+local ENTER_FRAME_EVENT = Event:new("enterFrame")
+
 ---------------------------------------
 -- コンストラクタです
 ---------------------------------------
@@ -142,6 +144,9 @@ end
 function M:onEnterFrame()
     if self.sceneHandler.onEnterFrame then
         self.sceneHandler.onEnterFrame()
+    end
+    if self:hasEventListener("enterFrame") then
+        self:dispatchEvent(ENTER_FRAME_EVENT)
     end
 end
 

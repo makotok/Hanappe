@@ -39,9 +39,10 @@ function M:new(params)
     table.copy(self, group)
     local color = MOAIColor.new()
     group.color = color
-    group.width = 0
-    group.height = 0
     group.children = {}
+    
+    group:setPrivate("width", 0)
+    group:setPrivate("height", 0)
     
     -- functions
     delegate(group, color, "moveColor")
@@ -73,7 +74,7 @@ end
 ----------------------------------------------------------------
 function M:getBounds()
     local xMin, yMin, zMin = 0, 0, 0
-    local xMax, yMax, zMax = self.width, self.height, 0
+    local xMax, yMax, zMax = self:getWidth(), self:getHeight(), 0
     return xMin, yMin, zMin, xMax, yMax, zMax
 end
 
@@ -81,44 +82,43 @@ end
 -- サイズを設定します.
 ----------------------------------------------------------------
 function M:setSize(width, height)
-    self:setWidth(width)
-    self:setHeight(height)
+    self:setPrivate("width", width)
+    self:setPrivate("height", height)
 end
-
 
 ----------------------------------------------------------------
 -- サイズを返します.
 ----------------------------------------------------------------
 function M:getSize()
-    return self.width, self.height
+    return self:getWidth(), self:getHeight()
 end
 
 ----------------------------------------------------------------
 -- 幅を設定します.
 ----------------------------------------------------------------
 function M:setWidth(width)
-    self.width = width
+    self:setSize(width, self:getHeight())
 end
 
 ----------------------------------------------------------------
 -- 幅を返します.
 ----------------------------------------------------------------
 function M:getWidth()
-    return self.width
+    return self:getPrivate("width")
 end
 
 ----------------------------------------------------------------
 -- 高さを設定します.
 ----------------------------------------------------------------
 function M:setHeight(height)
-    self.height = height
+    self:setSize(self:getWidth(), height)
 end
 
 ----------------------------------------------------------------
 -- 高さを返します.
 ----------------------------------------------------------------
 function M:getHeight()
-    return self.height
+    return self:getPrivate("height")
 end
 
 ----------------------------------------------------------------

@@ -68,6 +68,14 @@ function M:copyParams(params)
     DisplayObject.copyParams(self, params)
 end
 
+function M:setWidth(width)
+    self:setSize(width, self:getHeight())
+end
+
+function M:setHeight(height)
+    self:setSize(self:getWidth(), height)
+end
+
 --------------------------------------------------------------------------------
 --サイズを設定します.
 --------------------------------------------------------------------------------

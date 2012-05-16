@@ -9,7 +9,7 @@ local Logger = require("hp/util/Logger")
 
 local M = {
     config = {
-        fontPath = "assets/default_font.ttf",
+        fontPath = "assets/fonts/ipag.ttf",
         textSize = 24,
     }
 }

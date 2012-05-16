@@ -14,37 +14,40 @@ local sceneItems = {
     {text = "moai", scene = "samples/moai_sample"},
     {text = "joystick", scene = "samples/stick_sample"},
     {text = "button", scene = "samples/button_sample", animation = "fade"},
+    {text = "panel", scene = "samples/panel_sample", animation = "fade"},
+    {text = "scrollview", scene = "samples/scrollview_sample", animation = "fade"},
     {text = "tiledmap", scene = "samples/tiledmap_sample", animation = "fade"},
     {text = "rpgmap", scene = "samples/rpgmap_sample", animation = "fade"},
 }
 
 function onCreate(params)
-    layer = Layer:new({scene = scene})
+    scrollView = ScrollView()
+    scrollView:setScene(scene)
     
     for i, item in ipairs(sceneItems) do
-        local graphics = Graphics:new({width = Application.screenWidth + 1, height = 30, layer = layer})
+        local graphics = Graphics:new({width = Application.screenWidth - 60, height = 50})
         graphics:setPenColor(0.5, 0.5, 0.5, 1):fillRect()
         graphics:setPenColor(1, 1, 1, 1):drawRect()
-        graphics:setLeft(0)
-        graphics:setTop(0)
+        graphics:setPos(0, 0)
         
-        local text = TextLabel:new({text = item.text, width = Application.screenWidth, height = 30, layer = layer})
+        local text = TextLabel:new({text = item.text, width = graphics:getWidth(), height = 50})
+        text:setPos(5, 0)
+        text:setAlignment(MOAITextBox.LEFT_JUSTIFY, MOAITextBox.CENTER_JUSTIFY)
         text.sceneName = item.scene
         text.sceneAnimation = item.animation
-        text:setLeft(5)
-        text:setTop(0)
         
-        local group = Group:new({width = Application.screenWidth, height = 30})
+        local group = Group:new({width = graphics:getWidth(), height = 50})
         group:addChild(graphics)
         group:addChild(text)
-        group:setLeft(0)
-        group:setTop((i - 1) * 30)
+        group:setPos(30, (i - 1) * 50)
+        
+        scrollView:addChild(group)
     end
 end
 
 function onTouchDown(event)
-    local worldX, worldY, worldZ = layer:wndToWorld(event.x, event.y, 0)
-    local touchProp = layer.partition:propForPoint ( worldX, worldY )
+    local worldX, worldY, worldZ = scrollView:wndToWorld(event.x, event.y, 0)
+    local touchProp = scrollView.partition:propForPoint ( worldX, worldY )
     if touchProp and touchProp.sceneName then
         SceneManager:openScene(touchProp.sceneName, {animation = touchProp.sceneAnimation})
     end

@@ -14,6 +14,10 @@ local table = require("hp/lang/table")
 local M = {}
 setmetatable(M, M)
 
+local function call(self, ...)
+    return self:new(...)
+end
+
 --------------------------------------------------------------------------------
 -- クラス定義関数です.
 -- 引数にテーブルを指定する事で多重継承が可能です.
@@ -25,8 +29,8 @@ function M:__call(...)
     for i, super in ipairs({...}) do
         table.copy(super, class)
     end
-    class.__call = nil
-    return class
+    class.__call = call
+    return setmetatable(class, class)
 end
 
 --------------------------------------------------------------------------------

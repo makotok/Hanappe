@@ -36,6 +36,17 @@ local Themes = {
     },
     Panel = {
         skin = "assets/themes/basic/skins/panel.png",
+        width = 200,
+        height = 200,
+    },
+    MessageBox = {
+        skin = "assets/themes/basic/skins/panel.png",
+        width = 200,
+        height = 200,
+        paddingTop = 10,
+        paddingLeft = 10,
+        paddingBottom = 10,
+        paddingRight = 10,
     },
     ScrollView = {
         vScrollEnabled = true,

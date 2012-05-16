@@ -39,7 +39,7 @@ end
 -- Widgetクラスはこちらを使用すべきです.
 --------------------------------------------------------------------------------
 function M:init(params)
-    self:setPrivateValue("enabled", true)
+    self:setPrivate("enabled", true)
 end
 
 ----------------------------------------------------------------
@@ -54,7 +54,6 @@ end
 function M:excludeFunctions()
     self.new = nil
     self.init = nil
-    self.setLayer = nil
     self.excludeFunctions = nil
 end
 
@@ -156,34 +155,75 @@ function M:getFocusManager()
 end
 
 --------------------------------------------------------------------------------
+-- サイズ変更時に子の大きさも変更します.
+--------------------------------------------------------------------------------
+function M:setSize(width, height)
+    local oldWidth, oldHeight =  self:getWidth(), self:getHeight()
+    
+    if oldWidth ~= width or oldHeight ~= height then
+        self:setPrivate("width", width)
+        self:setPrivate("height", height)
+        
+        local e = Event:new("resize")
+        e.oldWidth, e.oldHeight = oldWidth, oldHeight
+        e.newWidth, e.newHeight = width, height
+        self:dispatchEvent(e)
+    end
+end
+
+--------------------------------------------------------------------------------
 -- フレーム更新時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:onEnterFrame(e)
+    for i, child in ipairs(self.children) do
+        if child.onEnterFrame then
+            child:onEnterFrame(e)
+        end
+    end
 end
 
 --------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- Sceneをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:onTouchDown(e)
+    for i, child in ipairs(self.children) do
+        if child.onTouchDown then
+            child:onTouchDown(e)
+        end
+    end
 end
 
 --------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- Sceneをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:onTouchUp(e)
+    for i, child in ipairs(self.children) do
+        if child.onTouchUp then
+            child:onTouchUp(e)
+        end
+    end
 end
 
 --------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- Sceneをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:onTouchMove(e)
+    for i, child in ipairs(self.children) do
+        if child.onTouchMove then
+            child:onTouchMove(e)
+        end
+    end
 end
 
 --------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- Sceneをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:onTouchCancel(e)
+    for i, child in ipairs(self.children) do
+        if child.onTouchCancel then
+            child:onTouchCancel(e)
+        end
+    end
 end
-
     
 return M

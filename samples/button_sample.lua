@@ -1,10 +1,10 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    view = View:new()
+    view = View()
     view:setScene(scene)
     
-    button1 = Button:new({
+    button1 = Button({
         upSkin = "samples/assets/button_a.png",
         downSkin = "samples/assets/button_a.png",
         upColor = {red = 1, green = 1, blue = 1, alpha = 1},
@@ -16,7 +16,7 @@ function onCreate(params)
     button1:addEventListener("cancel", onButtonCancel)
     view:addChild(button1)
     
-    button2 = Button:new({
+    button2 = Button({
         upSkin = "samples/assets/button_a.png",
         downSkin = "samples/assets/button_a.png",
         upColor = {red = 1, green = 1, blue = 1, alpha = 1},
@@ -30,7 +30,7 @@ function onCreate(params)
     button2:addEventListener("cancel", onButtonCancel)
     view:addChild(button2)
     
-    button3 = Button:new({
+    button3 = Button({
         upSkin = "samples/assets/btn_up.png",
         downSkin = "samples/assets/btn_down.png",
         text = "ハローボタン"
@@ -44,7 +44,7 @@ function onCreate(params)
     button3:addEventListener("cancel", onButtonCancel)
     view:addChild(button3)
 
-    button4 = Button:new()
+    button4 = Button()
     button4:setSize(200, 50)
     button4:setLeft(0)
     button4:setText("default theme")

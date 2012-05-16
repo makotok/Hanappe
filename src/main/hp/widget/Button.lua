@@ -13,10 +13,14 @@ local WidgetManager = require("hp/manager/WidgetManager")
 ----------------------------------------------------------------
 local M = class(Widget)
 
+local super = Widget
+
 ----------------------------------------------------------------
 -- インスタンスを生成して返します.
 ----------------------------------------------------------------
 function M:init(params)
+    super.init(self, params)
+    
     params = params or self:getDefaultTheme()
     assert(params.upSkin)
     assert(params.downSkin)
@@ -45,9 +49,11 @@ function M:init(params)
     self.buttonUpEvent = Event:new(Event.BUTTON_UP)
     self.clickEvent = Event:new(Event.CLICK)
     self.cancelEvent = Event:new(Event.CANCEL)
-    self.toggle = params.toggle or false
     self.buttonDownFlag = false
     self.buttonTouching = false
+    self:setToggle(params.toggle or false)
+    
+    self:addEventListener("resize", self.onResizeButton, self)
     
     self:setButtonUpState()
 end
@@ -57,43 +63,6 @@ end
 --------------------------------------------------------------------------------
 function M:getDefaultTheme()
     return WidgetManager:getDefaultTheme()["Button"]
-end
-
---------------------------------------------------------------------------------
--- サイズ変更時に子の大きさも変更します.
---------------------------------------------------------------------------------
-function M:setSize(width, height)
-    self.width = width
-    self.height = height
-    for i, child in ipairs(self.children) do
-        if child.setSize then
-            child:setSize(width, height)
-        end
-    end
-end
-
---------------------------------------------------------------------------------
--- サイズ変更時に子の大きさも変更します.
---------------------------------------------------------------------------------
-function M:setWidth(width)
-    Widget.setWidth(width)
-    for i, child in ipairs(self.children) do
-        if child.setWidth then
-            child:setWidth(width)
-        end
-    end
-end
-
---------------------------------------------------------------------------------
--- サイズ変更時に子の大きさも変更します.
---------------------------------------------------------------------------------
-function M:setHeight(height)
-    Widget.setHeight(height)
-    for i, child in ipairs(self.children) do
-        if child.setHeight then
-            child:setHeight(height)
-        end
-    end
 end
 
 --------------------------------------------------------------------------------
@@ -135,13 +104,53 @@ function M:setText(text)
 end
 
 --------------------------------------------------------------------------------
+-- テキストの色を設定します.
+--------------------------------------------------------------------------------
+function M:setTextColor(r, g, b, a)
+    self.textLabel:setColor(r, g, b, a)
+end
+
+--------------------------------------------------------------------------------
+-- テキストサイズを設定します.
+--------------------------------------------------------------------------------
+function M:setTextSize(points, dpi)
+    self.textLabel:setTextSize(points, dpi)
+end
+
+--------------------------------------------------------------------------------
+-- トグルボタンかどうか設定します.
+--------------------------------------------------------------------------------
+function M:setToggle(value)
+    self:setPrivate("toggle", value)
+end
+
+--------------------------------------------------------------------------------
+-- トグルボタンかどうか返します.
+--------------------------------------------------------------------------------
+function M:isToggle()
+    return self:getPrivate("toggle")
+end
+
+--------------------------------------------------------------------------------
+-- サイズ変更時に子の大きさも変更します.
+--------------------------------------------------------------------------------
+function M:onResizeButton(e)
+    self.background:setSize(e.newWidth, e.newHeight)
+    self.textLabel:setSize(e.newWidth, e.newHeight)
+end
+
+--------------------------------------------------------------------------------
 -- タッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:onTouchDown(e)
+    if not self:isEnabled() then
+        return
+    end
+    
     local wx, wy = self.layer:wndToWorld(e.x, e.y, 0)
     if self:isHit(wx, wy, 0, self.background) then
         self.buttonTouching = true
-        if self.toggle and self.buttonDownFlag then
+        if self:isToggle() and self.buttonDownFlag then
             self:setButtonUpState()
         else
             self:setButtonDownState()
@@ -154,7 +163,11 @@ end
 -- タッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:onTouchUp(e)
-    if self.buttonTouching and not self.toggle then
+    if not self:isEnabled() then
+        return
+    end
+
+    if self.buttonTouching and not self:isToggle() then
         self.buttonTouching = false
         self:setButtonUpState()
         self:dispatchEvent(self.clickEvent)
@@ -165,10 +178,14 @@ end
 -- タッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:onTouchMove(e)
+    if not self:isEnabled() then
+        return
+    end
+
     local wx, wy = self.layer:wndToWorld(e.x, e.y, 0)
     if self.buttonTouching and not self:isHit(wx, wy, 0, self.background) then
         self.buttonTouching = false
-        if not self.toggle then
+        if not self:isToggle() then
             self:setButtonUpState()
             self:dispatchEvent(self.cancelEvent)
         end
@@ -179,12 +196,15 @@ end
 -- タッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:onTouchCancel(e)
-    if not self.toggle then
+    if not self:isEnabled() then
+        return
+    end
+
+    if not self:isToggle() then
         self.buttonTouching = false
         self:setButtonUpState()
         self:dispatchEvent(self.cancelEvent)
     end
 end
 
-    
 return M

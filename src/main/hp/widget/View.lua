@@ -40,7 +40,7 @@ end
 ----------------------------------------------------------------
 function M:init(params)
     self:setPrivate("children", {})
-    self:setPrivate("views", {})
+    self:setPrivate("enabled", true)
 end
 
 ----------------------------------------------------------------
@@ -64,8 +64,7 @@ end
 --------------------------------------------------------------------------------
 function M:setScreenSize(width, height)
     super.setScreenSize(self, width, height)
-    local sclX, sclY = Application:getViewScale()
-    self.viewport:setSize(width * sclX, height * sclY)
+    --self.viewport:setSize(width, height)
 end
 
 --------------------------------------------------------------------------------
@@ -102,7 +101,7 @@ end
 -- 描画テーブルを返します.
 ----------------------------------------------------------------
 function M:getRenderTable()
-    return {self, unpack(self:getViews())}
+    return {self}
 end
 
 ----------------------------------------------------------------
@@ -144,8 +143,6 @@ end
 -- 子オブジェクトを追加します.
 ----------------------------------------------------------------
 function M:addChild(child)
-    assert(child.isWidgetClass, "Not Widget")
-    
     local children = self:getChildren()
     local index = table.indexOf(children, child)
     if index > 0 then
@@ -153,7 +150,13 @@ function M:addChild(child)
     end
     
     table.insert(children, child)
-    child:setParentView(self)
+    if self.isWidgetClass then
+        child:setParentView(self)
+    elseif child.setLayer then
+        child:setLayer(self)
+    else
+        self:insertProp(child)
+    end
 end
 
 ----------------------------------------------------------------
@@ -170,47 +173,6 @@ function M:removeChild(child)
     child:setParentView(nil)
 end
 
-----------------------------------------------------------------
--- 子のviewリストを返します.
-----------------------------------------------------------------
-function M:getViews()
-    return self:getPrivate("views")
-end
-
-----------------------------------------------------------------
--- 子のviewを追加します.
-----------------------------------------------------------------
-function M:addView(view)
-    assert(child.isViewClass, "Not view")
-    
-    local views = self:getViews()
-    local index = table.indexOf(views, view)
-    if index > 0 then
-        return
-    end
-    
-    table.insert(views, view)
-    view:setAttrLink(MOAITransform.INHERIT_TRANSFORM, self, MOAITransform.TRANSFORM_TRAIT)
-    view:setAttrLink(MOAIColor.INHERIT_COLOR, self, MOAIColor.COLOR_TRAIT)
-    view:setParentView(self)
-end
-
-----------------------------------------------------------------
--- 子Viewを削除します.
-----------------------------------------------------------------
-function M:removeView(view)
-    local views = self:getViews()
-    local index = table.indexOf(views, child)
-    if index <= 0 then
-        return
-    end
-    
-    table.remove(views, index)
-    view:clearAttrLink(MOAITransform.INHERIT_TRANSFORM)
-    view:clearAttrLink(MOAIColor.INHERIT_COLOR)
-    view:setParentView(nil)
-end
-
 --------------------------------------------------------------------------------
 -- Viewクラスかどうか返します.
 -- 内部的な判定ロジックに使用されます.
@@ -220,14 +182,30 @@ function M:isViewClass()
 end
 
 --------------------------------------------------------------------------------
+-- Viewが有効かどうか設定します.
+--------------------------------------------------------------------------------
+function M:setEnabled(value)
+    if self:isEnabled() ~= value then
+        self:setPrivate("enabled", value)
+        self:dispatchEvent(Event:new("enabledChanged"))
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Viewが有効かどうか返します.
+--------------------------------------------------------------------------------
+function M:isEnabled()
+    return self:getPrivate("enabled")
+end
+
+--------------------------------------------------------------------------------
 -- フレーム更新時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:onEnterFrame(e)
     for i, child in ipairs(self:getChildren()) do
-        child:onEnterFrame(e)
-    end
-    for i, view in ipairs(self:getViews()) do
-        view:onEnterFrame(e)
+        if child.onEnterFrame then
+            child:onEnterFrame(e)
+        end
     end
 end
 
@@ -236,10 +214,9 @@ end
 --------------------------------------------------------------------------------
 function M:onTouchDown(e)
     for i, child in ipairs(self:getChildren()) do
-        child:onTouchDown(e)
-    end
-    for i, view in ipairs(self:getViews()) do
-        view:onTouchDown(e)
+        if child.onTouchDown then
+            child:onTouchDown(e)
+        end
     end
 end
 
@@ -248,10 +225,9 @@ end
 --------------------------------------------------------------------------------
 function M:onTouchUp(e)
     for i, child in ipairs(self:getChildren()) do
-        child:onTouchUp(e)
-    end
-    for i, view in ipairs(self:getViews()) do
-        view:onTouchUp(e)
+        if child.onTouchUp then
+            child:onTouchUp(e)
+        end
     end
 end
 
@@ -260,10 +236,9 @@ end
 --------------------------------------------------------------------------------
 function M:onTouchMove(e)
     for i, child in ipairs(self:getChildren()) do
-        child:onTouchMove(e)
-    end
-    for i, view in ipairs(self:getViews()) do
-        view:onTouchMove(e)
+        if child.onTouchMove then
+            child:onTouchMove(e)
+        end
     end
 end
 
@@ -272,10 +247,9 @@ end
 --------------------------------------------------------------------------------
 function M:onTouchCancel(e)
     for i, child in ipairs(self:getChildren()) do
-        child:onTouchCancel(e)
-    end
-    for i, view in ipairs(self:getViews()) do
-        view:onTouchCancel(e)
+        if child.onTouchCancel then
+            child:onTouchCancel(e)
+        end
     end
 end
 

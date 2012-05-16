@@ -5,7 +5,7 @@
 ----------------------------------------------------------------
 local M = {}
 
-function call(self, dest, src, funcName)
+local function call(self, dest, src, funcName)
     if funcName then
         dest[funcName] = function(self, ...)
             return src[funcName](src, ...)
