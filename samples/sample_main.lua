@@ -15,7 +15,9 @@ local sceneItems = {
     {text = "joystick", scene = "samples/stick_sample"},
     {text = "button", scene = "samples/button_sample", animation = "fade"},
     {text = "panel", scene = "samples/panel_sample", animation = "fade"},
+    {text = "messagebox", scene = "samples/messagebox_sample", animation = "fade"},
     {text = "scrollview", scene = "samples/scrollview_sample", animation = "fade"},
+    {text = "textview", scene = "samples/textview_sample", animation = "fade"},
     {text = "tiledmap", scene = "samples/tiledmap_sample", animation = "fade"},
     {text = "rpgmap", scene = "samples/rpgmap_sample", animation = "fade"},
 }
@@ -28,11 +30,11 @@ function onCreate(params)
     scrollView:setScene(scene)
     
     for i, item in ipairs(sceneItems) do
-        local graphics = Graphics:new({width = Application.screenWidth + 1, height = 50})
+        local graphics = Graphics({width = Application.screenWidth + 1, height = 50})
         setItemDefaultColor(graphics)
         graphics:setPos(0, 0)
         
-        local text = TextLabel:new({text = item.text, width = graphics:getWidth() - 1, height = 50})
+        local text = TextLabel({text = item.text, width = graphics:getWidth() - 1, height = 50})
         text:setPos(5, 0)
         text:setAlignment(MOAITextBox.LEFT_JUSTIFY, MOAITextBox.CENTER_JUSTIFY)
         text.sceneName = item.scene
@@ -40,7 +42,7 @@ function onCreate(params)
         text.background = graphics
         text:setColor(0, 0, 0, 1)
         
-        local group = Group:new({width = graphics:getWidth() - 1, height = 50})
+        local group = Group({width = graphics:getWidth() - 1, height = 50})
         group:addChild(graphics)
         group:addChild(text)
         group:setPos(0, (i - 1) * 50)
@@ -51,7 +53,7 @@ end
 
 function onTouchDown(event)
     local worldX, worldY, worldZ = scrollView:wndToWorld(event.x, event.y, 0)
-    local touchProp = scrollView.partition:propForPoint ( worldX, worldY )
+    local touchProp = scrollView:getPartition():propForPoint ( worldX, worldY )
     if touchProp and touchProp.sceneName then
         selectedItem = touchProp
         setItemSelectedColor(selectedItem.background)

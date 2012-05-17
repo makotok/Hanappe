@@ -7,8 +7,6 @@ local Themes = {
         fontPath = "assets/fonts/ipag.ttf",
         fontSize = 24,
         fontColor = {1, 1, 1, 1},
-        width = 200,
-        height = 50,
         onStateChanged = function(self)
         end,
     },
@@ -36,13 +34,9 @@ local Themes = {
     },
     Panel = {
         skin = "assets/themes/basic/skins/panel.png",
-        width = 200,
-        height = 200,
     },
     MessageBox = {
         skin = "assets/themes/basic/skins/panel.png",
-        width = 200,
-        height = 200,
         paddingTop = 10,
         paddingLeft = 10,
         paddingBottom = 10,
@@ -57,10 +51,14 @@ local Themes = {
         hScrollEnabled = false,
     },
     TextView = {
-    
+        vScrollEnabled = true,
+        hScrollEnabled = false,
     },
-    ScrollBar = {
-    
+    HScrollBar = {
+        skin = "assets/themes/basic/skins/scrollbar_horizontal.png"
+    },
+    VScrollBar = {
+        skin = "assets/themes/basic/skins/scrollbar_vertical.png"
     },
 }
 

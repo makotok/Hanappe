@@ -2,7 +2,7 @@
 -- Hanappe Framework Version:1.2.2
 -- Moai SDK Version 1.0 Revision 3
 -------------------------------------------------------------------
-Added:ScrollView,Panel,MessageBox
+Added:ScrollView,Panel,MessageBox,BoxLayout,HBoxLayout,VBoxLayout
 Modify:how to generate an instance of the class (__cal)
 Fixed:bug
 

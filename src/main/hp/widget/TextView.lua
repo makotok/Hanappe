@@ -1,37 +1,31 @@
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
-local NinePatch = require("hp/display/NinePatch")
-local TextLabel = require("hp/display/TextLabel")
+local Application = require("hp/Application")
+local Layer = require("hp/display/Layer")
 local Event = require("hp/event/Event")
-local Widget = require("hp/widget/Widget")
+local EventDispatcher = require("hp/event/EventDispatcher")
+local ScrollView = require("hp/widget/ScrollView")
 local WidgetManager = require("hp/manager/WidgetManager")
 
 ----------------------------------------------------------------
--- パネル内にメッセージを表示するウィジットです.<br>
--- まだ色々機能が足りない.
--- TODO:選択すると、次のメッセージを表示するようにしたい.
--- TODO:RPGでよくあるメッセージボックス機能
+-- テキストをスクロールして表示するViewクラスです.<br>
 -- @class table
--- @name MessageBox
+-- @name TextView
 ----------------------------------------------------------------
-local M = class(Panel)
+local M = class(ScrollView)
 
-local super = Panel
+local super = ScrollView
 
 ----------------------------------------------------------------
--- インスタンスを生成して返します.
+-- コンストラクタです.
 ----------------------------------------------------------------
 function M:init(params)
     super.init(self, params)
+    
     params = params or self:getDefaultTheme()
     
-    local paddingLeft = params.paddingLeft or 10
-    local paddingTop = params.paddingTop or 10
-    local paddingRight = params.paddingRight or 10
-    local paddingBottom = params.paddingBottom or 10
-    
     self.textLabel = TextLabel:new({text = params.text, textSize = params.fontSize})
-    self:setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+    self:updateTextLabel()
     self:addChild(self.textLabel)
 end
 
@@ -39,7 +33,7 @@ end
 -- サイズ変更時に子の大きさも変更します.
 --------------------------------------------------------------------------------
 function M:getDefaultTheme()
-    return WidgetManager:getDefaultTheme()["MessageBox"]
+    return WidgetManager:getDefaultTheme()["TextView"]
 end
 
 --------------------------------------------------------------------------------
@@ -82,27 +76,6 @@ function M:setTextSize(points, dpi)
     self.textLabel:setTextSize(points, dpi)
 end
 
---------------------------------------------------------------------------------
--- テキストラベルの余白を設定します.
---------------------------------------------------------------------------------
-function M:setPadding(left, top, right, bottom)
-    self:setPrivate("paddingLeft", left)
-    self:setPrivate("paddingTop", top)
-    self:setPrivate("paddingRight", right)
-    self:setPrivate("paddingBottom", bottom)
-    self:updateTextLabel()
-end
-
---------------------------------------------------------------------------------
--- テキストラベルの余白を返します.
---------------------------------------------------------------------------------
-function M:getPadding()
-    return
-        self:getPrivate("paddingLeft"),
-        self:getPrivate("paddingTop"),
-        self:getPrivate("paddingRight"),
-        self:getPrivate("paddingBottom")
-end
 --------------------------------------------------------------------------------
 -- サイズ変更時に子の大きさも変更します.
 --------------------------------------------------------------------------------
