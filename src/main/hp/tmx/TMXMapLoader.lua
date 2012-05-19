@@ -35,9 +35,25 @@ end
 -- 読み込んだ結果をTMXMapで返します。
 ---------------------------------------
 function M:loadFile(filename)
+    local data = io.input(filename):read("*a")
+    return self:loadString(data)
+
+    -- TODO:Windowsだとpackage.pathを使用した場合に動作しない
+    --[[
     local xml = MOAIXmlParser.parseFile(filename)
     self:parseNode(xml)
-    return self.map
+    return assert(self.map)
+    --]]
+end
+
+---------------------------------------
+-- TMX形式の文字列を読み込みます。
+-- 読み込んだ結果をTMXMapで返します。
+---------------------------------------
+function M:loadString(data)
+    local xml = MOAIXmlParser.parseString(data)
+    self:parseNode(xml)
+    return assert(self.map)
 end
 
 ---------------------------------------
@@ -50,11 +66,11 @@ function M:parseNode(node)
     else
         return
     end
-    
+
     if not node.children then
         return
     end
-    
+
     for key, value in pairs(node.children) do
         for key, value in ipairs(value) do
             if type(value) == "table" then
@@ -68,6 +84,7 @@ end
 -- Mapのノードを読み込みます。
 ---------------------------------------
 function M:parseNodeMap(node)
+    print("parseNodeMap")
     local map = TMXMap:new()
     self.map = map
 
@@ -152,9 +169,9 @@ function M:parseNodeData(node, layer)
     if node.children.data == nil or #node.children.data < 1 then
         return
     end
-    
+
     local data = node.children.data[1]
-    
+
     if not data.attributes or not data.attributes.encoding then
         self:parseNodeDataForPlane(node, layer, data)
     elseif data.attributes.encoding == M.ENCODING_BASE64 then
@@ -164,7 +181,7 @@ function M:parseNodeData(node, layer)
     else
         self:parseNodeDataForPlane(node, layer, data)
     end
-    
+
 end
 
 ---------------------------------------
@@ -188,11 +205,11 @@ end
 ---------------------------------------
 function M:parseNodeDataForBase64(node, layer, data)
     local decodedData = MOAIDataBuffer.base64Decode(data.value)
-    
+
     if data.attributes.compression then
         decodedData = MOAIDataBuffer.inflate(decodedData, 47)
     end
-    
+
     local tileSize = #decodedData / 4
     for i = 1, tileSize do
         local start = (i - 1) * 4 + 1
@@ -221,7 +238,7 @@ function M:parseNodeObject(node, group)
     if node.children.object == nil then
         return
     end
-    
+
     for i, value in ipairs(node.children.object) do
         local object = TMXObject:new(group)
         self:parseNodeAttributes(value, object)
