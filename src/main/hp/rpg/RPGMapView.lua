@@ -67,6 +67,7 @@ function M:loadMap(tmxMap)
     TMXMapView.loadMap(self, tmxMap)
     self.focusObject = self:findPlayerObject()
     self.collisionLayer = self:findCollisionLayer()
+    self.eventLayer = self:findEventLayer()
     
     self:scrollCameraToFocusObject()
 end
@@ -143,6 +144,16 @@ function M:findCollisionLayer()
     return self.tmxMap:findLayerByName("Collision")
 end
 
+--------------------------------------------------------------------------------
+-- Eventというnameのレイヤーを検索して返します.
+--------------------------------------------------------------------------------
+function M:findEventLayer()
+    return self.tmxMap:findLayerByName("Event")
+end
+
+--------------------------------------------------------------------------------
+-- 指定した座標のオブジェクトを検索して返します.
+--------------------------------------------------------------------------------
 function M:findObjectsByPosition(x, y)
     local objects = {}
     for i, objectLayer in ipairs(self.objectLayers) do

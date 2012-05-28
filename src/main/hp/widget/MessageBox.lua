@@ -23,23 +23,18 @@ local super = Panel
 ----------------------------------------------------------------
 function M:init(params)
     super.init(self, params)
-    params = params or self:getDefaultTheme()
+    local theme = self:getTheme()
     
-    local paddingLeft = params.paddingLeft or 10
-    local paddingTop = params.paddingTop or 10
-    local paddingRight = params.paddingRight or 10
-    local paddingBottom = params.paddingBottom or 10
-    
-    self.textLabel = TextLabel:new({text = params.text, textSize = params.fontSize})
-    self:setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+    self.textLabel = TextLabel({text = theme.text, textSize = theme.fontSize})
+    self:updateTextLabel()
     self:addChild(self.textLabel)
 end
 
 --------------------------------------------------------------------------------
 -- サイズ変更時に子の大きさも変更します.
 --------------------------------------------------------------------------------
-function M:getDefaultTheme()
-    return WidgetManager:getDefaultTheme()["MessageBox"]
+function M:getThemeName()
+    return "MessageBox"
 end
 
 --------------------------------------------------------------------------------
@@ -86,10 +81,10 @@ end
 -- テキストラベルの余白を設定します.
 --------------------------------------------------------------------------------
 function M:setPadding(left, top, right, bottom)
-    self:setPrivate("paddingLeft", left)
-    self:setPrivate("paddingTop", top)
-    self:setPrivate("paddingRight", right)
-    self:setPrivate("paddingBottom", bottom)
+    self:setStyle("paddingLeft", left)
+    self:setStyle("paddingTop", top)
+    self:setStyle("paddingRight", right)
+    self:setStyle("paddingBottom", bottom)
     self:updateTextLabel()
 end
 
@@ -98,10 +93,10 @@ end
 --------------------------------------------------------------------------------
 function M:getPadding()
     return
-        self:getPrivate("paddingLeft"),
-        self:getPrivate("paddingTop"),
-        self:getPrivate("paddingRight"),
-        self:getPrivate("paddingBottom")
+        self:getStyle("paddingLeft"),
+        self:getStyle("paddingTop"),
+        self:getStyle("paddingRight"),
+        self:getStyle("paddingBottom")
 end
 --------------------------------------------------------------------------------
 -- サイズ変更時に子の大きさも変更します.

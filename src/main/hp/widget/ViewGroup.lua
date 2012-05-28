@@ -1,0 +1,244 @@
+local table = require("hp/lang/table")
+local class = require("hp/lang/class")
+local Application = require("hp/Application")
+local Layer = require("hp/display/Layer")
+local Event = require("hp/event/Event")
+local EventDispatcher = require("hp/event/EventDispatcher")
+
+----------------------------------------------------------------
+-- Viewをグループ化するViewGroupクラスです.<br>
+-- TODO:実装中
+-- @class table
+-- @name ViewGroup
+----------------------------------------------------------------
+local M = class(Group, EventDispatcher)
+
+local super = Group
+
+--------------------------------------------------------------------------------
+-- インスタンスを生成して返します.
+--------------------------------------------------------------------------------
+function M:new(params)
+    local obj = Group.new(self)
+    EventDispatcher.init(obj)
+
+    if obj.init then
+        obj:init(params)
+    end
+    
+    obj:includeFunctions()
+    obj:excludeFunctions()
+
+    return obj
+end
+
+----------------------------------------------------------------
+-- コンストラクタです.
+----------------------------------------------------------------
+function M:init(params)
+    self:setPrivate("children", {})
+    self:setPrivate("enabled", true)
+end
+
+----------------------------------------------------------------
+-- 使用する関数を追加します.
+----------------------------------------------------------------
+function M:includeFunctions()
+end
+
+----------------------------------------------------------------
+-- 使用するべきでない関数を除外します.
+----------------------------------------------------------------
+function M:excludeFunctions()
+    self.new = nil
+    self.init = nil
+    self.excludeFunctions = nil
+end
+
+--------------------------------------------------------------------------------
+-- シーンを設定します.
+-- 親のViewが存在する場合は、Sceneを設定するとよくないので無効化されます.
+--------------------------------------------------------------------------------
+function M:setScene(scene)
+    if self:getParentView() then
+        return
+    end
+    
+    if self.scene then
+        self.scene:removeEventListener("enterFrame", self.onEnterFrame, self)
+        self.scene:removeEventListener("touchDown", self.onTouchDown, self)
+        self.scene:removeEventListener("touchUp", self.onTouchUp, self)
+        self.scene:removeEventListener("touchMove", self.onTouchMove, self)
+        self.scene:removeEventListener("touchCancel", self.onTouchCancel, self)
+        self.scene:removeChild(self)
+    end
+    
+    self.scene = scene
+    
+    if self.scene then
+        self.scene:addEventListener("enterFrame", self.onEnterFrame, self)
+        self.scene:addEventListener("touchDown", self.onTouchDown, self)
+        self.scene:addEventListener("touchUp", self.onTouchUp, self)
+        self.scene:addEventListener("touchMove", self.onTouchMove, self)
+        self.scene:addEventListener("touchCancel", self.onTouchCancel, self)
+        self.scene:addChild(self)
+    end
+end
+
+----------------------------------------------------------------
+-- 描画テーブルを返します.
+----------------------------------------------------------------
+function M:getRenderTable()
+    return {self}
+end
+
+----------------------------------------------------------------
+-- 子オブジェクト達を返します.
+----------------------------------------------------------------
+function M:getChildren()
+    return self:getPrivate("children")
+end
+
+----------------------------------------------------------------
+-- 親のViewを返します.
+----------------------------------------------------------------
+function M:getParentView()
+    return self:getPrivate("parentView")
+end
+
+----------------------------------------------------------------
+-- 親のViewを設定します.
+----------------------------------------------------------------
+function M:setParentView(view)
+    local parentView = self:getParentView()
+    if parentView == view then
+        return
+    end
+    
+    if parentView then
+        parentView:removeView(self)
+    end
+    
+    self:setPrivate("parentView", view)
+    parentView = view
+
+    if parentView then
+        parentView:addView(self)
+    end
+end
+
+----------------------------------------------------------------
+-- 子オブジェクトを追加します.
+----------------------------------------------------------------
+function M:addChild(child)
+    local children = self:getChildren()
+    local index = table.indexOf(children, child)
+    if index > 0 then
+        return
+    end
+    
+    table.insert(children, child)
+    if self.isWidgetClass then
+        child:setParentView(self)
+    elseif child.setLayer then
+        child:setLayer(self)
+    else
+        self:insertProp(child)
+    end
+end
+
+----------------------------------------------------------------
+-- 子オブジェクトを削除します.
+----------------------------------------------------------------
+function M:removeChild(child)
+    local children = self:getChildren()
+    local index = table.indexOf(children, child)
+    if index <= 0 then
+        return
+    end
+    
+    table.remove(children, index)
+    child:setParentView(nil)
+end
+
+--------------------------------------------------------------------------------
+-- Viewクラスかどうか返します.
+-- 内部的な判定ロジックに使用されます.
+--------------------------------------------------------------------------------
+function M:isViewClass()
+    return true
+end
+
+--------------------------------------------------------------------------------
+-- Viewが有効かどうか設定します.
+--------------------------------------------------------------------------------
+function M:setEnabled(value)
+    if self:isEnabled() ~= value then
+        self:setPrivate("enabled", value)
+        self:dispatchEvent(Event:new("enabledChanged"))
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Viewが有効かどうか返します.
+--------------------------------------------------------------------------------
+function M:isEnabled()
+    return self:getPrivate("enabled")
+end
+
+--------------------------------------------------------------------------------
+-- フレーム更新時のイベントリスナです.
+--------------------------------------------------------------------------------
+function M:onEnterFrame(e)
+    for i, child in ipairs(self:getChildren()) do
+        if child.onEnterFrame then
+            child:onEnterFrame(e)
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Sceneをタッチした時のイベントリスナです.
+--------------------------------------------------------------------------------
+function M:onTouchDown(e)
+    for i, child in ipairs(self:getChildren()) do
+        if child.onTouchDown then
+            child:onTouchDown(e)
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Sceneをタッチした時のイベントリスナです.
+--------------------------------------------------------------------------------
+function M:onTouchUp(e)
+    for i, child in ipairs(self:getChildren()) do
+        if child.onTouchUp then
+            child:onTouchUp(e)
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Sceneをタッチした時のイベントリスナです.
+--------------------------------------------------------------------------------
+function M:onTouchMove(e)
+    for i, child in ipairs(self:getChildren()) do
+        if child.onTouchMove then
+            child:onTouchMove(e)
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Sceneをタッチした時のイベントリスナです.
+--------------------------------------------------------------------------------
+function M:onTouchCancel(e)
+    for i, child in ipairs(self:getChildren()) do
+        if child.onTouchCancel then
+            child:onTouchCancel(e)
+        end
+    end
+end
+
+return M

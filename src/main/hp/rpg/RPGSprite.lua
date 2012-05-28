@@ -1,15 +1,16 @@
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local SpriteSheet = require("hp/display/SpriteSheet")
+local Event = require("hp/event/Event")
+local EventDispatcher = require("hp/event/EventDispatcher")
+local RPGMoveFactory = require("hp/rpg/move/RPGMoveFactory")
 
 ----------------------------------------------------------------
 -- RPGMapView用のスプライトクラスです.<br>
 -- @class table
 -- @name RPGSprite
 ----------------------------------------------------------------
-local M = class(SpriteSheet)
-
-math.randomseed(os.time())
+local M = class(SpriteSheet, EventDispatcher)
 
 -- constraints
 -- Sheet animations
@@ -20,18 +21,18 @@ M.SHEET_ANIMS = {
     {name = "walkUp", indexes = {11, 10, 11, 12, 11}, sec = 0.25},
 }
 
--- move direction
+-- 移動方向
 M.DIR_LEFT = 1
 M.DIR_UP = 2
 M.DIR_RIGHT = 3
 M.DIR_DOWN = 4
 
---
+-- 移動速度
 M.MOVE_SPEED = 2
 
---
-M.MOVE_NONE = "moveTypeNone"
-M.MOVE_RANDOM = "moveTypeRandom"
+-- 移動タイプ
+M.MOVE_NONE = "noneMove"
+M.MOVE_RANDOM = "randomMove"
 
 ----------------------------------------------------------------
 -- インスタンスを生成して返します.<br>
@@ -39,12 +40,15 @@ M.MOVE_RANDOM = "moveTypeRandom"
 ----------------------------------------------------------------
 function M:new(params)
     local obj = SpriteSheet.new(self, params)
+    EventDispatcher.init(obj)
+    
     obj:setSheetAnims(self.SHEET_ANIMS)
     
     obj.mapView = assert(params.mapView)
     obj.mapTileWidth = obj.mapView.tmxMap.tilewidth
     obj.mapTileHeight = obj.mapView.tmxMap.tileheight
     
+    obj.moveLogicFactory = RPGMoveFactory
     obj.moveSpeed = self.MOVE_SPEED
     
     obj.currentMoveX = 0
@@ -101,14 +105,7 @@ end
 ----------------------------------------------------------------
 function M:setMoveType(moveType)
     self.moveType = moveType
-end
-
-----------------------------------------------------------------
--- ランダム移動処理を行います.
-----------------------------------------------------------------
-function M:moveTypeRandom()
-    local r = math.random(200)
-    self:moveMap(r)
+    self.moveLogic = self.moveLogicFactory:createMove(self.moveType, {target = self})
 end
 
 ----------------------------------------------------------------
@@ -116,28 +113,57 @@ end
 -- moveLocではいまいちなので、自前で移動する.
 ----------------------------------------------------------------
 function M:moveStep()
+    if self.moveLogic then
+        self.moveLogic:onStep()
+    end
+
     if self:isMoving() then
         self:addLoc(self.currentMoveX, self.currentMoveY, 0)
         self.currentMoveCount = self.currentMoveCount - 1
+        if self.currentMoveCount == 0 then
+            if self:hasEventListener(Event.MOVE_FINISHED) then
+                self:dispatchEvent(Event.MOVE_FINISHED)
+            end
+            self:onMoveFinished()
+        end
     end
 end
 
+
 ----------------------------------------------------------------
 -- マップ上の座標を移動する共通処理です.
+-- TODO:リファクタリング
 ----------------------------------------------------------------
 function M:moveMapCommon(mapX, mapY, moveAnim)
     if self:isMoving() then
         return false
     end
-    if not self.mapView:collisionWith(self, self:getMapX() + mapX, self:getMapY() + mapY) then
-        self.currentMoveX = mapX * self.moveSpeed
-        self.currentMoveY = mapY * self.moveSpeed
-        self.currentMoveCount = self.mapTileWidth / self.moveSpeed
-    end
     
     if not self:isCurrentAnim(moveAnim) then
         self:playAnim(moveAnim)
     end
+        
+    -- 衝突判定
+    local nextMapX = self:getMapX() + mapX
+    local nextMapY = self:getMapY() + mapY
+    if self.mapView:collisionWith(self, nextMapX, nextMapY) then
+        local e = Event(Event.MOVE_COLLISION)
+        e.collisionMapX = nextMapX
+        e.collisionMapY = nextMapY
+        self:dispatchEvent(e)
+        self:onMoveCollision()
+        return false
+    end
+    
+    -- 移動処理
+    self.currentMoveX = mapX * self.moveSpeed
+    self.currentMoveY = mapY * self.moveSpeed
+    self.currentMoveCount = self.mapTileWidth / self.moveSpeed
+    
+    if self:hasEventListener(Event.MOVE_STARTED) then
+        self:dispatchEvent(Event.MOVE_STARTED)
+    end
+    self:onMoveStarted()
         
     return true
 end
@@ -193,6 +219,39 @@ end
 ----------------------------------------------------------------
 function M:isMoving()
     return self.currentMoveCount > 0
+end
+
+----------------------------------------------------------------
+-- 移動開始時に呼ばれます.
+----------------------------------------------------------------
+function M:onMoveStarted()
+
+end
+
+----------------------------------------------------------------
+-- 移動完了時に呼ばれます.
+----------------------------------------------------------------
+function M:onMoveFinished()
+    local eventLayer = self.mapView:findEventLayer()
+    if not eventLayer then
+        return
+    end
+    
+    local gid = eventLayer:getGid(self:getMapX(), self:getMapY())
+    if gid and gid > 0 and self:hasEventListener("moveOnTile") then
+        local tileset = self.mapView.tmxMap:findTilesetByGid(gid)
+        local e = Event("moveOnTile")
+        e.gid = gid
+        e.tileNo = tileset:getTileIndexByGid(gid)
+        self:dispatchEvent(e)
+    end
+end
+
+----------------------------------------------------------------
+-- 移動で衝突した時に呼ばれます.
+----------------------------------------------------------------
+function M:onMoveCollision()
+
 end
 
 return M

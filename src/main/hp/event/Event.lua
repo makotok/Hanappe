@@ -29,6 +29,9 @@ M.TOUCH_MOVE = "touchMove"
 M.TOUCH_CANCEL = "touchCancel"
 M.BUTTON_DOWN = "buttonDown"
 M.BUTTON_UP = "buttonUp"
+M.MOVE_STARTED = "moveStarted"
+M.MOVE_FINISHED = "moveFinished"
+M.MOVE_COLLISION = "moveCollision"
 
 M.PRIORITY_MIN = 0
 M.PRIORITY_DEFAULT = 1000

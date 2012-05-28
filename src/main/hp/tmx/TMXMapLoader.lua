@@ -179,7 +179,7 @@ function M:parseNodeData(node, layer)
     elseif data.attributes.encoding == M.ENCODING_CSV then
         self:parseNodeDataForCsv(node, layer, data)
     else
-        self:parseNodeDataForPlane(node, layer, data)
+        error("Not supported encoding!")
     end
 
 end

@@ -20,25 +20,22 @@ local super = Widget
 ----------------------------------------------------------------
 function M:init(params)
     super.init(self, params)
+    params = params or {}
     
-    params = params or self:getDefaultTheme()
-    assert(params.upSkin)
-    assert(params.downSkin)
+    self:overrideTheme(self:getDefaultTheme())
+    self:overrideTheme(params)
+    local theme = self:getTheme()
     
-    self.upSkin = params.upSkin
-    self.upColor = params.upColor or {red = 1, green = 1, blue = 1, alpha = 1}
-    self.downSkin = params.downSkin
-    self.downColor = params.downColor or {red = 1, green = 1, blue = 1, alpha = 1}
-    
-    self.background = NinePatch:new({texture = self.upSkin, width = params.width, height = params.height})
+    self.background = NinePatch({texture = theme.upSkin, width = params.width, height = params.height})
     self.background:setLeft(0)
     self.background:setTop(0)
     
-    self.textLabel = TextLabel:new({text = params.text, textSize = params.fontSize})
-    self.textLabel:setSize(self.background:getWidth(), self.textLabel:getTextSize())
-    self.textLabel:setLeft(0)
-    self.textLabel:setTop(self.background:getHeight() - self.textLabel:getHeight() - self.textLabel:getHeight() / 2 - 2)
-    self.textLabel:setAlignment(MOAITextBox.CENTER_JUSTIFY)
+    self.textLabel = TextLabel:new({text = params.text, textSize = theme.fontSize})
+    self.textLabel:setWidth(self.background:getWidth() - theme.paddingLeft - theme.paddingRight)
+    self.textLabel:setHeight(self.background:getHeight() - theme.paddingTop - theme.paddingBottom)
+    self.textLabel:setLeft(theme.paddingLeft)
+    self.textLabel:setTop(theme.paddingTop)
+    self.textLabel:setAlignment(MOAITextBox.CENTER_JUSTIFY, MOAITextBox.CENTER_JUSTIFY)
     
     self:addChild(self.background)
     self:addChild(self.textLabel)
@@ -51,7 +48,7 @@ function M:init(params)
     self.cancelEvent = Event:new(Event.CANCEL)
     self.buttonDownFlag = false
     self.buttonTouching = false
-    self:setToggle(params.toggle or false)
+    self:setToggle(theme.toggle or false)
     
     self:addEventListener("resize", self.onResizeButton, self)
     
@@ -59,10 +56,10 @@ function M:init(params)
 end
 
 --------------------------------------------------------------------------------
--- サイズ変更時に子の大きさも変更します.
+-- テーマ名を返します.
 --------------------------------------------------------------------------------
-function M:getDefaultTheme()
-    return WidgetManager:getDefaultTheme()["Button"]
+function M:getThemeName()
+    return "Button"
 end
 
 --------------------------------------------------------------------------------
@@ -73,10 +70,15 @@ function M:setButtonUpState()
         return
     end
     
-    local color = self.upColor
+    local color = self:getStyle("upColor")
+    local fontColor = self:getStyle("fontUpColor")
+    local skin = self:getStyle("upSkin")
+    
     self.buttonDownFlag = false
-    self.background:setTexture(self.upSkin)
-    self:setColor(color.red, color.green, color.blue, color.alpha)
+    self.background:setTexture(skin)
+    self.background:setColor(color.red, color.green, color.blue, color.alpha)
+    self.textLabel:setColor(fontColor.red, fontColor.green, fontColor.blue, fontColor.alpha)
+    
     self:dispatchEvent(self.buttonUpEvent)
 end
 
@@ -88,10 +90,14 @@ function M:setButtonDownState()
         return
     end
     
-    local color = self.downColor
+    local color = self:getStyle("downColor")
+    local fontColor = self:getStyle("fontDownColor")
+    local skin = self:getStyle("downSkin")
+    
     self.buttonDownFlag = true
-    self.background:setTexture(self.downSkin)
-    self:setColor(color.red, color.green, color.blue, color.alpha)
+    self.background:setTexture(skin)
+    self.background:setColor(color.red, color.green, color.blue, color.alpha)
+    self.textLabel:setColor(fontColor.red, fontColor.green, fontColor.blue, fontColor.alpha)
 
     self:dispatchEvent(self.buttonDownEvent)
 end
@@ -121,22 +127,24 @@ end
 -- トグルボタンかどうか設定します.
 --------------------------------------------------------------------------------
 function M:setToggle(value)
-    self:setPrivate("toggle", value)
+    self:setStyle("toggle", value)
 end
 
 --------------------------------------------------------------------------------
 -- トグルボタンかどうか返します.
 --------------------------------------------------------------------------------
 function M:isToggle()
-    return self:getPrivate("toggle")
+    return self:getStyle("toggle")
 end
 
 --------------------------------------------------------------------------------
 -- サイズ変更時に子の大きさも変更します.
 --------------------------------------------------------------------------------
 function M:onResizeButton(e)
+    local theme = self:getTheme()
     self.background:setSize(e.newWidth, e.newHeight)
-    self.textLabel:setSize(e.newWidth, e.newHeight)
+    self.textLabel:setWidth(e.newWidth - theme.paddingLeft - theme.paddingRight)
+    self.textLabel:setHeight(e.newHeight - theme.paddingTop - theme.paddingBottom)
 end
 
 --------------------------------------------------------------------------------

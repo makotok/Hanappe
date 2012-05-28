@@ -28,6 +28,9 @@ function onCreate(params)
     -- TODO:そのうちListViewに入れ替わる
     scrollView = ScrollView()
     scrollView:setScene(scene)
+    --scrollView:setScreenSize(300, 300)
+    --scrollView:setViewSize(300, 300)
+    --scrollView:setPos(10, 10)
     
     for i, item in ipairs(sceneItems) do
         local graphics = Graphics({width = Application.screenWidth + 1, height = 50})

@@ -29,6 +29,7 @@ function M.createScene(name, params)
     scene.sceneHandler = params.handler or require(name)
     scene.name = name
     scene.sceneHandler.scene = scene
+    params.scene = scene
 
     return scene
 end

@@ -71,7 +71,7 @@
   <object gid="520" x="1280" y="192"/>
   <object name="Men1" type="Actor" gid="514" x="544" y="832">
    <properties>
-    <property name="moveType" value="moveTypeRandom"/>
+    <property name="moveType" value="randomMove"/>
    </properties>
   </object>
  </objectgroup>

@@ -21,13 +21,13 @@ local super = Widget
 ----------------------------------------------------------------
 function M:init(params)
     super.init(self, params)
+    params = params or {}
     
-    params = params or self:getDefaultTheme()
-    assert(params.skin)
+    self:overrideTheme(self:getDefaultTheme())
+    self:overrideTheme(params)
+    local theme = self:getTheme()
     
-    self.skin = params.skin
-    
-    self.background = NinePatch:new({texture = self.skin, width = params.width, height = params.height})
+    self.background = NinePatch:new({texture = theme.skin, width = theme.width, height = theme.height})
     self.background:setLeft(0)
     self.background:setTop(0)
     
@@ -41,8 +41,8 @@ end
 --------------------------------------------------------------------------------
 -- サイズ変更時に子の大きさも変更します.
 --------------------------------------------------------------------------------
-function M:getDefaultTheme()
-    return WidgetManager:getDefaultTheme()["Panel"]
+function M:getThemeName()
+    return "Panel"
 end
 
 --------------------------------------------------------------------------------

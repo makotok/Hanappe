@@ -1,4 +1,5 @@
 local class = require("hp/lang/class")
+local Event = require("hp/event/Event")
 local EventListener = require("hp/event/EventListener")
 
 ----------------------------------------------------------------
@@ -80,6 +81,7 @@ end
 -- イベントをディスパッチします
 ---------------------------------------
 function M:dispatchEvent(event)
+    event = type(event) == "string" and Event(event) or event
     event.stoped = false
     event.target = self.eventTarget or self
     for key, obj in ipairs(self.eventlisteners) do

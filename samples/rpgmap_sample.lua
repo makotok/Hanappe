@@ -34,6 +34,9 @@ function onCreate(params)
     -- player setting
     player = mapView:findPlayerObject()
     player.moveSpeed = 4
+    player:addEventListener("moveStarted", onPlayerMoveStarted)
+    player:addEventListener("moveFinished", onPlayerMoveFinished)
+    player:addEventListener("moveCollision", onPlayerMoveCollision)
     
     -- widget
     view = View:new()
@@ -70,6 +73,18 @@ end
 
 function onButtonATouchDown(e)
     
+end
+
+function onPlayerMoveStarted(e)
+    print("onPlayerMoveStarted")
+end
+
+function onPlayerMoveFinished(e)
+    print("onPlayerMoveFinished")
+end
+
+function onPlayerMoveCollision(e)
+    print("onPlayerMoveCollision", e.collisionMapX, e.collisionMapY)
 end
 
 function onStickChanged(e)

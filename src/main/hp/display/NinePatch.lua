@@ -47,6 +47,9 @@ function M:new(params)
     
     prop:setPrivate("width", 0)
     prop:setPrivate("height", 0)
+    prop:setPrivate("sclX", 1)
+    prop:setPrivate("sclY", 1)
+    prop:setPrivate("sclZ", 1)
 
     prop:copyParams(params)
     
@@ -68,10 +71,16 @@ function M:copyParams(params)
     DisplayObject.copyParams(self, params)
 end
 
+--------------------------------------------------------------------------------
+--サイズを設定します.
+--------------------------------------------------------------------------------
 function M:setWidth(width)
     self:setSize(width, self:getHeight())
 end
 
+--------------------------------------------------------------------------------
+--サイズを設定します.
+--------------------------------------------------------------------------------
 function M:setHeight(height)
     self:setSize(self:getWidth(), height)
 end
@@ -99,16 +108,30 @@ end
 -- スケールを設定します.
 --------------------------------------------------------------------------------
 function M:setScl(x, y, z)
-    local tw, th = self.texture:getSize()
-    local width, height = self:getSize()
+    self:setPrivate("sclX", x)
+    self:setPrivate("sclX", y)
+    self:setPrivate("sclX", z)
+    
     local sclX, sclY, sclZ = self:getOrignScl()
     sclX, sclY, sclZ = sclX * x, sclY * y, sclZ * z
     self:setOrignScl(sclX, sclY, sclZ)
 end
 
+--------------------------------------------------------------------------------
+-- スケールを返します.
+--------------------------------------------------------------------------------
 function M:getScl()
-    -- TODO
-    return 1, 1, 1
+    return self:getPrivate("sclX"), self:getPrivate("sclY"), self:getPrivate("sclZ")
+end
+
+--------------------------------------------------------------------------------
+-- スケールを移動します.
+-- TODO:おそらく上手くいかない。実装方法の検討が必要。
+--------------------------------------------------------------------------------
+function M:seekScl(x, y, z, sec, mode)
+    local sclX, sclY, sclZ = self:getOrignScl()
+    sclX, sclY, sclZ = sclX * x, sclY * y, sclZ * z
+    return self:seekScl(sclX, sclY, sclZ, sec, mode)
 end
 
 --------------------------------------------------------------------------------

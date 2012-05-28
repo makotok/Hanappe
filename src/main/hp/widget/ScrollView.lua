@@ -5,13 +5,10 @@ local Event = require("hp/event/Event")
 local View = require("hp/widget/View")
 
 ----------------------------------------------------------------
--- Widgetを格納するViewコンテナです.<br>
--- 全てのウィジットはViewに追加します.<br>
--- <br>
--- また、ViewにViewを追加する事もできます.<br>
--- その場合、自身の描画後に子のViewが描画されます.<br>
+-- スクロールするViewです.<br>
+-- スクロール範囲内で、ユーザ操作によりスクロールします.<br>
 -- @class table
--- @name View
+-- @name ScrollView
 ----------------------------------------------------------------
 local M = class(View)
 
