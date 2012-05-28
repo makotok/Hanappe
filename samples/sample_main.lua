@@ -14,6 +14,7 @@ local sceneItems = {
     {text = "moai", scene = "samples/moai_sample"},
     {text = "joystick", scene = "samples/stick_sample"},
     {text = "button", scene = "samples/button_sample", animation = "fade"},
+    {text = "radiobutton", scene = "samples/radiobutton_sample", animation = "fade"},
     {text = "panel", scene = "samples/panel_sample", animation = "fade"},
     {text = "messagebox", scene = "samples/messagebox_sample", animation = "fade"},
     {text = "scrollview", scene = "samples/scrollview_sample", animation = "fade"},

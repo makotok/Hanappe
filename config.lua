@@ -5,8 +5,8 @@ package.path = package.path .. ';src/main/?.lua'
 -- Hanappe Application config
 local config = {
     title = "hanappe samples",
-    -- iPhone 3GS
     
+    -- iPhone 3GS
     screenWidth = 320,
     screenHeight = 480,
     viewWidth = 320,
@@ -27,6 +27,7 @@ local config = {
     viewWidth = 768,
     viewHeight = 1024,
     --]]
+    
     landscape = false,
     showWindow = true,
     useInputManager = true,

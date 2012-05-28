@@ -32,7 +32,7 @@ M.RadioButton = table.deepCopy(
     paddingLeft = 0,
     paddingBottom = 0,
     paddingRight = 0,
-})
+}, M.RadioButton)
 
 --------------------------------------------------------------------------------
 M.CheckBox = table.deepCopy(M.Button)
@@ -46,7 +46,7 @@ M.CheckBox = table.deepCopy(
     paddingLeft = 0,
     paddingBottom = 0,
     paddingRight = 0,
-})
+}, M.CheckBox)
 
 --------------------------------------------------------------------------------
 M.Panel = {

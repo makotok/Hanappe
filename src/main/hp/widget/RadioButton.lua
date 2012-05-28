@@ -18,9 +18,16 @@ local M = class(super)
 function M:init(params)
     super.init(self, params)
     self.textLabel:setLeft(self.background:getRight())
-    self.toggle = true
+    self:setToggle(true)
     
-    self:addEventListener(Event.BUTTON_DOWN, self.onRadioButtonDown, self, Event.PRIORITY_DEFAULT - 10)
+    self:addEventListener(Event.BUTTON_DOWN, self.onRadioButtonDown, self)
+end
+
+----------------------------------------------------------------
+-- テーマ名を返します.
+----------------------------------------------------------------
+function M:getThemeName()
+    return "RadioButton"
 end
 
 ----------------------------------------------------------------
@@ -33,9 +40,24 @@ end
 --------------------------------------------------------------------------------
 -- ボタンの押下後のイベントハンドラです.
 --------------------------------------------------------------------------------
-function M:onRadioButtonDown()
-    if self.radioGroup then
-        self.radioGroup:setSelectedButton(self)
+function M:onTouchDown(e)
+    if not self:isEnabled() then
+        return
+    end
+    
+    local wx, wy = self.layer:wndToWorld(e.x, e.y, 0)
+    if self:isHit(wx, wy, 0, self.background) then
+        self.buttonTouching = true
+        self:setButtonDownState()
+    end
+end
+
+--------------------------------------------------------------------------------
+-- ボタンの押下後のイベントハンドラです.
+--------------------------------------------------------------------------------
+function M:onRadioButtonDown(e)
+    if self:getRadioGroup() then
+        self:getRadioGroup():setSelectedItem(self)
     end
 end
 
@@ -61,7 +83,26 @@ end
 -- ラジオボタンのグループを設定します.
 ----------------------------------------------------------------
 function M:setRadioGroup(radioGroup)
-    self.radioGroup = radioGroup
+    if self:getRadioGroup() == radioGroup then
+        return
+    end
+
+    if self:getRadioGroup() then
+        local group = self:getRadioGroup()
+        group:removeChild(self)
+    end
+    self:setPrivate("radioGroup", radioGroup)
+    if self:getRadioGroup() then
+        local group = self:getRadioGroup()
+        group:addChild(self)
+    end
+end
+
+----------------------------------------------------------------
+-- ラジオボタンのグループを返します.
+----------------------------------------------------------------
+function M:getRadioGroup()
+    return self:getPrivate("radioGroup")
 end
 
 return M

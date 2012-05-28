@@ -1,48 +1,72 @@
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
-local Event = require("hp/event/Event")
-local Button = require("hp/widget/Button")
-local Widget = require("hp/widget/Widget")
 
 ----------------------------------------------------------------
 -- ラジオボタンウィジットクラスです.<br>
 -- @class table
 -- @name RadioButton
 ----------------------------------------------------------------
-local super = Button
-local M = class(super)
+local M = class()
 
 ----------------------------------------------------------------
 -- インスタンスを生成して返します.
 ----------------------------------------------------------------
-function M:init(params)
-    super.init(self, params)
-    self.textLabel:setLeft(self.background:getRight())
-    self.toggle = true
+function M:init()
+    self:setPrivate("selectedItem", nil)
+    self:setPrivate("children", {})
 end
 
 ----------------------------------------------------------------
--- 使用するべきでない関数を除外します.
+-- ラジオボタンリストを返します.
 ----------------------------------------------------------------
-function M:excludeFunctions()
-    super.excludeFunctions(self)
+function M:getChildren()
+    return self:getPrivate("children")
 end
 
 ----------------------------------------------------------------
--- ラジオボタンが選択済かどうか返します.
+-- ラジオボタンを追加します.
 ----------------------------------------------------------------
-function M:isSelected()
-    return self.touchDownFlag
+function M:addChild(child)
+    local children = self:getChildren()
+    local added = table.insertElement(children, child)
+    if added then
+        child:setRadioGroup(self)
+    end
 end
 
 ----------------------------------------------------------------
--- ラジオボタンが選択済かどうか設定します.
+-- ラジオボタンを削除します.
 ----------------------------------------------------------------
-function M:setSelected(value)
-    if value then
-        self:setButtonDownState()
-    else
-        self:setButtonUpState()
+function M:removeChild(child)
+    local children = self:getChildren()
+    local removed = table.removeElement(children, child)
+    if removed then
+        child:setRadioGroup(nil)
+    end
+end
+
+
+----------------------------------------------------------------
+-- 選択済のラジオボタンを返します.
+----------------------------------------------------------------
+function M:getSelectedItem()
+    return self:getPrivate("selectedItem")
+end
+
+----------------------------------------------------------------
+-- 選択済のラジオボタンを設定します.
+----------------------------------------------------------------
+function M:setSelectedItem(item)
+    if self:getSelectedItem() == item then
+        return
+    end
+    
+    self:setPrivate("selectedItem", item)
+    item:setSelected(true)
+    for i, child in ipairs(self:getChildren()) do
+        if child ~= item then
+            child:setSelected(false)
+        end
     end
 end
 
