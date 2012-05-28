@@ -142,7 +142,6 @@ end
 
 ---------------------------------------
 -- スクリーンとViewportのベーススケールを返します.
--- 
 ---------------------------------------
 function M:getViewScale()
     return self.screenWidth / self.viewWidth, self.screenHeight / self.viewHeight

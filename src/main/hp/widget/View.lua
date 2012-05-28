@@ -4,6 +4,7 @@ local Application = require("hp/Application")
 local Layer = require("hp/display/Layer")
 local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
+local ThemeClient = require("hp/widget/ThemeClient")
 
 ----------------------------------------------------------------
 -- Widgetを格納するViewコンテナです.<br>
@@ -14,7 +15,7 @@ local EventDispatcher = require("hp/event/EventDispatcher")
 -- @class table
 -- @name View
 ----------------------------------------------------------------
-local M = class(Layer, EventDispatcher)
+local M = class(Layer, EventDispatcher, ThemeClient)
 
 local super = Layer
 
@@ -24,6 +25,7 @@ local super = Layer
 function M:new(params)
     local obj = Layer.new(self)
     EventDispatcher.init(obj)
+    ThemeClient.init(obj)
 
     if obj.init then
         obj:init(params)

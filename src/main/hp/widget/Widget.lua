@@ -4,6 +4,7 @@ local Group = require("hp/display/Group")
 local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
 local WidgetManager = require("hp/manager/WidgetManager")
+local ThemeClient = require("hp/widget/ThemeClient")
 
 --------------------------------------------------------------------------------
 -- 全てのWidgetが継承すべきクラスです.<br>
@@ -13,7 +14,7 @@ local WidgetManager = require("hp/manager/WidgetManager")
 -- @class table
 -- @name Widget
 --------------------------------------------------------------------------------
-local M = class(Group, EventDispatcher)
+local M = class(Group, EventDispatcher, ThemeClient)
 
 --------------------------------------------------------------------------------
 -- インスタンスを生成して返します.
@@ -21,6 +22,7 @@ local M = class(Group, EventDispatcher)
 function M:new(params)
     local obj = Group.new(self)
     EventDispatcher.init(obj)
+    ThemeClient.init(obj)
     
     if obj.init then
         obj:init(params)
@@ -38,7 +40,6 @@ end
 --------------------------------------------------------------------------------
 function M:init(params)
     self:setPrivate("enabled", true)
-    self:setPrivate("theme", {})
 end
 
 ----------------------------------------------------------------
@@ -54,59 +55,6 @@ function M:excludeFunctions()
     self.new = nil
     self.init = nil
     self.excludeFunctions = nil
-end
-
-----------------------------------------------------------------
--- ウィジットのテーマを取得します.
-----------------------------------------------------------------
-function M:getTheme()
-    return self:getPrivate("theme")
-end
-
-----------------------------------------------------------------
--- ウィジットのテーマを設定します.
-----------------------------------------------------------------
-function M:setTheme(theme)
-    self:setPrivate("theme", theme)
-end
-
-----------------------------------------------------------------
--- ウィジットのテーマを上書きします.
-----------------------------------------------------------------
-function M:overrideTheme(theme)
-    return table.deepCopy(theme or {}, self:getTheme())
-end
-
-----------------------------------------------------------------
--- ウィジットのテーマ名を返します.
--- デフォルトではないので空です.
--- 継承側で定義する必要があります.
-----------------------------------------------------------------
-function M:getThemeName()
-    return ""
-end
-
---------------------------------------------------------------------------------
--- デフォルトテーマを返します.
---------------------------------------------------------------------------------
-function M:getDefaultTheme()
-    return WidgetManager:getDefaultTheme()[self:getThemeName()]
-end
-
---------------------------------------------------------------------------------
--- スタイルを設定します.
--- スタイルは、テーマのパラメータです.
---------------------------------------------------------------------------------
-function M:setStyle(name, value)
-    local theme = self:getTheme()
-    theme[name] = value
-end
-
---------------------------------------------------------------------------------
--- スタイルを返します.
---------------------------------------------------------------------------------
-function M:getStyle(name)
-    return self:getTheme()[name]
 end
 
 --------------------------------------------------------------------------------

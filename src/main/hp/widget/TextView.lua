@@ -9,6 +9,7 @@ local WidgetManager = require("hp/manager/WidgetManager")
 
 ----------------------------------------------------------------
 -- テキストをスクロールして表示するViewクラスです.<br>
+-- TODO:まだ実装中
 -- @class table
 -- @name TextView
 ----------------------------------------------------------------
@@ -21,10 +22,13 @@ local super = ScrollView
 ----------------------------------------------------------------
 function M:init(params)
     super.init(self, params)
+    params = params or {}
     
-    params = params or self:getDefaultTheme()
+    self:overrideTheme(self:getDefaultTheme())
+    self:overrideTheme(params)
+    local theme = self:getTheme()
     
-    self.textLabel = TextLabel:new({text = params.text, textSize = params.fontSize})
+    self.textLabel = TextLabel({text = theme.text, textSize = theme.fontSize})
     self:updateTextLabel()
     self:addChild(self.textLabel)
 end
@@ -32,8 +36,8 @@ end
 --------------------------------------------------------------------------------
 -- サイズ変更時に子の大きさも変更します.
 --------------------------------------------------------------------------------
-function M:getDefaultTheme()
-    return WidgetManager:getDefaultTheme()["TextView"]
+function M:getThemeName()
+    return "TextView"
 end
 
 --------------------------------------------------------------------------------
