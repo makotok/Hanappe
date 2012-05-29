@@ -215,9 +215,9 @@ end
 ---------------------------------------
 -- 画面をタッチした時のイベント処理です.
 ---------------------------------------
-function M:onSceneTouchCancel(event)
-    if self.sceneHandler.onSceneTouchCancel then
-        self.sceneHandler.onSceneTouchCancel(event)
+function M:onTouchCancel(event)
+    if self.sceneHandler.onTouchCancel then
+        self.sceneHandler.onTouchCancel(event)
     end
     if self:hasEventListener(Event.TOUCH_CANCEL) then
         self:dispatchEvent(table.copy(event, Event:new()))

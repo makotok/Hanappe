@@ -95,6 +95,30 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/dungeon/DungeonMap.html">hp/dungeon/DungeonMap.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonMapBuilder.html">hp/dungeon/DungeonMapBuilder.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonObject.html">hp/dungeon/DungeonObject.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRange.html">hp/dungeon/DungeonRange.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRoad.html">hp/dungeon/DungeonRoad.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRoom.html">hp/dungeon/DungeonRoom.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/event/Event.html">hp/event/Event.lua</a>
 	</li>
 
@@ -131,7 +155,23 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/lang/proxy.html">hp/lang/proxy.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/BoxLayout.html">hp/layout/BoxLayout.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/HBoxLayout.html">hp/layout/HBoxLayout.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/VBoxLayout.html">hp/layout/VBoxLayout.lua</a>
 	</li>
 
 	<li>
@@ -191,6 +231,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/CompareUtil.html">hp/util/CompareUtil.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/util/Logger.html">hp/util/Logger.lua</a>
 	</li>
 
@@ -198,10 +242,26 @@
 		<a href="../../../files/hp/util/MOAIPropUtil.html">hp/util/MOAIPropUtil.lua</a>
 	</li>
 
+	<li>
+		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
 	<li><strong>hp/widget/Button.lua</strong></li>
 	
 	<li>
+		<a href="../../../files/hp/widget/HScrollBar.html">hp/widget/HScrollBar.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/Joystick.html">hp/widget/Joystick.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/MessageBox.html">hp/widget/MessageBox.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/Panel.html">hp/widget/Panel.lua</a>
 	</li>
 
 	<li>
@@ -213,7 +273,31 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/widget/ScrollBarBase.html">hp/widget/ScrollBarBase.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ScrollView.html">hp/widget/ScrollView.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/TextView.html">hp/widget/TextView.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ThemeClient.html">hp/widget/ThemeClient.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/VScrollBar.html">hp/widget/VScrollBar.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ViewGroup.html">hp/widget/ViewGroup.lua</a>
 	</li>
 
 	<li>
@@ -243,13 +327,23 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:getDefaultTheme">M:getDefaultTheme</a>&nbsp;()</td>
-	<td class="summary">サイズ変更時に子の大きさも変更します.</td>
+	<td class="name" nowrap><a href="#M:getThemeName">M:getThemeName</a>&nbsp;()</td>
+	<td class="summary">テーマ名を返します.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
 	<td class="summary">インスタンスを生成して返します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:isToggle">M:isToggle</a>&nbsp;()</td>
+	<td class="summary">トグルボタンかどうか返します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:onResizeButton">M:onResizeButton</a>&nbsp;(e)</td>
+	<td class="summary">サイズ変更時に子の大きさも変更します.</td>
 	</tr>
 
 	<tr>
@@ -283,23 +377,23 @@
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:setHeight">M:setHeight</a>&nbsp;(height)</td>
-	<td class="summary">サイズ変更時に子の大きさも変更します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setSize">M:setSize</a>&nbsp;(width, height)</td>
-	<td class="summary">サイズ変更時に子の大きさも変更します.</td>
-	</tr>
-
-	<tr>
 	<td class="name" nowrap><a href="#M:setText">M:setText</a>&nbsp;(text)</td>
 	<td class="summary">テキストを設定します.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:setWidth">M:setWidth</a>&nbsp;(width)</td>
-	<td class="summary">サイズ変更時に子の大きさも変更します.</td>
+	<td class="name" nowrap><a href="#M:setTextColor">M:setTextColor</a>&nbsp;(r, g, b, a)</td>
+	<td class="summary">テキストの色を設定します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setTextSize">M:setTextSize</a>&nbsp;(points, dpi)</td>
+	<td class="summary">テキストサイズを設定します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setToggle">M:setToggle</a>&nbsp;(value)</td>
+	<td class="summary">トグルボタンかどうか設定します.</td>
 	</tr>
 
 </table>
@@ -330,9 +424,9 @@
 
 
 
-<dt><a name="M:getDefaultTheme"></a><strong>M:getDefaultTheme</strong>&nbsp;()</dt>
+<dt><a name="M:getThemeName"></a><strong>M:getThemeName</strong>&nbsp;()</dt>
 <dd>
-サイズ変更時に子の大きさも変更します. 
+テーマ名を返します. 
 
 
 
@@ -357,6 +451,49 @@
 	
 	<li>
 	  params: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:isToggle"></a><strong>M:isToggle</strong>&nbsp;()</dt>
+<dd>
+トグルボタンかどうか返します. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:onResizeButton"></a><strong>M:onResizeButton</strong>&nbsp;(e)</dt>
+<dd>
+サイズ変更時に子の大きさも変更します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  e: 
 	</li>
 	
 </ul>
@@ -511,62 +648,6 @@
 
 
 
-<dt><a name="M:setHeight"></a><strong>M:setHeight</strong>&nbsp;(height)</dt>
-<dd>
-サイズ変更時に子の大きさも変更します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  height: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setSize"></a><strong>M:setSize</strong>&nbsp;(width, height)</dt>
-<dd>
-サイズ変更時に子の大きさも変更します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  width: 
-	</li>
-	
-	<li>
-	  height: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
 <dt><a name="M:setText"></a><strong>M:setText</strong>&nbsp;(text)</dt>
 <dd>
 テキストを設定します. 
@@ -593,16 +674,84 @@
 
 
 
-<dt><a name="M:setWidth"></a><strong>M:setWidth</strong>&nbsp;(width)</dt>
+<dt><a name="M:setTextColor"></a><strong>M:setTextColor</strong>&nbsp;(r, g, b, a)</dt>
 <dd>
-サイズ変更時に子の大きさも変更します. 
+テキストの色を設定します. 
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  width: 
+	  r: 
+	</li>
+	
+	<li>
+	  g: 
+	</li>
+	
+	<li>
+	  b: 
+	</li>
+	
+	<li>
+	  a: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setTextSize"></a><strong>M:setTextSize</strong>&nbsp;(points, dpi)</dt>
+<dd>
+テキストサイズを設定します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  points: 
+	</li>
+	
+	<li>
+	  dpi: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setToggle"></a><strong>M:setToggle</strong>&nbsp;(value)</dt>
+<dd>
+トグルボタンかどうか設定します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  value: 
 	</li>
 	
 </ul>

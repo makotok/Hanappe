@@ -95,6 +95,30 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/dungeon/DungeonMap.html">hp/dungeon/DungeonMap.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonMapBuilder.html">hp/dungeon/DungeonMapBuilder.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonObject.html">hp/dungeon/DungeonObject.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRange.html">hp/dungeon/DungeonRange.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRoad.html">hp/dungeon/DungeonRoad.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRoom.html">hp/dungeon/DungeonRoom.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/event/Event.html">hp/event/Event.lua</a>
 	</li>
 
@@ -131,7 +155,23 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/lang/proxy.html">hp/lang/proxy.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/BoxLayout.html">hp/layout/BoxLayout.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/HBoxLayout.html">hp/layout/HBoxLayout.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/VBoxLayout.html">hp/layout/VBoxLayout.lua</a>
 	</li>
 
 	<li>
@@ -191,6 +231,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/CompareUtil.html">hp/util/CompareUtil.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/util/Logger.html">hp/util/Logger.lua</a>
 	</li>
 
@@ -199,11 +243,27 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/Button.html">hp/widget/Button.lua</a>
 	</li>
 
 	<li>
+		<a href="../../../files/hp/widget/HScrollBar.html">hp/widget/HScrollBar.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/Joystick.html">hp/widget/Joystick.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/MessageBox.html">hp/widget/MessageBox.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/Panel.html">hp/widget/Panel.lua</a>
 	</li>
 
 	<li>
@@ -215,7 +275,31 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/widget/ScrollBarBase.html">hp/widget/ScrollBarBase.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ScrollView.html">hp/widget/ScrollView.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/TextView.html">hp/widget/TextView.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ThemeClient.html">hp/widget/ThemeClient.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/VScrollBar.html">hp/widget/VScrollBar.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ViewGroup.html">hp/widget/ViewGroup.lua</a>
 	</li>
 
 	<li><strong>hp/widget/Widget.lua</strong></li>
@@ -299,22 +383,22 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onTouchCancel">M:onTouchCancel</a>&nbsp;(e)</td>
-	<td class="summary">タッチした時のイベントリスナです.</td>
+	<td class="summary">Sceneをタッチした時のイベントリスナです.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onTouchDown">M:onTouchDown</a>&nbsp;(e)</td>
-	<td class="summary">タッチした時のイベントリスナです.</td>
+	<td class="summary">Sceneをタッチした時のイベントリスナです.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onTouchMove">M:onTouchMove</a>&nbsp;(e)</td>
-	<td class="summary">タッチした時のイベントリスナです.</td>
+	<td class="summary">Sceneをタッチした時のイベントリスナです.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onTouchUp">M:onTouchUp</a>&nbsp;(e)</td>
-	<td class="summary">タッチした時のイベントリスナです.</td>
+	<td class="summary">Sceneをタッチした時のイベントリスナです.</td>
 	</tr>
 
 	<tr>
@@ -332,6 +416,11 @@
 	<td class="summary">レイヤーを設定します.</td>
 	</tr>
 
+	<tr>
+	<td class="name" nowrap><a href="#M:setSize">M:setSize</a>&nbsp;(width, height)</td>
+	<td class="summary">サイズ変更時に子の大きさも変更します.</td>
+	</tr>
+
 </table>
 
 
@@ -342,7 +431,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#Widget ">Widget </a></td>
-	<td class="summary">全てのWidgetが継承すべきクラスです.<br> ウィジットの基本となる機能を提供します.<br> <br> ウィジットを使用する場合の制約として、Sceneクラスを使用する必要があります.<br> Scene上にウィジットを構築する事により、面倒な実装を回避できます.<br> Scene上にウィジットを構築しない場合、イベントのトリガーを自前で行う必要があります.</td>
+	<td class="summary">全てのWidgetが継承すべきクラスです.<br> ウィジットの基本となる機能を提供します.<br> <br> ウィジットはViewに追加して使用します.<br> </td>
 	</tr>
 
 </table>
@@ -614,7 +703,7 @@
 
 <dt><a name="M:onTouchCancel"></a><strong>M:onTouchCancel</strong>&nbsp;(e)</dt>
 <dd>
-タッチした時のイベントリスナです. 
+Sceneをタッチした時のイベントリスナです. 
 
 
 <h3>Parameters</h3>
@@ -640,7 +729,7 @@
 
 <dt><a name="M:onTouchDown"></a><strong>M:onTouchDown</strong>&nbsp;(e)</dt>
 <dd>
-タッチした時のイベントリスナです. 
+Sceneをタッチした時のイベントリスナです. 
 
 
 <h3>Parameters</h3>
@@ -666,7 +755,7 @@
 
 <dt><a name="M:onTouchMove"></a><strong>M:onTouchMove</strong>&nbsp;(e)</dt>
 <dd>
-タッチした時のイベントリスナです. 
+Sceneをタッチした時のイベントリスナです. 
 
 
 <h3>Parameters</h3>
@@ -692,7 +781,7 @@
 
 <dt><a name="M:onTouchUp"></a><strong>M:onTouchUp</strong>&nbsp;(e)</dt>
 <dd>
-タッチした時のイベントリスナです. 
+Sceneをタッチした時のイベントリスナです. 
 
 
 <h3>Parameters</h3>
@@ -783,6 +872,36 @@
 </dd>
 
 
+
+
+<dt><a name="M:setSize"></a><strong>M:setSize</strong>&nbsp;(width, height)</dt>
+<dd>
+サイズ変更時に子の大きさも変更します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  width: 
+	</li>
+	
+	<li>
+	  height: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
 </dl>
 
 
@@ -792,7 +911,7 @@
 <dl class="table">
 
 <dt><a name="Widget "></a><strong>Widget </strong></dt>
-<dd>全てのWidgetが継承すべきクラスです.<br> ウィジットの基本となる機能を提供します.<br> <br> ウィジットを使用する場合の制約として、Sceneクラスを使用する必要があります.<br> Scene上にウィジットを構築する事により、面倒な実装を回避できます.<br> Scene上にウィジットを構築しない場合、イベントのトリガーを自前で行う必要があります.
+<dd>全てのWidgetが継承すべきクラスです.<br> ウィジットの基本となる機能を提供します.<br> <br> ウィジットはViewに追加して使用します.<br>
 
 
 

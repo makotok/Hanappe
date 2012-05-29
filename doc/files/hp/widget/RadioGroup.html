@@ -95,6 +95,30 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/dungeon/DungeonMap.html">hp/dungeon/DungeonMap.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonMapBuilder.html">hp/dungeon/DungeonMapBuilder.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonObject.html">hp/dungeon/DungeonObject.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRange.html">hp/dungeon/DungeonRange.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRoad.html">hp/dungeon/DungeonRoad.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRoom.html">hp/dungeon/DungeonRoom.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/event/Event.html">hp/event/Event.lua</a>
 	</li>
 
@@ -131,7 +155,23 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/lang/proxy.html">hp/lang/proxy.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/BoxLayout.html">hp/layout/BoxLayout.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/HBoxLayout.html">hp/layout/HBoxLayout.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/VBoxLayout.html">hp/layout/VBoxLayout.lua</a>
 	</li>
 
 	<li>
@@ -191,6 +231,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/CompareUtil.html">hp/util/CompareUtil.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/util/Logger.html">hp/util/Logger.lua</a>
 	</li>
 
@@ -199,11 +243,27 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/Button.html">hp/widget/Button.lua</a>
 	</li>
 
 	<li>
+		<a href="../../../files/hp/widget/HScrollBar.html">hp/widget/HScrollBar.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/Joystick.html">hp/widget/Joystick.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/MessageBox.html">hp/widget/MessageBox.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/Panel.html">hp/widget/Panel.lua</a>
 	</li>
 
 	<li>
@@ -213,7 +273,31 @@
 	<li><strong>hp/widget/RadioGroup.lua</strong></li>
 	
 	<li>
+		<a href="../../../files/hp/widget/ScrollBarBase.html">hp/widget/ScrollBarBase.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ScrollView.html">hp/widget/ScrollView.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/TextView.html">hp/widget/TextView.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ThemeClient.html">hp/widget/ThemeClient.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/VScrollBar.html">hp/widget/VScrollBar.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ViewGroup.html">hp/widget/ViewGroup.lua</a>
 	</li>
 
 	<li>
@@ -243,23 +327,33 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:excludeFunctions">M:excludeFunctions</a>&nbsp;()</td>
-	<td class="summary">使用するべきでない関数を除外します.</td>
+	<td class="name" nowrap><a href="#M:addChild">M:addChild</a>&nbsp;(child)</td>
+	<td class="summary">ラジオボタンを追加します.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
+	<td class="name" nowrap><a href="#M:getChildren">M:getChildren</a>&nbsp;()</td>
+	<td class="summary">ラジオボタンリストを返します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:getSelectedItem">M:getSelectedItem</a>&nbsp;()</td>
+	<td class="summary">選択済のラジオボタンを返します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;()</td>
 	<td class="summary">インスタンスを生成して返します.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:isSelected">M:isSelected</a>&nbsp;()</td>
-	<td class="summary">ラジオボタンが選択済かどうか返します.</td>
+	<td class="name" nowrap><a href="#M:removeChild">M:removeChild</a>&nbsp;(child)</td>
+	<td class="summary">ラジオボタンを削除します.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:setSelected">M:setSelected</a>&nbsp;(value)</td>
-	<td class="summary">ラジオボタンが選択済かどうか設定します.</td>
+	<td class="name" nowrap><a href="#M:setSelectedItem">M:setSelectedItem</a>&nbsp;(item)</td>
+	<td class="summary">選択済のラジオボタンを設定します.</td>
 	</tr>
 
 </table>
@@ -290,33 +384,16 @@
 
 
 
-<dt><a name="M:excludeFunctions"></a><strong>M:excludeFunctions</strong>&nbsp;()</dt>
+<dt><a name="M:addChild"></a><strong>M:addChild</strong>&nbsp;(child)</dt>
 <dd>
-使用するべきでない関数を除外します. 
-
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
-<dd>
-インスタンスを生成して返します. 
+ラジオボタンを追加します. 
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  child: 
 	</li>
 	
 </ul>
@@ -333,9 +410,9 @@
 
 
 
-<dt><a name="M:isSelected"></a><strong>M:isSelected</strong>&nbsp;()</dt>
+<dt><a name="M:getChildren"></a><strong>M:getChildren</strong>&nbsp;()</dt>
 <dd>
-ラジオボタンが選択済かどうか返します. 
+ラジオボタンリストを返します. 
 
 
 
@@ -350,16 +427,76 @@
 
 
 
-<dt><a name="M:setSelected"></a><strong>M:setSelected</strong>&nbsp;(value)</dt>
+<dt><a name="M:getSelectedItem"></a><strong>M:getSelectedItem</strong>&nbsp;()</dt>
 <dd>
-ラジオボタンが選択済かどうか設定します. 
+選択済のラジオボタンを返します. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;()</dt>
+<dd>
+インスタンスを生成して返します. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:removeChild"></a><strong>M:removeChild</strong>&nbsp;(child)</dt>
+<dd>
+ラジオボタンを削除します. 
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  value: 
+	  child: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setSelectedItem"></a><strong>M:setSelectedItem</strong>&nbsp;(item)</dt>
+<dd>
+選択済のラジオボタンを設定します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  item: 
 	</li>
 	
 </ul>

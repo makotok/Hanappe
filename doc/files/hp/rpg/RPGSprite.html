@@ -95,6 +95,30 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/dungeon/DungeonMap.html">hp/dungeon/DungeonMap.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonMapBuilder.html">hp/dungeon/DungeonMapBuilder.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonObject.html">hp/dungeon/DungeonObject.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRange.html">hp/dungeon/DungeonRange.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRoad.html">hp/dungeon/DungeonRoad.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRoom.html">hp/dungeon/DungeonRoom.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/event/Event.html">hp/event/Event.lua</a>
 	</li>
 
@@ -131,7 +155,23 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/lang/proxy.html">hp/lang/proxy.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/BoxLayout.html">hp/layout/BoxLayout.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/HBoxLayout.html">hp/layout/HBoxLayout.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/VBoxLayout.html">hp/layout/VBoxLayout.lua</a>
 	</li>
 
 	<li>
@@ -189,6 +229,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/CompareUtil.html">hp/util/CompareUtil.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/util/Logger.html">hp/util/Logger.lua</a>
 	</li>
 
@@ -197,11 +241,27 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/Button.html">hp/widget/Button.lua</a>
 	</li>
 
 	<li>
+		<a href="../../../files/hp/widget/HScrollBar.html">hp/widget/HScrollBar.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/Joystick.html">hp/widget/Joystick.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/MessageBox.html">hp/widget/MessageBox.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/Panel.html">hp/widget/Panel.lua</a>
 	</li>
 
 	<li>
@@ -213,7 +273,31 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/widget/ScrollBarBase.html">hp/widget/ScrollBarBase.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ScrollView.html">hp/widget/ScrollView.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/TextView.html">hp/widget/TextView.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ThemeClient.html">hp/widget/ThemeClient.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/VScrollBar.html">hp/widget/VScrollBar.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ViewGroup.html">hp/widget/ViewGroup.lua</a>
 	</li>
 
 	<li>
@@ -303,11 +387,6 @@
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:moveTypeRandom">M:moveTypeRandom</a>&nbsp;()</td>
-	<td class="summary">ランダム移動処理を行います.</td>
-	</tr>
-
-	<tr>
 	<td class="name" nowrap><a href="#M:new">M:new</a>&nbsp;(params)</td>
 	<td class="summary">インスタンスを生成して返します.<br> </td>
 	</tr>
@@ -315,6 +394,21 @@
 	<tr>
 	<td class="name" nowrap><a href="#M:onEnterFrame">M:onEnterFrame</a>&nbsp;()</td>
 	<td class="summary">フレーム更新処理を行います.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:onMoveCollision">M:onMoveCollision</a>&nbsp;()</td>
+	<td class="summary">移動で衝突した時に呼ばれます.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:onMoveFinished">M:onMoveFinished</a>&nbsp;()</td>
+	<td class="summary">移動完了時に呼ばれます.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:onMoveStarted">M:onMoveStarted</a>&nbsp;()</td>
+	<td class="summary">移動開始時に呼ばれます.</td>
 	</tr>
 
 	<tr>
@@ -463,7 +557,7 @@
 
 <dt><a name="M:moveMapCommon"></a><strong>M:moveMapCommon</strong>&nbsp;(mapX, mapY, moveAnim)</dt>
 <dd>
-マップ上の座標を移動する共通処理です. 
+マップ上の座標を移動する共通処理です. TODO:リファクタリング 
 
 
 <h3>Parameters</h3>
@@ -580,23 +674,6 @@
 
 
 
-<dt><a name="M:moveTypeRandom"></a><strong>M:moveTypeRandom</strong>&nbsp;()</dt>
-<dd>
-ランダム移動処理を行います. 
-
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
 <dt><a name="M:new"></a><strong>M:new</strong>&nbsp;(params)</dt>
 <dd>
 インスタンスを生成して返します.<br>
@@ -629,6 +706,57 @@
 <dt><a name="M:onEnterFrame"></a><strong>M:onEnterFrame</strong>&nbsp;()</dt>
 <dd>
 フレーム更新処理を行います. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:onMoveCollision"></a><strong>M:onMoveCollision</strong>&nbsp;()</dt>
+<dd>
+移動で衝突した時に呼ばれます. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:onMoveFinished"></a><strong>M:onMoveFinished</strong>&nbsp;()</dt>
+<dd>
+移動完了時に呼ばれます. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:onMoveStarted"></a><strong>M:onMoveStarted</strong>&nbsp;()</dt>
+<dd>
+移動開始時に呼ばれます. 
 
 
 

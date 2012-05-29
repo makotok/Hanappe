@@ -95,6 +95,30 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/dungeon/DungeonMap.html">hp/dungeon/DungeonMap.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonMapBuilder.html">hp/dungeon/DungeonMapBuilder.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonObject.html">hp/dungeon/DungeonObject.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRange.html">hp/dungeon/DungeonRange.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRoad.html">hp/dungeon/DungeonRoad.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/dungeon/DungeonRoom.html">hp/dungeon/DungeonRoom.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/event/Event.html">hp/event/Event.lua</a>
 	</li>
 
@@ -130,8 +154,24 @@
 		<a href="../../../files/hp/lang/math.html">hp/lang/math.lua</a>
 	</li>
 
+	<li>
+		<a href="../../../files/hp/lang/proxy.html">hp/lang/proxy.lua</a>
+	</li>
+
 	<li><strong>hp/lang/table.lua</strong></li>
 	
+	<li>
+		<a href="../../../files/hp/layout/BoxLayout.html">hp/layout/BoxLayout.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/HBoxLayout.html">hp/layout/HBoxLayout.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/layout/VBoxLayout.html">hp/layout/VBoxLayout.lua</a>
+	</li>
+
 	<li>
 		<a href="../../../files/hp/manager/FontManager.html">hp/manager/FontManager.lua</a>
 	</li>
@@ -189,6 +229,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/CompareUtil.html">hp/util/CompareUtil.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/util/Logger.html">hp/util/Logger.lua</a>
 	</li>
 
@@ -197,11 +241,27 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/Button.html">hp/widget/Button.lua</a>
 	</li>
 
 	<li>
+		<a href="../../../files/hp/widget/HScrollBar.html">hp/widget/HScrollBar.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/Joystick.html">hp/widget/Joystick.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/MessageBox.html">hp/widget/MessageBox.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/Panel.html">hp/widget/Panel.lua</a>
 	</li>
 
 	<li>
@@ -213,7 +273,31 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/widget/ScrollBarBase.html">hp/widget/ScrollBarBase.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ScrollView.html">hp/widget/ScrollView.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/TextView.html">hp/widget/TextView.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ThemeClient.html">hp/widget/ThemeClient.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/VScrollBar.html">hp/widget/VScrollBar.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/widget/ViewGroup.html">hp/widget/ViewGroup.lua</a>
 	</li>
 
 	<li>
@@ -255,6 +339,16 @@
 	<tr>
 	<td class="name" nowrap><a href="#M.indexOf">M.indexOf</a>&nbsp;(array, value)</td>
 	<td class="summary">配列から一致する値を検索して、見つかった位置を返します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.insertElement">M.insertElement</a>&nbsp;(t, o)</td>
+	<td class="summary">テーブルに要素を追加します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.removeElement">M.removeElement</a>&nbsp;(t, o)</td>
+	<td class="summary">テーブルから要素を削除します.</td>
 	</tr>
 
 </table>
@@ -373,6 +467,66 @@
 
 <h3>Return value:</h3>
 見つかった場合はindex,ない場合は0 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.insertElement"></a><strong>M.insertElement</strong>&nbsp;(t, o)</dt>
+<dd>
+テーブルに要素を追加します. 要素が存在した場合、要素は追加せずにfalseを返します. 要素が存在しない場合、要素を追加してtrueを返します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  t: 
+	</li>
+	
+	<li>
+	  o: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.removeElement"></a><strong>M.removeElement</strong>&nbsp;(t, o)</dt>
+<dd>
+テーブルから要素を削除します. 削除に成功した場合は、元のインデックスを返します. 要素がない場合は、0を返します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  t: 
+	</li>
+	
+	<li>
+	  o: 
+	</li>
+	
+</ul>
+
+
+
+
+
 
 
 
