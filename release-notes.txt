@@ -4,6 +4,7 @@
 -------------------------------------------------------------------
 Refactoring:sample.
 Fixed:setVisible work around a bug in the MOAITextBox.
+Group:setting when setCenterPiv, change so as not to move the upper left coordinates
 
 -------------------------------------------------------------------
 -- Hanappe Framework Version:1.3.0

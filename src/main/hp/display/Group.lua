@@ -137,9 +137,11 @@ end
 -- pivをサイズの中央に設定します.
 ----------------------------------------------------------------
 function M:setCenterPiv()
+    local left, top = self:getPos()
     local pivX = self:getWidth() / 2
     local pivY = self:getHeight() / 2
     self:setPiv(pivX, pivY, 0)
+    self:setPos(left, top)
 end
 
 ----------------------------------------------------------------
