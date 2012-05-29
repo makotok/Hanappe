@@ -92,4 +92,15 @@ function M:setSize(width, height)
     self:setTop(top)
 end
 
+--------------------------------------------------------------------------------
+-- MOAITextBoxがvisibleが効かないため、alphaで擬似的に非表示にします.
+-- TODO:バグ報告.修正された場合に実装を削除予定
+--------------------------------------------------------------------------------
+function M:setVisible(value)
+    local r, g, b, a = self:getColor()
+    a = value and 1 or 0
+    self:setColor(r, g, b, a)
+    interface.setVisible(self, value)
+end
+
 return M

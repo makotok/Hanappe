@@ -3,6 +3,7 @@
 -- Moai SDK Version 1.1 Revision 1
 -------------------------------------------------------------------
 Refactoring:sample.
+Fixed:setVisible work around a bug in the MOAITextBox.
 
 -------------------------------------------------------------------
 -- Hanappe Framework Version:1.3.0
