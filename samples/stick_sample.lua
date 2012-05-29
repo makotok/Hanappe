@@ -1,10 +1,10 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    view = View:new()
+    view = View()
     view:setScene(scene)
     
-    joystick1 = Joystick:new({
+    joystick1 = Joystick({
         baseTexture = "samples/assets/control_base.png",
         knobTexture = "samples/assets/control_knob.png",
     })
@@ -13,7 +13,7 @@ function onCreate(params)
     joystick1:addEventListener("stickChanged", onStickChanged)
     view:addChild(joystick1)
 
-    joystick2 = Joystick:new({
+    joystick2 = Joystick({
         baseTexture = "samples/assets/control_base.png",
         knobTexture = "samples/assets/control_knob.png",
         stickMode = Joystick.MODE_DIGITAL,

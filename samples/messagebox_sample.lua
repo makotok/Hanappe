@@ -18,13 +18,15 @@ function onCreate(params)
     messageBox:setSize(300, 100)
     messageBox:setText(text)
     messageBox:setPos(10, 10)
+    messageBox:hide()
     widgetView:addChild(messageBox)
     
 end
 
 function onStart()
+    messageBox:showPopup()
 end
 
 function onTouchDown(e)
-    messageBox.textLabel:nextPage()
+    --messageBox.textLabel:nextPage()
 end

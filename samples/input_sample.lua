@@ -1,9 +1,9 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    layer = Layer:new({scene = scene})
-    sprite1 = Sprite:new({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0})
-    sprite2 = Sprite:new({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = sprite1:getBottom()})
+    layer = Layer({scene = scene})
+    sprite1 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0})
+    sprite2 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = sprite1:getBottom()})
 end
 
 function touchHandler(e)

@@ -23,25 +23,25 @@ local sheetAnims = {
 }
 
 function onCreate(params)
-    layer = Layer:new({scene = scene})
+    layer = Layer({scene = scene})
 
-    sprite1 = SpriteSheet:new({texture = "samples/assets/actor.png", sheets = sheets, sheetAnims = sheetAnims, layer = layer})
+    sprite1 = SpriteSheet({texture = "samples/assets/actor.png", sheets = sheets, sheetAnims = sheetAnims, layer = layer})
     sprite1:setLeft(0)
     sprite1:setTop(0)
     
-    sprite2 = SpriteSheet:new({texture = "samples/assets/actor.png", layer = layer})
+    sprite2 = SpriteSheet({texture = "samples/assets/actor.png", layer = layer})
     sprite2:setTiledSheets(32, 32)
     sprite2:setSheetAnims(sheetAnims)
     sprite2:setLeft(sprite1:getRight())
     sprite2:setTop(0)
     
-    sprite3 = SpriteSheet:new({texture = "samples/assets/actor.png", layer = layer})
+    sprite3 = SpriteSheet({texture = "samples/assets/actor.png", layer = layer})
     sprite3:setTiledSheets(32, 32, 3, 4)
     sprite3:setSheetAnims(sheetAnims)
     sprite3:setLeft(sprite2:getRight())
     sprite3:setTop(0)
     
-    sprite4 = SpriteSheet:new({texture = "samples/assets/actor.png", layer = layer})
+    sprite4 = SpriteSheet({texture = "samples/assets/actor.png", layer = layer})
     sprite4:setTiledSheets(32, 32, 3, 4, 0, 0)
     sprite4:setSheetAnims(sheetAnims)
     sprite4:setLeft(sprite3:getRight())

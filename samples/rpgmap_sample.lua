@@ -25,9 +25,9 @@ local playerMoveDir = 0
 function onCreate(params)
     -- map view load
     -- You might want to read from the params.
-    mapLoader = TMXMapLoader:new()
+    mapLoader = TMXMapLoader()
     mapData = mapLoader:loadFile("samples/assets/rpg_map.tmx")
-    mapView = RPGMapView:new("samples/assets/")
+    mapView = RPGMapView("samples/assets/")
     mapView:loadMap(mapData)
     mapView:setScene(scene)
     
@@ -39,9 +39,9 @@ function onCreate(params)
     player:addEventListener("moveCollision", onPlayerMoveCollision)
     
     -- widget
-    view = View:new()
+    view = View()
     view:setScene(scene)
-    joystick = Joystick:new({
+    joystick = Joystick({
         baseTexture = "samples/assets/control_base.png",
         knobTexture = "samples/assets/control_knob.png",
         stickMode = Joystick.MODE_DIGITAL,
@@ -52,7 +52,7 @@ function onCreate(params)
     joystick:addEventListener("stickChanged", onStickChanged)
     view:addChild(joystick)
     
-    buttonA = Button:new({
+    buttonA = Button({
         upSkin = "samples/assets/button_a.png",
         downSkin = "samples/assets/button_a.png",
         upColor = {red = 1, green = 1, blue = 1, alpha = 1},

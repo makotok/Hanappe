@@ -2,15 +2,15 @@ module(..., package.seeall)
 
 function onCreate(params)
     -- layer
-    layer1 = Layer:new({scene = scene})
-    layer2 = Layer:new({scene = scene})
+    layer1 = Layer({scene = scene})
+    layer2 = Layer({scene = scene})
     
     -- sprite
-    sprite1 = Sprite:new({texture = "samples/assets/cathead.png", layer = layer1, left = 0, top = 0})
-    sprite2 = Sprite:new({texture = "samples/assets/cathead.png", layer = layer2, left = 0, top = sprite1:getBottom()})
+    sprite1 = Sprite({texture = "samples/assets/cathead.png", layer = layer1, left = 0, top = 0})
+    sprite2 = Sprite({texture = "samples/assets/cathead.png", layer = layer2, left = 0, top = sprite1:getBottom()})
     
     -- group
-    group = Group:new({width = Application.viewWidth, height = Application.viewHeight})
+    group = Group({width = Application.viewWidth, height = Application.viewHeight})
     group:setPiv(sprite1:getWidth() / 2, sprite1:getHeight(), 0)
     group:setLeft(10)
     group:setTop(10)

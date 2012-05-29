@@ -1,11 +1,12 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    layer = Layer:new({scene = scene})
+    layer = Layer({scene = scene})
 
     sprite1 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0})
-    sprite2 = Sprite({texture = "samples/assets/cathead.png", layer = layer})
 
+    -- MEMO:class.__call = class.new
+    sprite2 = Sprite:new({texture = "samples/assets/cathead.png", layer = layer})
     sprite2:setLeft(0)
     sprite2:setTop(sprite1:getBottom())
     

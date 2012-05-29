@@ -3,10 +3,10 @@ module(..., package.seeall)
 local touchX, touchY = 0, 0
 
 function onCreate(params)
-    mapLoader = TMXMapLoader:new()
+    mapLoader = TMXMapLoader()
     mapData = mapLoader:loadFile("samples/assets/platform.tmx")
 
-    mapView = TMXMapView:new("samples/assets/")
+    mapView = TMXMapView("samples/assets/")
     mapView:loadMap(mapData)
     mapView:setScene(scene)
 end
