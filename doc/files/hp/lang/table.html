@@ -154,10 +154,6 @@
 		<a href="../../../files/hp/lang/math.html">hp/lang/math.lua</a>
 	</li>
 
-	<li>
-		<a href="../../../files/hp/lang/proxy.html">hp/lang/proxy.lua</a>
-	</li>
-
 	<li><strong>hp/lang/table.lua</strong></li>
 	
 	<li>
@@ -332,27 +328,27 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M.copy">M.copy</a>&nbsp;(src, dest)</td>
-	<td class="summary">テーブルをコピーします.</td>
+	<td class="summary">The shallow copy of the table.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M.deepCopy">M.deepCopy</a>&nbsp;(src, dest)</td>
-	<td class="summary">テーブルをディープコピーします.</td>
+	<td class="summary">The deep copy of the table.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M.indexOf">M.indexOf</a>&nbsp;(array, value)</td>
-	<td class="summary">配列から一致する値を検索して、見つかった位置を返します.</td>
+	<td class="summary">Returns the position found by searching for a matching value from the array.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M.insertElement">M.insertElement</a>&nbsp;(t, o)</td>
-	<td class="summary">テーブルに要素を追加します.</td>
+	<td class="summary">Adds an element to the table.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M.removeElement">M.removeElement</a>&nbsp;(t, o)</td>
-	<td class="summary">テーブルから要素を削除します.</td>
+	<td class="summary">This removes the element from the table.</td>
 	</tr>
 
 </table>
@@ -365,7 +361,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#table ">table </a></td>
-	<td class="summary">tableの機能拡張したモジュールです.</td>
+	<td class="summary">modules that extend functionality of the table.</td>
 	</tr>
 
 </table>
@@ -385,18 +381,18 @@
 
 <dt><a name="M.copy"></a><strong>M.copy</strong>&nbsp;(src, dest)</dt>
 <dd>
-テーブルをコピーします. 
+The shallow copy of the table.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  src: 
+	  src: copy
 	</li>
 	
 	<li>
-	  dest: 
+	  dest: (option)Destination
 	</li>
 	
 </ul>
@@ -405,6 +401,9 @@
 
 
 
+
+<h3>Return value:</h3>
+dest 
 
 
 
@@ -415,18 +414,18 @@
 
 <dt><a name="M.deepCopy"></a><strong>M.deepCopy</strong>&nbsp;(src, dest)</dt>
 <dd>
-テーブルをディープコピーします. destを指定しない場合は新規テーブルを生成して返します.
+The deep copy of the table.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  src: コピー元
+	  src: copy
 	</li>
 	
 	<li>
-	  dest: コピー先(option)
+	  dest: (option)Destination
 	</li>
 	
 </ul>
@@ -437,7 +436,7 @@
 
 
 <h3>Return value:</h3>
-コピー後テーブル 
+dest 
 
 
 
@@ -448,18 +447,18 @@
 
 <dt><a name="M.indexOf"></a><strong>M.indexOf</strong>&nbsp;(array, value)</dt>
 <dd>
-配列から一致する値を検索して、見つかった位置を返します.
+Returns the position found by searching for a matching value from the array.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  array: 配列
+	  array: table array
 	</li>
 	
 	<li>
-	  value: 検索する値
+	  value: Search value
 	</li>
 	
 </ul>
@@ -470,7 +469,7 @@
 
 
 <h3>Return value:</h3>
-見つかった場合はindex,ない場合は0 
+If one is found the index. 0 if not found. 
 
 
 
@@ -481,18 +480,18 @@
 
 <dt><a name="M.insertElement"></a><strong>M.insertElement</strong>&nbsp;(t, o)</dt>
 <dd>
-テーブルに要素を追加します. 要素が存在した場合、要素は追加せずにfalseを返します. 要素が存在しない場合、要素を追加してtrueを返します. 
+Adds an element to the table. If the element was present, the element will return false without the need for additional. If the element does not exist, and returns true add an element.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  t: 
+	  t: table
 	</li>
 	
 	<li>
-	  o: 
+	  o: element
 	</li>
 	
 </ul>
@@ -501,6 +500,9 @@
 
 
 
+
+<h3>Return value:</h3>
+If it already exists, false. If you add is true. 
 
 
 
@@ -511,18 +513,18 @@
 
 <dt><a name="M.removeElement"></a><strong>M.removeElement</strong>&nbsp;(t, o)</dt>
 <dd>
-テーブルから要素を削除します. 削除に成功した場合は、元のインデックスを返します. 要素がない場合は、0を返します. 
+This removes the element from the table. If you have successfully removed, it returns the index of the yuan. If there is no element, it returns 0.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  t: 
+	  t: table
 	</li>
 	
 	<li>
-	  o: 
+	  o: element
 	</li>
 	
 </ul>
@@ -531,6 +533,9 @@
 
 
 
+
+<h3>Return value:</h3>
+index 
 
 
 
@@ -546,7 +551,7 @@
 <dl class="table">
 
 <dt><a name="table "></a><strong>table </strong></dt>
-<dd>tableの機能拡張したモジュールです.
+<dd>modules that extend functionality of the table.
 
 
 

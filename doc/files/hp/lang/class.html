@@ -153,10 +153,6 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/lang/proxy.html">hp/lang/proxy.lua</a>
-	</li>
-
-	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
 	</li>
 
@@ -332,27 +328,27 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:__call">M:__call</a>&nbsp;(...)</td>
-	<td class="summary">クラス定義関数です.</td>
+	<td class="summary">Class definition is a function.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getPrivate">M:getPrivate</a>&nbsp;(name)</td>
-	<td class="summary">metatableからプライベートな変数を返します.<br> 擬似的に変数をカプセル化してします.<br> この関数はクラス内から使用する事を目的とする為、 基本的に外部から呼ばないでください.</td>
+	<td class="summary">Returns the private variable.<br> Encapsulates the variables in a pseudo manner.<br> Since this function intended to be used internally, please do not reference user.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getPrivates">M:getPrivates</a>&nbsp;()</td>
-	<td class="summary">metatableからプライベートな変数の一覧を返します.<br> 擬似的に変数をカプセル化してします.<br> この関数はクラス内から使用する事を目的とする為、 基本的に外部から呼ばないでください.</td>
+	<td class="summary">Returns a list of variables that are private from metatable.<br> Encapsulates the variables in a pseudo manner.<br> Since this function intended to be used internally, please do not reference user.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:new">M:new</a>&nbsp;(...)</td>
-	<td class="summary">コンストラクタ関数です.</td>
+	<td class="summary">Instance generating functions.<br> The user can use this function.<br> Calling this function, init function will be called internally.<br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setPrivate">M:setPrivate</a>&nbsp;(name, value)</td>
-	<td class="summary">metatableからプライベートな変数を設定します.<br> 擬似的に変数をカプセル化してします.<br> この関数はクラス内から使用する事を目的とする為、 基本的に外部から呼ばないでください.</td>
+	<td class="summary">Set the private variable.<br> Encapsulates the variables in a pseudo manner.<br> Since this function intended to be used internally, please do not reference user.</td>
 	</tr>
 
 </table>
@@ -365,7 +361,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#class ">class </a></td>
-	<td class="summary">クラスベースなオブジェクト指向を簡単に実現するためのクラスです.<br> クラスの基本的な機能を有します.<br> setmetatableによる継承ではなく、テーブルに展開する事で<br> 継承が多くなった場合でもパフォーマンスが劣化しません.<br>  カプセル化の仕組みとして、getPrivate、setPrivateを用意しています.<br> この関数を使用すると、外部から隠したい一時変数等をmetatableに隠す事ができます.<br> </td>
+	<td class="summary">Class that enable you to easily object-oriented.<br> Provide the basic functionality of the class.<br> <br> class does not perform inheritance setmetatable.<br> The inheritance by copying it to the table.<br> Will consume a little more memory, the performance does not deteriorate if the inheritance is deep.<br> </td>
 	</tr>
 
 </table>
@@ -385,14 +381,14 @@
 
 <dt><a name="M:__call"></a><strong>M:__call</strong>&nbsp;(...)</dt>
 <dd>
-クラス定義関数です. 引数にテーブルを指定する事で多重継承が可能です.
+Class definition is a function.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  ...: 親テーブルです. 多重継承が可能です.
+	  ...: Base class list.
 	</li>
 	
 </ul>
@@ -414,14 +410,14 @@ class
 
 <dt><a name="M:getPrivate"></a><strong>M:getPrivate</strong>&nbsp;(name)</dt>
 <dd>
-metatableからプライベートな変数を返します.<br> 擬似的に変数をカプセル化してします.<br> この関数はクラス内から使用する事を目的とする為、 基本的に外部から呼ばないでください. 
+Returns the private variable.<br> Encapsulates the variables in a pseudo manner.<br> Since this function intended to be used internally, please do not reference user.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  name: 
+	  name: Private variable name
 	</li>
 	
 </ul>
@@ -430,6 +426,9 @@ metatableからプライベートな変数を返します.<br> 擬似的に変�
 
 
 
+
+<h3>Return value:</h3>
+Private variable 
 
 
 
@@ -440,13 +439,16 @@ metatableからプライベートな変数を返します.<br> 擬似的に変�
 
 <dt><a name="M:getPrivates"></a><strong>M:getPrivates</strong>&nbsp;()</dt>
 <dd>
-metatableからプライベートな変数の一覧を返します.<br> 擬似的に変数をカプセル化してします.<br> この関数はクラス内から使用する事を目的とする為、 基本的に外部から呼ばないでください. 
+Returns a list of variables that are private from metatable.<br> Encapsulates the variables in a pseudo manner.<br> Since this function intended to be used internally, please do not reference user.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+mt.__privates 
 
 
 
@@ -457,7 +459,7 @@ metatableからプライベートな変数の一覧を返します.<br> 擬似�
 
 <dt><a name="M:new"></a><strong>M:new</strong>&nbsp;(...)</dt>
 <dd>
-コンストラクタ関数です. デフォルトではテーブルを生成して、メタテーブルによる参照を設定します.
+Instance generating functions.<br> The user can use this function.<br> Calling this function, init function will be called internally.<br>
 
 
 <h3>Parameters</h3>
@@ -475,7 +477,7 @@ metatableからプライベートな変数の一覧を返します.<br> 擬似�
 
 
 <h3>Return value:</h3>
-インスタンス 
+Instance 
 
 
 
@@ -486,14 +488,14 @@ metatableからプライベートな変数の一覧を返します.<br> 擬似�
 
 <dt><a name="M:setPrivate"></a><strong>M:setPrivate</strong>&nbsp;(name, value)</dt>
 <dd>
-metatableからプライベートな変数を設定します.<br> 擬似的に変数をカプセル化してします.<br> この関数はクラス内から使用する事を目的とする為、 基本的に外部から呼ばないでください. 
+Set the private variable.<br> Encapsulates the variables in a pseudo manner.<br> Since this function intended to be used internally, please do not reference user.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  name: 
+	  name: Private variable name
 	</li>
 	
 	<li>
@@ -506,6 +508,9 @@ metatableからプライベートな変数を設定します.<br> 擬似的に�
 
 
 
+
+<h3>Return value:</h3>
+value Private variable 
 
 
 
@@ -521,7 +526,7 @@ metatableからプライベートな変数を設定します.<br> 擬似的に�
 <dl class="table">
 
 <dt><a name="class "></a><strong>class </strong></dt>
-<dd>クラスベースなオブジェクト指向を簡単に実現するためのクラスです.<br> クラスの基本的な機能を有します.<br> setmetatableによる継承ではなく、テーブルに展開する事で<br> 継承が多くなった場合でもパフォーマンスが劣化しません.<br>  カプセル化の仕組みとして、getPrivate、setPrivateを用意しています.<br> この関数を使用すると、外部から隠したい一時変数等をmetatableに隠す事ができます.<br>
+<dd>Class that enable you to easily object-oriented.<br> Provide the basic functionality of the class.<br> <br> class does not perform inheritance setmetatable.<br> The inheritance by copying it to the table.<br> Will consume a little more memory, the performance does not deteriorate if the inheritance is deep.<br>
 
 
 

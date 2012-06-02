@@ -153,10 +153,6 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/lang/proxy.html">hp/lang/proxy.lua</a>
-	</li>
-
-	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
 	</li>
 
@@ -342,7 +338,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getBounds">M:getBounds</a>&nbsp;()</td>
-	<td class="summary">サイズを返します.</td>
+	<td class="summary">オブジェクトの境界を返します.</td>
 	</tr>
 
 	<tr>
@@ -356,13 +352,18 @@
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:getSize">M:getSize</a>&nbsp;()</td>
-	<td class="summary">サイズを返します.</td>
+	<td class="name" nowrap><a href="#M:getWidth">M:getWidth</a>&nbsp;()</td>
+	<td class="summary">幅を返します.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:getWidth">M:getWidth</a>&nbsp;()</td>
-	<td class="summary">幅を返します.</td>
+	<td class="name" nowrap><a href="#M:hitTestScreen">M:hitTestScreen</a>&nbsp;(screenX, screenY, screenZ)</td>
+	<td class="summary">If the object will collide with the screen, it returns true.<br> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:hitTestWorld">M:hitTestWorld</a>&nbsp;(worldX, worldY, worldZ)</td>
+	<td class="summary">If the object will collide with the world, it returns true.<br> </td>
 	</tr>
 
 	<tr>
@@ -492,7 +493,7 @@
 
 <dt><a name="M:getBounds"></a><strong>M:getBounds</strong>&nbsp;()</dt>
 <dd>
-サイズを返します. 
+オブジェクトの境界を返します. 
 
 
 
@@ -541,9 +542,9 @@
 
 
 
-<dt><a name="M:getSize"></a><strong>M:getSize</strong>&nbsp;()</dt>
+<dt><a name="M:getWidth"></a><strong>M:getWidth</strong>&nbsp;()</dt>
 <dd>
-サイズを返します. 
+幅を返します. 
 
 
 
@@ -558,15 +559,72 @@
 
 
 
-<dt><a name="M:getWidth"></a><strong>M:getWidth</strong>&nbsp;()</dt>
+<dt><a name="M:hitTestScreen"></a><strong>M:hitTestScreen</strong>&nbsp;(screenX, screenY, screenZ)</dt>
 <dd>
-幅を返します. 
+If the object will collide with the screen, it returns true.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  screenX: x of screen
+	</li>
+	
+	<li>
+	  screenY: y of screen
+	</li>
+	
+	<li>
+	  screenZ: (option)z of screen
+	</li>
+	
+</ul>
 
 
 
 
 
 
+<h3>Return value:</h3>
+If the object is a true conflict 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:hitTestWorld"></a><strong>M:hitTestWorld</strong>&nbsp;(worldX, worldY, worldZ)</dt>
+<dd>
+If the object will collide with the world, it returns true.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  worldX: world x of layer
+	</li>
+	
+	<li>
+	  worldY: world y of layer
+	</li>
+	
+	<li>
+	  worldZ: (option)world z of layer
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+If the object is a true conflict 
 
 
 
