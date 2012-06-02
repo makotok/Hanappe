@@ -15,9 +15,6 @@ local M = class(DisplayObject, TextureDrawable)
 -- インスタンスを生成して返します.
 --------------------------------------------------------------------------------
 function M:init(params)
-    assert(params, "params is nil!")
-    assert(params.texture, "texture is nil!")
-
     local deck = MOAIGfxQuadDeck2D.new()
     local grid = MOAIGrid.new ()
 
@@ -63,9 +60,7 @@ end
 -- シートデータを設定します.
 --------------------------------------------------------------------------------
 function M:setSheets(sheets)
-    if not self.texture then
-        return
-    end
+    assert(self.texture)
     
     local tw, th = self.texture:getSize()
     self.deck:reserve(#sheets)
