@@ -1,22 +1,21 @@
 --------------------------------------------------------------------------------
--- tableの機能拡張したモジュールです.
+-- modules that extend functionality of the table.
 -- @class table
 -- @name table
 --------------------------------------------------------------------------------
-local table = table
 local M = {}
 setmetatable(M, {__index = table})
 
--- Lua5.1とLua5.2の互換性を保つ実装
+-- Compatibility and implementation of Lua5.2 Lua5.1
 if unpack then
     M.unpack = unpack
 end
 
 --------------------------------------------------------------------------------
--- 配列から一致する値を検索して、見つかった位置を返します.
--- @param array 配列
--- @param value 検索する値
--- @return 見つかった場合はindex,ない場合は0
+-- Returns the position found by searching for a matching value from the array.
+-- @param array table array
+-- @param value Search value
+-- @return If one is found the index. 0 if not found.
 --------------------------------------------------------------------------------
 function M.indexOf(array, value)
     for i, v in ipairs(array) do
@@ -28,10 +27,13 @@ function M.indexOf(array, value)
 end
 
 --------------------------------------------------------------------------------
--- テーブルをコピーします.
+-- The shallow copy of the table.
+-- @param src copy
+-- @param dest (option)Destination
+-- @return dest
 --------------------------------------------------------------------------------
 function M.copy(src, dest)
-    dest = dest and dest or {}
+    dest = dest or {}
     for i, v in pairs(src) do
         dest[i] = v
     end
@@ -39,14 +41,13 @@ function M.copy(src, dest)
 end
 
 --------------------------------------------------------------------------------
--- テーブルをディープコピーします.
--- destを指定しない場合は新規テーブルを生成して返します.
--- @param src コピー元
--- @param dest コピー先(option)
--- @return コピー後テーブル
+-- The deep copy of the table.
+-- @param src copy
+-- @param dest (option)Destination
+-- @return dest
 --------------------------------------------------------------------------------
 function M.deepCopy(src, dest)
-    dest = dest and dest or {}
+    dest = dest or {}
     for i, v in pairs(src) do
         if type(v) == "table" then
             dest[i] = {}
@@ -59,9 +60,12 @@ function M.deepCopy(src, dest)
 end
 
 --------------------------------------------------------------------------------
--- テーブルに要素を追加します.
--- 要素が存在した場合、要素は追加せずにfalseを返します.
--- 要素が存在しない場合、要素を追加してtrueを返します.
+-- Adds an element to the table.
+-- If the element was present, the element will return false without the need for additional.
+-- If the element does not exist, and returns true add an element.
+-- @param t table
+-- @param o element
+-- @return If it already exists, false. If you add is true.
 --------------------------------------------------------------------------------
 function M.insertElement(t, o)
     if M.indexOf(t, o) > 0 then
@@ -72,9 +76,12 @@ function M.insertElement(t, o)
 end
 
 --------------------------------------------------------------------------------
--- テーブルから要素を削除します.
--- 削除に成功した場合は、元のインデックスを返します.
--- 要素がない場合は、0を返します.
+-- This removes the element from the table.
+-- If you have successfully removed, it returns the index of the yuan.
+-- If there is no element, it returns 0.
+-- @param t table
+-- @param o element
+-- @return index
 --------------------------------------------------------------------------------
 function M.removeElement(t, o)
     local i = M.indexOf(t, o)

@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- mathの機能拡張したモジュールです.
+-- modules that extend functionality of the math.
 -- @class table
 -- @name math
 --------------------------------------------------------------------------------
@@ -8,9 +8,9 @@ local math = {}
 setmetatable(math, {__index = gmath})
 
 ---------------------------------------
--- 引数の値の平均値を求めます
--- @param ... 可変長引数の数値
--- @return 平均値
+-- Calculate the average of the values ​​of the argument.
+-- @param ... The number of variable-length argument
+-- @return average
 ---------------------------------------
 function math.average(...)
     local total = 0
@@ -22,9 +22,9 @@ function math.average(...)
 end
 
 ---------------------------------------
--- 引数の値の合計を求めます
--- @param ... 可変長引数の数値
--- @return 合計
+-- Calculate the total values of the argument
+-- @param ... The number of variable-length argument
+-- @return total
 ---------------------------------------
 function math.sum(...)
     local total = 0
