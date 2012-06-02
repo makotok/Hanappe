@@ -155,8 +155,7 @@ function M:onTouchDown(e)
         return
     end
     
-    local wx, wy = self.layer:wndToWorld(e.x, e.y, 0)
-    if self:isHit(wx, wy, 0, self.background) then
+    if self:hitTestScreen(e.x, e.y) then
         self.buttonTouching = true
         if self:isToggle() and self.buttonDownFlag then
             self:setButtonUpState()
@@ -190,8 +189,7 @@ function M:onTouchMove(e)
         return
     end
 
-    local wx, wy = self.layer:wndToWorld(e.x, e.y, 0)
-    if self.buttonTouching and not self:isHit(wx, wy, 0, self.background) then
+    if self.buttonTouching and not self:hitTestScreen(e.x, e.y) then
         self.buttonTouching = false
         if not self:isToggle() then
             self:setButtonUpState()

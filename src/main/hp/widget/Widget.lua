@@ -66,30 +66,6 @@ function M:getParentView()
 end
 
 --------------------------------------------------------------------------------
--- 指定した座標と子オブジェクトが衝突するか返します.
---------------------------------------------------------------------------------
-function M:isHit(worldX, worldY, worldZ, child)
-    local props = {self.layer.partition:propListForPoint(worldX, worldY, worldZ)}
-    if table.indexOf(props, child) > 0 then
-        return true
-    end
-    return false
-end
-
---------------------------------------------------------------------------------
--- 子オブジェクトのいずれかが存在するか返します.
---------------------------------------------------------------------------------
-function M:isHitForChildren(worldX, worldY, worldZ)
-    local props = {self.layer.partition:propListForPoint(worldX, worldY, worldZ)}
-    for i, prop in ipairs(props) do
-        if table.indexOf(self.children, prop) > 0 then
-            return true
-        end
-    end
-    return false
-end
-
---------------------------------------------------------------------------------
 -- ウィジットクラスかどうか返します.
 --------------------------------------------------------------------------------
 function M:isWidgetClass()

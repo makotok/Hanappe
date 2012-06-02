@@ -38,8 +38,7 @@ function M:onTouchDown(e)
         return
     end
     
-    local wx, wy = self.layer:wndToWorld(e.x, e.y, 0)
-    if self:isHit(wx, wy, 0, self.background) then
+    if self:hitTestScreen(e.x, e.y) then
         self.buttonTouching = true
         self:setButtonDownState()
     end

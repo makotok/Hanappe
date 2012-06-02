@@ -9,25 +9,8 @@ local DisplayObject = require("hp/display/DisplayObject")
 -- @name Group
 ----------------------------------------------------------------
 local M = class(DisplayObject)
-M.MOAI_CLASS = MOAITransform
 
-local COLOR_ATTRS = {
-    MOAIColor.ATTR_R_COL,
-    MOAIColor.ATTR_G_COL,
-    MOAIColor.ATTR_B_COL,
-    MOAIColor.ATTR_A_COL,
-    MOAIColor.INHERIT_COLOR,
-    MOAIColor.COLOR_TRAIT
-}
-
-local function hasColorAttr(attrID)
-    for i, v in ipairs(COLOR_ATTRS) do
-        if attrID == v then
-            return true
-        end
-    end
-    return false
-end
+local MOAIPropInterface = MOAIProp.getInterfaceTable()
 
 ----------------------------------------------------------------
 -- Groupインスタンスを生成して返します.
@@ -35,20 +18,11 @@ end
 function M:init(params)
     params = params or {}
 
-    -- color, group
-    local color = MOAIColor.new()
-    self.color = color
     self.children = {}
-    
+
     self:setPrivate("width", 0)
     self:setPrivate("height", 0)
-    
-    -- functions
-    delegate(self, color, "moveColor")
-    delegate(self, color, "seekColor")
-    delegate(self, color, "setColor")
-    
-    -- set params
+
     self:copyParams(params)
 end
 
@@ -62,11 +36,12 @@ function M:copyParams(params)
     if params.height then
         self:setHeight(params.height)
     end
+
     DisplayObject.copyParams(self, params)
 end
 
 ----------------------------------------------------------------
--- サイズを返します.
+-- オブジェクトの境界を返します.
 ----------------------------------------------------------------
 function M:getBounds()
     local xMin, yMin, zMin = 0, 0, 0
@@ -74,24 +49,9 @@ function M:getBounds()
     return xMin, yMin, zMin, xMax, yMax, zMax
 end
 
-----------------------------------------------------------------
--- サイズを設定します.
-----------------------------------------------------------------
-function M:setSize(width, height)
-    self:setPrivate("width", width)
-    self:setPrivate("height", height)
-end
-
-----------------------------------------------------------------
--- サイズを返します.
-----------------------------------------------------------------
-function M:getSize()
-    return self:getWidth(), self:getHeight()
-end
-
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- 幅を設定します.
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
 function M:setWidth(width)
     self:setSize(width, self:getHeight())
 end
@@ -103,9 +63,9 @@ function M:getWidth()
     return self:getPrivate("width")
 end
 
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- 高さを設定します.
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
 function M:setHeight(height)
     self:setSize(self:getWidth(), height)
 end
@@ -117,11 +77,20 @@ function M:getHeight()
     return self:getPrivate("height")
 end
 
+--------------------------------------------------------------------------------
+--サイズを設定します.
+--------------------------------------------------------------------------------
+function M:setSize(width, height)
+    self:setPrivate("width", width)
+    self:setPrivate("height", height)
+end
+
 ----------------------------------------------------------------
 -- visibleを設定します.
 ----------------------------------------------------------------
 function M:setVisible(value)
-    self.visible = value
+    MOAIPropInterface.setVisible(self, value)
+    
     for i, v in ipairs(self.children) do
         if v.setVisible then
             v:setVisible(value)
@@ -157,13 +126,7 @@ function M:addChild(child)
     end
     
     table.insert(self.children, child)
-    if child.isGroup then
-        child:setAttrLink(MOAITransform.INHERIT_TRANSFORM, self, MOAITransform.TRANSFORM_TRAIT)
-        child.color:setAttrLink(MOAIColor.INHERIT_COLOR, self.color, MOAIColor.COLOR_TRAIT)
-    else
-        child:setAttrLink(MOAITransform.INHERIT_TRANSFORM, self, MOAITransform.TRANSFORM_TRAIT)
-        child:setAttrLink(MOAIColor.INHERIT_COLOR, self.color, MOAIColor.COLOR_TRAIT)
-    end
+    child:setParent(self)
     
     if self.layer then
         if child.setLayer then
@@ -182,12 +145,12 @@ function M:removeChild(child)
         return
     end
     
-    if child.isGroup then
-        child:clearAttrLink(MOAITransform.INHERIT_TRANSFORM)
-        child.color:clearAttrLink(MOAIColor.INHERIT_COLOR)
-    else
-        child:clearAttrLink(MOAITransform.INHERIT_TRANSFORM)
-        child:clearAttrLink(MOAIColor.INHERIT_COLOR)
+    child:setParent(nil)
+    
+    if self.layer then
+        if child.setLayer then
+            child:setLayer(nil)
+        end
     end
     
     table.remove(children, index)
@@ -211,6 +174,56 @@ end
 --------------------------------------------------------------------------------
 function M:isGroup()
     return true
+end
+
+--------------------------------------------------------------------------------
+-- If the object will collide with the screen, it returns true.<br>
+-- @param screenX x of screen
+-- @param screenY y of screen
+-- @param screenZ (option)z of screen
+-- @return If the object is a true conflict
+--------------------------------------------------------------------------------
+function M:hitTestScreen(screenX, screenY, screenZ)
+    assert(self.layer)
+    screenZ = screenZ or 0
+    
+    for i, child in ipairs(self.children) do
+        if child.hitTestScreen then
+            if child:hitTestScreen(screenX, screenY, screenZ) then
+                return true
+            end
+        else
+            local worldX, worldY, worldZ = self.layer:wndToWorld(screenX, screenY, screenZ)
+            if child:inside(worldX, worldY, worldZ) then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+--------------------------------------------------------------------------------
+-- If the object will collide with the world, it returns true.<br>
+-- @param worldX world x of layer
+-- @param worldY world y of layer
+-- @param worldZ (option)world z of layer
+-- @return If the object is a true conflict
+--------------------------------------------------------------------------------
+function M:hitTestWorld(worldX, worldY, worldZ)
+    worldZ = worldZ or 0
+    
+    for i, child in ipairs(self.children) do
+        if child.hitTestWorld then
+            if child:hitTestWorld(worldX, worldY, worldZ) then
+                return true
+            end
+        else
+            if child:inside(worldX, worldY, worldZ) then
+                return true
+            end
+        end
+    end
+    return false
 end
 
 return M
