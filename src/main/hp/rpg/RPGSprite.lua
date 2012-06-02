@@ -11,6 +11,7 @@ local RPGMoveFactory = require("hp/rpg/move/RPGMoveFactory")
 -- @name RPGSprite
 ----------------------------------------------------------------
 local M = class(SpriteSheet, EventDispatcher)
+M.new = SpriteSheet.new
 
 -- constraints
 -- Sheet animations
@@ -38,24 +39,22 @@ M.MOVE_RANDOM = "randomMove"
 -- インスタンスを生成して返します.<br>
 -- @return インスタンス
 ----------------------------------------------------------------
-function M:new(params)
-    local obj = SpriteSheet.new(self, params)
-    EventDispatcher.init(obj)
+function M:init(params)
+    SpriteSheet.init(self, params)
+    EventDispatcher.init(self)
     
-    obj:setSheetAnims(self.SHEET_ANIMS)
+    self:setSheetAnims(self.SHEET_ANIMS)
     
-    obj.mapView = assert(params.mapView)
-    obj.mapTileWidth = obj.mapView.tmxMap.tilewidth
-    obj.mapTileHeight = obj.mapView.tmxMap.tileheight
+    self.mapView = assert(params.mapView)
+    self.mapTileWidth = self.mapView.tmxMap.tilewidth
+    self.mapTileHeight = self.mapView.tmxMap.tileheight
     
-    obj.moveLogicFactory = RPGMoveFactory
-    obj.moveSpeed = self.MOVE_SPEED
+    self.moveLogicFactory = RPGMoveFactory
+    self.moveSpeed = self.MOVE_SPEED
     
-    obj.currentMoveX = 0
-    obj.currentMoveY = 0
-    obj.currentMoveCount = 0
-    
-    return obj
+    self.currentMoveX = 0
+    self.currentMoveY = 0
+    self.currentMoveCount = 0
 end
 
 ----------------------------------------------------------------
