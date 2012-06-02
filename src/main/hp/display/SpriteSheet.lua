@@ -23,25 +23,17 @@ local M = class(DisplayObject, TextureDrawable)
 --     layer = MOAILayerを設定.<br>
 -- @return インスタンス
 --------------------------------------------------------------------------------
-function M:new(params)
-    -- asserts
-    assert(params, "params is nil!")
-    assert(params.texture, "texture is nil!")
-
-    -- prop, deck
-    local prop = MOAIProp.new()
-    table.copy(self, prop)
+function M:init(params)
+    params = params or {}
     local deck = MOAIGfxQuadDeck2D.new()
-    prop:setDeck(deck)
-    prop.deck = deck
-    prop.animTable = {}
-    prop.currentAnim = nil
-    prop.sheetSize = 0
 
-    -- set params
-    prop:copyParams(params)
-    
-    return prop
+    self:setDeck(deck)
+    self.deck = deck
+    self.animTable = {}
+    self.currentAnim = nil
+    self.sheetSize = 0
+
+    self:copyParams(params)
 end
 
 --------------------------------------------------------------------------------
@@ -72,6 +64,7 @@ end
 -- @param margin シートの開始位置の余白(option)
 --------------------------------------------------------------------------------
 function M:setTiledSheets(tileWidth, tileHeight, tileX, tileY, spacing, margin)
+    assert(self.texture)
     assert(tileWidth)
     assert(tileHeight)
     
@@ -100,9 +93,7 @@ end
 -- @param sheets シートデータ
 --------------------------------------------------------------------------------
 function M:setSheets(sheets)
-    if not self.texture then
-        return
-    end
+    assert(self.texture)
     
     local tw, th = self.texture:getSize()
     self.deck:reserve(#sheets)

@@ -14,21 +14,16 @@ local M = class(DisplayObject, TextureDrawable)
 --------------------------------------------------------------------------------
 -- Spriteインスタンスを生成して返します.
 --------------------------------------------------------------------------------
-function M:new(params)
-    assert(params, "params is nil!")
-    assert(params.texture, "texture is nil!")
-
-    -- prop, deck
-    local deck = MOAIGfxQuad2D.new()
-    local prop = MOAIProp.new()
-    table.copy(self, prop)
-    prop:setDeck(deck)
-    prop.deck = deck
-    deck:setUVRect(0, 0, 1, 1)
-
-    prop:copyParams(params)
+function M:init(params)
+    params = params or {}
     
-    return prop
+    local deck = MOAIGfxQuad2D.new()
+    deck:setUVRect(0, 0, 1, 1)
+    
+    self:setDeck(deck)
+    self.deck = deck
+
+    self:copyParams(params)
 end
 
 --------------------------------------------------------------------------------

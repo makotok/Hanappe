@@ -11,24 +11,19 @@ local FontManager = require("hp/manager/FontManager")
 --------------------------------------------------------------------------------
 local M = class(DisplayObject)
 
+M.MOAI_CLASS = MOAITextBox
+
 local interface = MOAITextBox.getInterfaceTable()
 
 --------------------------------------------------------------------------------
 -- TextLabelインスタンスを生成して返します.
 --------------------------------------------------------------------------------
-function M:new(params)
+function M:init(params)
     params = params or {}
 
-    -- textbox, font
-    local textbox = MOAITextBox.new()
-    table.copy(self, textbox)
     local font = FontManager:request(params.font)
-    textbox:setFont(font)
-    
-    -- set params
-    textbox:copyParams(params)
-
-    return textbox
+    self:setFont(font)
+    self:copyParams(params)
 end
 
 --------------------------------------------------------------------------------

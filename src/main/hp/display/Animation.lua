@@ -14,6 +14,9 @@ local M = class()
 -- コンストラクタです
 ---------------------------------------
 function M:init(targets, sec, easeType)
+    if type(targets) == "userdata" then
+        targets = {targets}
+    end
     self.internal = {
         commands = {},
         targets = targets or {},
@@ -85,6 +88,21 @@ function M:setBottom(bottom)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
             MOAIPropUtil.setBottom(v, bottom)
+        end
+        callback(obj)
+    end
+    local command = self:newCommand(playFunc)
+    self:addCommand(command)
+    return self
+end
+
+---------------------------------------
+-- 対象オブジェクトを移動させます.
+---------------------------------------
+function M:setPos(left, top)
+    local playFunc = function(obj, callback)
+        for i, v in ipairs(self.internal.targets) do
+            MOAIPropUtil.setPos(v, left, top)
         end
         callback(obj)
     end

@@ -14,26 +14,19 @@ local M = class(DisplayObject, TextureDrawable)
 --------------------------------------------------------------------------------
 -- インスタンスを生成して返します.
 --------------------------------------------------------------------------------
-function M:new(params)
-    -- asserts
+function M:init(params)
     assert(params, "params is nil!")
     assert(params.texture, "texture is nil!")
 
-    -- prop, deck, grid
-    local prop = MOAIProp.new()
-    table.copy(self, prop)
     local deck = MOAIGfxQuadDeck2D.new()
     local grid = MOAIGrid.new ()
 
-    prop:setDeck(deck)
-    prop:setGrid(grid)
-    prop.deck = deck
-    prop.grid = grid
+    self:setDeck(deck)
+    self:setGrid(grid)
+    self.deck = deck
+    self.grid = grid
 
-    -- set params
-    prop:copyParams(params)
-    
-    return prop
+    self:copyParams(params)
 end
 
 --------------------------------------------------------------------------------

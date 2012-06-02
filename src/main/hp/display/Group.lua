@@ -9,6 +9,7 @@ local DisplayObject = require("hp/display/DisplayObject")
 -- @name Group
 ----------------------------------------------------------------
 local M = class(DisplayObject)
+M.MOAI_CLASS = MOAITransform
 
 local COLOR_ATTRS = {
     MOAIColor.ATTR_R_COL,
@@ -31,28 +32,24 @@ end
 ----------------------------------------------------------------
 -- Groupインスタンスを生成して返します.
 ----------------------------------------------------------------
-function M:new(params)
+function M:init(params)
     params = params or {}
 
-    -- transform, color, group
-    local group = MOAITransform.new()
-    table.copy(self, group)
+    -- color, group
     local color = MOAIColor.new()
-    group.color = color
-    group.children = {}
+    self.color = color
+    self.children = {}
     
-    group:setPrivate("width", 0)
-    group:setPrivate("height", 0)
+    self:setPrivate("width", 0)
+    self:setPrivate("height", 0)
     
     -- functions
-    delegate(group, color, "moveColor")
-    delegate(group, color, "seekColor")
-    delegate(group, color, "setColor")
+    delegate(self, color, "moveColor")
+    delegate(self, color, "seekColor")
+    delegate(self, color, "setColor")
     
     -- set params
-    group:copyParams(params)
-
-    return group
+    self:copyParams(params)
 end
 
 --------------------------------------------------------------------------------
@@ -65,7 +62,6 @@ function M:copyParams(params)
     if params.height then
         self:setHeight(params.height)
     end
-    
     DisplayObject.copyParams(self, params)
 end
 

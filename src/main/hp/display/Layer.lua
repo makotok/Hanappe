@@ -10,37 +10,30 @@ local DisplayObject = require("hp/display/DisplayObject")
 -- @name Layer
 --------------------------------------------------------------------------------
 local M = class(DisplayObject)
+M.MOAI_CLASS = MOAILayer
 
 --------------------------------------------------------------------------------
 -- Layerインスタンスを生成して返します.
 --------------------------------------------------------------------------------
-function M:new(params)
+function M:init(params)
     params = params or {}
 
-    -- layer
-    local layer = MOAILayer.new()
-    table.copy(self, layer)
-    
-    -- partition
     local partition = MOAIPartition.new()
-    layer:setPartition(partition)
-    layer.partition = partition
+    self:setPartition(partition)
+    self.partition = partition
 
-    -- viewport
     local viewport = MOAIViewport.new()
-    layer:setViewport(viewport)
-    layer.viewport = viewport
+    self:setViewport(viewport)
+    self.viewport = viewport
     
-    layer:setScreenSize(Application.screenWidth, Application.screenHeight)
-    layer:setViewSize(Application.viewWidth, Application.viewHeight)
-    layer:setOffset(-1, 1)
+    self:setScreenSize(Application.screenWidth, Application.screenHeight)
+    self:setViewSize(Application.viewWidth, Application.viewHeight)
+    self:setOffset(-1, 1)
     
     -- set params
-    layer:copyParams(params)
+    self:copyParams(params)
     
-    MOAIRenderMgr.pushRenderPass(layer)
-    
-    return layer
+    MOAIRenderMgr.pushRenderPass(self)
 end
 
 --------------------------------------------------------------------------------
@@ -133,6 +126,27 @@ function M:setOffset(offsetX, offsetY)
     self.offsetX = offsetX
     self.offsetY = offsetY
     self.viewport:setOffset(offsetX, offsetY)
+end
+
+---------------------------------------
+-- スクリーンとViewportのスケールを返します.
+---------------------------------------
+function M:getViewScale()
+    return self.screenWidth / self.viewWidth, self.screenHeight / self.viewHeight
+end
+
+---------------------------------------
+-- スクリーンとViewportのスケールを返します.
+---------------------------------------
+function M:getViewScaleX()
+    return self.screenWidth / self.viewWidth
+end
+
+---------------------------------------
+-- スクリーンとViewportのスケールを返します.
+---------------------------------------
+function M:getViewScaleY()
+    return self.screenHeight / self.viewHeight
 end
 
 --------------------------------------------------------------------------------

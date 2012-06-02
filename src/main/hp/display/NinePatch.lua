@@ -18,16 +18,14 @@ local interface = MOAIProp.getInterfaceTable()
 --------------------------------------------------------------------------------
 -- Spriteインスタンスを生成して返します.
 --------------------------------------------------------------------------------
-function M:new(params)
+function M:init(params)
     assert(params, "params is nil!")
     assert(params.texture, "texture is nil!")
 
-    -- prop, deck
     local deck = MOAIStretchPatch2D.new()
-    local prop = MOAIProp.new()
-    table.copy(self, prop)
-    prop:setDeck(deck)
-    prop.deck = deck
+    self:setDeck(deck)
+    self.deck = deck
+    
     deck:reserveUVRects(1)
     deck:setUVRect(1, 0, 0, 1, 1)
 
@@ -41,19 +39,17 @@ function M:new(params)
     deck:setColumn(2, 1 / 3, true)
     deck:setColumn(3, 1 / 3, false)
     
-    prop.setOrignScl = assert(interface.setScl)
-    prop.getOrignScl = assert(interface.getScl)
-    prop.seekOrignScl = assert(interface.seekScl)
+    self.setOrignScl = assert(interface.setScl)
+    self.getOrignScl = assert(interface.getScl)
+    self.seekOrignScl = assert(interface.seekScl)
     
-    prop:setPrivate("width", 0)
-    prop:setPrivate("height", 0)
-    prop:setPrivate("sclX", 1)
-    prop:setPrivate("sclY", 1)
-    prop:setPrivate("sclZ", 1)
+    self:setPrivate("width", 0)
+    self:setPrivate("height", 0)
+    self:setPrivate("sclX", 1)
+    self:setPrivate("sclY", 1)
+    self:setPrivate("sclZ", 1)
 
-    prop:copyParams(params)
-    
-    return prop
+    self:copyParams(params)
 end
 
 --------------------------------------------------------------------------------

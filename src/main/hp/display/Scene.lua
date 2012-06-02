@@ -19,28 +19,28 @@ local Application = require("hp/Application")
 -- @name Scene
 ----------------------------------------------------------------
 local M = class(Group, EventDispatcher)
+M.new = Group.new
 
 local ENTER_FRAME_EVENT = Event:new("enterFrame")
 
 ---------------------------------------
 -- コンストラクタです
 ---------------------------------------
-function M:new()
-    local obj = Group.new(self, {width = Application.screenWidth, height = Application.screenHeight})
-    EventDispatcher.init(obj)
+function M:init()
+    Group.init(self)
+    EventDispatcher.init(self)
     
-    obj.name = ""
-    obj.visible = true
-    obj.sceneManager = require("hp/manager/SceneManager")
-    obj.sceneHandler = {}
-    obj.touchDownFlag = false
+    self:setSize(Application.screenWidth, Application.screenHeight)
+    
+    self.name = ""
+    self.visible = true
+    self.sceneManager = require("hp/manager/SceneManager")
+    self.sceneHandler = {}
+    self.touchDownFlag = false
 
-    --self:setCenterPiv()
-    obj:setPiv(Application.screenWidth / 2, Application.screenHeight / 2, 0)
-    obj:setLeft(0)
-    obj:setTop(0)
-    
-    return obj
+    self:setCenterPiv()
+    self:setLeft(0)
+    self:setTop(0)
 end
 
 ----------------------------------------------------------------
@@ -49,6 +49,13 @@ end
 function M:setVisible(value)
     self.visible = value
     self.sceneManager:updateRender()
+end
+
+----------------------------------------------------------------
+-- visibleを返します.
+----------------------------------------------------------------
+function M:getVisible()
+    return self.visible
 end
 
 ---------------------------------------

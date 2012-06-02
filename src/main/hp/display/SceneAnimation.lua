@@ -31,7 +31,7 @@ function M.popIn(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
     return Animation:new():parallel(
         Animation:new({currentScene}, sec)
-            :seekColor(-0.5, -0.5, -0.5, -0.5),
+            :seekColor(0.5, 0.5, 0.5, 0.5),
         createShowAnimation(nextScene, sec)
             :setScl(0, 0, 1):seekScl(1, 1, 1)
     )

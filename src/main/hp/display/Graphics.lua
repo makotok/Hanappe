@@ -32,37 +32,30 @@ local M = class(DisplayObject)
 -- @param params
 -- @return インスタンス
 --------------------------------------------------------------------------------
-function M:new(params)
+function M:init(params)
     assert(params)
     assert(params.width)
     assert(params.height)
 
     params = params or {}
 
-    -- prop, deck
-    local prop = MOAIProp.new()
-    table.copy(self, prop)
-    
     local deck = MOAIScriptDeck.new()
-    prop:setDeck(deck)
-    prop.deck = deck
-    prop.commands = {}
+    self:setDeck(deck)
+    self.deck = deck
+    self.commands = {}
 
     deck:setDrawCallback(
         function(index, xOff, yOff, xFlip, yFlip)
-            MOAIGfxDevice.setPenColor(prop:getRed(), prop:getGreen(), prop:getBlue(), prop:getAlpha())
+            MOAIGfxDevice.setPenColor(self:getRed(), self:getGreen(), self:getBlue(), self:getAlpha())
             MOAIGfxDevice.setPenWidth(1)
             MOAIGfxDevice.setPointSize(1)
-            for i, gfx in ipairs(prop.commands) do
-                gfx(prop)
+            for i, gfx in ipairs(self.commands) do
+                gfx(self)
             end
         end
     )
     
-    -- parameters
-    prop:copyParams(params)
-        
-    return prop
+    self:copyParams(params)
 end
 
 --------------------------------------------------------------------------------
@@ -73,7 +66,6 @@ function M:copyParams(params)
         self.deck:setRect(0, 0, params.width, params.height)
         self:setPiv(params.width / 2, params.height / 2, 0)
     end
-    
     DisplayObject.copyParams(self, params)
 end
 
