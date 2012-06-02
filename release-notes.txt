@@ -1,10 +1,16 @@
 -------------------------------------------------------------------
--- Hanappe Framework Version:1.3.1
+-- Hanappe Framework Version:1.4.0
 -- Moai SDK Version 1.1 Revision 1
 -------------------------------------------------------------------
 Refactoring:sample.
 Fixed:setVisible work around a bug in the MOAITextBox.
-Group:setting when setCenterPiv, change so as not to move the upper left coordinates
+Modify:Group setting when setCenterPiv, change so as not to move the upper left coordinates
+Modify:Change the method of generating an instance of the DisplayObject.
+Modify:TextureDrawable When you first set the texture, change it to resize.
+Modify:Change to MOAIProp from MOAITransform, an instance of the Group.
+Added:In touch with events, changes can be detected moving distance.
+Added:Add useful functions to MOAIPropUtil.
+Added:Add a pop-up display function in a MessageBox.
 
 -------------------------------------------------------------------
 -- Hanappe Framework Version:1.3.0
