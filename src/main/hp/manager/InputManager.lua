@@ -12,27 +12,37 @@ local EventDispatcher = require("hp/event/EventDispatcher")
 local M = EventDispatcher:new()
 local pointer = {x = 0, y = 0, down = false}
 local keyboard = {key = 0, down = false}
+local touchEventStack = {}
+
+local TOUCH_EVENTS = {}
+TOUCH_EVENTS[MOAITouchSensor.TOUCH_DOWN] = Event.TOUCH_DOWN
+TOUCH_EVENTS[MOAITouchSensor.TOUCH_UP] = Event.TOUCH_UP
+TOUCH_EVENTS[MOAITouchSensor.TOUCH_MOVE] = Event.TOUCH_MOVE
+TOUCH_EVENTS[MOAITouchSensor.TOUCH_CANCEL] = Event.TOUCH_CANCEL
 
 ----------------------------------------------------------------
 -- タッチ処理
 ----------------------------------------------------------------
 local function onTouch(eventType, idx, x, y, tapCount)
     -- event
-    local event = Event:new(Event.TOUCH, M)
-    if eventType == MOAITouchSensor.TOUCH_DOWN then
-        event.type = Event.TOUCH_DOWN
-    elseif eventType == MOAITouchSensor.TOUCH_UP then
-        event.type = Event.TOUCH_UP
-    elseif eventType == MOAITouchSensor.TOUCH_MOVE then
-        event.type = Event.TOUCH_MOVE
-    elseif eventType == MOAITouchSensor.TOUCH_CANCEL then
-        event.type = Event.TOUCH_CANCEL
-    end
+    local event = Event(TOUCH_EVENTS[eventType], M)
     event.idx = idx
     event.x = x
     event.y = y
     event.tapCount = tapCount
-    event.target = M
+    
+    if eventType == MOAITouchSensor.TOUCH_DOWN then
+        touchEventStack[idx] = event
+    elseif eventType == MOAITouchSensor.TOUCH_UP then
+        touchEventStack[idx] = nil
+    elseif eventType == MOAITouchSensor.TOUCH_MOVE then
+        local oldEvent = touchEventStack[idx]
+        event.moveX = event.x - oldEvent.x
+        event.moveY = event.y - oldEvent.y
+        touchEventStack[idx] = event
+    elseif eventType == MOAITouchSensor.TOUCH_CANCEL then
+        touchEventStack[idx] = nil
+    end
 
     M:dispatchEvent(event)
 end
