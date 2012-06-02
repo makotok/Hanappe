@@ -8,6 +8,8 @@ Modify:Group setting when setCenterPiv, change so as not to move the upper left 
 Modify:Change the method of generating an instance of the DisplayObject.
 Modify:TextureDrawable When you first set the texture, change it to resize.
 Modify:Change to MOAIProp from MOAITransform, an instance of the Group.
+Modify:Has inherited the DisplayObject EventDispatcher.
+Modify:Change the order of succession to the constructor of the class.
 Added:In touch with events, changes can be detected moving distance.
 Added:Add useful functions to MOAIPropUtil.
 Added:Add a pop-up display function in a MessageBox.
