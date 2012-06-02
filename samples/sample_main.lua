@@ -15,6 +15,7 @@ local sceneItems = {
     {text = "moai", scene = "samples/display/moai_sample"},
     {text = "hittest", scene = "samples/display/hittest_sample"},
     {text = "drag", scene = "samples/display/drag_sample"},
+    {text = "drag2", scene = "samples/display/drag2_sample"},
     -- manager
     {text = "scenemanager", scene = "samples/manager/scenemanager_sample"},
 
@@ -24,6 +25,7 @@ local sceneItems = {
     {text = "radiobutton", scene = "samples/widget/radiobutton_sample", animation = "fade"},
     {text = "panel", scene = "samples/widget/panel_sample", animation = "fade"},
     {text = "messagebox", scene = "samples/widget/messagebox_sample", animation = "fade"},
+    {text = "messagebox2", scene = "samples/widget/messagebox2_sample", animation = "fade"},
     {text = "scrollview", scene = "samples/widget/scrollview_sample", animation = "fade"},
     {text = "textview", scene = "samples/widget/textview_sample", animation = "fade"},
     -- tmx
