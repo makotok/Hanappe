@@ -10,7 +10,7 @@ function onCreate(params)
     -- 改行を含むテキストは、nextPageで上手くいかない.
     -- バグを回避する実装を行う予定。（ただしそのうち修正される可能性もある）
     -- また、word wrapがスペースで行っているので、日本語に対応できていない。
-    -- これは、対応が難しいのでMOAISDKに修正をお願いしている。
+    -- MEMO:Will improve in the next version of MOAI.
     local text =  ""
     for i = 1, 20 do
         text = text .. "メッセージ" .. i .. "\n"
