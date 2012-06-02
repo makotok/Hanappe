@@ -46,6 +46,14 @@ function onCreate(params)
     sprite4:setSheetAnims(sheetAnims)
     sprite4:setLeft(sprite3:getRight())
     sprite4:setTop(0)
+
+    sprite5 = SpriteSheet()
+    sprite5:setTexture("samples/assets/actor.png")
+    sprite5:setTiledSheets(32, 32)
+    sprite5:setSheetAnims(sheetAnims)
+    sprite5:setPos(0, sprite4:getBottom())
+    sprite5:setLayer(layer)
+
 end
 
 function onStart()
@@ -53,6 +61,8 @@ function onStart()
     sprite2:playAnim("walkLeft")
     sprite3:playAnim("walkRight")
     sprite4:playAnim("walkUp")
+    sprite5:playAnim("walkUp")
+    sprite5:stopAnim()
 end
 
 function onTouchDown()

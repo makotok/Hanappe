@@ -1,5 +1,7 @@
 module(..., package.seeall)
 
+local MY_MSGBOX_THEME = {textSize = 16, width = 300, height = 100}
+
 function onCreate(params)
     widgetView = View()
     widgetView:setScene(scene)
@@ -13,9 +15,7 @@ function onCreate(params)
     for i = 1, 20 do
         text = text .. "メッセージ" .. i .. "\n"
     end
-    messageBox = MessageBox()
-    messageBox:setTextSize(16)
-    messageBox:setSize(300, 100)
+    messageBox = MessageBox(MY_MSGBOX_THEME)
     messageBox:setText(text)
     messageBox:setPos(10, 10)
     messageBox:hide()
@@ -25,8 +25,4 @@ end
 
 function onStart()
     messageBox:showPopup()
-end
-
-function onTouchDown(e)
-    --messageBox.textLabel:nextPage()
 end

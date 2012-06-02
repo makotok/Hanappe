@@ -1,26 +1,35 @@
 module(..., package.seeall)
 
 local sceneItems = {
-    {text = "graphics", scene = "samples/graphics_sample", animation = "changeNow"},
-    {text = "group", scene = "samples/group_sample", animation = "fade"},
-    {text = "input", scene = "samples/input_sample", animation = "crossFade"},
-    {text = "sprite", scene = "samples/sprite_sample", animation = "slideToTop"},
-    {text = "spritesheet", scene = "samples/spritesheet_sample", animation = "slideToBottom"},
-    {text = "mapsprite", scene = "samples/mapsprite_sample", animation = "slideToLeft"},
-    {text = "text", scene = "samples/text_sample", animation = "slideToRight"},
-    {text = "animation", scene = "samples/animation_sample", animation = "fade"},
-    {text = "ninepatch", scene = "samples/ninepatch_sample", animation = "fade"},
-    {text = "scene", scene = "samples/scene_sample", animation = "popIn"},
-    {text = "moai", scene = "samples/moai_sample"},
-    {text = "joystick", scene = "samples/stick_sample"},
-    {text = "button", scene = "samples/button_sample", animation = "fade"},
-    {text = "radiobutton", scene = "samples/radiobutton_sample", animation = "fade"},
-    {text = "panel", scene = "samples/panel_sample", animation = "fade"},
-    {text = "messagebox", scene = "samples/messagebox_sample", animation = "fade"},
-    {text = "scrollview", scene = "samples/scrollview_sample", animation = "fade"},
-    {text = "textview", scene = "samples/textview_sample", animation = "fade"},
-    {text = "tiledmap", scene = "samples/tiledmap_sample", animation = "fade"},
-    {text = "rpgmap", scene = "samples/rpgmap_sample", animation = "fade"},
+    -- display
+    {text = "graphics", scene = "samples/display/graphics_sample", animation = "changeNow"},
+    {text = "group", scene = "samples/display/group_sample", animation = "fade"},
+    {text = "input", scene = "samples/display/input_sample", animation = "crossFade"},
+    {text = "sprite", scene = "samples/display/sprite_sample", animation = "slideToTop"},
+    {text = "spritesheet", scene = "samples/display/spritesheet_sample", animation = "slideToBottom"},
+    {text = "mapsprite", scene = "samples/display/mapsprite_sample", animation = "slideToLeft"},
+    {text = "text", scene = "samples/display/text_sample", animation = "slideToRight"},
+    {text = "animation", scene = "samples/display/animation_sample", animation = "fade"},
+    {text = "ninepatch", scene = "samples/display/ninepatch_sample", animation = "fade"},
+    {text = "scene", scene = "samples/display/scene_sample", animation = "popIn"},
+    {text = "moai", scene = "samples/display/moai_sample"},
+    {text = "hittest", scene = "samples/display/hittest_sample"},
+    {text = "drag", scene = "samples/display/drag_sample"},
+    -- manager
+    {text = "scenemanager", scene = "samples/manager/scenemanager_sample"},
+
+    -- widget
+    {text = "joystick", scene = "samples/widget/stick_sample"},
+    {text = "button", scene = "samples/widget/button_sample", animation = "fade"},
+    {text = "radiobutton", scene = "samples/widget/radiobutton_sample", animation = "fade"},
+    {text = "panel", scene = "samples/widget/panel_sample", animation = "fade"},
+    {text = "messagebox", scene = "samples/widget/messagebox_sample", animation = "fade"},
+    {text = "scrollview", scene = "samples/widget/scrollview_sample", animation = "fade"},
+    {text = "textview", scene = "samples/widget/textview_sample", animation = "fade"},
+    -- tmx
+    {text = "tiledmap", scene = "samples/tmx/tiledmap_sample", animation = "fade"},
+    -- rpg
+    {text = "rpgmap", scene = "samples/rpg/rpgmap_sample", animation = "fade"},
 }
 
 local selectedItem = nil
