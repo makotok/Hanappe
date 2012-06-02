@@ -29,6 +29,8 @@ M.RANGE_OF_CENTER_RATE = 0.5
 -- インスタンスを生成して返します.
 ----------------------------------------------------------------
 function M:init(params)
+    Widget.init(self, params)
+    
     assert(params)
     assert(params.baseTexture)
     assert(params.knobTexture)
@@ -48,8 +50,6 @@ function M:init(params)
     
     self:setSize(baseSprite:getWidth(), baseSprite:getHeight())
     self:setCenterKnob()
-
-    return obj
 end
 
 --------------------------------------------------------------------------------
