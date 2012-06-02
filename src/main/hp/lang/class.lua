@@ -1,13 +1,13 @@
 local table = require("hp/lang/table")
 
 --------------------------------------------------------------------------------
--- クラスベースなオブジェクト指向を簡単に実現するためのクラスです.<br>
--- クラスの基本的な機能を有します.<br>
--- setmetatableによる継承ではなく、テーブルに展開する事で<br>
--- 継承が多くなった場合でもパフォーマンスが劣化しません.<br>
---
--- カプセル化の仕組みとして、getPrivate、setPrivateを用意しています.<br>
--- この関数を使用すると、外部から隠したい一時変数等をmetatableに隠す事ができます.<br>
+-- Class that enable you to easily object-oriented.<br>
+-- Provide the basic functionality of the class.<br>
+-- <br>
+-- class does not perform inheritance setmetatable.<br>
+-- The inheritance by copying it to the table.<br>
+-- Will consume a little more memory,
+-- the performance does not deteriorate if the inheritance is deep.<br>
 -- @class table
 -- @name class
 --------------------------------------------------------------------------------
@@ -19,24 +19,29 @@ local function call(self, ...)
 end
 
 --------------------------------------------------------------------------------
--- クラス定義関数です.
--- 引数にテーブルを指定する事で多重継承が可能です.
--- @param ... 親テーブルです. 多重継承が可能です.
+-- Class definition is a function.
+-- @param ... Base class list.
 -- @return class
 --------------------------------------------------------------------------------
 function M:__call(...)
     local class = table.copy(self)
-    for i, super in ipairs({...}) do
+    local bases = {...}
+    for i, super in ipairs(bases) do
         table.copy(super, class)
+    end
+    if #bases > 0 then
+        class.new = bases[1].new
+        class.init = bases[1].init
     end
     class.__call = call
     return setmetatable(class, class)
 end
 
 --------------------------------------------------------------------------------
--- コンストラクタ関数です.
--- デフォルトではテーブルを生成して、メタテーブルによる参照を設定します.
--- @return インスタンス
+-- Instance generating functions.<br>
+-- The user can use this function.<br>
+-- Calling this function, init function will be called internally.<br>
+-- @return Instance
 --------------------------------------------------------------------------------
 function M:new(...)
     local obj = {__index = self}
@@ -53,10 +58,10 @@ function M:new(...)
 end
 
 --------------------------------------------------------------------------------
--- metatableからプライベートな変数の一覧を返します.<br>
--- 擬似的に変数をカプセル化してします.<br>
--- この関数はクラス内から使用する事を目的とする為、
--- 基本的に外部から呼ばないでください.
+-- Returns a list of variables that are private from metatable.<br>
+-- Encapsulates the variables in a pseudo manner.<br>
+-- Since this function intended to be used internally, please do not reference user.
+-- @return mt.__privates
 --------------------------------------------------------------------------------
 function M:getPrivates()
     local mt = getmetatable(self)
@@ -65,10 +70,11 @@ function M:getPrivates()
 end
 
 --------------------------------------------------------------------------------
--- metatableからプライベートな変数を返します.<br>
--- 擬似的に変数をカプセル化してします.<br>
--- この関数はクラス内から使用する事を目的とする為、
--- 基本的に外部から呼ばないでください.
+-- Returns the private variable.<br>
+-- Encapsulates the variables in a pseudo manner.<br>
+-- Since this function intended to be used internally, please do not reference user.
+-- @param name Private variable name
+-- @return Private variable
 --------------------------------------------------------------------------------
 function M:getPrivate(name)
     local mt = getmetatable(self)
@@ -77,10 +83,11 @@ function M:getPrivate(name)
 end
 
 --------------------------------------------------------------------------------
--- metatableからプライベートな変数を設定します.<br>
--- 擬似的に変数をカプセル化してします.<br>
--- この関数はクラス内から使用する事を目的とする為、
--- 基本的に外部から呼ばないでください.
+-- Set the private variable.<br>
+-- Encapsulates the variables in a pseudo manner.<br>
+-- Since this function intended to be used internally, please do not reference user.
+-- @param name Private variable name
+-- @return value Private variable
 --------------------------------------------------------------------------------
 function M:setPrivate(name, value)
     local mt = getmetatable(self)
