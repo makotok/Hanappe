@@ -16,48 +16,20 @@ local ThemeClient = require("hp/widget/ThemeClient")
 -- @name View
 ----------------------------------------------------------------
 local M = class(Layer, EventDispatcher, ThemeClient)
+M.new = Layer.new
 
 local super = Layer
-
---------------------------------------------------------------------------------
--- インスタンスを生成して返します.
---------------------------------------------------------------------------------
-function M:new(params)
-    local obj = Layer.new(self)
-    EventDispatcher.init(obj)
-    ThemeClient.init(obj)
-
-    if obj.init then
-        obj:init(params)
-    end
-    
-    obj:includeFunctions()
-    obj:excludeFunctions()
-
-    return obj
-end
 
 ----------------------------------------------------------------
 -- コンストラクタです.
 ----------------------------------------------------------------
 function M:init(params)
+    Layer.init(self)
+    EventDispatcher.init(self)
+    ThemeClient.init(self)
+    
     self:setPrivate("children", {})
     self:setPrivate("enabled", true)
-end
-
-----------------------------------------------------------------
--- 使用する関数を追加します.
-----------------------------------------------------------------
-function M:includeFunctions()
-end
-
-----------------------------------------------------------------
--- 使用するべきでない関数を除外します.
-----------------------------------------------------------------
-function M:excludeFunctions()
-    self.new = nil
-    self.init = nil
-    self.excludeFunctions = nil
 end
 
 --------------------------------------------------------------------------------

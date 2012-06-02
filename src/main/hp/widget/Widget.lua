@@ -20,18 +20,7 @@ local M = class(Group, EventDispatcher, ThemeClient)
 -- インスタンスを生成して返します.
 --------------------------------------------------------------------------------
 function M:new(params)
-    local obj = Group.new(self)
-    EventDispatcher.init(obj)
-    ThemeClient.init(obj)
-    
-    if obj.init then
-        obj:init(params)
-    end
-    
-    obj:includeFunctions()
-    obj:excludeFunctions()
-
-    return obj
+    return Group.new(self, params)
 end
 
 --------------------------------------------------------------------------------
@@ -39,22 +28,11 @@ end
 -- Widgetクラスはこちらを使用すべきです.
 --------------------------------------------------------------------------------
 function M:init(params)
+    Group.init(self)
+    EventDispatcher.init(self)
+    ThemeClient.init(self)
+    
     self:setPrivate("enabled", true)
-end
-
-----------------------------------------------------------------
--- 使用する関数を追加します.
-----------------------------------------------------------------
-function M:includeFunctions()
-end
-
-----------------------------------------------------------------
--- 使用するべきでない関数を除外します.
-----------------------------------------------------------------
-function M:excludeFunctions()
-    self.new = nil
-    self.init = nil
-    self.excludeFunctions = nil
 end
 
 --------------------------------------------------------------------------------
