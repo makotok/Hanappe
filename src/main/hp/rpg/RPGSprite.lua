@@ -10,8 +10,7 @@ local RPGMoveFactory = require("hp/rpg/move/RPGMoveFactory")
 -- @class table
 -- @name RPGSprite
 ----------------------------------------------------------------
-local M = class(SpriteSheet, EventDispatcher)
-M.new = SpriteSheet.new
+local M = class(SpriteSheet)
 
 -- constraints
 -- Sheet animations
@@ -41,7 +40,6 @@ M.MOVE_RANDOM = "randomMove"
 ----------------------------------------------------------------
 function M:init(params)
     SpriteSheet.init(self, params)
-    EventDispatcher.init(self)
     
     self:setSheetAnims(self.SHEET_ANIMS)
     

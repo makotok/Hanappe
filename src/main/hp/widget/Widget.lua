@@ -14,14 +14,7 @@ local ThemeClient = require("hp/widget/ThemeClient")
 -- @class table
 -- @name Widget
 --------------------------------------------------------------------------------
-local M = class(Group, EventDispatcher, ThemeClient)
-
---------------------------------------------------------------------------------
--- インスタンスを生成して返します.
---------------------------------------------------------------------------------
-function M:new(params)
-    return Group.new(self, params)
-end
+local M = class(Group, ThemeClient)
 
 --------------------------------------------------------------------------------
 -- コンストラクタです.
@@ -29,7 +22,6 @@ end
 --------------------------------------------------------------------------------
 function M:init(params)
     Group.init(self)
-    EventDispatcher.init(self)
     ThemeClient.init(self)
     
     self:setPrivate("enabled", true)

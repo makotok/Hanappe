@@ -24,6 +24,8 @@ local M = class(DisplayObject, TextureDrawable)
 -- @return インスタンス
 --------------------------------------------------------------------------------
 function M:init(params)
+    DisplayObject.init(self)
+
     params = params or {}
     local deck = MOAIGfxQuadDeck2D.new()
 

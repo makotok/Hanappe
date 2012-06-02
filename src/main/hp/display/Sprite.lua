@@ -15,6 +15,8 @@ local M = class(DisplayObject, TextureDrawable)
 -- Spriteインスタンスを生成して返します.
 --------------------------------------------------------------------------------
 function M:init(params)
+    DisplayObject.init(self)
+
     params = params or {}
     
     local deck = MOAIGfxQuad2D.new()

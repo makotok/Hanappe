@@ -33,6 +33,8 @@ local M = class(DisplayObject)
 -- @return インスタンス
 --------------------------------------------------------------------------------
 function M:init(params)
+    DisplayObject.init(self)
+
     assert(params)
     assert(params.width)
     assert(params.height)

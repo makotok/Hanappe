@@ -19,6 +19,8 @@ local interface = MOAITextBox.getInterfaceTable()
 -- TextLabelインスタンスを生成して返します.
 --------------------------------------------------------------------------------
 function M:init(params)
+    DisplayObject.init(self)
+
     params = params or {}
 
     local font = FontManager:request(params.font)

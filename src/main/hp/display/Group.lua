@@ -16,6 +16,8 @@ local MOAIPropInterface = MOAIProp.getInterfaceTable()
 -- Groupインスタンスを生成して返します.
 ----------------------------------------------------------------
 function M:init(params)
+    DisplayObject.init(self)
+
     params = params or {}
 
     self.children = {}

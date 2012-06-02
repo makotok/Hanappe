@@ -15,6 +15,8 @@ local M = class(DisplayObject, TextureDrawable)
 -- インスタンスを生成して返します.
 --------------------------------------------------------------------------------
 function M:init(params)
+    DisplayObject.init(self)
+
     local deck = MOAIGfxQuadDeck2D.new()
     local grid = MOAIGrid.new ()
 

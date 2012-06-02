@@ -15,8 +15,7 @@ local ThemeClient = require("hp/widget/ThemeClient")
 -- @class table
 -- @name View
 ----------------------------------------------------------------
-local M = class(Layer, EventDispatcher, ThemeClient)
-M.new = Layer.new
+local M = class(Layer, ThemeClient)
 
 local super = Layer
 
@@ -25,7 +24,6 @@ local super = Layer
 ----------------------------------------------------------------
 function M:init(params)
     Layer.init(self)
-    EventDispatcher.init(self)
     ThemeClient.init(self)
     
     self:setPrivate("children", {})

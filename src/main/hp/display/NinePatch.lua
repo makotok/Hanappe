@@ -19,6 +19,8 @@ local interface = MOAIProp.getInterfaceTable()
 -- Spriteインスタンスを生成して返します.
 --------------------------------------------------------------------------------
 function M:init(params)
+    DisplayObject.init(self)
+
     assert(params, "params is nil!")
     assert(params.texture, "texture is nil!")
 

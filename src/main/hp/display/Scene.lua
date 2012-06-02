@@ -18,7 +18,7 @@ local Application = require("hp/Application")
 -- @class table
 -- @name Scene
 ----------------------------------------------------------------
-local M = class(Group, EventDispatcher)
+local M = class(Group)
 M.new = Group.new
 
 local ENTER_FRAME_EVENT = Event:new("enterFrame")
@@ -28,7 +28,6 @@ local ENTER_FRAME_EVENT = Event:new("enterFrame")
 ---------------------------------------
 function M:init()
     Group.init(self)
-    EventDispatcher.init(self)
     
     self:setSize(Application.screenWidth, Application.screenHeight)
     

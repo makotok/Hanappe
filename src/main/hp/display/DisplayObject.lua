@@ -1,6 +1,7 @@
 local class = require("hp/lang/class")
 local table = require("hp/lang/table")
 local MOAIPropUtil = require("hp/util/MOAIPropUtil")
+local EventDispatcher = require("hp/event/EventDispatcher")
 
 --------------------------------------------------------------------------------
 -- 描画オブジェクトの基底クラスです.<br>
@@ -8,7 +9,7 @@ local MOAIPropUtil = require("hp/util/MOAIPropUtil")
 -- @class table
 -- @name DisplayObject
 --------------------------------------------------------------------------------
-local M = class(MOAIPropUtil)
+local M = class(EventDispatcher, MOAIPropUtil)
 
 M.MOAI_CLASS = MOAIProp
 
@@ -28,6 +29,13 @@ function M:new(...)
     obj.init = nil
     
     return obj
+end
+
+--------------------------------------------------------------------------------
+-- コンストラクタです.
+--------------------------------------------------------------------------------
+function M:init(...)
+    EventDispatcher.init(self)
 end
 
 --------------------------------------------------------------------------------
