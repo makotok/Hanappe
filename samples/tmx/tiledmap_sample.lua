@@ -11,12 +11,7 @@ function onCreate(params)
     mapView:setScene(scene)
 end
 
-function onTouchDown(e)
-    touchX, touchY = e.x, e.y
-end
-
 function onTouchMove(e)
-    local moveX, moveY = touchX - e.x, touchY - e.y
-    mapView.camera:addLoc(moveX, moveY, 0)
-    touchX, touchY = e.x, e.y
+    local vScaleX, vScaleY = Application:getViewScale()
+    mapView.camera:addLoc(-e.moveX / vScaleX, -e.moveY / vScaleY, 0)
 end

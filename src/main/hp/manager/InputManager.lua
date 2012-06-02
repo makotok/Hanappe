@@ -29,6 +29,8 @@ local function onTouch(eventType, idx, x, y, tapCount)
     event.idx = idx
     event.x = x
     event.y = y
+    event.moveX = 0
+    event.moveY = 0
     event.tapCount = tapCount
     
     if eventType == MOAITouchSensor.TOUCH_DOWN then
