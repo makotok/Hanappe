@@ -21,6 +21,8 @@ function M:new(...)
     local obj = self.MOAI_CLASS.new()
     table.copy(self, obj)
 
+    EventDispatcher.init(obj)
+
     if obj.init then
         obj:init(...)
     end
@@ -35,7 +37,6 @@ end
 -- コンストラクタです.
 --------------------------------------------------------------------------------
 function M:init(...)
-    EventDispatcher.init(self)
 end
 
 --------------------------------------------------------------------------------
