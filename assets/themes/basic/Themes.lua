@@ -56,6 +56,7 @@ M.Panel = {
 --------------------------------------------------------------------------------
 M.MessageBox = {
     skin = "assets/themes/basic/skins/panel.png",
+    textSize = 16,
     paddingTop = 10,
     paddingLeft = 10,
     paddingBottom = 10,
