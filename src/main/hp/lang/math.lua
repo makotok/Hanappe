@@ -8,7 +8,7 @@ local math = {}
 setmetatable(math, {__index = gmath})
 
 ---------------------------------------
--- Calculate the average of the values ​​of the argument.
+-- Calculate the average of the values of the argument.
 -- @param ... The number of variable-length argument
 -- @return average
 ---------------------------------------
