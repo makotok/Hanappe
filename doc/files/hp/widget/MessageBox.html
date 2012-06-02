@@ -195,6 +195,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/physics/PhysicsWorld.html">hp/physics/PhysicsWorld.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/rpg/RPGMapView.html">hp/rpg/RPGMapView.lua</a>
 	</li>
 
@@ -337,13 +341,43 @@
 	</tr>
 
 	<tr>
+	<td class="name" nowrap><a href="#M:hidePopup">M:hidePopup</a>&nbsp;()</td>
+	<td class="summary">ポップアップエフェクトでメッセージボックスを非表示にします.</td>
+	</tr>
+
+	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
 	<td class="summary">インスタンスを生成して返します.</td>
 	</tr>
 
 	<tr>
+	<td class="name" nowrap><a href="#M:isBusy">M:isBusy</a>&nbsp;()</td>
+	<td class="summary">メッセージの表示処理中かどうか返します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:more">M:more</a>&nbsp;()</td>
+	<td class="summary">次のページが存在するか返します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:nextPage">M:nextPage</a>&nbsp;()</td>
+	<td class="summary">次のページを表示します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:onMessageEnd">M:onMessageEnd</a>&nbsp;()</td>
+	<td class="summary">メッセージが終了した場合に呼ばれます.</td>
+	</tr>
+
+	<tr>
 	<td class="name" nowrap><a href="#M:onResize">M:onResize</a>&nbsp;(e)</td>
 	<td class="summary">サイズ変更時に子の大きさも変更します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:onTouchDown">M:onTouchDown</a>&nbsp;(e)</td>
+	<td class="summary">画面をタッチした時の処理を行います.</td>
 	</tr>
 
 	<tr>
@@ -364,6 +398,11 @@
 	<tr>
 	<td class="name" nowrap><a href="#M:setTextSize">M:setTextSize</a>&nbsp;(points, dpi)</td>
 	<td class="summary">テキストサイズを設定します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:showPopup">M:showPopup</a>&nbsp;()</td>
+	<td class="summary">ポップアップエフェクトでメッセージボックスを表示します.</td>
 	</tr>
 
 	<tr>
@@ -438,6 +477,23 @@
 
 
 
+<dt><a name="M:hidePopup"></a><strong>M:hidePopup</strong>&nbsp;()</dt>
+<dd>
+ポップアップエフェクトでメッセージボックスを非表示にします. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
 <dd>
 インスタンスを生成して返します. 
@@ -464,9 +520,103 @@
 
 
 
+<dt><a name="M:isBusy"></a><strong>M:isBusy</strong>&nbsp;()</dt>
+<dd>
+メッセージの表示処理中かどうか返します. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:more"></a><strong>M:more</strong>&nbsp;()</dt>
+<dd>
+次のページが存在するか返します. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:nextPage"></a><strong>M:nextPage</strong>&nbsp;()</dt>
+<dd>
+次のページを表示します. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:onMessageEnd"></a><strong>M:onMessageEnd</strong>&nbsp;()</dt>
+<dd>
+メッセージが終了した場合に呼ばれます. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
 <dt><a name="M:onResize"></a><strong>M:onResize</strong>&nbsp;(e)</dt>
 <dd>
 サイズ変更時に子の大きさも変更します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  e: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:onTouchDown"></a><strong>M:onTouchDown</strong>&nbsp;(e)</dt>
+<dd>
+画面をタッチした時の処理を行います. 
 
 
 <h3>Parameters</h3>
@@ -622,6 +772,23 @@
 
 
 
+<dt><a name="M:showPopup"></a><strong>M:showPopup</strong>&nbsp;()</dt>
+<dd>
+ポップアップエフェクトでメッセージボックスを表示します. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
 <dt><a name="M:spool"></a><strong>M:spool</strong>&nbsp;()</dt>
 <dd>
 テキストをスプールします. 
@@ -641,7 +808,7 @@
 
 <dt><a name="M:updateTextLabel"></a><strong>M:updateTextLabel</strong>&nbsp;()</dt>
 <dd>
-テキストラベルの状態を更新します. 
+テキストラベルの状態を更新します. サイズを変更した場合に自動的に更新されます. 
 
 
 

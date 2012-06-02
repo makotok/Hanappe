@@ -193,6 +193,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/physics/PhysicsWorld.html">hp/physics/PhysicsWorld.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/rpg/RPGMapView.html">hp/rpg/RPGMapView.lua</a>
 	</li>
 
@@ -337,7 +341,7 @@
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:new">M:new</a>&nbsp;(params)</td>
+	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
 	<td class="summary">TextLabelインスタンスを生成して返します.</td>
 	</tr>
 
@@ -354,6 +358,11 @@
 	<tr>
 	<td class="name" nowrap><a href="#M:setTextSize">M:setTextSize</a>&nbsp;(points, dpi)</td>
 	<td class="summary">テキストサイズを設定します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setVisible">M:setVisible</a>&nbsp;(value)</td>
+	<td class="summary">MOAITextBoxがvisibleが効かないため、alphaで擬似的に非表示にします.</td>
 	</tr>
 
 	<tr>
@@ -432,7 +441,7 @@
 
 
 
-<dt><a name="M:new"></a><strong>M:new</strong>&nbsp;(params)</dt>
+<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
 <dd>
 TextLabelインスタンスを生成して返します. 
 
@@ -528,6 +537,32 @@ TextLabelインスタンスを生成して返します.
 	
 	<li>
 	  dpi: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setVisible"></a><strong>M:setVisible</strong>&nbsp;(value)</dt>
+<dd>
+MOAITextBoxがvisibleが効かないため、alphaで擬似的に非表示にします. TODO:バグ報告.修正された場合に実装を削除予定 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  value: 
 	</li>
 	
 </ul>

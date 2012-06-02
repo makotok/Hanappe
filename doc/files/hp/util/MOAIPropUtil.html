@@ -195,6 +195,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/physics/PhysicsWorld.html">hp/physics/PhysicsWorld.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/rpg/RPGMapView.html">hp/rpg/RPGMapView.lua</a>
 	</li>
 
@@ -397,8 +401,23 @@
 	</tr>
 
 	<tr>
+	<td class="name" nowrap><a href="#M.setAlpha">M.setAlpha</a>&nbsp;(prop, a)</td>
+	<td class="summary">alphaを設定します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.setBlue">M.setBlue</a>&nbsp;(prop, blue)</td>
+	<td class="summary">blueを設定します.</td>
+	</tr>
+
+	<tr>
 	<td class="name" nowrap><a href="#M.setBottom">M.setBottom</a>&nbsp;(prop, bottom)</td>
 	<td class="summary">bottom座標を設定します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.setGreen">M.setGreen</a>&nbsp;(prop, green)</td>
+	<td class="summary">greenを設定します.</td>
 	</tr>
 
 	<tr>
@@ -409,6 +428,11 @@
 	<tr>
 	<td class="name" nowrap><a href="#M.setPos">M.setPos</a>&nbsp;(prop, left, top)</td>
 	<td class="summary">左上原点の座標を設定します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.setRed">M.setRed</a>&nbsp;(prop, red)</td>
+	<td class="summary">redを設定します.</td>
 	</tr>
 
 	<tr>
@@ -482,7 +506,7 @@ alphaを返します.
 
 <dt><a name="M.getBlue"></a><strong>M.getBlue</strong>&nbsp;(prop)</dt>
 <dd>
-blueを返します. 
+blueを返します.
 
 
 <h3>Parameters</h3>
@@ -498,6 +522,9 @@ blueを返します.
 
 
 
+
+<h3>Return value:</h3>
+blue 
 
 
 
@@ -612,14 +639,14 @@ greenを返します.
 
 <dt><a name="M.getLeft"></a><strong>M.getLeft</strong>&nbsp;(prop)</dt>
 <dd>
-left座標を返します. 
+left座標を返します.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  prop: 
+	  prop: MOAIProp 
 	</li>
 	
 </ul>
@@ -818,6 +845,66 @@ top座標を返します.
 
 
 
+<dt><a name="M.setAlpha"></a><strong>M.setAlpha</strong>&nbsp;(prop, a)</dt>
+<dd>
+alphaを設定します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  prop: 
+	</li>
+	
+	<li>
+	  a: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.setBlue"></a><strong>M.setBlue</strong>&nbsp;(prop, blue)</dt>
+<dd>
+blueを設定します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  prop: 
+	</li>
+	
+	<li>
+	  blue: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
 <dt><a name="M.setBottom"></a><strong>M.setBottom</strong>&nbsp;(prop, bottom)</dt>
 <dd>
 bottom座標を設定します. 
@@ -848,9 +935,9 @@ bottom座標を設定します.
 
 
 
-<dt><a name="M.setLeft"></a><strong>M.setLeft</strong>&nbsp;(prop, left)</dt>
+<dt><a name="M.setGreen"></a><strong>M.setGreen</strong>&nbsp;(prop, green)</dt>
 <dd>
-left座標を設定します. 
+greenを設定します. 
 
 
 <h3>Parameters</h3>
@@ -861,7 +948,37 @@ left座標を設定します.
 	</li>
 	
 	<li>
-	  left: 
+	  green: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.setLeft"></a><strong>M.setLeft</strong>&nbsp;(prop, left)</dt>
+<dd>
+left座標を設定します.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  prop: MOAIProp
+	</li>
+	
+	<li>
+	  left: left point 
 	</li>
 	
 </ul>
@@ -896,6 +1013,36 @@ left座標を設定します.
 	
 	<li>
 	  top: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.setRed"></a><strong>M.setRed</strong>&nbsp;(prop, red)</dt>
+<dd>
+redを設定します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  prop: 
+	</li>
+	
+	<li>
+	  red: 
 	</li>
 	
 </ul>

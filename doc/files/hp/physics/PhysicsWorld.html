@@ -194,10 +194,8 @@
 		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
 	</li>
 
-	<li>
-		<a href="../../../files/hp/physics/PhysicsWorld.html">hp/physics/PhysicsWorld.lua</a>
-	</li>
-
+	<li><strong>hp/physics/PhysicsWorld.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/rpg/RPGMapView.html">hp/rpg/RPGMapView.lua</a>
 	</li>
@@ -298,8 +296,10 @@
 		<a href="../../../files/hp/widget/VScrollBar.html">hp/widget/VScrollBar.lua</a>
 	</li>
 
-	<li><strong>hp/widget/View.lua</strong></li>
-	
+	<li>
+		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
+	</li>
+
 	<li>
 		<a href="../../../files/hp/widget/ViewGroup.html">hp/widget/ViewGroup.lua</a>
 	</li>
@@ -319,103 +319,13 @@
 
 <div id="content">
 
-<h1>File <code>hp/widget/View.lua</code></h1>
+<h1>File <code>hp/physics/PhysicsWorld.lua</code></h1>
 
 
 
 
 
 
-
-<h2>Functions</h2>
-<table class="function_list">
-
-	<tr>
-	<td class="name" nowrap><a href="#M:addChild">M:addChild</a>&nbsp;(child)</td>
-	<td class="summary">子オブジェクトを追加します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:getChildren">M:getChildren</a>&nbsp;()</td>
-	<td class="summary">子オブジェクト達を返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:getParentView">M:getParentView</a>&nbsp;()</td>
-	<td class="summary">親のViewを返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:getRenderTable">M:getRenderTable</a>&nbsp;()</td>
-	<td class="summary">描画テーブルを返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">コンストラクタです.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:isEnabled">M:isEnabled</a>&nbsp;()</td>
-	<td class="summary">Viewが有効かどうか返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:isViewClass">M:isViewClass</a>&nbsp;()</td>
-	<td class="summary">Viewクラスかどうか返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:onEnterFrame">M:onEnterFrame</a>&nbsp;(e)</td>
-	<td class="summary">フレーム更新時のイベントリスナです.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:onTouchCancel">M:onTouchCancel</a>&nbsp;(e)</td>
-	<td class="summary">Sceneをタッチした時のイベントリスナです.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:onTouchDown">M:onTouchDown</a>&nbsp;(e)</td>
-	<td class="summary">Sceneをタッチした時のイベントリスナです.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:onTouchMove">M:onTouchMove</a>&nbsp;(e)</td>
-	<td class="summary">Sceneをタッチした時のイベントリスナです.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:onTouchUp">M:onTouchUp</a>&nbsp;(e)</td>
-	<td class="summary">Sceneをタッチした時のイベントリスナです.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:removeChild">M:removeChild</a>&nbsp;(child)</td>
-	<td class="summary">子オブジェクトを削除します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setEnabled">M:setEnabled</a>&nbsp;(value)</td>
-	<td class="summary">Viewが有効かどうか設定します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setParentView">M:setParentView</a>&nbsp;(view)</td>
-	<td class="summary">親のViewを設定します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setScene">M:setScene</a>&nbsp;(scene)</td>
-	<td class="summary">シーンを設定します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setScreenSize">M:setScreenSize</a>&nbsp;(width, height)</td>
-	<td class="summary">画面上のサイズを設定します.</td>
-	</tr>
-
-</table>
 
 
 
@@ -424,8 +334,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#View ">View </a></td>
-	<td class="summary">Widgetを格納するViewコンテナです.<br> 全てのウィジットはViewに追加します.<br> <br> また、ViewにViewを追加する事もできます.<br> その場合、自身の描画後に子のViewが描画されます.<br> </td>
+	<td class="name" nowrap><a href="#DisplayFactory ">DisplayFactory </a></td>
+	<td class="summary">描画オブジェクトのファクトリークラスです.<br> 各クラスをimportすると名前衝突する場合があるので、こちらを使用することもできます.</td>
 	</tr>
 
 </table>
@@ -437,412 +347,6 @@
 
 
 
-
-<h2><a name="functions"></a>Functions</h2>
-<dl class="function">
-
-
-
-<dt><a name="M:addChild"></a><strong>M:addChild</strong>&nbsp;(child)</dt>
-<dd>
-子オブジェクトを追加します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  child: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:getChildren"></a><strong>M:getChildren</strong>&nbsp;()</dt>
-<dd>
-子オブジェクト達を返します. 
-
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:getParentView"></a><strong>M:getParentView</strong>&nbsp;()</dt>
-<dd>
-親のViewを返します. 
-
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:getRenderTable"></a><strong>M:getRenderTable</strong>&nbsp;()</dt>
-<dd>
-描画テーブルを返します. 
-
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
-<dd>
-コンストラクタです. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  params: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:isEnabled"></a><strong>M:isEnabled</strong>&nbsp;()</dt>
-<dd>
-Viewが有効かどうか返します. 
-
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:isViewClass"></a><strong>M:isViewClass</strong>&nbsp;()</dt>
-<dd>
-Viewクラスかどうか返します. 内部的な判定ロジックに使用されます. 
-
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:onEnterFrame"></a><strong>M:onEnterFrame</strong>&nbsp;(e)</dt>
-<dd>
-フレーム更新時のイベントリスナです. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  e: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:onTouchCancel"></a><strong>M:onTouchCancel</strong>&nbsp;(e)</dt>
-<dd>
-Sceneをタッチした時のイベントリスナです. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  e: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:onTouchDown"></a><strong>M:onTouchDown</strong>&nbsp;(e)</dt>
-<dd>
-Sceneをタッチした時のイベントリスナです. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  e: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:onTouchMove"></a><strong>M:onTouchMove</strong>&nbsp;(e)</dt>
-<dd>
-Sceneをタッチした時のイベントリスナです. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  e: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:onTouchUp"></a><strong>M:onTouchUp</strong>&nbsp;(e)</dt>
-<dd>
-Sceneをタッチした時のイベントリスナです. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  e: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:removeChild"></a><strong>M:removeChild</strong>&nbsp;(child)</dt>
-<dd>
-子オブジェクトを削除します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  child: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setEnabled"></a><strong>M:setEnabled</strong>&nbsp;(value)</dt>
-<dd>
-Viewが有効かどうか設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  value: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setParentView"></a><strong>M:setParentView</strong>&nbsp;(view)</dt>
-<dd>
-親のViewを設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  view: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setScene"></a><strong>M:setScene</strong>&nbsp;(scene)</dt>
-<dd>
-シーンを設定します. 親のViewが存在する場合は、Sceneを設定するとよくないので無効化されます. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  scene: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setScreenSize"></a><strong>M:setScreenSize</strong>&nbsp;(width, height)</dt>
-<dd>
-画面上のサイズを設定します. サイズを設定すると、Viewのサイズも設定されます. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  width: 
-	</li>
-	
-	<li>
-	  height: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-</dl>
 
 
 
@@ -850,8 +354,8 @@ Viewが有効かどうか設定します.
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="View "></a><strong>View </strong></dt>
-<dd>Widgetを格納するViewコンテナです.<br> 全てのウィジットはViewに追加します.<br> <br> また、ViewにViewを追加する事もできます.<br> その場合、自身の描画後に子のViewが描画されます.<br>
+<dt><a name="DisplayFactory "></a><strong>DisplayFactory </strong></dt>
+<dd>描画オブジェクトのファクトリークラスです.<br> 各クラスをimportすると名前衝突する場合があるので、こちらを使用することもできます.
 
 
 

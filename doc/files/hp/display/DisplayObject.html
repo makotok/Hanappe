@@ -193,6 +193,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/physics/PhysicsWorld.html">hp/physics/PhysicsWorld.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/rpg/RPGMapView.html">hp/rpg/RPGMapView.lua</a>
 	</li>
 
@@ -332,6 +336,26 @@
 	</tr>
 
 	<tr>
+	<td class="name" nowrap><a href="#M:hitTestObject">M:hitTestObject</a>&nbsp;(prop, object)</td>
+	<td class="summary">If the object will collide with the screen, it returns true.<br> TODO:If you are rotating, it will not work.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:hitTestScreen">M:hitTestScreen</a>&nbsp;(screenX, screenY, screenZ)</td>
+	<td class="summary">If the object will collide with the screen, it returns true.<br> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:hitTestWorld">M:hitTestWorld</a>&nbsp;(worldX, worldY, worldZ)</td>
+	<td class="summary">If the object will collide with the world, it returns true.<br> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:new">M:new</a>&nbsp;(...)</td>
+	<td class="summary">コンストラクタです.</td>
+	</tr>
+
+	<tr>
 	<td class="name" nowrap><a href="#M:setLayer">M:setLayer</a>&nbsp;(layer)</td>
 	<td class="summary">レイヤーを設定します.</td>
 	</tr>
@@ -374,6 +398,139 @@
 	
 	<li>
 	  params: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:hitTestObject"></a><strong>M:hitTestObject</strong>&nbsp;(prop, object)</dt>
+<dd>
+If the object will collide with the screen, it returns true.<br> TODO:If you are rotating, it will not work.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  prop: 
+	</li>
+	
+	<li>
+	  object: MOAIProp object
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+If the object is a true conflict 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:hitTestScreen"></a><strong>M:hitTestScreen</strong>&nbsp;(screenX, screenY, screenZ)</dt>
+<dd>
+If the object will collide with the screen, it returns true.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  screenX: x of screen
+	</li>
+	
+	<li>
+	  screenY: y of screen
+	</li>
+	
+	<li>
+	  screenZ: (option)z of screen
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+If the object is a true conflict 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:hitTestWorld"></a><strong>M:hitTestWorld</strong>&nbsp;(worldX, worldY, worldZ)</dt>
+<dd>
+If the object will collide with the world, it returns true.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  worldX: world x of layer
+	</li>
+	
+	<li>
+	  worldY: world y of layer
+	</li>
+	
+	<li>
+	  worldZ: (option)world z of layer
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+If the object is a true conflict 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:new"></a><strong>M:new</strong>&nbsp;(...)</dt>
+<dd>
+コンストラクタです. self.MOAI_CLASSのインスタンスを生成します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  ...: 
 	</li>
 	
 </ul>
