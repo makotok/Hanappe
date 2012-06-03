@@ -26,12 +26,8 @@ end
 function M:__call(...)
     local class = table.copy(self)
     local bases = {...}
-    for i, super in ipairs(bases) do
-        table.copy(super, class)
-    end
-    if #bases > 0 then
-        class.new = bases[1].new
-        class.init = bases[1].init
+    for i = #bases, 1, -1 do
+        table.copy(bases[i], class)
     end
     class.__call = call
     return setmetatable(class, class)
