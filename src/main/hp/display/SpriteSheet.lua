@@ -4,23 +4,23 @@ local DisplayObject = require("hp/display/DisplayObject")
 local TextureDrawable = require("hp/display/TextureDrawable")
 
 --------------------------------------------------------------------------------
--- 複数のシートを切り替えて描画するクラスです.<br>
--- シート情報を設定して、シートアニメーションを行う事が簡単にできます.<br>
+-- This is a class to draw the sheet switching.<br>
+-- Sheet can be defined in any shape.<br>
+-- <br>
+-- Extends -> DisplayObject, TextureDrawable<br>
+-- 
 -- @class table
 -- @name SpriteSheet
 --------------------------------------------------------------------------------
 local M = class(DisplayObject, TextureDrawable)
 
 --------------------------------------------------------------------------------
--- SpriteSheetインスタンスを生成して返します.<br>
--- @param params 生成するためのパラメータ<br>
--- paramsに設定できるパラメータ:<br>
---     texture = テクスチャのパスもしくはMOAITextureインスタンス.<br>
---     sheets = sheet情報.setSheets関数を参照.<br>
---     sheetAnims = animation情報.setSheetAnims関数を参照.<br>
---     left = 左原点の座標.<br>
---     top = 上原点の座標.<br>
---     layer = MOAILayerを設定.<br>
+-- The constructor.<br>
+-- @param params (option)Parameter is set to Object.<br>
+-- params:<br>
+--     texture:Path of the texture. Or, MOAITexture instance.<br>
+--     sheets:See setSheets function.<br>
+--     sheetAnims = See setSheetAnims function.<br>
 -- @return インスタンス
 --------------------------------------------------------------------------------
 function M:init(params)
@@ -39,7 +39,8 @@ function M:init(params)
 end
 
 --------------------------------------------------------------------------------
--- パラメータを各プロパティにコピーします.
+-- Set the parameter setter function.
+-- @param params Parameter is set to Object.<br>
 --------------------------------------------------------------------------------
 function M:copyParams(params)
     if params.texture and self.setTexture then
@@ -56,14 +57,13 @@ function M:copyParams(params)
 end
 
 --------------------------------------------------------------------------------
--- タイル形式のシートデータを生成して設定します.
--- シート毎の余白などを設定可能です.
--- @param tileWidth タイルの幅
--- @param tileHeight タイルの高さ
--- @param tileX X方向のタイル数(option)
--- @param tileY Y方向のタイル数(option)
--- @param spacing シート毎の余白(option)
--- @param margin シートの開始位置の余白(option)
+-- Set the sheet data in the form of tiles.
+-- @param tileWidth The width of the tile.
+-- @param tileHeight The height of the tile.
+-- @param tileX (option)number of tiles in the x-direction.
+-- @param tileY (option)number of tiles in the y-direction.
+-- @param spacing (option)Spaces between tiles.
+-- @param margin (option)Margins of the Start position
 --------------------------------------------------------------------------------
 function M:setTiledSheets(tileWidth, tileHeight, tileX, tileY, spacing, margin)
     assert(self.texture)
@@ -89,10 +89,11 @@ function M:setTiledSheets(tileWidth, tileHeight, tileX, tileY, spacing, margin)
 end
 
 --------------------------------------------------------------------------------
--- シートデータを設定します.<br>
--- シートデータは以下の形式に乗っ取ってください.<br>
--- {x = x座標の開始位置, y = y座標の開始位置, width = 幅, height = 高さ}
--- @param sheets シートデータ
+-- Set the data sheet.<br>
+-- Sheet in accordance with the following format: Please.<br>
+-- {x = Start position, y = Start position, width = The width of the sheet, height = The height of the sheet} <br>
+-- TODO:Setting of the flip.
+-- @param sheets sheet data
 --------------------------------------------------------------------------------
 function M:setSheets(sheets)
     assert(self.texture)
@@ -110,7 +111,9 @@ function M:setSheets(sheets)
 end
 
 --------------------------------------------------------------------------------
--- 複数のアニメーションデータを設定します.
+-- Set the data to move the key frame animations.<br>
+-- See M:setSheetAnim function.<br>
+-- @param sheetAnims table is set to setSheetAnim.
 --------------------------------------------------------------------------------
 function M:setSheetAnims(sheetAnims)
     for i, v in ipairs(sheetAnims) do
@@ -120,11 +123,15 @@ function M:setSheetAnims(sheetAnims)
 end
 
 --------------------------------------------------------------------------------
--- アニメーションデータを設定します.
+-- Set the data to move the key frame animation.<br>
+-- @param name Animation name.
+-- @param indexes Key sequence.
+-- @param sec Seconds to move the key.
+-- @param mode (option)Mode is set to MOAIAnim.(The default is MOAITimer.LOOP)
 --------------------------------------------------------------------------------
 function M:setSheetAnim(name, indexes, sec, mode)
     local curve = MOAIAnimCurve.new()
-    local anim = MOAIAnim:new()
+    local anim = MOAIAnim.new()
 
     curve:reserveKeys(#indexes)
     for i = 1, #indexes do
@@ -141,14 +148,16 @@ function M:setSheetAnim(name, indexes, sec, mode)
 end
 
 --------------------------------------------------------------------------------
--- 指定した名前のアニメーションデータを返します.
+-- Returns the animation data with the specified name.
+-- @param Animation name.
+-- @return MOAIAnim instance
 --------------------------------------------------------------------------------
 function M:getSheetAnim(name)
     return self.animTable[name]
 end
 
 --------------------------------------------------------------------------------
--- アニメーションを開始します.
+-- Start the animation.
 --------------------------------------------------------------------------------
 function M:playAnim(name)
     local currentAnim = self.currentAnim
@@ -167,7 +176,7 @@ function M:playAnim(name)
 end
 
 --------------------------------------------------------------------------------
--- アニメーションを停止します.
+-- Stop the animation.
 --------------------------------------------------------------------------------
 function M:stopAnim()
     if self.currentAnim then
@@ -176,7 +185,9 @@ function M:stopAnim()
 end
 
 --------------------------------------------------------------------------------
--- 指定した名前がカレントアニメーションかどうか判定します.
+-- Check the current animation with the specified name.<br>
+-- @param name Animation name.
+-- @return If the current animation is true.
 --------------------------------------------------------------------------------
 function M:isCurrentAnim(name)
     return self.currentAnim == self.animTable[name]

@@ -1,43 +1,34 @@
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local DisplayObject = require("hp/display/DisplayObject")
+local Resizable = require("hp/display/Resizable")
 
 --------------------------------------------------------------------------------
--- Graphics機能を持ったDisplayObjectです.
--- DisplayObjectの機能に加えて、基本図形の描画を行う機能があります.
--- 
--- draw*,fill*関数で描画を行います.
--- set*関数で状態の設定を行います.
--- 描画した結果をクリアしたい場合は、clear関数をコールしてください.
--- 
+-- The DisplayObject that has graphics capabilities.<br>
+-- You can call in the method chain MOAIDraw.<br>
+-- See MOAIDraw.<br>
+-- <br>
+-- Extends -> DisplayObject, Resizable<br>
 -- <code>
--- example)
--- local g = Graphics:new({width = 100, height = 100})
--- g:setPenColor(1, 0, 0, 1)
--- g:fillRect()
--- g:drawRect()
--- g:setPenColor(0, 1, 0, 1)
--- g:fillRect(25, 25, 50, 50)
--- g:drawRect(25, 25, 50, 50)
--- g.parent = scene
+-- example)<br>
+-- local g = Graphics({width = 100, height = 100})<br>
+-- g:setPenColor(1, 0, 0, 1):fillRect():drawRect()<br>
+-- g:setPenColor(0, 1, 0, 1):fillRect(25, 25, 50, 50):drawRect(25, 25, 50, 50)<br>
+-- g:setLayer(layer)<br>
 -- </code>
 --
 -- @class table
 -- @name Graphics
 --------------------------------------------------------------------------------
-local M = class(DisplayObject)
+local M = class(DisplayObject, Resizable)
 
 --------------------------------------------------------------------------------
--- Graphicsインスタンスを生成して返します.
--- @param params
--- @return インスタンス
+-- The constructor.
+-- @param params (option)Parameter is set to Object.<br>
+--      (params:width, height)
 --------------------------------------------------------------------------------
 function M:init(params)
     DisplayObject.init(self)
-
-    assert(params)
-    assert(params.width)
-    assert(params.height)
 
     params = params or {}
 
@@ -61,22 +52,38 @@ function M:init(params)
 end
 
 --------------------------------------------------------------------------------
--- パラメータを各プロパティにコピーします.
+-- Based on the parameters, and then call the function setter.
+-- @param params Parameter is set to Object.<br>
 --------------------------------------------------------------------------------
 function M:copyParams(params)
     if params.width and params.height then
-        self.deck:setRect(0, 0, params.width, params.height)
-        self:setPiv(params.width / 2, params.height / 2, 0)
+        self:setSize(params.width, params.height)
     end
     DisplayObject.copyParams(self, params)
 end
 
+--------------------------------------------------------------------------------
+-- Set the height and width.<br>
+-- @param width width
+-- @param height height
+--------------------------------------------------------------------------------
+function M:setSize(width, height)
+    width = width or self:getWidth()
+    height = height or self:getHeight()
+    
+    local left, top = self:getPos()
+    self.deck:setRect(0, 0, width, height)
+    self:setPiv(width / 2, height / 2, 0)
+    self:setPos(left, top)
+end
+
+
 ---------------------------------------
--- 円を描画します.
--- @param x ローカル座標
--- @param y ローカル座標
--- @param r 半径
--- @param steps 点の数
+-- Draw a circle.<br>
+-- @param x Model x
+-- @param y Model y
+-- @param r Radius
+-- @param steps Number of points
 -- @return self
 ---------------------------------------
 function M:drawCircle(x, y, r, steps)
@@ -94,12 +101,12 @@ function M:drawCircle(x, y, r, steps)
 end
 
 ---------------------------------------
--- 楕円を描画します.
--- @param x ローカル座標
--- @param y ローカル座標
--- @param xRad x方向の半径
--- @param yRad y方向の半径
--- @param steps 点の数
+-- Draw an ellipse.<br>
+-- @param x Model x
+-- @param y Model y
+-- @param xRad Radius
+-- @param yRad Radius
+-- @param steps Number of points
 -- @return self
 ---------------------------------------
 function M:drawEllipse(x, y, xRad, yRad, steps)
@@ -116,8 +123,8 @@ function M:drawEllipse(x, y, xRad, yRad, steps)
 end
 
 ---------------------------------------
--- 引数の点を結んだ線を描画します.
--- @param ... 点の座標.x0, y0, x1, y1...
+-- Draws a line.<br>
+-- @param ... Coordinates of the point
 -- @return self
 ---------------------------------------
 function M:drawLine(...)
@@ -130,8 +137,8 @@ function M:drawLine(...)
 end
 
 ---------------------------------------
--- 引数の点を描画します.
--- @param ... 点の座標.x0, y0, x1, y1...
+-- Draws a point.
+-- @param ... Coordinates of the point
 -- @return self
 ---------------------------------------
 function M:drawPoints(...)
@@ -144,11 +151,11 @@ function M:drawPoints(...)
 end
 
 ---------------------------------------
--- 放射線を描画します.
--- @param x ローカル座標
--- @param y ローカル座標
--- @param dx 線の長さ
--- @param dy 線の長さ
+-- Draw a ray.
+-- @param x Model x
+-- @param y Model y
+-- @param dx Line length
+-- @param dy Line length
 -- @return self
 ---------------------------------------
 function M:drawRay(x, y, dx, dy)
@@ -164,12 +171,11 @@ function M:drawRay(x, y, dx, dy)
 end
 
 ---------------------------------------
--- 四角形を描画します.
--- TODO:使用してみると座標に違和感がある・・・
--- @param x0 開始のローカル座標
--- @param y0 開始のローカル座標
--- @param x1 終了のローカル座標
--- @param y1 終了のローカル座標
+-- Draw a rectangle.
+-- @param x0 Model x0
+-- @param y0 Model y0
+-- @param x1 Model x1
+-- @param y1 Model y1
 -- @return self
 ---------------------------------------
 function M:drawRect(x0, y0, x1, y1)
@@ -185,11 +191,11 @@ function M:drawRect(x0, y0, x1, y1)
 end
 
 ---------------------------------------
--- 円を塗りつぶします.
--- @param x ローカル座標
--- @param y ローカル座標
--- @param r 半径
--- @param steps 点の数
+-- Fill the circle.
+-- @param x X of model
+-- @param y Y of model
+-- @param r Radius
+-- @param steps Number of points
 -- @return self
 ---------------------------------------
 function M:fillCircle(x, y, r, steps)
@@ -207,12 +213,12 @@ function M:fillCircle(x, y, r, steps)
 end
 
 ---------------------------------------
--- 楕円を塗りつぶします.
--- @param x ローカル座標
--- @param y ローカル座標
--- @param xRad 半径
--- @param yRad 半径
--- @param steps 点の数
+-- Fill an ellipse.
+-- @param x X of model
+-- @param y Y of model
+-- @param xRad Radius
+-- @param yRad Radius
+-- @param steps steps Number of points
 -- @return self
 ---------------------------------------
 function M:fillEllipse(x, y, xRad, yRad, steps)
@@ -228,9 +234,8 @@ function M:fillEllipse(x, y, xRad, yRad, steps)
 end
 
 ---------------------------------------
--- 三角形を塗りつぶします.
--- TRIANGLE_FANに該当します.
--- @param ... 点(x, y).x0, y0, x1, y1...
+-- Fills the triangle.
+-- @param ... point(x, y)
 -- @return self
 ---------------------------------------
 function M:fillFan(...)
@@ -243,11 +248,11 @@ function M:fillFan(...)
 end
 
 ---------------------------------------
--- 四角形を塗りつぶします.
--- @param x0 開始のローカル座標
--- @param y0 開始のローカル座標
--- @param x1 終了のローカル座標
--- @param y1 終了のローカル座標
+-- Fill a rectangle.
+-- @param x0 X0 of model
+-- @param y0 Y0 of model
+-- @param x1 X1 of model
+-- @param y1 Y1 of model
 -- @return self
 ---------------------------------------
 function M:fillRect(x0, y0, x1, y1)
@@ -263,8 +268,8 @@ function M:fillRect(x0, y0, x1, y1)
 end
 
 ---------------------------------------
--- 指定した色に設定します.
--- 設定後に描画したコマンドに反映されます.
+-- Sets the color of the pen.<br>
+-- Will be reflected in the drawing functions.
 -- @param r red
 -- @param g green
 -- @param b blue
@@ -285,8 +290,9 @@ function M:setPenColor(r, g, b, a)
 end
 
 ---------------------------------------
--- 指定したペンのサイズに設定します.
--- 設定後に描画したコマンドに反映されます.
+-- Set the size of the pen that you specify.<br>
+-- Will be reflected in the drawing functions.
+-- @param width width
 -- @return self
 ---------------------------------------
 function M:setPenWidth(width)
@@ -298,8 +304,9 @@ function M:setPenWidth(width)
 end
 
 ---------------------------------------
--- 指定したポイントのサイズに設定します.
--- 設定後に描画したコマンドに反映されます.
+-- Set the size of the specified point.<br>
+-- Will be reflected in the drawing functions.
+-- @param size
 -- @return self
 ---------------------------------------
 function M:setPointSize(size)
@@ -311,7 +318,8 @@ function M:setPointSize(size)
 end
 
 ---------------------------------------
--- 描画処理をクリアします.
+-- Clears the drawing operations.
+-- @return self
 ---------------------------------------
 function M:clear()
     self.commands = {}

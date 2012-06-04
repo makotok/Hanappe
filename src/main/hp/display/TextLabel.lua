@@ -1,22 +1,25 @@
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local DisplayObject = require("hp/display/DisplayObject")
+local Resizable = require("hp/display/Resizable")
 local FontManager = require("hp/manager/FontManager")
 
 --------------------------------------------------------------------------------
--- テキストを描画するモジュールです.<br>
--- MOAITextBoxを生成して返します.
+-- This is a class to draw the text.<br>
+-- See MOAITextBox.<br>
+-- Extends : DisplayObject, Resizable<br>
 -- @class table
 -- @name TextLabel
 --------------------------------------------------------------------------------
-local M = class(DisplayObject)
+local M = class(DisplayObject, Resizable)
 
 M.MOAI_CLASS = MOAITextBox
 
 local interface = MOAITextBox.getInterfaceTable()
 
 --------------------------------------------------------------------------------
--- TextLabelインスタンスを生成して返します.
+-- The constructor.
+-- @param params (option)Parameter is set to Object.<br>
 --------------------------------------------------------------------------------
 function M:init(params)
     DisplayObject.init(self)
@@ -25,11 +28,14 @@ function M:init(params)
 
     local font = FontManager:request(params.font)
     self:setFont(font)
+    self:setTextSize(FontManager.config.textSize)
     self:copyParams(params)
 end
 
 --------------------------------------------------------------------------------
--- パラメータを各プロパティにコピーします.
+-- Set the parameter setter function.
+-- @param params Parameter is set to Object.<br>
+--      (params:width, height, textSize, text)
 --------------------------------------------------------------------------------
 function M:copyParams(params)
     if params.width and params.height then
@@ -37,17 +43,31 @@ function M:copyParams(params)
     end
     if params.textSize then
         self:setTextSize(params.textSize)
-    else
-        self:setTextSize(FontManager.config.textSize)
     end
     if params.text then
-        self:setString(params.text)
+        self:setText(params.text)
     end
     DisplayObject.copyParams(self, params)
 end
 
 --------------------------------------------------------------------------------
--- テキストサイズを設定します.
+-- Set the text size.<br>
+-- @param width
+-- @param height
+--------------------------------------------------------------------------------
+function M:setSize(width, height)
+    width = width or self:getWidth()
+    height = height or self:getHeight()
+    
+    local left, top = self:getPos()
+    self:setRect(-width / 2, -height / 2, width / 2, height / 2)
+    self:setPos(left, top)
+end
+
+--------------------------------------------------------------------------------
+-- Set the text size.<br>
+-- @param points size.
+-- @param dpi (deprecated)Resolution.
 --------------------------------------------------------------------------------
 function M:setTextSize(points, dpi)
     self:setPrivate("textSizePoints", points)
@@ -56,42 +76,24 @@ function M:setTextSize(points, dpi)
 end
 
 --------------------------------------------------------------------------------
--- テキストサイズを返します.
+-- Returns the text size.<br>
+-- @return points, dpi
 --------------------------------------------------------------------------------
 function M:getTextSize()
     return self:getPrivate("textSizePoints"), self:getPrivate("textSizeDpi")
 end
 
 --------------------------------------------------------------------------------
--- 幅を設定します.
+-- Set the text.<br>
+-- @param text text.
 --------------------------------------------------------------------------------
-function M:setWidth(width)
-    self:setSize(width, self:getHeight())
+function M:setText(text)
+    self:setString(text)
 end
 
 --------------------------------------------------------------------------------
--- 高さを設定します.
---------------------------------------------------------------------------------
-function M:setHeight(height)
-    self:setSize(self:getWidth(), height)
-end
-
---------------------------------------------------------------------------------
--- サイズを設定します.
---------------------------------------------------------------------------------
-function M:setSize(width, height)
-    width = width or self:getWidth()
-    height = height or self:getHeight()
-    
-    local left, top = self:getLeft(), self:getTop()
-    self:setRect(-width / 2, -height / 2, width / 2, height / 2)
-    self:setLeft(left)
-    self:setTop(top)
-end
-
---------------------------------------------------------------------------------
--- MOAITextBoxがvisibleが効かないため、alphaで擬似的に非表示にします.
--- TODO:バグ報告.修正された場合に実装を削除予定
+-- MOAITextBox does not work for the visible, and hide in a pseudo-alpha.<br>
+-- TODO:Will be removed in MOAI SDK V1.2.
 --------------------------------------------------------------------------------
 function M:setVisible(value)
     local r, g, b, a = self:getColor()

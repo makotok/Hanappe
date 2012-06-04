@@ -4,8 +4,13 @@ local MOAIPropUtil = require("hp/util/MOAIPropUtil")
 local EventDispatcher = require("hp/event/EventDispatcher")
 
 --------------------------------------------------------------------------------
--- 描画オブジェクトの基底クラスです.<br>
--- MOAIPropを拡張して、便利な関数を追加します.
+-- The base class for all display objects.<br>
+-- To inherit MOAIPropUtil, you can use the convenience function.<br>
+-- To inherit EventDispatcher, you can use the event notification.<br>
+-- <br>
+-- Use the MOAIProp class.<br>
+-- By changing the M.MOAI_CLASS, you can change to another class.<br>
+-- Extends : EventDispatcher, MOAIPropUtil<br>
 -- @class table
 -- @name DisplayObject
 --------------------------------------------------------------------------------
@@ -13,10 +18,13 @@ local M = class(EventDispatcher, MOAIPropUtil)
 
 M.MOAI_CLASS = MOAIProp
 
---------------------------------------------------------------------------------
--- コンストラクタです.
--- self.MOAI_CLASSのインスタンスを生成します.
---------------------------------------------------------------------------------
+----------------------------------------------------------------
+-- Instance generating functions.<br>
+-- Unlike an ordinary class, and based on the MOAI_CLASS.<br>
+-- To inherit this function is not recommended.<br>
+-- @param ... params.
+-- @return instance.
+----------------------------------------------------------------
 function M:new(...)
     local obj = self.MOAI_CLASS.new()
     table.copy(self, obj)
@@ -33,14 +41,16 @@ function M:new(...)
     return obj
 end
 
---------------------------------------------------------------------------------
--- コンストラクタです.
---------------------------------------------------------------------------------
+----------------------------------------------------------------
+-- The constructor.
+----------------------------------------------------------------
 function M:init(...)
 end
 
 --------------------------------------------------------------------------------
--- パラメータテーブルの値を元に、各setter関数の引数にセットしてコールします.
+-- Set the parameter setter function.
+-- @param params Parameter is set to Object.<br>
+--      (params:left, top, layer)
 --------------------------------------------------------------------------------
 function M:copyParams(params)
     if params.left then
@@ -55,7 +65,7 @@ function M:copyParams(params)
 end
 
 --------------------------------------------------------------------------------
--- レイヤーを設定します.
+-- Set the MOAILayer instance.
 --------------------------------------------------------------------------------
 function M:setLayer(layer)
     if self.layer == layer then

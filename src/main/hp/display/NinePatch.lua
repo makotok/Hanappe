@@ -1,22 +1,24 @@
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local DisplayObject = require("hp/display/DisplayObject")
+local Resizable = require("hp/display/Resizable")
 local TextureDrawable = require("hp/display/TextureDrawable")
 
 --------------------------------------------------------------------------------
--- 部分的に伸張が可能なNinePatchクラスです.<br>
--- 外部的な使用方法はSprite等とほとんど変わりませんが、
--- サイズを指定するとスケールが大きくなります.<br>
--- ウィジットの構築に役立ちます.<br>
+-- NinePatch class is the scale is partially configured.<br>
+-- When you set the size, scale will be reconfigured dynamically.<br>
+-- Will help you build a widget.<br>
+-- Extends : DisplayObject, TextureDrawable, Resizable<br>
 -- @class table
 -- @name NinePatch
 --------------------------------------------------------------------------------
-local M = class(DisplayObject, TextureDrawable)
+local M = class(DisplayObject, TextureDrawable, Resizable)
 
 local interface = MOAIProp.getInterfaceTable()
 
 --------------------------------------------------------------------------------
--- Spriteインスタンスを生成して返します.
+-- The constructor.
+-- @param params (option)Parameter is set to Object.<br>
 --------------------------------------------------------------------------------
 function M:init(params)
     DisplayObject.init(self)
@@ -72,23 +74,9 @@ end
 --------------------------------------------------------------------------------
 --サイズを設定します.
 --------------------------------------------------------------------------------
-function M:setWidth(width)
-    self:setSize(width, self:getHeight())
-end
-
---------------------------------------------------------------------------------
---サイズを設定します.
---------------------------------------------------------------------------------
-function M:setHeight(height)
-    self:setSize(self:getWidth(), height)
-end
-
---------------------------------------------------------------------------------
---サイズを設定します.
---------------------------------------------------------------------------------
 function M:setSize(width, height)
     local tw, th = self.texture:getSize()
-    local left, top = self:getLeft(), self:getTop()
+    local left, top = self:getPos()
     local sclX, sclY, sclZ = self:getScl()
     local bSclX, bSclY, bSclZ = width / tw, height / th, 1 -- TODO:sclZ
     local oSclX, oSclY, oSclZ = sclX * bSclX, sclY * bSclY, sclZ * bSclZ
@@ -98,8 +86,7 @@ function M:setSize(width, height)
     
     self.deck:setRect(-tw / 2, -th / 2, tw / 2, th / 2)
     self:setOrignScl(oSclX, oSclY, oSclZ)
-    self:setLeft(left)
-    self:setTop(top)
+    self:setPos(left, top)
 end
 
 --------------------------------------------------------------------------------

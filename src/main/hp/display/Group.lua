@@ -2,18 +2,22 @@ local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local delegate = require("hp/lang/delegate")
 local DisplayObject = require("hp/display/DisplayObject")
+local Resizable = require("hp/display/Resizable")
 
 ----------------------------------------------------------------
--- MOAIPropをグループ化にクラスです.<br>
+-- This is a class to grouping the DisplayObject.<br>
+-- Will be used as a dummy MOAIProp.<br>
+-- Extends : DisplayObject, Resizable<br>
 -- @class table
 -- @name Group
 ----------------------------------------------------------------
-local M = class(DisplayObject)
+local M = class(DisplayObject, Resizable)
 
 local MOAIPropInterface = MOAIProp.getInterfaceTable()
 
 ----------------------------------------------------------------
--- Groupインスタンスを生成して返します.
+-- The constructor.
+-- @param params (option)Parameter is set to Object.<br>
 ----------------------------------------------------------------
 function M:init(params)
     DisplayObject.init(self)
@@ -29,7 +33,8 @@ function M:init(params)
 end
 
 --------------------------------------------------------------------------------
--- パラメータを各プロパティにコピーします.
+-- Set the parameter setter function.
+-- @param params Parameter is set to Object.<br>
 --------------------------------------------------------------------------------
 function M:copyParams(params)
     if params.width then
@@ -43,7 +48,8 @@ function M:copyParams(params)
 end
 
 ----------------------------------------------------------------
--- オブジェクトの境界を返します.
+-- Returns the bounds of the object.
+-- @return xMin, yMin, zMin, xMax, yMax, zMax
 ----------------------------------------------------------------
 function M:getBounds()
     local xMin, yMin, zMin = 0, 0, 0
@@ -52,35 +58,25 @@ function M:getBounds()
 end
 
 --------------------------------------------------------------------------------
--- 幅を設定します.
+-- Returns the width.
+-- @return width
 --------------------------------------------------------------------------------
-function M:setWidth(width)
-    self:setSize(width, self:getHeight())
-end
-
-----------------------------------------------------------------
--- 幅を返します.
-----------------------------------------------------------------
 function M:getWidth()
     return self:getPrivate("width")
 end
 
---------------------------------------------------------------------------------
--- 高さを設定します.
---------------------------------------------------------------------------------
-function M:setHeight(height)
-    self:setSize(self:getWidth(), height)
-end
-
 ----------------------------------------------------------------
--- 高さを返します.
+-- Returns the height.
+-- @return height
 ----------------------------------------------------------------
 function M:getHeight()
     return self:getPrivate("height")
 end
 
 --------------------------------------------------------------------------------
---サイズを設定します.
+-- Sets the width and height.
+-- @param width width
+-- @param height height
 --------------------------------------------------------------------------------
 function M:setSize(width, height)
     self:setPrivate("width", width)
@@ -88,20 +84,21 @@ function M:setSize(width, height)
 end
 
 ----------------------------------------------------------------
--- visibleを設定します.
+-- Set the visible.
+-- @param visible visible
 ----------------------------------------------------------------
-function M:setVisible(value)
-    MOAIPropInterface.setVisible(self, value)
+function M:setVisible(visible)
+    MOAIPropInterface.setVisible(self, visible)
     
     for i, v in ipairs(self.children) do
         if v.setVisible then
-            v:setVisible(value)
+            v:setVisible(visible)
         end
     end
 end
 
 ----------------------------------------------------------------
--- pivをサイズの中央に設定します.
+-- Set the center of the pivot.
 ----------------------------------------------------------------
 function M:setCenterPiv()
     local left, top = self:getPos()
@@ -112,14 +109,20 @@ function M:setCenterPiv()
 end
 
 ----------------------------------------------------------------
--- 子オブジェクトを返します.
+-- Returns the children object.
+-- If you want to use this function with caution.<br>
+-- direct manipulation table against children are not reflected in the Group.<br>
+-- @return children
 ----------------------------------------------------------------
 function M:getChildren()
     return self.children
 end
 
 ----------------------------------------------------------------
--- 子オブジェクトを追加します.
+-- Add a child object.<br>
+-- The child object to duplicate is not added.<br>
+-- If you have set the Layer to the group, the layer is set to the child.
+-- @param Child to inherit the MOAIProp.
 ----------------------------------------------------------------
 function M:addChild(child)
     local index = table.indexOf(self.children, child)
@@ -138,7 +141,9 @@ function M:addChild(child)
 end
 
 ----------------------------------------------------------------
--- 子オブジェクトを削除します.
+-- Remove the child object.<br>
+-- If you have set the Layer to the group, layer of the child is removed.
+-- @param Child to inherit the MOAIProp.
 ----------------------------------------------------------------
 function M:removeChild(child)
     local children = self.children
@@ -159,7 +164,8 @@ function M:removeChild(child)
 end
 
 --------------------------------------------------------------------------------
--- レイヤーを設定します.
+-- Set the layer of the same for children.
+-- @param layer MOAILayer instance.
 --------------------------------------------------------------------------------
 function M:setLayer(layer)
     self.layer = layer
@@ -171,8 +177,8 @@ function M:setLayer(layer)
 end
 
 --------------------------------------------------------------------------------
--- グループかどうか返します.
--- 内部判定で使用されます.
+-- Returns true if the group.<br>
+-- Are used in internal decision.
 --------------------------------------------------------------------------------
 function M:isGroup()
     return true
