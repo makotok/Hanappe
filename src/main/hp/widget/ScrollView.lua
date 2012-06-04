@@ -474,9 +474,8 @@ function M:onTouchMove(e)
         return
     end
     
-    local worldX, worldY = e.x, e.y
-    local lastX, lastY = self:getLastTouchLoc()
-    local moveX, moveY = lastX - worldX, lastY -  worldY
+    local scaleX, scaleY = self:getViewScale()
+    local moveX, moveY = -e.moveX / scaleX, -e.moveY / scaleY
     
     moveX = self:isHScrollEnabled() and moveX or 0
     moveY = self:isVScrollEnabled() and moveY or 0

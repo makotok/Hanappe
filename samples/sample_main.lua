@@ -45,7 +45,7 @@ function onCreate(params)
     --scrollView:setPos(10, 10)
     
     for i, item in ipairs(sceneItems) do
-        local graphics = Graphics({width = Application.screenWidth + 1, height = 50})
+        local graphics = Graphics({width = Application.viewWidth + 1, height = 50})
         setItemDefaultColor(graphics)
         graphics:setPos(0, 0)
         
