@@ -111,6 +111,9 @@ function M:importClasses(t, prefix)
     t[prefix .. "Panel"] = require("hp/widget/Panel")
     t[prefix .. "MessageBox"] = require("hp/widget/MessageBox")
     t[prefix .. "Joystick"] = require("hp/widget/Joystick")
+
+    -- physics classes
+    t[prefix .. "PhysicsWorld"] = require("hp/physics/PhysicsWorld")
     
     -- rpg classes
     t[prefix .. "RPGMapView"] = require("hp/rpg/RPGMapView")

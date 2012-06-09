@@ -28,6 +28,10 @@ local sceneItems = {
     {text = "messagebox2", scene = "samples/widget/messagebox2_sample", animation = "fade"},
     {text = "scrollview", scene = "samples/widget/scrollview_sample", animation = "fade"},
     {text = "textview", scene = "samples/widget/textview_sample", animation = "fade"},
+
+    -- physics
+    {text = "physics1", scene = "samples/physics/physics1_sample", animation = "fade"},
+
     -- tmx
     {text = "tiledmap", scene = "samples/tmx/tiledmap_sample", animation = "fade"},
     -- rpg
