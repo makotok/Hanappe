@@ -13,9 +13,10 @@ local sceneItems = {
     {text = "ninepatch", scene = "samples/display/ninepatch_sample", animation = "fade"},
     {text = "scene", scene = "samples/display/scene_sample", animation = "popIn"},
     {text = "moai", scene = "samples/display/moai_sample"},
-    {text = "hittest", scene = "samples/display/hittest_sample"},
-    {text = "drag", scene = "samples/display/drag_sample"},
-    {text = "drag2", scene = "samples/display/drag2_sample"},
+    {text = "hittest", scene = "samples/display/hittest_sample", animation = "fade"},
+    {text = "drag", scene = "samples/display/drag_sample", animation = "fade"},
+    {text = "drag2", scene = "samples/display/drag2_sample", animation = "fade"},
+    {text = "mesh", scene = "samples/display/mesh_sample", animation = "slideToRight"},
     -- manager
     {text = "scenemanager", scene = "samples/manager/scenemanager_sample"},
 

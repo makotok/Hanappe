@@ -12,6 +12,63 @@ if unpack then
 end
 
 --------------------------------------------------------------------------------
+-- Table decorate is useful for decorating objects
+-- when using tables as classes.<br>
+-- Author:Nenad Katic<br>
+-- @param: arg1 - string=new key when string, needs arg2
+--              - table=will extend all key/values
+--         arg2(optional)        
+--------------------------------------------------------------------------------
+function M.decorate( src, arg1, arg2 )
+    if not arg2 then
+        if type(arg1)=="table" then
+            for k,v in pairs( arg1 ) do
+                if not src[k] then
+                    src[k] = v
+                elseif src[ k ] ~= v then
+                    print( "ERROR (table.decorate): Extension failed because key "..k.." exists.") 
+                end   
+            end
+        end
+    elseif type(arg1)=="string" and type(arg2)=="function" then
+        if not src[arg1] then
+            src[arg1] = arg2
+        elseif src[ arg1 ] ~= arg2 then
+            print( "ERROR (table.decorate): Extension failed because key "..arg1.." exists.") 
+        end      
+    end
+end
+
+--------------------------------------------------------------------------------
+-- table.override and table.extend are very similar, but are made different
+-- routines so that they wouldn't be confused
+-- Author:Nenad Katic<br>
+--------------------------------------------------------------------------------
+function M.extend( src, dest )
+    for k,v in pairs( src) do
+        if not dest[k] then
+            dest[k] = v
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Copies and overrides properties from src to dest.<br>
+-- If onlyExistingKeys is true, it *only* overrides the properties.<br>
+-- Author:Nenad Katic<br>
+--------------------------------------------------------------------------------
+function table.override( src, dest, onlyExistingKeys )
+    for k,v in pairs( src ) do
+        if not onlyExistingKeys then
+            dest[k] = v
+        elseif dest[k] then
+            -- override only existing keys if asked for
+            dest[k] = v
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
 -- Returns the position found by searching for a matching value from the array.
 -- @param array table array
 -- @param value Search value
@@ -25,6 +82,20 @@ function M.indexOf(array, value)
     end
     return 0
 end
+
+--------------------------------------------------------------------------------
+-- Same as indexOf, only for key values (slower)
+-- Author:Nenad Katic<br>
+--------------------------------------------------------------------------------
+function M.keyOf( src, val )
+    for k, v in pairs( src ) do
+        if v == val then
+            return k
+        end
+    end
+    return nil
+end
+
 
 --------------------------------------------------------------------------------
 -- The shallow copy of the table.
@@ -48,12 +119,11 @@ end
 --------------------------------------------------------------------------------
 function M.deepCopy(src, dest)
     dest = dest or {}
-    for i, v in pairs(src) do
+    for k, v in pairs(src) do
         if type(v) == "table" then
-            dest[i] = {}
-            M.deepCopy(v, dest[i])
+            dest[k] = M.deepCopy(v)
         else
-            dest[i] = v
+            dest[k] = v
         end
     end
     return dest

@@ -84,13 +84,18 @@ function M:importClasses(t, prefix)
     t[prefix .. "TextLabel"]    = require("hp/display/TextLabel")
     t[prefix .. "NinePatch"]    = require("hp/display/NinePatch")
     t[prefix .. "Animation"]    = require("hp/display/Animation")
+
+    -- factory classes
+    t[prefix .. "DisplayFactory"]    = require("hp/factory/DisplayFactory")
+    t[prefix .. "WidgetFactory"]    = require("hp/factory/WidgetFactory")
+    t[prefix .. "MeshFactory"]    = require("hp/factory/MeshFactory")
     
     -- manager classes
     t[prefix .. "SceneManager"]     = require("hp/manager/SceneManager")
     t[prefix .. "InputManager"]     = require("hp/manager/InputManager")
     t[prefix .. "TextureManager"]   = require("hp/manager/TextureManager")
     t[prefix .. "FontManager"]      = require("hp/manager/FontManager")
-    t[prefix .. "WidgetManager"]      = require("hp/manager/WidgetManager")
+    t[prefix .. "WidgetManager"]    = require("hp/manager/WidgetManager")
 
     -- tmx classes
     t[prefix .. "TMXLayer"]         = require("hp/tmx/TMXLayer")
