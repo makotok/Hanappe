@@ -3,12 +3,12 @@ module(..., package.seeall)
 function onCreate(params)
     layer = Layer({scene = scene})
     
-    -- Since one argument, the following method call is possible.
+    -- Rect
     g1 = Graphics {width = 50, height = 50, left = 10, top = 10, layer = layer}
     g1:setPenColor(1, 0, 0, 1):fillRect()
     g1:setPenColor(0, 1, 0, 1):drawRect()
     
-    -- Supports the empty constructor.
+    -- Line
     g2 = Graphics()
     g2:setSize(50, 50)
     g2:setLayer(layer)
@@ -29,9 +29,13 @@ function onCreate(params)
     g4:setPenColor(1, 1, 0, 1):drawEllipse()
     g4:setPenColor(0, 1, 1, 1):drawEllipse(20, 20, 10, 15, 5)
     
-    -- Drawing operations will be cleared.
-    g5 = Graphics({width = 50, height = 50, layer = layer})
-    g5:setPenColor(1, 0, 0, 1):drawLine(0, 0, 40, 40):clear()
+    -- Ray
+    g5 = Graphics {width = 100, height = 50, left = 10, top = g4:getBottom() + 10, layer = layer}
+    g5:setPenColor(1, 0, 0, 1):drawRay(0, 0, 1, 0):drawRay(0, 0, 0, 1):drawRay(0, 0, 1, 1)
+    
+    -- Clear
+    g6 = Graphics {width = 50, height = 50, layer = layer}
+    g6:setPenColor(1, 0, 0, 1):drawLine(0, 0, 40, 40):clear()
 end
 
 function onStart()
