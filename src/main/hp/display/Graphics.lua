@@ -80,14 +80,14 @@ end
 
 ---------------------------------------
 -- Draw a circle.<br>
--- @param x Model x
--- @param y Model y
--- @param r Radius
--- @param steps Number of points
+-- @param x Position of the left.
+-- @param y Position of the top.
+-- @param r Radius.(Not in diameter.)
+-- @param steps Number of points.
 -- @return self
 ---------------------------------------
 function M:drawCircle(x, y, r, steps)
-    steps = steps and steps or 360
+    steps = steps or 360
     local command = function(self)
         if x and y and r and steps then
             MOAIDraw.drawCircle(x + r, y + r, r, steps)
@@ -102,15 +102,15 @@ end
 
 ---------------------------------------
 -- Draw an ellipse.<br>
--- @param x Model x
--- @param y Model y
--- @param xRad Radius
--- @param yRad Radius
--- @param steps Number of points
+-- @param Position of the left.
+-- @param Position of the top.
+-- @param xRad Radius.(Not in diameter.)
+-- @param yRad Radius.(Not in diameter.)
+-- @param steps Number of points.
 -- @return self
 ---------------------------------------
 function M:drawEllipse(x, y, xRad, yRad, steps)
-    steps = steps and steps or 360
+    steps = steps or 360
     local command = function(self)
         if x and y and xRad and yRad and steps then
             MOAIDraw.drawEllipse(x + xRad, y + yRad, xRad, yRad, steps)
@@ -125,7 +125,7 @@ end
 
 ---------------------------------------
 -- Draws a line.<br>
--- @param ... Coordinates of the point
+-- @param ... Position of the points(x0, y0).
 -- @return self
 ---------------------------------------
 function M:drawLine(...)
@@ -139,7 +139,7 @@ end
 
 ---------------------------------------
 -- Draws a point.
--- @param ... Coordinates of the point
+-- @param ... Position of the points(x0, y0).
 -- @return self
 ---------------------------------------
 function M:drawPoints(...)
@@ -153,10 +153,10 @@ end
 
 ---------------------------------------
 -- Draw a ray.
--- @param x Model x
--- @param y Model y
--- @param dx Line length
--- @param dy Line length
+-- @param x Position of the left.
+-- @param y Position of the top.
+-- @param dx Direction.
+-- @param dy Direction.
 -- @return self
 ---------------------------------------
 function M:drawRay(x, y, dx, dy)
@@ -173,10 +173,10 @@ end
 
 ---------------------------------------
 -- Draw a rectangle.
--- @param x0 Model x0
--- @param y0 Model y0
--- @param x1 Model x1
--- @param y1 Model y1
+-- @param x0 Position of the left.
+-- @param y0 Position of the top.
+-- @param x1 Position of the right.
+-- @param y1 Position of the bottom
 -- @return self
 ---------------------------------------
 function M:drawRect(x0, y0, x1, y1)
@@ -193,10 +193,10 @@ end
 
 ---------------------------------------
 -- Fill the circle.
--- @param x X of model
--- @param y Y of model
--- @param r Radius
--- @param steps Number of points
+-- @param x Position of the left.
+-- @param y Position of the top.
+-- @param r Radius.(Not in diameter.)
+-- @param steps Number of points.
 -- @return self
 ---------------------------------------
 function M:fillCircle(x, y, r, steps)
@@ -215,11 +215,11 @@ end
 
 ---------------------------------------
 -- Fill an ellipse.
--- @param x X of model
--- @param y Y of model
--- @param xRad Radius
--- @param yRad Radius
--- @param steps steps Number of points
+-- @param x Position of the left.
+-- @param y Position of the top.
+-- @param xRad Radius.(Not in diameter.)
+-- @param yRad Radius.(Not in diameter.)
+-- @param steps Number of points.
 -- @return self
 ---------------------------------------
 function M:fillEllipse(x, y, xRad, yRad, steps)
@@ -238,7 +238,7 @@ end
 
 ---------------------------------------
 -- Fills the triangle.
--- @param ... point(x, y)
+-- @param ... Position of the points(x0, y0).
 -- @return self
 ---------------------------------------
 function M:fillFan(...)
@@ -252,10 +252,10 @@ end
 
 ---------------------------------------
 -- Fill a rectangle.
--- @param x0 X0 of model
--- @param y0 Y0 of model
--- @param x1 X1 of model
--- @param y1 Y1 of model
+-- @param x0 Position of the left.
+-- @param y0 Position of the top.
+-- @param x1 Position of the right.
+-- @param y1 Position of the bottom.
 -- @return self
 ---------------------------------------
 function M:fillRect(x0, y0, x1, y1)
@@ -280,7 +280,7 @@ end
 -- @return self
 ---------------------------------------
 function M:setPenColor(r, g, b, a)
-    a = a and a or 1
+    a = a or 1
     local command = function(self)
         local red = r * self:getRed()
         local green = g * self:getGreen()
