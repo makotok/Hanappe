@@ -1,14 +1,14 @@
 --------------------------------------------------------------------------------
--- MOAIPropオブジェクトを操作するユーティリティクラスです.<br>
+-- This is a utility class for MOAIProp.<br>
 -- @class table
 -- @name MOAIPropUtil
 --------------------------------------------------------------------------------
 local M = {}
 
 --------------------------------------------------------------------------------
--- left座標を設定します.
--- @param prop MOAIProp
--- @param left left point
+-- Sets the position of the left.
+-- @param prop MOAIProp instance.
+-- @param left Position of the left.
 --------------------------------------------------------------------------------
 function M.setLeft(prop, left)
     local xMin, yMin, zMin, xMax, yMax, zMax = 0, 0, 0, 0, 0, 0
@@ -23,8 +23,9 @@ function M.setLeft(prop, left)
 end
 
 --------------------------------------------------------------------------------
--- left座標を返します.
--- @param prop MOAIProp
+-- Returns the position of the left.
+-- @param prop MOAIProp instance.
+-- @return Position of the left.
 --------------------------------------------------------------------------------
 function M.getLeft(prop)
     local xMin, yMin, zMin, xMax, yMax, zMax = 0, 0, 0, 0, 0, 0
@@ -39,7 +40,9 @@ function M.getLeft(prop)
 end
 
 --------------------------------------------------------------------------------
--- right座標を設定します.
+-- Sets the position of the right.
+-- @param prop MOAIProp instance.
+-- @param right Position of the right.
 --------------------------------------------------------------------------------
 function M.setRight(prop, right)
     local width = M.getWidth(prop)
@@ -47,7 +50,9 @@ function M.setRight(prop, right)
 end
 
 --------------------------------------------------------------------------------
--- right座標を返します.
+-- Returns the position of the right.
+-- @param prop MOAIProp instance.
+-- @return Position of the right.
 --------------------------------------------------------------------------------
 function M.getRight(prop)
     local left = M.getLeft(prop)
@@ -56,7 +61,9 @@ function M.getRight(prop)
 end
 
 --------------------------------------------------------------------------------
--- top座標を設定します.
+-- Sets the position of the top.
+-- @param prop MOAIProp instance.
+-- @param top Position of the top.
 --------------------------------------------------------------------------------
 function M.setTop(prop, top)
     local xMin, yMin, zMin, xMax, yMax, zMax = 0, 0, 0, 0, 0, 0
@@ -71,7 +78,9 @@ function M.setTop(prop, top)
 end
 
 --------------------------------------------------------------------------------
--- top座標を返します.
+-- Returns the position of the top.
+-- @param prop MOAIProp instance.
+-- @return Position of the top.
 --------------------------------------------------------------------------------
 function M.getTop(prop)
     local xMin, yMin, zMin, xMax, yMax, zMax = 0, 0, 0, 0, 0, 0
@@ -86,7 +95,9 @@ function M.getTop(prop)
 end
 
 --------------------------------------------------------------------------------
--- bottom座標を設定します.
+-- Sets the position of the bottom.
+-- @param prop MOAIProp instance.
+-- @param bottom Position of the bottom.
 --------------------------------------------------------------------------------
 function M.setBottom(prop, bottom)
     local height = M.getHeight(prop)
@@ -94,7 +105,9 @@ function M.setBottom(prop, bottom)
 end
 
 --------------------------------------------------------------------------------
--- bottom座標を返します.
+-- Returns the position of the bottom.
+-- @param prop MOAIProp instance.
+-- @return Position of the bottom.
 --------------------------------------------------------------------------------
 function M.getBottom(prop)
     local top = M.getTop(prop)
@@ -103,7 +116,10 @@ function M.getBottom(prop)
 end
 
 --------------------------------------------------------------------------------
--- 左上原点の座標を設定します.
+-- Sets the position of the left and top.
+-- @param prop MOAIProp
+-- @param left Position of the left.
+-- @param top Position of the top.
 --------------------------------------------------------------------------------
 function M.setPos(prop, left, top)
     M.setLeft(prop, left)
@@ -111,14 +127,18 @@ function M.setPos(prop, left, top)
 end
 
 --------------------------------------------------------------------------------
--- 左上原点の座標を返します.
+-- Returns the position of the left and top.
+-- @param prop MOAIProp instance.
+-- @return Position of the left and top.
 --------------------------------------------------------------------------------
 function M.getPos(prop)
     return M.getLeft(prop), M.getTop(prop)
 end
 
 --------------------------------------------------------------------------------
--- 2Dオブジェクトの幅を返します.
+-- Returns the width.
+-- @param MOAIProp instance.
+-- @return width
 --------------------------------------------------------------------------------
 function M.getWidth(prop)
     local xMin, yMin, zMin, xMax, yMax, zMax = prop:getBounds()
@@ -126,7 +146,9 @@ function M.getWidth(prop)
 end
 
 --------------------------------------------------------------------------------
--- 2Dオブジェクトの高さを返します.
+-- Returns the height.
+-- @param MOAIProp instance.
+-- @return height
 --------------------------------------------------------------------------------
 function M.getHeight(prop)
     local xMin, yMin, zMin, xMax, yMax, zMax = prop:getBounds()
@@ -134,7 +156,9 @@ function M.getHeight(prop)
 end
 
 --------------------------------------------------------------------------------
--- 2Dオブジェクトのサイズを返します.
+-- Returns the width and height.
+-- @param MOAIProp instance.
+-- @return width, height
 --------------------------------------------------------------------------------
 function M.getSize(prop)
     local xMin, yMin, zMin, xMax, yMax, zMax = prop:getBounds()
@@ -142,7 +166,9 @@ function M.getSize(prop)
 end
 
 --------------------------------------------------------------------------------
--- 色を返します.
+-- Returns the color.
+-- @param MOAIProp instance.
+-- @return red, green, blue, alpha
 --------------------------------------------------------------------------------
 function M.getColor(prop)
     local r = prop:getAttr(MOAIColor.ATTR_R_COL)
@@ -153,7 +179,9 @@ function M.getColor(prop)
 end
 
 --------------------------------------------------------------------------------
--- redを返します.
+-- Returns the red.
+-- @param MOAIProp instance.
+-- @return red
 --------------------------------------------------------------------------------
 function M.getRed(prop)
     local r = prop:getAttr(MOAIColor.ATTR_R_COL)
@@ -161,14 +189,18 @@ function M.getRed(prop)
 end
 
 --------------------------------------------------------------------------------
--- redを設定します.
+-- Sets the red.
+-- @param MOAIProp instance.
+-- @param red
 --------------------------------------------------------------------------------
 function M.setRed(prop, red)
     prop:setAttr(MOAIColor.ATTR_R_COL, red)
 end
 
 --------------------------------------------------------------------------------
--- greenを返します.
+-- Returns the green.
+-- @param MOAIProp instance.
+-- @return green
 --------------------------------------------------------------------------------
 function M.getGreen(prop)
     local g = prop:getAttr(MOAIColor.ATTR_G_COL)
@@ -176,14 +208,17 @@ function M.getGreen(prop)
 end
 
 --------------------------------------------------------------------------------
--- greenを設定します.
+-- Sets the green.
+-- @param MOAIProp instance.
+-- @param green.
 --------------------------------------------------------------------------------
 function M.setGreen(prop, green)
     prop:setAttr(MOAIColor.ATTR_G_COL, green)
 end
 
 --------------------------------------------------------------------------------
--- blueを返します.
+-- Returns the blue.
+-- @param MOAIProp instance.
 -- @return blue
 --------------------------------------------------------------------------------
 function M.getBlue(prop)
@@ -192,14 +227,18 @@ function M.getBlue(prop)
 end
 
 --------------------------------------------------------------------------------
--- blueを設定します.
+-- Sets the blue.
+-- @param MOAIProp instance.
+-- @param blue.
 --------------------------------------------------------------------------------
 function M.setBlue(prop, blue)
     prop:setAttr(MOAIColor.ATTR_B_COL, blue)
 end
 
 --------------------------------------------------------------------------------
--- alphaを返します.
+-- Returns the alpha.
+-- @param MOAIProp instance.
+-- @return alpha
 --------------------------------------------------------------------------------
 function M.getAlpha(prop)
     local a = prop:getAttr(MOAIColor.ATTR_A_COL)
@@ -207,21 +246,25 @@ function M.getAlpha(prop)
 end
 
 --------------------------------------------------------------------------------
--- alphaを設定します.
+-- Sets the alpha.
+-- @param MOAIProp instance.
+-- @param alpha.
 --------------------------------------------------------------------------------
 function M.setAlpha(prop, a)
     prop:setAttr(MOAIColor.ATTR_A_COL, a)
 end
 
 --------------------------------------------------------------------------------
--- 表示します.
+-- Sets to true visible.
+-- @param prop.
 --------------------------------------------------------------------------------
 function M.show(prop)
     prop:setVisible(true)
 end
 
 --------------------------------------------------------------------------------
--- 非表示にします.
+-- Sets to false visible.
+-- @param prop.
 --------------------------------------------------------------------------------
 function M.hide(prop)
     prop:setVisible(false)
