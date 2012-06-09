@@ -90,10 +90,10 @@ function M:drawCircle(x, y, r, steps)
     steps = steps and steps or 360
     local command = function(self)
         if x and y and r and steps then
-            MOAIDraw.drawCircle(x, y, r, steps)
+            MOAIDraw.drawCircle(x + r, y + r, r, steps)
         else
-            local rw = math.min(self:getWidth(), self:getHeight())
-            MOAIDraw.drawCircle(0, 0, rw, 360)
+            local rw = math.min(self:getWidth(), self:getHeight()) / 2
+            MOAIDraw.drawCircle(rw, rw, rw, 360)
         end
     end
     table.insert(self.commands, command)
@@ -113,9 +113,10 @@ function M:drawEllipse(x, y, xRad, yRad, steps)
     steps = steps and steps or 360
     local command = function(self)
         if x and y and xRad and yRad and steps then
-            MOAIDraw.drawEllipse(x, y, xRad, yRad, steps)
+            MOAIDraw.drawEllipse(x + xRad, y + yRad, xRad, yRad, steps)
         else
-            MOAIDraw.drawEllipse(0, 0, self:getWidth(), self:getHeight(), steps)
+            local rw, rh = self:getWidth() / 2, self:getHeight() / 2
+            MOAIDraw.drawEllipse(rw, rh, rw, rh, steps)
         end
     end
     table.insert(self.commands, command)
@@ -199,13 +200,13 @@ end
 -- @return self
 ---------------------------------------
 function M:fillCircle(x, y, r, steps)
-    steps = steps and steps or 360
+    steps = steps or 360
     local command = function(self)
         if x and y and r and steps then
-            MOAIDraw.fillCircle(x, y, r, steps)
+            MOAIDraw.fillCircle(x + r, y + r, r, steps)
         else
-            local r = math.min(self:getWidth(), self:getHeight())
-            MOAIDraw.fillCircle(0, 0, r, steps)
+            local r = math.min(self:getWidth(), self:getHeight()) / 2
+            MOAIDraw.fillCircle(r, r, r, steps)
         end
     end
     table.insert(self.commands, command)
@@ -222,11 +223,13 @@ end
 -- @return self
 ---------------------------------------
 function M:fillEllipse(x, y, xRad, yRad, steps)
+    steps = steps or 360
     local command = function(self)
         if x and y and xRad and yRad then
-            MOAIDraw.fillEllipse(x, y, xRad, yRad, steps)
+            MOAIDraw.fillEllipse(x + xRad, y + yRad, xRad, yRad, steps)
         else
-            MOAIDraw.fillEllipse(0, 0, self:getWidth(), self:getHeight(), 360)
+            local rw, rh = self:getWidth() / 2, self:getHeight() / 2
+            MOAIDraw.fillEllipse(rw, rh, rw, rh, steps)
         end
     end
     table.insert(self.commands, command)
