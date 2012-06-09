@@ -5,17 +5,11 @@ function onCreate(params)
 
     rect = MeshFactory.newRect(10, 10, 50, 50, {"#003300", "#CCFF00", 90})
     layer:insertProp(rect)
-
-    color = MOAIColor.new ()
-    color:setParent(scene)
-    rect.shader:setAttrLink ( 2, color, MOAIColor.COLOR_TRAIT )
-
-    print(rect:getSize())
-    print(rect:getSize())
 end
 
 function onStart()
-    color:moveColor ( -1, -1, -1, -1, 1.5 )
+    rect:moveColor (-1, -1, -1, -1, 2)
+    rect:moveRot(0, 0, 180, 2)
 end
 
 function onTouchDown()

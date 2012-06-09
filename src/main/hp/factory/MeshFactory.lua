@@ -203,7 +203,7 @@ function M.newRect( left, top, width, height, col )
     ------------------------------------------------------------
     -- Assign BasicShader (color = vertex color only, no UV)
     ------------------------------------------------------------
-    local shader = ShaderManager:request(ShaderManager.BASIC_COLOR_SHADER)
+    local shader = ShaderManager.getShader(ShaderManager.BASIC_COLOR_SHADER)
     
     ------------------------------------------------------------
     -- Create a prop
@@ -280,7 +280,7 @@ function M.newCircle( x, y, r, col, seg )
     end
 
     local mesh = createMesh( vcoords, colorCoords, MOAIMesh.GL_TRIANGLE_FAN )
-    local shader = ShaderManager:request(ShaderManager.BASIC_COLOR_SHADER)
+    local shader = ShaderManager.getShader(ShaderManager.BASIC_COLOR_SHADER)
     local prop = DisplayObject()
     prop:setDeck(mesh)
     prop:setShader(shader)
@@ -324,7 +324,7 @@ function M.createPolygon( vertices, col )
     --debugger.printTable( triangulatedPoints, "TRI")
 
     local mesh =  createMesh( triangulatedPoints, colorCoords, MOAIMesh.GL_TRIANGLES )
-    local shader = ShaderManager:request(ShaderManager.BASIC_COLOR_SHADER)
+    local shader = ShaderManager.getShader(ShaderManager.BASIC_COLOR_SHADER)
     local prop = DisplayObject()
     prop:setDeck(mesh)
     prop:setShader(shader)
