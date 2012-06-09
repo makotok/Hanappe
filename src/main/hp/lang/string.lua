@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 -- modules that extend functionality of the string.
--- @author 
+-- @author Nenad Katic
 -- @class table
 -- @name string
 --------------------------------------------------------------------------------

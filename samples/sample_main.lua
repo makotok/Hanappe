@@ -16,7 +16,7 @@ local sceneItems = {
     {text = "hittest", scene = "samples/display/hittest_sample", animation = "fade"},
     {text = "drag", scene = "samples/display/drag_sample", animation = "fade"},
     {text = "drag2", scene = "samples/display/drag2_sample", animation = "fade"},
-    {text = "mesh", scene = "samples/display/mesh_sample", animation = "slideToRight"},
+    {text = "mesh", scene = "samples/display/mesh_sample", animation = "fade"},
     -- manager
     {text = "scenemanager", scene = "samples/manager/scenemanager_sample"},
 

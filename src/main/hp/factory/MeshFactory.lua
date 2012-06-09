@@ -288,8 +288,6 @@ function M.newCircle( x, y, r, col, seg )
     return prop
 end
 
-
-
 --------------------------------------------------------------------------------
 -- 
 -- @param vertices
@@ -321,7 +319,6 @@ function M.createPolygon( vertices, col )
             colorCoords[ #colorCoords + 1 ] = colors[1]
         end
     end
-    --debugger.printTable( triangulatedPoints, "TRI")
 
     local mesh =  createMesh( triangulatedPoints, colorCoords, MOAIMesh.GL_TRIANGLES )
     local shader = ShaderManager.getShader(ShaderManager.BASIC_COLOR_SHADER)
