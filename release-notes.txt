@@ -1,4 +1,16 @@
 -------------------------------------------------------------------
+-- Hanappe Framework Version:1.4.1
+-- Moai SDK Version 1.1 Revision 1
+-------------------------------------------------------------------
+Added:Mesh etc.
+Added:Add a function to resize Group.
+Added:PhysicsWorld, PhysicsBody, PhysicsFixture.(Prototype)
+Fixed:Fixed a bug in function wait (Animation).
+Fixed:Fixed a bug in Graphics.
+Fixed:Fixed a problem when the scale of the View is different.
+Modify:Change the order of class inheritance.
+
+-------------------------------------------------------------------
 -- Hanappe Framework Version:1.4.0
 -- Moai SDK Version 1.1 Revision 1
 -------------------------------------------------------------------
