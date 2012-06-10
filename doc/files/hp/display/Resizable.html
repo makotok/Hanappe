@@ -74,10 +74,8 @@
 		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
 	</li>
 
-	<li>
-		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
-	</li>
-
+	<li><strong>hp/display/Resizable.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/display/Scene.html">hp/display/Scene.lua</a>
 	</li>
@@ -318,8 +316,10 @@
 		<a href="../../../files/hp/widget/ThemeClient.html">hp/widget/ThemeClient.lua</a>
 	</li>
 
-	<li><strong>hp/widget/VScrollBar.lua</strong></li>
-	
+	<li>
+		<a href="../../../files/hp/widget/VScrollBar.html">hp/widget/VScrollBar.lua</a>
+	</li>
+
 	<li>
 		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
 	</li>
@@ -343,7 +343,7 @@
 
 <div id="content">
 
-<h1>File <code>hp/widget/VScrollBar.lua</code></h1>
+<h1>File <code>hp/display/Resizable.lua</code></h1>
 
 
 
@@ -355,13 +355,23 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:getDefaultTheme">M:getDefaultTheme</a>&nbsp;()</td>
-	<td class="summary">デフォルトテーマを返します.</td>
+	<td class="name" nowrap><a href="#M:isResizable">M:isResizable</a>&nbsp;()</td>
+	<td class="summary">Function indicating that it is possible to resize.<br> </td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">インスタンスを生成して返します.</td>
+	<td class="name" nowrap><a href="#M:setHeight">M:setHeight</a>&nbsp;(height)</td>
+	<td class="summary">Set the height<br> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setSize">M:setSize</a>&nbsp;(width, height)</td>
+	<td class="summary">Set the height and width.<br> If the argument is not set the size of the texture will be set.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setWidth">M:setWidth</a>&nbsp;(width)</td>
+	<td class="summary">Set the width.<br> </td>
 	</tr>
 
 </table>
@@ -373,8 +383,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#VScrollBar ">VScrollBar </a></td>
-	<td class="summary">スクロールバークラスです.<br> 水平バーを表示するだけです.</td>
+	<td class="name" nowrap><a href="#Resizable ">Resizable </a></td>
+	<td class="summary">Is the module object can be resized to be implemented.<br> TODO:In the future, there is likely to change in order to unify the origin of the position.</td>
 	</tr>
 
 </table>
@@ -392,10 +402,39 @@
 
 
 
-<dt><a name="M:getDefaultTheme"></a><strong>M:getDefaultTheme</strong>&nbsp;()</dt>
+<dt><a name="M:isResizable"></a><strong>M:isResizable</strong>&nbsp;()</dt>
 <dd>
-デフォルトテーマを返します. 
+Function indicating that it is possible to resize.<br>
 
+
+
+
+
+
+
+<h3>Return value:</h3>
+true 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setHeight"></a><strong>M:setHeight</strong>&nbsp;(height)</dt>
+<dd>
+Set the height<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  height: height 
+	</li>
+	
+</ul>
 
 
 
@@ -409,16 +448,46 @@
 
 
 
-<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
+<dt><a name="M:setSize"></a><strong>M:setSize</strong>&nbsp;(width, height)</dt>
 <dd>
-インスタンスを生成して返します. 
+Set the height and width.<br> If the argument is not set the size of the texture will be set. TODO:In the future, there is likely to change in order to unify the origin of the position.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  width: width
+	</li>
+	
+	<li>
+	  height: height 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setWidth"></a><strong>M:setWidth</strong>&nbsp;(width)</dt>
+<dd>
+Set the width.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  width: width 
 	</li>
 	
 </ul>
@@ -441,8 +510,8 @@
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="VScrollBar "></a><strong>VScrollBar </strong></dt>
-<dd>スクロールバークラスです.<br> 水平バーを表示するだけです.
+<dt><a name="Resizable "></a><strong>Resizable </strong></dt>
+<dd>Is the module object can be resized to be implemented.<br> TODO:In the future, there is likely to change in order to unify the origin of the position.
 
 
 

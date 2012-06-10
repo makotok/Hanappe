@@ -66,8 +66,16 @@
 		<a href="../../../files/hp/display/MapSprite.html">hp/display/MapSprite.lua</a>
 	</li>
 
+	<li>
+		<a href="../../../files/hp/display/Mesh.html">hp/display/Mesh.lua</a>
+	</li>
+
 	<li><strong>hp/display/NinePatch.lua</strong></li>
 	
+	<li>
+		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
+	</li>
+
 	<li>
 		<a href="../../../files/hp/display/Scene.html">hp/display/Scene.lua</a>
 	</li>
@@ -153,6 +161,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/lang/string.html">hp/lang/string.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
 	</li>
 
@@ -181,11 +193,23 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/TextureManager.html">hp/manager/TextureManager.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsBody.html">hp/physics/PhysicsBody.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsFixture.html">hp/physics/PhysicsFixture.lua</a>
 	</li>
 
 	<li>
@@ -242,6 +266,10 @@
 
 	<li>
 		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/Triangulation.html">hp/util/Triangulation.lua</a>
 	</li>
 
 	<li>
@@ -343,17 +371,12 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">Spriteインスタンスを生成して返します.</td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:seekScl">M:seekScl</a>&nbsp;(x, y, z, sec, mode)</td>
 	<td class="summary">スケールを移動します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setHeight">M:setHeight</a>&nbsp;(height)</td>
-	<td class="summary">サイズを設定します.</td>
 	</tr>
 
 	<tr>
@@ -376,11 +399,6 @@
 	<td class="summary">固定的な行の長さを設定します.</td>
 	</tr>
 
-	<tr>
-	<td class="name" nowrap><a href="#M:setWidth">M:setWidth</a>&nbsp;(width)</td>
-	<td class="summary">サイズを設定します.</td>
-	</tr>
-
 </table>
 
 
@@ -391,7 +409,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#NinePatch ">NinePatch </a></td>
-	<td class="summary">部分的に伸張が可能なNinePatchクラスです.<br> 外部的な使用方法はSprite等とほとんど変わりませんが、 サイズを指定するとスケールが大きくなります.<br> ウィジットの構築に役立ちます.<br> </td>
+	<td class="summary">NinePatch class is the scale is partially configured.<br> When you set the size, scale will be reconfigured dynamically.<br> Will help you build a widget.<br> Extends : DisplayObject, TextureDrawable, Resizable<br> </td>
 	</tr>
 
 </table>
@@ -471,14 +489,14 @@
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
 <dd>
-Spriteインスタンスを生成して返します. 
+The constructor.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  params: (option)Parameter is set to Object.<br> 
 	</li>
 	
 </ul>
@@ -521,32 +539,6 @@ Spriteインスタンスを生成して返します.
 	
 	<li>
 	  mode: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setHeight"></a><strong>M:setHeight</strong>&nbsp;(height)</dt>
-<dd>
-サイズを設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  height: 
 	</li>
 	
 </ul>
@@ -693,32 +685,6 @@ Spriteインスタンスを生成して返します.
 </dd>
 
 
-
-
-<dt><a name="M:setWidth"></a><strong>M:setWidth</strong>&nbsp;(width)</dt>
-<dd>
-サイズを設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  width: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
 </dl>
 
 
@@ -728,7 +694,7 @@ Spriteインスタンスを生成して返します.
 <dl class="table">
 
 <dt><a name="NinePatch "></a><strong>NinePatch </strong></dt>
-<dd>部分的に伸張が可能なNinePatchクラスです.<br> 外部的な使用方法はSprite等とほとんど変わりませんが、 サイズを指定するとスケールが大きくなります.<br> ウィジットの構築に役立ちます.<br>
+<dd>NinePatch class is the scale is partially configured.<br> When you set the size, scale will be reconfigured dynamically.<br> Will help you build a widget.<br> Extends : DisplayObject, TextureDrawable, Resizable<br>
 
 
 

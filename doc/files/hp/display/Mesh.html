@@ -66,10 +66,8 @@
 		<a href="../../../files/hp/display/MapSprite.html">hp/display/MapSprite.lua</a>
 	</li>
 
-	<li>
-		<a href="../../../files/hp/display/Mesh.html">hp/display/Mesh.lua</a>
-	</li>
-
+	<li><strong>hp/display/Mesh.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
 	</li>
@@ -318,8 +316,10 @@
 		<a href="../../../files/hp/widget/ThemeClient.html">hp/widget/ThemeClient.lua</a>
 	</li>
 
-	<li><strong>hp/widget/VScrollBar.lua</strong></li>
-	
+	<li>
+		<a href="../../../files/hp/widget/VScrollBar.html">hp/widget/VScrollBar.lua</a>
+	</li>
+
 	<li>
 		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
 	</li>
@@ -343,7 +343,7 @@
 
 <div id="content">
 
-<h1>File <code>hp/widget/VScrollBar.lua</code></h1>
+<h1>File <code>hp/display/Mesh.lua</code></h1>
 
 
 
@@ -355,13 +355,48 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:getDefaultTheme">M:getDefaultTheme</a>&nbsp;()</td>
-	<td class="summary">デフォルトテーマを返します.</td>
+	<td class="name" nowrap><a href="#M.newCircle">M.newCircle</a>&nbsp;(left, top, r, col, seg)</td>
+	<td class="summary">Creates and returns a mesh of the circle.<br> Mesh is the class that inherits from the DisplayObject.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">インスタンスを生成して返します.</td>
+	<td class="name" nowrap><a href="#M.newGradient">M.newGradient</a>&nbsp;(col1, col2, angle)</td>
+	<td class="summary">Creates and returns a gradient array.<br> Example: ( "#003300", "#CCFF00", 90 ) </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.newPolygon">M.newPolygon</a>&nbsp;(left, top, vertices, col)</td>
+	<td class="summary">Creates and returns a mesh of the polygon.<br> Mesh is the class that inherits from the DisplayObject.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.newRect">M.newRect</a>&nbsp;(left, top, width, height, col)</td>
+	<td class="summary">Creates and returns a mesh of the rectangle.<br> Mesh is the class that inherits from the DisplayObject.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(vcoords, colors, primType, params)</td>
+	<td class="summary">The constructor.<br> Normally, you do not directly create an instance.<br> Creation function (M.newRect, M.newCircle, M.newPolygon) you can easily create a mesh by using the.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#calculateDetailedGradient">calculateDetailedGradient</a>&nbsp;(points, angle, col1, col2)</td>
+	<td class="summary">Returns the color to calculate the gradient.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#calculateGradient">calculateGradient</a>&nbsp;(color1, color2, angle, gradAngle)</td>
+	<td class="summary">Returns the color to calculate the gradient.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#createMesh">createMesh</a>&nbsp;(vcoords, colors, primType)</td>
+	<td class="summary">Creates and returns a mesh.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#isColorOrGradient">isColorOrGradient</a>&nbsp;(col)</td>
+	<td class="summary">Returns an array of colors.</td>
 	</tr>
 
 </table>
@@ -373,8 +408,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#VScrollBar ">VScrollBar </a></td>
-	<td class="summary">スクロールバークラスです.<br> 水平バーを表示するだけです.</td>
+	<td class="name" nowrap><a href="#Mesh ">Mesh </a></td>
+	<td class="summary">This is a class to draw a gradient mesh.<br> This source has been implemented by Nenad Katic.<br> Has been partially modified.<br> </td>
 	</tr>
 
 </table>
@@ -392,10 +427,199 @@
 
 
 
-<dt><a name="M:getDefaultTheme"></a><strong>M:getDefaultTheme</strong>&nbsp;()</dt>
+<dt><a name="M.newCircle"></a><strong>M.newCircle</strong>&nbsp;(left, top, r, col, seg)</dt>
 <dd>
-デフォルトテーマを返します. 
+Creates and returns a mesh of the circle.<br> Mesh is the class that inherits from the DisplayObject.
 
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  left: Position of the left.
+	</li>
+	
+	<li>
+	  top: Position of the top.
+	</li>
+	
+	<li>
+	  r: Radius.
+	</li>
+	
+	<li>
+	  col: color(s).
+	</li>
+	
+	<li>
+	  seg: segments.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+Circle object 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.newGradient"></a><strong>M.newGradient</strong>&nbsp;(col1, col2, angle)</dt>
+<dd>
+Creates and returns a gradient array.<br> Example: ( "#003300", "#CCFF00", 90 )
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  col1: fromColor.
+	</li>
+	
+	<li>
+	  col2: toColor.
+	</li>
+	
+	<li>
+	  angle: gradientAngle.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+gradient array 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.newPolygon"></a><strong>M.newPolygon</strong>&nbsp;(left, top, vertices, col)</dt>
+<dd>
+Creates and returns a mesh of the polygon.<br> Mesh is the class that inherits from the DisplayObject.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  left: Position of the left.
+	</li>
+	
+	<li>
+	  top: Position of the top.
+	</li>
+	
+	<li>
+	  vertices: Vertex array.
+	</li>
+	
+	<li>
+	  col: Color gradient.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+Polygon object 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.newRect"></a><strong>M.newRect</strong>&nbsp;(left, top, width, height, col)</dt>
+<dd>
+Creates and returns a mesh of the rectangle.<br> Mesh is the class that inherits from the DisplayObject.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  left: Position of the left.
+	</li>
+	
+	<li>
+	  top: Position of the top.
+	</li>
+	
+	<li>
+	  width: width.
+	</li>
+	
+	<li>
+	  height: height.
+	</li>
+	
+	<li>
+	  col: Color of the gradient.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+Rectangle object 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(vcoords, colors, primType, params)</dt>
+<dd>
+The constructor.<br> Normally, you do not directly create an instance.<br> Creation function (M.newRect, M.newCircle, M.newPolygon) you can easily create a mesh by using the.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  vcoords: 
+	</li>
+	
+	<li>
+	  colors: 
+	</li>
+	
+	<li>
+	  primType: 
+	</li>
+	
+	<li>
+	  params: (option)Parameter is set to Object.<br> (params:width, height) 
+	</li>
+	
+</ul>
 
 
 
@@ -409,16 +633,126 @@
 
 
 
-<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
+<dt><a name="calculateDetailedGradient"></a><strong>calculateDetailedGradient</strong>&nbsp;(points, angle, col1, col2)</dt>
 <dd>
-インスタンスを生成して返します. 
+Returns the color to calculate the gradient. 
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  points: 
+	</li>
+	
+	<li>
+	  angle: 
+	</li>
+	
+	<li>
+	  col1: 
+	</li>
+	
+	<li>
+	  col2: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="calculateGradient"></a><strong>calculateGradient</strong>&nbsp;(color1, color2, angle, gradAngle)</dt>
+<dd>
+Returns the color to calculate the gradient. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  color1: 
+	</li>
+	
+	<li>
+	  color2: 
+	</li>
+	
+	<li>
+	  angle: 
+	</li>
+	
+	<li>
+	  gradAngle: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="createMesh"></a><strong>createMesh</strong>&nbsp;(vcoords, colors, primType)</dt>
+<dd>
+Creates and returns a mesh. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  vcoords: 
+	</li>
+	
+	<li>
+	  colors: 
+	</li>
+	
+	<li>
+	  primType: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="isColorOrGradient"></a><strong>isColorOrGradient</strong>&nbsp;(col)</dt>
+<dd>
+Returns an array of colors. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  col: 
 	</li>
 	
 </ul>
@@ -441,8 +775,8 @@
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="VScrollBar "></a><strong>VScrollBar </strong></dt>
-<dd>スクロールバークラスです.<br> 水平バーを表示するだけです.
+<dt><a name="Mesh "></a><strong>Mesh </strong></dt>
+<dd>This is a class to draw a gradient mesh.<br> This source has been implemented by Nenad Katic.<br> Has been partially modified.<br>
 
 
 

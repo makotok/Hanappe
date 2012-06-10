@@ -210,10 +210,8 @@
 		<a href="../../../files/hp/physics/PhysicsBody.html">hp/physics/PhysicsBody.lua</a>
 	</li>
 
-	<li>
-		<a href="../../../files/hp/physics/PhysicsFixture.html">hp/physics/PhysicsFixture.lua</a>
-	</li>
-
+	<li><strong>hp/physics/PhysicsFixture.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/physics/PhysicsWorld.html">hp/physics/PhysicsWorld.lua</a>
 	</li>
@@ -318,8 +316,10 @@
 		<a href="../../../files/hp/widget/ThemeClient.html">hp/widget/ThemeClient.lua</a>
 	</li>
 
-	<li><strong>hp/widget/VScrollBar.lua</strong></li>
-	
+	<li>
+		<a href="../../../files/hp/widget/VScrollBar.html">hp/widget/VScrollBar.lua</a>
+	</li>
+
 	<li>
 		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
 	</li>
@@ -343,7 +343,7 @@
 
 <div id="content">
 
-<h1>File <code>hp/widget/VScrollBar.lua</code></h1>
+<h1>File <code>hp/physics/PhysicsFixture.lua</code></h1>
 
 
 
@@ -355,13 +355,33 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:getDefaultTheme">M:getDefaultTheme</a>&nbsp;()</td>
-	<td class="summary">デフォルトテーマを返します.</td>
+	<td class="name" nowrap><a href="#M:copyParams">M:copyParams</a>&nbsp;(params)</td>
+	<td class="summary">Set the parameter setter function.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:destroy">M:destroy</a>&nbsp;()</td>
+	<td class="summary">Fixtureを破棄します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:getName">M:getName</a>&nbsp;()</td>
+	<td class="summary">名前を返します.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">インスタンスを生成して返します.</td>
+	<td class="summary">The constructor.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:new">M:new</a>&nbsp;(obj, ...)</td>
+	<td class="summary">The constructor.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setName">M:setName</a>&nbsp;(name)</td>
+	<td class="summary">名前を設定します.</td>
 	</tr>
 
 </table>
@@ -373,8 +393,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#VScrollBar ">VScrollBar </a></td>
-	<td class="summary">スクロールバークラスです.<br> 水平バーを表示するだけです.</td>
+	<td class="name" nowrap><a href="#PhysicsWorld ">PhysicsWorld </a></td>
+	<td class="summary">Class that inherits from MOAIBox2DWorld.<br> TODO:Not implemented </td>
 	</tr>
 
 </table>
@@ -392,9 +412,35 @@
 
 
 
-<dt><a name="M:getDefaultTheme"></a><strong>M:getDefaultTheme</strong>&nbsp;()</dt>
+<dt><a name="M:copyParams"></a><strong>M:copyParams</strong>&nbsp;(params)</dt>
 <dd>
-デフォルトテーマを返します. 
+Set the parameter setter function.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  params: Parameter is set to Object.<br> (params:pe_fixture_id, name, density, friction, restitution, filter) 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:destroy"></a><strong>M:destroy</strong>&nbsp;()</dt>
+<dd>
+Fixtureを破棄します. Bodyからも削除されます. 
 
 
 
@@ -409,9 +455,29 @@
 
 
 
+<dt><a name="M:getName"></a><strong>M:getName</strong>&nbsp;()</dt>
+<dd>
+名前を返します.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+name 
+
+
+
+</dd>
+
+
+
+
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
 <dd>
-インスタンスを生成して返します. 
+The constructor. 
 
 
 <h3>Parameters</h3>
@@ -419,6 +485,62 @@
 	
 	<li>
 	  params: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:new"></a><strong>M:new</strong>&nbsp;(obj, ...)</dt>
+<dd>
+The constructor.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  obj: MOAIBox2DFixture instance. 
+	</li>
+	
+	<li>
+	  ...: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setName"></a><strong>M:setName</strong>&nbsp;(name)</dt>
+<dd>
+名前を設定します.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  name: 
 	</li>
 	
 </ul>
@@ -441,8 +563,8 @@
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="VScrollBar "></a><strong>VScrollBar </strong></dt>
-<dd>スクロールバークラスです.<br> 水平バーを表示するだけです.
+<dt><a name="PhysicsWorld "></a><strong>PhysicsWorld </strong></dt>
+<dd>Class that inherits from MOAIBox2DWorld.<br> TODO:Not implemented
 
 
 

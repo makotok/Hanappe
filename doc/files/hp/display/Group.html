@@ -65,7 +65,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/Mesh.html">hp/display/Mesh.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
 
 	<li>
@@ -153,6 +161,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/lang/string.html">hp/lang/string.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
 	</li>
 
@@ -181,11 +193,23 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/TextureManager.html">hp/manager/TextureManager.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsBody.html">hp/physics/PhysicsBody.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsFixture.html">hp/physics/PhysicsFixture.lua</a>
 	</li>
 
 	<li>
@@ -242,6 +266,10 @@
 
 	<li>
 		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/Triangulation.html">hp/util/Triangulation.lua</a>
 	</li>
 
 	<li>
@@ -327,33 +355,33 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:addChild">M:addChild</a>&nbsp;(child)</td>
-	<td class="summary">子オブジェクトを追加します.</td>
+	<td class="name" nowrap><a href="#M:addChild">M:addChild</a>&nbsp;(child, Child)</td>
+	<td class="summary">Add a child object.<br> The child object to duplicate is not added.<br> If you have set the Layer to the group, the layer is set to the child.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:copyParams">M:copyParams</a>&nbsp;(params)</td>
-	<td class="summary">パラメータを各プロパティにコピーします.</td>
+	<td class="summary">Set the parameter setter function.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getBounds">M:getBounds</a>&nbsp;()</td>
-	<td class="summary">オブジェクトの境界を返します.</td>
+	<td class="summary">Returns the bounds of the object.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getChildren">M:getChildren</a>&nbsp;()</td>
-	<td class="summary">子オブジェクトを返します.</td>
+	<td class="summary">Returns the children object.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getHeight">M:getHeight</a>&nbsp;()</td>
-	<td class="summary">高さを返します.</td>
+	<td class="summary">Returns the height.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getWidth">M:getWidth</a>&nbsp;()</td>
-	<td class="summary">幅を返します.</td>
+	<td class="summary">Returns the width.</td>
 	</tr>
 
 	<tr>
@@ -368,47 +396,42 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">Groupインスタンスを生成して返します.</td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:isGroup">M:isGroup</a>&nbsp;()</td>
-	<td class="summary">グループかどうか返します.</td>
+	<td class="summary">Returns true if the group.<br> Are used in internal decision.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:removeChild">M:removeChild</a>&nbsp;(child)</td>
-	<td class="summary">子オブジェクトを削除します.</td>
+	<td class="name" nowrap><a href="#M:removeChild">M:removeChild</a>&nbsp;(child, Child)</td>
+	<td class="summary">Remove the child object.<br> If you have set the Layer to the group, layer of the child is removed.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:resizeForChildren">M:resizeForChildren</a>&nbsp;()</td>
+	<td class="summary">Resize based on the location and size of the child elements.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setCenterPiv">M:setCenterPiv</a>&nbsp;()</td>
-	<td class="summary">pivをサイズの中央に設定します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setHeight">M:setHeight</a>&nbsp;(height)</td>
-	<td class="summary">高さを設定します.</td>
+	<td class="summary">Set the center of the pivot.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setLayer">M:setLayer</a>&nbsp;(layer)</td>
-	<td class="summary">レイヤーを設定します.</td>
+	<td class="summary">Set the layer of the same for children.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setSize">M:setSize</a>&nbsp;(width, height)</td>
-	<td class="summary">サイズを設定します.</td>
+	<td class="summary">Sets the width and height.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:setVisible">M:setVisible</a>&nbsp;(value)</td>
-	<td class="summary">visibleを設定します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setWidth">M:setWidth</a>&nbsp;(width)</td>
-	<td class="summary">幅を設定します.</td>
+	<td class="name" nowrap><a href="#M:setVisible">M:setVisible</a>&nbsp;(visible)</td>
+	<td class="summary">Set the visible.</td>
 	</tr>
 
 </table>
@@ -421,7 +444,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#Group ">Group </a></td>
-	<td class="summary">MOAIPropをグループ化にクラスです.<br> </td>
+	<td class="summary">This is a class to grouping the DisplayObject.<br> Will be used as a dummy MOAIProp.<br> Extends : DisplayObject, Resizable<br> </td>
 	</tr>
 
 </table>
@@ -439,9 +462,9 @@
 
 
 
-<dt><a name="M:addChild"></a><strong>M:addChild</strong>&nbsp;(child)</dt>
+<dt><a name="M:addChild"></a><strong>M:addChild</strong>&nbsp;(child, Child)</dt>
 <dd>
-子オブジェクトを追加します. 
+Add a child object.<br> The child object to duplicate is not added.<br> If you have set the Layer to the group, the layer is set to the child.
 
 
 <h3>Parameters</h3>
@@ -449,6 +472,10 @@
 	
 	<li>
 	  child: 
+	</li>
+	
+	<li>
+	  Child: to inherit the MOAIProp. 
 	</li>
 	
 </ul>
@@ -467,14 +494,14 @@
 
 <dt><a name="M:copyParams"></a><strong>M:copyParams</strong>&nbsp;(params)</dt>
 <dd>
-パラメータを各プロパティにコピーします. 
+Set the parameter setter function.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  params: Parameter is set to Object.<br> 
 	</li>
 	
 </ul>
@@ -493,13 +520,16 @@
 
 <dt><a name="M:getBounds"></a><strong>M:getBounds</strong>&nbsp;()</dt>
 <dd>
-オブジェクトの境界を返します. 
+Returns the bounds of the object.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+xMin, yMin, zMin, xMax, yMax, zMax 
 
 
 
@@ -510,13 +540,16 @@
 
 <dt><a name="M:getChildren"></a><strong>M:getChildren</strong>&nbsp;()</dt>
 <dd>
-子オブジェクトを返します. 
+Returns the children object. If you want to use this function with caution.<br> direct manipulation table against children are not reflected in the Group.<br>
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+children 
 
 
 
@@ -527,13 +560,16 @@
 
 <dt><a name="M:getHeight"></a><strong>M:getHeight</strong>&nbsp;()</dt>
 <dd>
-高さを返します. 
+Returns the height.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+height 
 
 
 
@@ -544,13 +580,16 @@
 
 <dt><a name="M:getWidth"></a><strong>M:getWidth</strong>&nbsp;()</dt>
 <dd>
-幅を返します. 
+Returns the width.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+width 
 
 
 
@@ -635,14 +674,14 @@ If the object is a true conflict
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
 <dd>
-Groupインスタンスを生成して返します. 
+The constructor.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  params: (option)Parameter is set to Object.<br> 
 	</li>
 	
 </ul>
@@ -661,7 +700,7 @@ Groupインスタンスを生成して返します.
 
 <dt><a name="M:isGroup"></a><strong>M:isGroup</strong>&nbsp;()</dt>
 <dd>
-グループかどうか返します. 内部判定で使用されます. 
+Returns true if the group.<br> Are used in internal decision. 
 
 
 
@@ -676,9 +715,9 @@ Groupインスタンスを生成して返します.
 
 
 
-<dt><a name="M:removeChild"></a><strong>M:removeChild</strong>&nbsp;(child)</dt>
+<dt><a name="M:removeChild"></a><strong>M:removeChild</strong>&nbsp;(child, Child)</dt>
 <dd>
-子オブジェクトを削除します. 
+Remove the child object.<br> If you have set the Layer to the group, layer of the child is removed.
 
 
 <h3>Parameters</h3>
@@ -688,7 +727,28 @@ Groupインスタンスを生成して返します.
 	  child: 
 	</li>
 	
+	<li>
+	  Child: to inherit the MOAIProp. 
+	</li>
+	
 </ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:resizeForChildren"></a><strong>M:resizeForChildren</strong>&nbsp;()</dt>
+<dd>
+Resize based on the location and size of the child elements. 
+
 
 
 
@@ -704,34 +764,8 @@ Groupインスタンスを生成して返します.
 
 <dt><a name="M:setCenterPiv"></a><strong>M:setCenterPiv</strong>&nbsp;()</dt>
 <dd>
-pivをサイズの中央に設定します. 
+Set the center of the pivot. 
 
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setHeight"></a><strong>M:setHeight</strong>&nbsp;(height)</dt>
-<dd>
-高さを設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  height: 
-	</li>
-	
-</ul>
 
 
 
@@ -747,14 +781,14 @@ pivをサイズの中央に設定します.
 
 <dt><a name="M:setLayer"></a><strong>M:setLayer</strong>&nbsp;(layer)</dt>
 <dd>
-レイヤーを設定します. 
+Set the layer of the same for children.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  layer: 
+	  layer: MOAILayer instance. 
 	</li>
 	
 </ul>
@@ -773,44 +807,18 @@ pivをサイズの中央に設定します.
 
 <dt><a name="M:setSize"></a><strong>M:setSize</strong>&nbsp;(width, height)</dt>
 <dd>
-サイズを設定します. 
+Sets the width and height.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  width: 
+	  width: width
 	</li>
 	
 	<li>
-	  height: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setVisible"></a><strong>M:setVisible</strong>&nbsp;(value)</dt>
-<dd>
-visibleを設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  value: 
+	  height: height 
 	</li>
 	
 </ul>
@@ -827,16 +835,16 @@ visibleを設定します.
 
 
 
-<dt><a name="M:setWidth"></a><strong>M:setWidth</strong>&nbsp;(width)</dt>
+<dt><a name="M:setVisible"></a><strong>M:setVisible</strong>&nbsp;(visible)</dt>
 <dd>
-幅を設定します. 
+Set the visible.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  width: 
+	  visible: visible 
 	</li>
 	
 </ul>
@@ -860,7 +868,7 @@ visibleを設定します.
 <dl class="table">
 
 <dt><a name="Group "></a><strong>Group </strong></dt>
-<dd>MOAIPropをグループ化にクラスです.<br>
+<dd>This is a class to grouping the DisplayObject.<br> Will be used as a dummy MOAIProp.<br> Extends : DisplayObject, Resizable<br>
 
 
 

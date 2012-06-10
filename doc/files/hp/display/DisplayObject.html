@@ -65,7 +65,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/Mesh.html">hp/display/Mesh.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
 
 	<li>
@@ -153,6 +161,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/lang/string.html">hp/lang/string.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
 	</li>
 
@@ -181,11 +193,23 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/TextureManager.html">hp/manager/TextureManager.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsBody.html">hp/physics/PhysicsBody.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsFixture.html">hp/physics/PhysicsFixture.lua</a>
 	</li>
 
 	<li>
@@ -242,6 +266,10 @@
 
 	<li>
 		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/Triangulation.html">hp/util/Triangulation.lua</a>
 	</li>
 
 	<li>
@@ -328,7 +356,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:copyParams">M:copyParams</a>&nbsp;(params)</td>
-	<td class="summary">パラメータテーブルの値を元に、各setter関数の引数にセットしてコールします.</td>
+	<td class="summary">Set the parameter setter function.</td>
 	</tr>
 
 	<tr>
@@ -348,17 +376,17 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(...)</td>
-	<td class="summary">コンストラクタです.</td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:new">M:new</a>&nbsp;(...)</td>
-	<td class="summary">コンストラクタです.</td>
+	<td class="summary">Instance generating functions.<br> Unlike an ordinary class, and based on the MOAI_CLASS.<br> To inherit this function is not recommended.<br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setLayer">M:setLayer</a>&nbsp;(layer)</td>
-	<td class="summary">レイヤーを設定します.</td>
+	<td class="summary">Set the MOAILayer instance.</td>
 	</tr>
 
 </table>
@@ -371,7 +399,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#DisplayObject ">DisplayObject </a></td>
-	<td class="summary">描画オブジェクトの基底クラスです.<br> MOAIPropを拡張して、便利な関数を追加します.</td>
+	<td class="summary">The base class for all display objects.<br> To inherit MOAIPropUtil, you can use the convenience function.<br> To inherit EventDispatcher, you can use the event notification.<br> <br> Use the MOAIProp class.<br> By changing the M.MOAI_CLASS, you can change to another class.<br> Extends : EventDispatcher, MOAIPropUtil<br> </td>
 	</tr>
 
 </table>
@@ -391,14 +419,14 @@
 
 <dt><a name="M:copyParams"></a><strong>M:copyParams</strong>&nbsp;(params)</dt>
 <dd>
-パラメータテーブルの値を元に、各setter関数の引数にセットしてコールします. 
+Set the parameter setter function.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  params: Parameter is set to Object.<br> (params:left, top, layer) 
 	</li>
 	
 </ul>
@@ -524,7 +552,7 @@ If the object is a true conflict
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(...)</dt>
 <dd>
-コンストラクタです. 
+The constructor. 
 
 
 <h3>Parameters</h3>
@@ -550,14 +578,14 @@ If the object is a true conflict
 
 <dt><a name="M:new"></a><strong>M:new</strong>&nbsp;(...)</dt>
 <dd>
-コンストラクタです. self.MOAI_CLASSのインスタンスを生成します. 
+Instance generating functions.<br> Unlike an ordinary class, and based on the MOAI_CLASS.<br> To inherit this function is not recommended.<br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  ...: 
+	  ...: params.
 	</li>
 	
 </ul>
@@ -566,6 +594,9 @@ If the object is a true conflict
 
 
 
+
+<h3>Return value:</h3>
+instance. 
 
 
 
@@ -576,7 +607,7 @@ If the object is a true conflict
 
 <dt><a name="M:setLayer"></a><strong>M:setLayer</strong>&nbsp;(layer)</dt>
 <dd>
-レイヤーを設定します. 
+Set the MOAILayer instance. 
 
 
 <h3>Parameters</h3>
@@ -607,7 +638,7 @@ If the object is a true conflict
 <dl class="table">
 
 <dt><a name="DisplayObject "></a><strong>DisplayObject </strong></dt>
-<dd>描画オブジェクトの基底クラスです.<br> MOAIPropを拡張して、便利な関数を追加します.
+<dd>The base class for all display objects.<br> To inherit MOAIPropUtil, you can use the convenience function.<br> To inherit EventDispatcher, you can use the event notification.<br> <br> Use the MOAIProp class.<br> By changing the M.MOAI_CLASS, you can change to another class.<br> Extends : EventDispatcher, MOAIPropUtil<br>
 
 
 

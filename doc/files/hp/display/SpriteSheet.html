@@ -67,7 +67,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/Mesh.html">hp/display/Mesh.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
 
 	<li>
@@ -153,6 +161,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/lang/string.html">hp/lang/string.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
 	</li>
 
@@ -181,11 +193,23 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/TextureManager.html">hp/manager/TextureManager.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsBody.html">hp/physics/PhysicsBody.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsFixture.html">hp/physics/PhysicsFixture.lua</a>
 	</li>
 
 	<li>
@@ -242,6 +266,10 @@
 
 	<li>
 		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/Triangulation.html">hp/util/Triangulation.lua</a>
 	</li>
 
 	<li>
@@ -328,52 +356,52 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:copyParams">M:copyParams</a>&nbsp;(params)</td>
-	<td class="summary">パラメータを各プロパティにコピーします.</td>
+	<td class="summary">Set the parameter setter function.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:getSheetAnim">M:getSheetAnim</a>&nbsp;(name)</td>
-	<td class="summary">指定した名前のアニメーションデータを返します.</td>
+	<td class="name" nowrap><a href="#M:getSheetAnim">M:getSheetAnim</a>&nbsp;(name, Animation)</td>
+	<td class="summary">Returns the animation data with the specified name.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">SpriteSheetインスタンスを生成して返します.<br> </td>
+	<td class="summary">The constructor.<br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:isCurrentAnim">M:isCurrentAnim</a>&nbsp;(name)</td>
-	<td class="summary">指定した名前がカレントアニメーションかどうか判定します.</td>
+	<td class="summary">Check the current animation with the specified name.<br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:playAnim">M:playAnim</a>&nbsp;(name)</td>
-	<td class="summary">アニメーションを開始します.</td>
+	<td class="summary">Start the animation.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setSheetAnim">M:setSheetAnim</a>&nbsp;(name, indexes, sec, mode)</td>
-	<td class="summary">アニメーションデータを設定します.</td>
+	<td class="summary">Set the data to move the key frame animation.<br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setSheetAnims">M:setSheetAnims</a>&nbsp;(sheetAnims)</td>
-	<td class="summary">複数のアニメーションデータを設定します.</td>
+	<td class="summary">Set the data to move the key frame animations.<br> See M:setSheetAnim function.<br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setSheets">M:setSheets</a>&nbsp;(sheets)</td>
-	<td class="summary">シートデータを設定します.<br> シートデータは以下の形式に乗っ取ってください.<br> {x = x座標の開始位置, y = y座標の開始位置, width = 幅, height = 高さ} </td>
+	<td class="summary">Set the data sheet.<br> Sheet in accordance with the following format: Please.<br> {x = Start position, y = Start position, width = The width of the sheet, height = The height of the sheet} <br> TODO:Setting of the flip.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setTiledSheets">M:setTiledSheets</a>&nbsp;(tileWidth, tileHeight, tileX, tileY, spacing, margin)</td>
-	<td class="summary">タイル形式のシートデータを生成して設定します.</td>
+	<td class="summary">Set the sheet data in the form of tiles.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:stopAnim">M:stopAnim</a>&nbsp;()</td>
-	<td class="summary">アニメーションを停止します.</td>
+	<td class="summary">Stop the animation.</td>
 	</tr>
 
 </table>
@@ -386,7 +414,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#SpriteSheet ">SpriteSheet </a></td>
-	<td class="summary">複数のシートを切り替えて描画するクラスです.<br> シート情報を設定して、シートアニメーションを行う事が簡単にできます.<br> </td>
+	<td class="summary">This is a class to draw the sheet switching.<br> Sheet can be defined in any shape.<br> <br> Extends -> DisplayObject, TextureDrawable<br>  </td>
 	</tr>
 
 </table>
@@ -406,14 +434,14 @@
 
 <dt><a name="M:copyParams"></a><strong>M:copyParams</strong>&nbsp;(params)</dt>
 <dd>
-パラメータを各プロパティにコピーします. 
+Set the parameter setter function.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  params: Parameter is set to Object.<br> 
 	</li>
 	
 </ul>
@@ -430,9 +458,9 @@
 
 
 
-<dt><a name="M:getSheetAnim"></a><strong>M:getSheetAnim</strong>&nbsp;(name)</dt>
+<dt><a name="M:getSheetAnim"></a><strong>M:getSheetAnim</strong>&nbsp;(name, Animation)</dt>
 <dd>
-指定した名前のアニメーションデータを返します. 
+Returns the animation data with the specified name.
 
 
 <h3>Parameters</h3>
@@ -442,12 +470,19 @@
 	  name: 
 	</li>
 	
+	<li>
+	  Animation: name.
+	</li>
+	
 </ul>
 
 
 
 
 
+
+<h3>Return value:</h3>
+MOAIAnim instance 
 
 
 
@@ -458,14 +493,14 @@
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
 <dd>
-SpriteSheetインスタンスを生成して返します.<br>
+The constructor.<br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 生成するためのパラメータ<br> paramsに設定できるパラメータ:<br> texture = テクスチャのパスもしくはMOAITextureインスタンス.<br> sheets = sheet情報.setSheets関数を参照.<br> sheetAnims = animation情報.setSheetAnims関数を参照.<br> left = 左原点の座標.<br> top = 上原点の座標.<br> layer = MOAILayerを設定.<br>
+	  params: (option)Parameter is set to Object.<br> params:<br> texture:Path of the texture. Or, MOAITexture instance.<br> sheets:See setSheets function.<br> sheetAnims = See setSheetAnims function.<br>
 	</li>
 	
 </ul>
@@ -487,14 +522,14 @@ SpriteSheetインスタンスを生成して返します.<br>
 
 <dt><a name="M:isCurrentAnim"></a><strong>M:isCurrentAnim</strong>&nbsp;(name)</dt>
 <dd>
-指定した名前がカレントアニメーションかどうか判定します. 
+Check the current animation with the specified name.<br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  name: 
+	  name: Animation name.
 	</li>
 	
 </ul>
@@ -503,6 +538,9 @@ SpriteSheetインスタンスを生成して返します.<br>
 
 
 
+
+<h3>Return value:</h3>
+If the current animation is true. 
 
 
 
@@ -513,7 +551,7 @@ SpriteSheetインスタンスを生成して返します.<br>
 
 <dt><a name="M:playAnim"></a><strong>M:playAnim</strong>&nbsp;(name)</dt>
 <dd>
-アニメーションを開始します. 
+Start the animation. 
 
 
 <h3>Parameters</h3>
@@ -539,26 +577,26 @@ SpriteSheetインスタンスを生成して返します.<br>
 
 <dt><a name="M:setSheetAnim"></a><strong>M:setSheetAnim</strong>&nbsp;(name, indexes, sec, mode)</dt>
 <dd>
-アニメーションデータを設定します. 
+Set the data to move the key frame animation.<br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  name: 
+	  name: Animation name.
 	</li>
 	
 	<li>
-	  indexes: 
+	  indexes: Key sequence.
 	</li>
 	
 	<li>
-	  sec: 
+	  sec: Seconds to move the key.
 	</li>
 	
 	<li>
-	  mode: 
+	  mode: (option)Mode is set to MOAIAnim.(The default is MOAITimer.LOOP) 
 	</li>
 	
 </ul>
@@ -577,14 +615,14 @@ SpriteSheetインスタンスを生成して返します.<br>
 
 <dt><a name="M:setSheetAnims"></a><strong>M:setSheetAnims</strong>&nbsp;(sheetAnims)</dt>
 <dd>
-複数のアニメーションデータを設定します. 
+Set the data to move the key frame animations.<br> See M:setSheetAnim function.<br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  sheetAnims: 
+	  sheetAnims: table is set to setSheetAnim. 
 	</li>
 	
 </ul>
@@ -603,14 +641,14 @@ SpriteSheetインスタンスを生成して返します.<br>
 
 <dt><a name="M:setSheets"></a><strong>M:setSheets</strong>&nbsp;(sheets)</dt>
 <dd>
-シートデータを設定します.<br> シートデータは以下の形式に乗っ取ってください.<br> {x = x座標の開始位置, y = y座標の開始位置, width = 幅, height = 高さ}
+Set the data sheet.<br> Sheet in accordance with the following format: Please.<br> {x = Start position, y = Start position, width = The width of the sheet, height = The height of the sheet} <br> TODO:Setting of the flip.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  sheets: シートデータ 
+	  sheets: sheet data 
 	</li>
 	
 </ul>
@@ -629,34 +667,34 @@ SpriteSheetインスタンスを生成して返します.<br>
 
 <dt><a name="M:setTiledSheets"></a><strong>M:setTiledSheets</strong>&nbsp;(tileWidth, tileHeight, tileX, tileY, spacing, margin)</dt>
 <dd>
-タイル形式のシートデータを生成して設定します. シート毎の余白などを設定可能です.
+Set the sheet data in the form of tiles.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  tileWidth: タイルの幅
+	  tileWidth: The width of the tile.
 	</li>
 	
 	<li>
-	  tileHeight: タイルの高さ
+	  tileHeight: The height of the tile.
 	</li>
 	
 	<li>
-	  tileX: X方向のタイル数(option)
+	  tileX: (option)number of tiles in the x-direction.
 	</li>
 	
 	<li>
-	  tileY: Y方向のタイル数(option)
+	  tileY: (option)number of tiles in the y-direction.
 	</li>
 	
 	<li>
-	  spacing: シート毎の余白(option)
+	  spacing: (option)Spaces between tiles.
 	</li>
 	
 	<li>
-	  margin: シートの開始位置の余白(option) 
+	  margin: (option)Margins of the Start position 
 	</li>
 	
 </ul>
@@ -675,7 +713,7 @@ SpriteSheetインスタンスを生成して返します.<br>
 
 <dt><a name="M:stopAnim"></a><strong>M:stopAnim</strong>&nbsp;()</dt>
 <dd>
-アニメーションを停止します. 
+Stop the animation. 
 
 
 
@@ -697,7 +735,7 @@ SpriteSheetインスタンスを生成して返します.<br>
 <dl class="table">
 
 <dt><a name="SpriteSheet "></a><strong>SpriteSheet </strong></dt>
-<dd>複数のシートを切り替えて描画するクラスです.<br> シート情報を設定して、シートアニメーションを行う事が簡単にできます.<br>
+<dd>This is a class to draw the sheet switching.<br> Sheet can be defined in any shape.<br> <br> Extends -> DisplayObject, TextureDrawable<br> 
 
 
 

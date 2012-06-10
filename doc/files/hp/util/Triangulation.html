@@ -270,10 +270,8 @@
 		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
 	</li>
 
-	<li>
-		<a href="../../../files/hp/util/Triangulation.html">hp/util/Triangulation.lua</a>
-	</li>
-
+	<li><strong>hp/util/Triangulation.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/widget/Button.html">hp/widget/Button.lua</a>
 	</li>
@@ -318,8 +316,10 @@
 		<a href="../../../files/hp/widget/ThemeClient.html">hp/widget/ThemeClient.lua</a>
 	</li>
 
-	<li><strong>hp/widget/VScrollBar.lua</strong></li>
-	
+	<li>
+		<a href="../../../files/hp/widget/VScrollBar.html">hp/widget/VScrollBar.lua</a>
+	</li>
+
 	<li>
 		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
 	</li>
@@ -343,7 +343,7 @@
 
 <div id="content">
 
-<h1>File <code>hp/widget/VScrollBar.lua</code></h1>
+<h1>File <code>hp/util/Triangulation.lua</code></h1>
 
 
 
@@ -355,13 +355,23 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:getDefaultTheme">M:getDefaultTheme</a>&nbsp;()</td>
-	<td class="summary">デフォルトテーマを返します.</td>
+	<td class="name" nowrap><a href="#M.process">M.process</a>&nbsp;(contour)</td>
+	<td class="summary"> </td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">インスタンスを生成して返します.</td>
+	<td class="name" nowrap><a href="#area">area</a>&nbsp;(contour)</td>
+	<td class="summary"> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#insideTriangle">insideTriangle</a>&nbsp;(Ax, Ay, Bx, By, Cx, Cy, Px, Py)</td>
+	<td class="summary"> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#snip">snip</a>&nbsp;(contour, u, v, w, n, V)</td>
+	<td class="summary"> </td>
 	</tr>
 
 </table>
@@ -373,8 +383,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#VScrollBar ">VScrollBar </a></td>
-	<td class="summary">スクロールバークラスです.<br> 水平バーを表示するだけです.</td>
+	<td class="name" nowrap><a href="#Triangulation ">Triangulation </a></td>
+	<td class="summary">Triangulation routine is based on code by <br> JOHN W.</td>
 	</tr>
 
 </table>
@@ -392,10 +402,19 @@
 
 
 
-<dt><a name="M:getDefaultTheme"></a><strong>M:getDefaultTheme</strong>&nbsp;()</dt>
+<dt><a name="M.process"></a><strong>M.process</strong>&nbsp;(contour)</dt>
 <dd>
-デフォルトテーマを返します. 
 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  contour: 
+	</li>
+	
+</ul>
 
 
 
@@ -409,16 +428,116 @@
 
 
 
-<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
+<dt><a name="area"></a><strong>area</strong>&nbsp;(contour)</dt>
 <dd>
-インスタンスを生成して返します. 
+
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  contour: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="insideTriangle"></a><strong>insideTriangle</strong>&nbsp;(Ax, Ay, Bx, By, Cx, Cy, Px, Py)</dt>
+<dd>
+
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  Ax: 
+	</li>
+	
+	<li>
+	  Ay: 
+	</li>
+	
+	<li>
+	  Bx: 
+	</li>
+	
+	<li>
+	  By: 
+	</li>
+	
+	<li>
+	  Cx: 
+	</li>
+	
+	<li>
+	  Cy: 
+	</li>
+	
+	<li>
+	  Px: 
+	</li>
+	
+	<li>
+	  Py: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="snip"></a><strong>snip</strong>&nbsp;(contour, u, v, w, n, V)</dt>
+<dd>
+
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  contour: 
+	</li>
+	
+	<li>
+	  u: 
+	</li>
+	
+	<li>
+	  v: 
+	</li>
+	
+	<li>
+	  w: 
+	</li>
+	
+	<li>
+	  n: 
+	</li>
+	
+	<li>
+	  V: 
 	</li>
 	
 </ul>
@@ -441,8 +560,8 @@
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="VScrollBar "></a><strong>VScrollBar </strong></dt>
-<dd>スクロールバークラスです.<br> 水平バーを表示するだけです.
+<dt><a name="Triangulation "></a><strong>Triangulation </strong></dt>
+<dd>Triangulation routine is based on code by <br> JOHN W. RATCLIFF (jratcliff@verant.com), July 22, 2000 <br>
 
 
 

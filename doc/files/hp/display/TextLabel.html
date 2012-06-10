@@ -67,7 +67,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/Mesh.html">hp/display/Mesh.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
 
 	<li>
@@ -153,6 +161,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/lang/string.html">hp/lang/string.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
 	</li>
 
@@ -181,11 +193,23 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/TextureManager.html">hp/manager/TextureManager.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsBody.html">hp/physics/PhysicsBody.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsFixture.html">hp/physics/PhysicsFixture.lua</a>
 	</li>
 
 	<li>
@@ -242,6 +266,10 @@
 
 	<li>
 		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/Triangulation.html">hp/util/Triangulation.lua</a>
 	</li>
 
 	<li>
@@ -328,42 +356,37 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:copyParams">M:copyParams</a>&nbsp;(params)</td>
-	<td class="summary">パラメータを各プロパティにコピーします.</td>
+	<td class="summary">Set the parameter setter function.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getTextSize">M:getTextSize</a>&nbsp;()</td>
-	<td class="summary">テキストサイズを返します.</td>
+	<td class="summary">Returns the text size.<br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">TextLabelインスタンスを生成して返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setHeight">M:setHeight</a>&nbsp;(height)</td>
-	<td class="summary">高さを設定します.</td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setSize">M:setSize</a>&nbsp;(width, height)</td>
-	<td class="summary">サイズを設定します.</td>
+	<td class="summary">Set the text size.<br> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setText">M:setText</a>&nbsp;(text)</td>
+	<td class="summary">Set the text.<br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setTextSize">M:setTextSize</a>&nbsp;(points, dpi)</td>
-	<td class="summary">テキストサイズを設定します.</td>
+	<td class="summary">Set the text size.<br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setVisible">M:setVisible</a>&nbsp;(value)</td>
-	<td class="summary">MOAITextBoxがvisibleが効かないため、alphaで擬似的に非表示にします.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setWidth">M:setWidth</a>&nbsp;(width)</td>
-	<td class="summary">幅を設定します.</td>
+	<td class="summary">MOAITextBox does not work for the visible, and hide in a pseudo-alpha.<br> TODO:Will be removed in MOAI SDK V1.2.</td>
 	</tr>
 
 </table>
@@ -376,7 +399,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#TextLabel ">TextLabel </a></td>
-	<td class="summary">テキストを描画するモジュールです.<br> MOAITextBoxを生成して返します.</td>
+	<td class="summary">This is a class to draw the text.<br> See MOAITextBox.<br> Extends : DisplayObject, Resizable<br> </td>
 	</tr>
 
 </table>
@@ -396,14 +419,14 @@
 
 <dt><a name="M:copyParams"></a><strong>M:copyParams</strong>&nbsp;(params)</dt>
 <dd>
-パラメータを各プロパティにコピーします. 
+Set the parameter setter function.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  params: Parameter is set to Object.<br> (params:width, height, textSize, text) 
 	</li>
 	
 </ul>
@@ -422,13 +445,16 @@
 
 <dt><a name="M:getTextSize"></a><strong>M:getTextSize</strong>&nbsp;()</dt>
 <dd>
-テキストサイズを返します. 
+Returns the text size.<br>
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+points, dpi 
 
 
 
@@ -439,40 +465,14 @@
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
 <dd>
-TextLabelインスタンスを生成して返します. 
+The constructor.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setHeight"></a><strong>M:setHeight</strong>&nbsp;(height)</dt>
-<dd>
-高さを設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  height: 
+	  params: (option)Parameter is set to Object.<br> 
 	</li>
 	
 </ul>
@@ -491,7 +491,7 @@ TextLabelインスタンスを生成して返します.
 
 <dt><a name="M:setSize"></a><strong>M:setSize</strong>&nbsp;(width, height)</dt>
 <dd>
-サイズを設定します. 
+Set the text size.<br>
 
 
 <h3>Parameters</h3>
@@ -519,20 +519,46 @@ TextLabelインスタンスを生成して返します.
 
 
 
-<dt><a name="M:setTextSize"></a><strong>M:setTextSize</strong>&nbsp;(points, dpi)</dt>
+<dt><a name="M:setText"></a><strong>M:setText</strong>&nbsp;(text)</dt>
 <dd>
-テキストサイズを設定します. 
+Set the text.<br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  points: 
+	  text: text. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setTextSize"></a><strong>M:setTextSize</strong>&nbsp;(points, dpi)</dt>
+<dd>
+Set the text size.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  points: size.
 	</li>
 	
 	<li>
-	  dpi: 
+	  dpi: (deprecated)Resolution. 
 	</li>
 	
 </ul>
@@ -551,7 +577,7 @@ TextLabelインスタンスを生成して返します.
 
 <dt><a name="M:setVisible"></a><strong>M:setVisible</strong>&nbsp;(value)</dt>
 <dd>
-MOAITextBoxがvisibleが効かないため、alphaで擬似的に非表示にします. TODO:バグ報告.修正された場合に実装を削除予定 
+MOAITextBox does not work for the visible, and hide in a pseudo-alpha.<br> TODO:Will be removed in MOAI SDK V1.2. 
 
 
 <h3>Parameters</h3>
@@ -559,32 +585,6 @@ MOAITextBoxがvisibleが効かないため、alphaで擬似的に非表示にし
 	
 	<li>
 	  value: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setWidth"></a><strong>M:setWidth</strong>&nbsp;(width)</dt>
-<dd>
-幅を設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  width: 
 	</li>
 	
 </ul>
@@ -608,7 +608,7 @@ MOAITextBoxがvisibleが効かないため、alphaで擬似的に非表示にし
 <dl class="table">
 
 <dt><a name="TextLabel "></a><strong>TextLabel </strong></dt>
-<dd>テキストを描画するモジュールです.<br> MOAITextBoxを生成して返します.
+<dd>This is a class to draw the text.<br> See MOAITextBox.<br> Extends : DisplayObject, Resizable<br>
 
 
 

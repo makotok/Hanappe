@@ -67,7 +67,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/Mesh.html">hp/display/Mesh.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
 
 	<li>
@@ -154,6 +162,10 @@
 		<a href="../../../files/hp/lang/math.html">hp/lang/math.lua</a>
 	</li>
 
+	<li>
+		<a href="../../../files/hp/lang/string.html">hp/lang/string.lua</a>
+	</li>
+
 	<li><strong>hp/lang/table.lua</strong></li>
 	
 	<li>
@@ -181,11 +193,23 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/TextureManager.html">hp/manager/TextureManager.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsBody.html">hp/physics/PhysicsBody.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsFixture.html">hp/physics/PhysicsFixture.lua</a>
 	</li>
 
 	<li>
@@ -242,6 +266,10 @@
 
 	<li>
 		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/Triangulation.html">hp/util/Triangulation.lua</a>
 	</li>
 
 	<li>
@@ -332,8 +360,18 @@
 	</tr>
 
 	<tr>
+	<td class="name" nowrap><a href="#M.decorate">M.decorate</a>&nbsp;(src, arg1, arg2)</td>
+	<td class="summary">Table decorate is useful for decorating objects when using tables as classes.<br> Author:Nenad Katic<br> @param: arg1 - string=new key when string, needs arg2 - table=will extend all key/values arg2(optional)  </td>
+	</tr>
+
+	<tr>
 	<td class="name" nowrap><a href="#M.deepCopy">M.deepCopy</a>&nbsp;(src, dest)</td>
 	<td class="summary">The deep copy of the table.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.extend">M.extend</a>&nbsp;(src, dest)</td>
+	<td class="summary">table.override and table.extend are very similar, but are made different routines so that they wouldn't be confused Author:Nenad Katic<br>  </td>
 	</tr>
 
 	<tr>
@@ -347,8 +385,18 @@
 	</tr>
 
 	<tr>
+	<td class="name" nowrap><a href="#M.keyOf">M.keyOf</a>&nbsp;(src, val)</td>
+	<td class="summary">Same as indexOf, only for key values (slower) Author:Nenad Katic<br>  </td>
+	</tr>
+
+	<tr>
 	<td class="name" nowrap><a href="#M.removeElement">M.removeElement</a>&nbsp;(t, o)</td>
 	<td class="summary">This removes the element from the table.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#table.override">table.override</a>&nbsp;(src, dest, onlyExistingKeys)</td>
+	<td class="summary">Copies and overrides properties from src to dest.<br> If onlyExistingKeys is true, it *only* overrides the properties.<br> Author:Nenad Katic<br>  </td>
 	</tr>
 
 </table>
@@ -412,6 +460,40 @@ dest
 
 
 
+<dt><a name="M.decorate"></a><strong>M.decorate</strong>&nbsp;(src, arg1, arg2)</dt>
+<dd>
+Table decorate is useful for decorating objects when using tables as classes.<br> Author:Nenad Katic<br> @param: arg1 - string=new key when string, needs arg2 - table=will extend all key/values arg2(optional) 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  src: 
+	</li>
+	
+	<li>
+	  arg1: 
+	</li>
+	
+	<li>
+	  arg2: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
 <dt><a name="M.deepCopy"></a><strong>M.deepCopy</strong>&nbsp;(src, dest)</dt>
 <dd>
 The deep copy of the table.
@@ -437,6 +519,36 @@ The deep copy of the table.
 
 <h3>Return value:</h3>
 dest 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.extend"></a><strong>M.extend</strong>&nbsp;(src, dest)</dt>
+<dd>
+table.override and table.extend are very similar, but are made different routines so that they wouldn't be confused Author:Nenad Katic<br> 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  src: 
+	</li>
+	
+	<li>
+	  dest: 
+	</li>
+	
+</ul>
+
+
+
+
+
 
 
 
@@ -511,6 +623,36 @@ If it already exists, false. If you add is true.
 
 
 
+<dt><a name="M.keyOf"></a><strong>M.keyOf</strong>&nbsp;(src, val)</dt>
+<dd>
+Same as indexOf, only for key values (slower) Author:Nenad Katic<br> 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  src: 
+	</li>
+	
+	<li>
+	  val: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
 <dt><a name="M.removeElement"></a><strong>M.removeElement</strong>&nbsp;(t, o)</dt>
 <dd>
 This removes the element from the table. If you have successfully removed, it returns the index of the yuan. If there is no element, it returns 0.
@@ -536,6 +678,40 @@ This removes the element from the table. If you have successfully removed, it re
 
 <h3>Return value:</h3>
 index 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="table.override"></a><strong>table.override</strong>&nbsp;(src, dest, onlyExistingKeys)</dt>
+<dd>
+Copies and overrides properties from src to dest.<br> If onlyExistingKeys is true, it *only* overrides the properties.<br> Author:Nenad Katic<br> 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  src: 
+	</li>
+	
+	<li>
+	  dest: 
+	</li>
+	
+	<li>
+	  onlyExistingKeys: 
+	</li>
+	
+</ul>
+
+
+
+
+
 
 
 

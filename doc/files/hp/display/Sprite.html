@@ -67,7 +67,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/Mesh.html">hp/display/Mesh.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
 
 	<li>
@@ -153,6 +161,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/lang/string.html">hp/lang/string.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
 	</li>
 
@@ -181,11 +193,23 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/TextureManager.html">hp/manager/TextureManager.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsBody.html">hp/physics/PhysicsBody.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsFixture.html">hp/physics/PhysicsFixture.lua</a>
 	</li>
 
 	<li>
@@ -242,6 +266,10 @@
 
 	<li>
 		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/Triangulation.html">hp/util/Triangulation.lua</a>
 	</li>
 
 	<li>
@@ -328,27 +356,12 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:copyParams">M:copyParams</a>&nbsp;(params)</td>
-	<td class="summary">パラメータテーブルの値を元に、各setter関数の引数にセットしてコールします.</td>
+	<td class="summary">Set the parameter setter function.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">Spriteインスタンスを生成して返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setHeight">M:setHeight</a>&nbsp;(height)</td>
-	<td class="summary">高さを設定します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setSize">M:setSize</a>&nbsp;(width, height)</td>
-	<td class="summary">サイズを設定します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:setWidth">M:setWidth</a>&nbsp;(width)</td>
-	<td class="summary">幅を設定します.</td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 </table>
@@ -361,7 +374,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#Sprite ">Sprite </a></td>
-	<td class="summary">描画オブジェクトを生成するモジュールです.<br> オブジェクトの生成を簡単に行う事ができるようになります。 </td>
+	<td class="summary">This is a class to draw the texture.<br> Extends : DisplayObject, TextureDrawable, Resizable<br> </td>
 	</tr>
 
 </table>
@@ -381,14 +394,14 @@
 
 <dt><a name="M:copyParams"></a><strong>M:copyParams</strong>&nbsp;(params)</dt>
 <dd>
-パラメータテーブルの値を元に、各setter関数の引数にセットしてコールします. 
+Set the parameter setter function.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  params: Parameter is set to Object.<br> (params:texture, width, height) 
 	</li>
 	
 </ul>
@@ -407,96 +420,14 @@
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
 <dd>
-Spriteインスタンスを生成して返します. 
+The constructor.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setHeight"></a><strong>M:setHeight</strong>&nbsp;(height)</dt>
-<dd>
-高さを設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  height: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setSize"></a><strong>M:setSize</strong>&nbsp;(width, height)</dt>
-<dd>
-サイズを設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  width: 
-	</li>
-	
-	<li>
-	  height: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:setWidth"></a><strong>M:setWidth</strong>&nbsp;(width)</dt>
-<dd>
-幅を設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  width: 
+	  params: (option)Parameter is set to Object.<br> 
 	</li>
 	
 </ul>
@@ -520,7 +451,7 @@ Spriteインスタンスを生成して返します.
 <dl class="table">
 
 <dt><a name="Sprite "></a><strong>Sprite </strong></dt>
-<dd>描画オブジェクトを生成するモジュールです.<br> オブジェクトの生成を簡単に行う事ができるようになります。
+<dd>This is a class to draw the texture.<br> Extends : DisplayObject, TextureDrawable, Resizable<br>
 
 
 

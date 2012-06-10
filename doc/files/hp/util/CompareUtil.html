@@ -67,7 +67,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/Mesh.html">hp/display/Mesh.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
 
 	<li>
@@ -155,6 +163,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/lang/string.html">hp/lang/string.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
 	</li>
 
@@ -183,11 +195,23 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/TextureManager.html">hp/manager/TextureManager.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsBody.html">hp/physics/PhysicsBody.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/physics/PhysicsFixture.html">hp/physics/PhysicsFixture.lua</a>
 	</li>
 
 	<li>
@@ -242,6 +266,10 @@
 
 	<li>
 		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/Triangulation.html">hp/util/Triangulation.lua</a>
 	</li>
 
 	<li>
@@ -323,6 +351,46 @@
 
 
 
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#M.compare">M.compare</a>&nbsp;(a, b, comp)</td>
+	<td class="summary">Compare the b and a.<br> Sets the comparison function as an argument.<br> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.compareEQ">M.compareEQ</a>&nbsp;(a, b)</td>
+	<td class="summary">Compare the b and a.<br> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.compareGE">M.compareGE</a>&nbsp;(a, b)</td>
+	<td class="summary">Compare the b and a.<br> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.compareGT">M.compareGT</a>&nbsp;(a, b)</td>
+	<td class="summary">Compare the b and a.<br> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.compareLE">M.compareLE</a>&nbsp;(a, b)</td>
+	<td class="summary">Compare the b and a.<br> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.compareLT">M.compareLT</a>&nbsp;(a, b)</td>
+	<td class="summary">Compare the b and a.<br> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.compareNE">M.compareNE</a>&nbsp;(a, b)</td>
+	<td class="summary">Compare the b and a.<br> </td>
+	</tr>
+
+</table>
+
 
 
 
@@ -331,7 +399,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#CompareUtil ">CompareUtil </a></td>
-	<td class="summary">オブジェクトの比較を行うユーティリティクラスです.<br> </td>
+	<td class="summary">This is a utility class to do a comparison of the object.<br> </td>
 	</tr>
 
 </table>
@@ -344,6 +412,246 @@
 
 
 
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="M.compare"></a><strong>M.compare</strong>&nbsp;(a, b, comp)</dt>
+<dd>
+Compare the b and a.<br> Sets the comparison function as an argument.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  a: Target.
+	</li>
+	
+	<li>
+	  b: Target.
+	</li>
+	
+	<li>
+	  comp: Function or a string constant.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+True if the comparison result is matched. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.compareEQ"></a><strong>M.compareEQ</strong>&nbsp;(a, b)</dt>
+<dd>
+Compare the b and a.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  a: Target.
+	</li>
+	
+	<li>
+	  b: Target.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+True if equal. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.compareGE"></a><strong>M.compareGE</strong>&nbsp;(a, b)</dt>
+<dd>
+Compare the b and a.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  a: Target.
+	</li>
+	
+	<li>
+	  b: Target.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+True if greater than or equal. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.compareGT"></a><strong>M.compareGT</strong>&nbsp;(a, b)</dt>
+<dd>
+Compare the b and a.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  a: Target.
+	</li>
+	
+	<li>
+	  b: Target.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+True if greater than. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.compareLE"></a><strong>M.compareLE</strong>&nbsp;(a, b)</dt>
+<dd>
+Compare the b and a.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  a: Target.
+	</li>
+	
+	<li>
+	  b: Target.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+True if less than or equal. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.compareLT"></a><strong>M.compareLT</strong>&nbsp;(a, b)</dt>
+<dd>
+Compare the b and a.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  a: Target.
+	</li>
+	
+	<li>
+	  b: Target.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+True if less than. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.compareNE"></a><strong>M.compareNE</strong>&nbsp;(a, b)</dt>
+<dd>
+Compare the b and a.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  a: Target.
+	</li>
+	
+	<li>
+	  b: Target.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+True if not equal. 
+
+
+
+</dd>
+
+
+</dl>
+
 
 
 
@@ -351,7 +659,7 @@
 <dl class="table">
 
 <dt><a name="CompareUtil "></a><strong>CompareUtil </strong></dt>
-<dd>オブジェクトの比較を行うユーティリティクラスです.<br>
+<dd>This is a utility class to do a comparison of the object.<br>
 
 
 

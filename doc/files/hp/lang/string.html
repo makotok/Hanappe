@@ -162,10 +162,8 @@
 		<a href="../../../files/hp/lang/math.html">hp/lang/math.lua</a>
 	</li>
 
-	<li>
-		<a href="../../../files/hp/lang/string.html">hp/lang/string.lua</a>
-	</li>
-
+	<li><strong>hp/lang/string.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/lang/table.html">hp/lang/table.lua</a>
 	</li>
@@ -318,8 +316,10 @@
 		<a href="../../../files/hp/widget/ThemeClient.html">hp/widget/ThemeClient.lua</a>
 	</li>
 
-	<li><strong>hp/widget/VScrollBar.lua</strong></li>
-	
+	<li>
+		<a href="../../../files/hp/widget/VScrollBar.html">hp/widget/VScrollBar.lua</a>
+	</li>
+
 	<li>
 		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
 	</li>
@@ -343,7 +343,7 @@
 
 <div id="content">
 
-<h1>File <code>hp/widget/VScrollBar.lua</code></h1>
+<h1>File <code>hp/lang/string.lua</code></h1>
 
 
 
@@ -355,13 +355,43 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:getDefaultTheme">M:getDefaultTheme</a>&nbsp;()</td>
-	<td class="summary">デフォルトテーマを返します.</td>
+	<td class="name" nowrap><a href="#string.decrypt">string.decrypt</a>&nbsp;(str)</td>
+	<td class="summary">String encryption  </td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">インスタンスを生成して返します.</td>
+	<td class="name" nowrap><a href="#string.encrypt">string.encrypt</a>&nbsp;(str, code)</td>
+	<td class="summary">String encryption  </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#string.fromNumberWithZeros">string.fromNumberWithZeros</a>&nbsp;(n, l)</td>
+	<td class="summary">Converts number to string, filling in zeros at beginning.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#string.hexToRGB">string.hexToRGB</a>&nbsp;(s, returnAsTable)</td>
+	<td class="summary">Converts hex number to rgb (format: #FF00FF)  </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#string.split">string.split</a>&nbsp;(self, delim, toNumber)</td>
+	<td class="summary">Splits string into a table of strings using delimiter.<br> Usage: local table = a:split( ",", false )<br> TODO:  Does not correspond to multi-byte.<br> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#string.splitToLines">string.splitToLines</a>&nbsp;(self, numLines, delim)</td>
+	<td class="summary">Splits string into N lines, using default ("#") or custom delimiter Routine separate words by spaces so make sure you have them.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#string.toNumber">string.toNumber</a>&nbsp;(self)</td>
+	<td class="summary">Converts the string to number, or returns string if fail.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#string.toTable">string.toTable</a>&nbsp;(self, delimiter)</td>
+	<td class="summary">Splits string into N lines, using default ("#") or custom delimiter Routine separate words by spaces so make sure you have them.</td>
 	</tr>
 
 </table>
@@ -373,8 +403,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#VScrollBar ">VScrollBar </a></td>
-	<td class="summary">スクロールバークラスです.<br> 水平バーを表示するだけです.</td>
+	<td class="name" nowrap><a href="#string ">string </a></td>
+	<td class="summary">modules that extend functionality of the string.</td>
 	</tr>
 
 </table>
@@ -392,10 +422,19 @@
 
 
 
-<dt><a name="M:getDefaultTheme"></a><strong>M:getDefaultTheme</strong>&nbsp;()</dt>
+<dt><a name="string.decrypt"></a><strong>string.decrypt</strong>&nbsp;(str)</dt>
 <dd>
-デフォルトテーマを返します. 
+String encryption 
 
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  str: 
+	</li>
+	
+</ul>
 
 
 
@@ -409,16 +448,207 @@
 
 
 
-<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
+<dt><a name="string.encrypt"></a><strong>string.encrypt</strong>&nbsp;(str, code)</dt>
 <dd>
-インスタンスを生成して返します. 
+String encryption 
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  str: 
+	</li>
+	
+	<li>
+	  code: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="string.fromNumberWithZeros"></a><strong>string.fromNumberWithZeros</strong>&nbsp;(n, l)</dt>
+<dd>
+Converts number to string, filling in zeros at beginning. Technically, this shouldn't really extend string class because it doesn't operate on string (doesn't have a "self" ) Usage:  print( string.fromNumbersWithZeros( 421, 6 ) ) 000421 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  n: 
+	</li>
+	
+	<li>
+	  l: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="string.hexToRGB"></a><strong>string.hexToRGB</strong>&nbsp;(s, returnAsTable)</dt>
+<dd>
+Converts hex number to rgb (format: #FF00FF) 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  s: 
+	</li>
+	
+	<li>
+	  returnAsTable: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="string.split"></a><strong>string.split</strong>&nbsp;(self, delim, toNumber)</dt>
+<dd>
+Splits string into a table of strings using delimiter.<br> Usage: local table = a:split( ",", false )<br> TODO:  Does not correspond to multi-byte.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  self: string.
+	</li>
+	
+	<li>
+	  delim: Delimiter.
+	</li>
+	
+	<li>
+	  toNumber: If set to true or to be converted to a numeric value.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+Split the resulting table 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="string.splitToLines"></a><strong>string.splitToLines</strong>&nbsp;(self, numLines, delim)</dt>
+<dd>
+Splits string into N lines, using default ("#") or custom delimiter Routine separate words by spaces so make sure you have them. Usage: local string = s:splitIntoLines( 3, "\n" ) 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  self: 
+	</li>
+	
+	<li>
+	  numLines: 
+	</li>
+	
+	<li>
+	  delim: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="string.toNumber"></a><strong>string.toNumber</strong>&nbsp;(self)</dt>
+<dd>
+Converts the string to number, or returns string if fail. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  self: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="string.toTable"></a><strong>string.toTable</strong>&nbsp;(self, delimiter)</dt>
+<dd>
+Splits string into N lines, using default ("#") or custom delimiter Routine separate words by spaces so make sure you have them. USAGE:   For a string "width:150 height:150", or "width:150_height:150" returns a table { width=150, height=150 } 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  self: 
+	</li>
+	
+	<li>
+	  delimiter: 
 	</li>
 	
 </ul>
@@ -441,8 +671,8 @@
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="VScrollBar "></a><strong>VScrollBar </strong></dt>
-<dd>スクロールバークラスです.<br> 水平バーを表示するだけです.
+<dt><a name="string "></a><strong>string </strong></dt>
+<dd>modules that extend functionality of the string.
 
 
 

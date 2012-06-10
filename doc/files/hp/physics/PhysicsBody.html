@@ -206,10 +206,8 @@
 		<a href="../../../files/hp/manager/WidgetManager.html">hp/manager/WidgetManager.lua</a>
 	</li>
 
-	<li>
-		<a href="../../../files/hp/physics/PhysicsBody.html">hp/physics/PhysicsBody.lua</a>
-	</li>
-
+	<li><strong>hp/physics/PhysicsBody.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/physics/PhysicsFixture.html">hp/physics/PhysicsFixture.lua</a>
 	</li>
@@ -318,8 +316,10 @@
 		<a href="../../../files/hp/widget/ThemeClient.html">hp/widget/ThemeClient.lua</a>
 	</li>
 
-	<li><strong>hp/widget/VScrollBar.lua</strong></li>
-	
+	<li>
+		<a href="../../../files/hp/widget/VScrollBar.html">hp/widget/VScrollBar.lua</a>
+	</li>
+
 	<li>
 		<a href="../../../files/hp/widget/View.html">hp/widget/View.lua</a>
 	</li>
@@ -343,7 +343,7 @@
 
 <div id="content">
 
-<h1>File <code>hp/widget/VScrollBar.lua</code></h1>
+<h1>File <code>hp/physics/PhysicsBody.lua</code></h1>
 
 
 
@@ -355,13 +355,88 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:getDefaultTheme">M:getDefaultTheme</a>&nbsp;()</td>
-	<td class="summary">デフォルトテーマを返します.</td>
+	<td class="name" nowrap><a href="#M:addCircle">M:addCircle</a>&nbsp;(x, y, radius)</td>
+	<td class="summary">サークルを追加します.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">インスタンスを生成して返します.</td>
+	<td class="name" nowrap><a href="#M:addEdges">M:addEdges</a>&nbsp;(verts)</td>
+	<td class="summary">エッジを追加します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:addEventListener">M:addEventListener</a>&nbsp;(eventType, callback, source, priority)</td>
+	<td class="summary">座標を設定します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:addPhysicsData">M:addPhysicsData</a>&nbsp;(...)</td>
+	<td class="summary">PhysicsEditorで作成したPhysicsDataを追加します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:addPolygon">M:addPolygon</a>&nbsp;(verts)</td>
+	<td class="summary">ポリゴンを追加します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:addRect">M:addRect</a>&nbsp;(xMin, yMin, xMax, yMax)</td>
+	<td class="summary">四角形を追加します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:findFixtureByName">M:findFixtureByName</a>&nbsp;(name)</td>
+	<td class="summary">名前から検索して、一致した最初のFixtureを返します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:findFixturesByName">M:findFixturesByName</a>&nbsp;(name)</td>
+	<td class="summary">名前から検索して、一致したFixtureのリストを返します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:getFixtures">M:getFixtures</a>&nbsp;()</td>
+	<td class="summary"> </td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:getX">M:getX</a>&nbsp;()</td>
+	<td class="summary">x座標を返します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:getY">M:getY</a>&nbsp;()</td>
+	<td class="summary">y座標を返します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;()</td>
+	<td class="summary">The constructor.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:new">M:new</a>&nbsp;(body)</td>
+	<td class="summary">The constructor.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setAngle">M:setAngle</a>&nbsp;(angle)</td>
+	<td class="summary">angleを設定します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setPosition">M:setPosition</a>&nbsp;(x, y)</td>
+	<td class="summary">座標を設定します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setX">M:setX</a>&nbsp;(x)</td>
+	<td class="summary">x座標を設定します.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setY">M:setY</a>&nbsp;(y)</td>
+	<td class="summary">y座標を設定します.</td>
 	</tr>
 
 </table>
@@ -373,8 +448,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#VScrollBar ">VScrollBar </a></td>
-	<td class="summary">スクロールバークラスです.<br> 水平バーを表示するだけです.</td>
+	<td class="name" nowrap><a href="#PhysicsWorld ">PhysicsWorld </a></td>
+	<td class="summary">Class that inherits from MOAIBox2DWorld.<br> TODO:Not implemented </td>
 	</tr>
 
 </table>
@@ -392,9 +467,249 @@
 
 
 
-<dt><a name="M:getDefaultTheme"></a><strong>M:getDefaultTheme</strong>&nbsp;()</dt>
+<dt><a name="M:addCircle"></a><strong>M:addCircle</strong>&nbsp;(x, y, radius)</dt>
 <dd>
-デフォルトテーマを返します. 
+サークルを追加します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x: 
+	</li>
+	
+	<li>
+	  y: 
+	</li>
+	
+	<li>
+	  radius: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:addEdges"></a><strong>M:addEdges</strong>&nbsp;(verts)</dt>
+<dd>
+エッジを追加します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  verts: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:addEventListener"></a><strong>M:addEventListener</strong>&nbsp;(eventType, callback, source, priority)</dt>
+<dd>
+座標を設定します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  eventType: 
+	</li>
+	
+	<li>
+	  callback: 
+	</li>
+	
+	<li>
+	  source: 
+	</li>
+	
+	<li>
+	  priority: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:addPhysicsData"></a><strong>M:addPhysicsData</strong>&nbsp;(...)</dt>
+<dd>
+PhysicsEditorで作成したPhysicsDataを追加します.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  ...: fixture datas 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:addPolygon"></a><strong>M:addPolygon</strong>&nbsp;(verts)</dt>
+<dd>
+ポリゴンを追加します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  verts: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:addRect"></a><strong>M:addRect</strong>&nbsp;(xMin, yMin, xMax, yMax)</dt>
+<dd>
+四角形を追加します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  xMin: 
+	</li>
+	
+	<li>
+	  yMin: 
+	</li>
+	
+	<li>
+	  xMax: 
+	</li>
+	
+	<li>
+	  yMax: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:findFixtureByName"></a><strong>M:findFixtureByName</strong>&nbsp;(name)</dt>
+<dd>
+名前から検索して、一致した最初のFixtureを返します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  name: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:findFixturesByName"></a><strong>M:findFixturesByName</strong>&nbsp;(name)</dt>
+<dd>
+名前から検索して、一致したFixtureのリストを返します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  name: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:getFixtures"></a><strong>M:getFixtures</strong>&nbsp;()</dt>
+<dd>
+
 
 
 
@@ -409,16 +724,181 @@
 
 
 
-<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
+<dt><a name="M:getX"></a><strong>M:getX</strong>&nbsp;()</dt>
 <dd>
-インスタンスを生成して返します. 
+x座標を返します.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+x 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:getY"></a><strong>M:getY</strong>&nbsp;()</dt>
+<dd>
+y座標を返します.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+y 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;()</dt>
+<dd>
+The constructor. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:new"></a><strong>M:new</strong>&nbsp;(body)</dt>
+<dd>
+The constructor.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  body: MOAIBox2DBody instance. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setAngle"></a><strong>M:setAngle</strong>&nbsp;(angle)</dt>
+<dd>
+angleを設定します.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  angle: angle 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setPosition"></a><strong>M:setPosition</strong>&nbsp;(x, y)</dt>
+<dd>
+座標を設定します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x: 
+	</li>
+	
+	<li>
+	  y: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setX"></a><strong>M:setX</strong>&nbsp;(x)</dt>
+<dd>
+x座標を設定します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setY"></a><strong>M:setY</strong>&nbsp;(y)</dt>
+<dd>
+y座標を設定します. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  y: 
 	</li>
 	
 </ul>
@@ -441,8 +921,8 @@
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="VScrollBar "></a><strong>VScrollBar </strong></dt>
-<dd>スクロールバークラスです.<br> 水平バーを表示するだけです.
+<dt><a name="PhysicsWorld "></a><strong>PhysicsWorld </strong></dt>
+<dd>Class that inherits from MOAIBox2DWorld.<br> TODO:Not implemented
 
 
 
