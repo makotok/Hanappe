@@ -525,7 +525,7 @@ end
 ---------------------------------------
 function M:wait(sec)
     local timer = MOAITimer.new()
-    timer:setTime(sec)
+    timer:setSpan(sec)
     
     local command = self:newCommand(
         function(obj, callback)
