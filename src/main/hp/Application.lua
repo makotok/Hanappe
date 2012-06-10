@@ -83,12 +83,12 @@ function M:importClasses(t, prefix)
     t[prefix .. "Group"]        = require("hp/display/Group")
     t[prefix .. "TextLabel"]    = require("hp/display/TextLabel")
     t[prefix .. "NinePatch"]    = require("hp/display/NinePatch")
+    t[prefix .. "Mesh"]    = require("hp/display/Mesh")
     t[prefix .. "Animation"]    = require("hp/display/Animation")
 
     -- factory classes
     t[prefix .. "DisplayFactory"]    = require("hp/factory/DisplayFactory")
     t[prefix .. "WidgetFactory"]    = require("hp/factory/WidgetFactory")
-    t[prefix .. "MeshFactory"]    = require("hp/factory/MeshFactory")
     
     -- manager classes
     t[prefix .. "SceneManager"]     = require("hp/manager/SceneManager")
