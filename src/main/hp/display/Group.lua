@@ -109,6 +109,18 @@ function M:setCenterPiv()
 end
 
 ----------------------------------------------------------------
+-- Resize based on the location and size of the child elements.
+----------------------------------------------------------------
+function M:resizeForChildren()
+    local maxWidth, maxHeight = 0, 0
+    for i, child in ipairs(self:getChildren()) do
+       maxWidth = math.max(maxWidth, child:getRight())
+       maxHeight = math.max(maxHeight, child:getBottom())
+    end
+    self:setSize(maxWidth, maxHeight)
+end
+
+----------------------------------------------------------------
 -- Returns the children object.
 -- If you want to use this function with caution.<br>
 -- direct manipulation table against children are not reflected in the Group.<br>
