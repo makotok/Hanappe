@@ -52,32 +52,48 @@ function M:copyParams(params)
     end
 end
 
-function M:createRectFromProp(prop, params)
-    params = params or {}
+function M:createBodyFromProp(prop, bodyType, ...)
+    local params = {...}
+    if #params == 0 then
+        table.insert(params, {shape == "rectangle"})
+    end
     
-    local body = self:addBody(params.type)
+    local body = self:addBody(bodyType)
     local width, height = MOAIPropUtil.getSize(prop)
     local xMin, yMin, xMax, yMax = -width / 2, -height / 2, width / 2, height / 2
-
-    local fixture = body:addRect(xMin, yMin, xMax, yMax)
-    fixture:copyParams(params)
     
+    for i, data in ipairs(params) do
+        data = table.copy(data)
+        data.shape = data.shape or "rectangle"
+        if data.shape == "rectangle" then
+            data.xMin = data.xMin or xMin
+            data.yMin = data.xMin or xMin
+            data.xMax = data.xMax or xMax
+            data.yMax = data.yMax or yMax
+        elseif data.shape == "circle" then
+            data.radius = data.radius or width / 2
+            data.center = data.center or {x = 0, y = 0}
+        end
+        body:addPhysicsData(data)
+    end
+
     MOAIPropUtil.setPos(prop, xMin, yMin)
     prop:setParent(body)
-    prop.b2body = body
+    prop.body = body
+    body.prop = prop
     
     body:resetMassData()
     return body
 end
 
-function M:createRect(xMin, yMin, xMax, yMax, params)
+function M:createRect(left, top, width, height, params)
     params = params or {}
     
     local body = self:addBody(params.type)
-    local fixture = body:addRect(xMin, yMin, xMax, yMax)
+    local fixture = body:addRect(0, 0, width, height)
     fixture:copyParams(params)
     
-    body:setPosition(x, y)
+    body:setPos(left, top)
     body:resetMassData()
     return body
 end

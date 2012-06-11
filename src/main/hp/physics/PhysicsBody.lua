@@ -61,8 +61,10 @@ end
 function M:addPhysicsData(...)
     for i, data in ipairs({...}) do
         if data.radius then
-            local x, y = data.center.x, data.center.y
-            local fixture = self:addPolygon(x, y, data.radius)
+            local fixture = self:addCircle(data.center.x, data.center.y, data.radius)
+            fixture:copyParams(data)
+        elseif data.shape == "rectangle" then
+            local fixture = self:addRect(data.xMin, data.yMin, data.xMax, data.xMax)
             fixture:copyParams(data)
         elseif type(data.shape) == "table" then
             local fixture = self:addPolygon(data.shape)
@@ -75,9 +77,9 @@ end
 -- サークルを追加します.
 --------------------------------------------------------------------------------
 function M:addCircle(x, y, radius)
-    local fixture = Interface.addCircle(self. x, y, radius)
+    local fixture = Interface.addCircle(self, x, y, radius)
     fixture = PhysicsFixture(fixture)
-    fixture:setParams(M.DEFAULT_FIXTURE_PARAMS)
+    fixture:copyParams(M.DEFAULT_FIXTURE_PARAMS)
     table.insert(self:getFixtures(), fixture)
     return fixture
 end
@@ -146,6 +148,10 @@ function M:getFixtures()
     return self:getPrivate("fixtures")
 end
 
+function M:getFixtureAt(i)
+    return self:getFixtures()[i]
+end
+
 --------------------------------------------------------------------------------
 -- angleを設定します.
 -- @param angle angle
@@ -190,8 +196,19 @@ end
 --------------------------------------------------------------------------------
 -- 座標を設定します.
 --------------------------------------------------------------------------------
-function M:setPosition(x, y)
+function M:setPos(x, y)
     self:setTransform(x, y, self:getAngle())
+end
+
+function M:getPos()
+    return self:getPosition()
+end
+
+--------------------------------------------------------------------------------
+-- 座標を設定します.
+--------------------------------------------------------------------------------
+function M:addPos(x, y)
+    self:setPos(x + self:getX(), y + self:getY())
 end
 
 --------------------------------------------------------------------------------
@@ -224,7 +241,6 @@ function M.fixtureCollisionHandler(phase, fixtureA, fixtureB, arbiter)
             bodyB:dispatchEvent(e)
         end
     end
-
 end
 
 return M
