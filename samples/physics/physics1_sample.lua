@@ -120,6 +120,7 @@ function makePlayer()
 end
 
 function makeFloors()
+    -- TODO:Loop generation of floor
     local makeFuncs = {}
     makeFuncs[FLOOR_NO_RED] = makeFloorForRed
     makeFuncs[FLOOR_NO_NORMAL] = makeFloorForNormal
@@ -180,7 +181,7 @@ end
 
 function makeScoreLabel()
     scoreLabel = TextLabel {text = "SCORE:0", layer = guiView}
-    scoreLabel:setSize(100, 30)
+    scoreLabel:setSize(150, 30)
     scoreLabel:setPos(5, 5)
     scoreLabel.scorePoint = 0
 
@@ -196,7 +197,7 @@ end
 
 function makeLevelLabel()
     levelLabel = TextLabel {text = "LEVEL:0", layer = guiView}
-    levelLabel:setSize(100, 30)
+    levelLabel:setSize(150, 30)
     levelLabel:setPos(5, scoreLabel:getBottom())
 end
 
