@@ -67,7 +67,7 @@ function M:createBodyFromProp(prop, bodyType, ...)
         data.shape = data.shape or "rectangle"
         if data.shape == "rectangle" then
             data.xMin = data.xMin or xMin
-            data.yMin = data.xMin or xMin
+            data.yMin = data.yMin or yMin
             data.xMax = data.xMax or xMax
             data.yMax = data.yMax or yMax
         elseif data.shape == "circle" then

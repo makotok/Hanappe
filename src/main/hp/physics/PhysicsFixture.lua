@@ -81,7 +81,7 @@ end
 -- @param name
 --------------------------------------------------------------------------------
 function M:setName(name)
-    self:setPrivaate("name", name)
+    self:setPrivate("name", name)
 end
 
 --------------------------------------------------------------------------------
@@ -89,7 +89,7 @@ end
 -- @return name
 --------------------------------------------------------------------------------
 function M:getName()
-    return self:getPrivaate("name")
+    return self:getPrivate("name")
 end
 
 return M

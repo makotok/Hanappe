@@ -64,7 +64,7 @@ function M:addPhysicsData(...)
             local fixture = self:addCircle(data.center.x, data.center.y, data.radius)
             fixture:copyParams(data)
         elseif data.shape == "rectangle" then
-            local fixture = self:addRect(data.xMin, data.yMin, data.xMax, data.xMax)
+            local fixture = self:addRect(data.xMin, data.yMin, data.xMax, data.yMax)
             fixture:copyParams(data)
         elseif type(data.shape) == "table" then
             local fixture = self:addPolygon(data.shape)
