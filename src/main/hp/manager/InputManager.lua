@@ -111,4 +111,10 @@ function M:initialize()
     end
 end
 
+function M:isKeyDown(key)
+    if MOAIInputMgr.device.keyboard then
+        return MOAIInputMgr.device.keyboard:keyIsDown(key)
+    end
+end
+
 return M
