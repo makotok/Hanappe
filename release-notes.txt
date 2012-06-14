@@ -1,4 +1,13 @@
 -------------------------------------------------------------------
+-- Hanappe Framework Version:1.4.2
+-- Moai SDK Version 1.1 Revision 1
+-------------------------------------------------------------------
+Modify:If the string params of the DisplayObject.
+Refactoring:sample.
+Fixed:Bug fixes of Physics
+Fixed:table.removeElement bug fixes
+
+-------------------------------------------------------------------
 -- Hanappe Framework Version:1.4.1
 -- Moai SDK Version 1.1 Revision 1
 -------------------------------------------------------------------
