@@ -1,5 +1,7 @@
 module(..., package.seeall)
 
+table = require "hp/lang/table"
+
 --------------------------------------------------------------------------------
 -- Const
 --------------------------------------------------------------------------------
@@ -14,8 +16,11 @@ local PLAYER_MOVE_VALUES = {
     right = 6
 }
 
-local GAME_WIDTH = 320
-local GAME_HEIGHT = 480
+local GAME_WIDTH = Application.viewWidth
+local GAME_HEIGHT = Application.viewHeight
+
+local KEY_LEFT = "a"
+local KEY_RIGHT = "d"
 
 local FLOOR_WIDTH = 80
 local FLOOR_HEIGHT = 6
@@ -26,8 +31,13 @@ local FLOOR_NO_RED = 1
 local FLOOR_NO_NORMAL = 2
 local FLOOR_NO_BOUND = 3
 
+local SCORE_NEXT = 50
+local SCORE_ADD_POINT = 0.05
+
 local SCREEN_TOUCH_LEFT = 1
 local SCREEN_TOUCH_RIGHT = 2
+
+local UNITS_MATER = 0.06
 
 --------------------------------------------------------------------------------
 -- Variables
@@ -67,9 +77,10 @@ function onEnterFrame()
         return
     end
     
-    movePlayer()
-    moveFloors()
+    updatePlayer()
+    updateFloors()
     updateScore()
+    updateLevel()
 end
 
 function onTouchDown(e)
@@ -89,8 +100,8 @@ function onPlayerCollision(e)
     local bodyB = e.fixtureB:getBody()
     
     if e.phase == "begin" then
-        if bodyB.prop and bodyB.prop.floorNo == FLOOR_NO_RED then
-            damageHitpoint()
+        if bodyB.onCollision then
+            bodyB:onCollision()
         end
     end
 end
@@ -120,20 +131,24 @@ function makePlayer()
 end
 
 function makeFloors()
-    -- TODO:Loop generation of floor
+    for i = 1, 10 do
+        makeFloor(i)
+    end 
+end
+
+function makeFloor(i)
     local makeFuncs = {}
     makeFuncs[FLOOR_NO_RED] = makeFloorForRed
     makeFuncs[FLOOR_NO_NORMAL] = makeFloorForNormal
     makeFuncs[FLOOR_NO_BOUND] = makeFloorForBound
     
-    for i = 1, 100 do
-        local f = math.random(FLOOR_NO_MAX)
-        local x = math.random(GAME_WIDTH - FLOOR_WIDTH)
-        local y = i * FLOOR_MARGIN
-        local floor = makeFuncs[f](x, y, FLOOR_WIDTH, FLOOR_HEIGHT)
-        floor.floorNo = f
-        floor.floorIndex = i
-    end 
+    local f = math.random(FLOOR_NO_MAX)
+    local x = math.random(GAME_WIDTH - FLOOR_WIDTH)
+    local y = i * FLOOR_MARGIN
+    local floor = makeFuncs[f](x, y, FLOOR_WIDTH, FLOOR_HEIGHT)
+    floor.floorNo = f
+    floor.floorIndex = i
+    return floor
 end
 
 function makeFloorForRed(x, y, width, height)
@@ -141,7 +156,12 @@ function makeFloorForRed(x, y, width, height)
     floor.body = physicsWorld:createBodyFromProp(floor, "static")
     floor.body:setPos(x, y)
     floor:setLayer(gameLayer)
-    table.insert(floors, floor)    
+    table.insert(floors, floor)
+    
+    function floor.body:onCollision()
+        damageHitpoint()
+    end
+    
     return floor
 end
 
@@ -156,18 +176,27 @@ end
 
 function makeFloorForBound(x, y, width, height)
     local floor = Mesh.newRect(0, 0, width, height, {"#000099", "#000033", 90})
-    floor.body = physicsWorld:createBodyFromProp(floor, "static", {restitution = 1})
+    floor.body = physicsWorld:createBodyFromProp(floor, "static")
     floor.body:setPos(x, y)
     floor:setLayer(gameLayer)
     table.insert(floors, floor)
+    
+    function floor.body:onCollision()
+        recoverHitpoint()
+    end
+    
     return floor
 end
 
 function makeWalls()
     local vw, vh = gameLayer:getViewSize()
-    physicsWorld:createRect(0, -1, vw, 1, {name = "wallTop", type = "static"})
-    physicsWorld:createRect(-1, 0, 1, vh, {type = "static"})
-    physicsWorld:createRect(vw, 0, 1, vh, {type = "static"})
+    local wallTop = physicsWorld:createRect(0, -1, vw, 1, {name = "wallTop", type = "static"})
+    local wallLeft = physicsWorld:createRect(-1, 0, 1, vh, {type = "static"})
+    local wallRight = physicsWorld:createRect(vw, 0, 1, vh, {type = "static"})
+    
+    function wallTop:onCollision()
+        damageHitpoint(-10)
+    end
 end
 
 function makeGuiView()
@@ -196,9 +225,29 @@ function makeScoreLabel()
 end
 
 function makeLevelLabel()
-    levelLabel = TextLabel {text = "LEVEL:0", layer = guiView}
+    levelLabel = TextLabel {text = "LEVEL:1", layer = guiView}
     levelLabel:setSize(150, 30)
     levelLabel:setPos(5, scoreLabel:getBottom())
+    levelLabel.nextScorePoint = SCORE_NEXT
+    levelLabel.level = 1
+    
+    function levelLabel:levelUp()
+        self.level = self.level + 1
+        levelLabel.nextScorePoint = levelLabel.nextScorePoint + SCORE_NEXT
+        
+        self:setText("LEVEL:" .. self.level)
+        self:setScl(1.2, 1.2, 1)
+        self:setColor(1, 0.5, 0.5, 1)
+        
+        self:seekScl(1, 1, 1, 1)
+        self:seekColor(1, 1, 1, 1, 1)
+        
+        floorSpeed = floorSpeed - 0.5
+    end
+    
+    function levelLabel:isLevelUp()
+        return self.nextScorePoint <= scoreLabel.scorePoint
+    end
 end
 
 function makeHitpointBar()
@@ -208,6 +257,12 @@ function makeHitpointBar()
     hitpointBar:addChild(Graphics({left = 40, top = 0, width = 60, height = 30}):setPenWidth(1):drawRect())
     hitpointBar:setLayer(guiView)
     hitpointBar.bar = hitpointBar.children[2]
+    
+    function hitpointBar:getHitpoint()
+        local x, y, z = self:getScl()
+        return x
+    end
+    
 end
 
 function makeGameOverLabel()
@@ -219,7 +274,7 @@ function makeGameOverLabel()
 end
 
 --------------------------------------------------------------------------------
--- Game Logic
+-- Update logic
 --------------------------------------------------------------------------------
 
 function updateTouchData(x, y)
@@ -230,44 +285,11 @@ function updateTouchData(x, y)
     end
 end
 
-function damageHitpoint()
-    local x, y, z = hitpointBar.bar:getScl()
-    if x <= 0 then
-        return
-    end
-    
-    hitpointBar.bar:addScl(-0.1, 0, 0)
-    player:setColor(1, 0.5, 0.5, 1)
-    player:seekColor(1, 1, 1, 1, 1)
-    
-    if isGameOver() then
-        gameOver()
-    end
-end
-
-function isGameOver()
-    local x = hitpointBar.bar:getScl()
-    return x <= 0
-end
-
-function gameOver()
-    
-    player:moveRot(0, 0, 360 * 3, 1)
-    player:seekScl(0, 0, 0, 1)
-    player:seekColor(0, 0, 0, 0, 1)
-    
-    makeGameOverLabel()
-    gameOverLabel:setScl(0, 0, 1)
-    gameOverLabel:seekScl(1, 1, 1, 1)
-    
-    physicsWorld:stop()
-end
-
-function movePlayer()
+function updatePlayer()
     local direction = getPlayerDirection()
     local linerX, linerY = player.body:getLinearVelocity()
     linerX = PLAYER_MOVE_VALUES[direction] or 0
-    linerX = linerX / 0.06
+    linerX = linerX / UNITS_MATER
     
     player.body:setAwake(true)
     player.body:setLinearVelocity(linerX, linerY)
@@ -277,25 +299,104 @@ function movePlayer()
     end
 end
 
-function moveFloors()
+function updateFloors()
     for i, floor in ipairs(floors) do
         floor.body:addPos(0, floorSpeed)
         if floor.onMove then
             floor:onMove()
         end
+        if floor.body:getY() < -10 then
+            recreateFloor(floor)
+        end
     end
 end
 
+function updateScore()
+    scoreLabel:addScore(SCORE_ADD_POINT)
+end
+
+function updateLevel()
+    if levelLabel:isLevelUp() then
+        levelLabel:levelUp()
+    end 
+end
+
 function getPlayerDirection()
-    if InputManager:isKeyDown("a") or screenTouchFlag == SCREEN_TOUCH_LEFT then
+    if InputManager:isKeyDown(KEY_LEFT) or screenTouchFlag == SCREEN_TOUCH_LEFT then
         return "left"
     end
-    if InputManager:isKeyDown("d") or screenTouchFlag == SCREEN_TOUCH_RIGHT then
+    if InputManager:isKeyDown(KEY_RIGHT) or screenTouchFlag == SCREEN_TOUCH_RIGHT then
         return "right"
     end
     return ""
 end
 
-function updateScore()
-    scoreLabel:addScore(0.05)
+--------------------------------------------------------------------------------
+-- GameOver logic
+--------------------------------------------------------------------------------
+
+function isGameOver()
+    local x = hitpointBar.bar:getScl()
+    return x <= 0
+end
+
+function gameOver()
+    
+    player:seekScl(2, 2, 1, 1)
+    player:seekColor(0, 0, 0, 0, 1)
+    
+    makeGameOverLabel()
+    gameOverLabel:setScl(0, 0, 1)
+    gameOverLabel:seekScl(1, 1, 1, 1)
+    
+    physicsWorld:stop()
+end
+
+--------------------------------------------------------------------------------
+-- Common logic
+--------------------------------------------------------------------------------
+
+function damageHitpoint(point)
+    point = point or -0.2
+    local x, y, z = hitpointBar.bar:getScl()
+    point = x + point <= 0 and -x or point
+    if x <= 0 then
+        return
+    end
+    if player.action then
+        player.action:stop()
+        player.action = nil
+    end
+    
+    hitpointBar.bar:addScl(point, 0, 0)
+    player:setColor(1, 0.5, 0.5, 1)
+    player.action = player:seekColor(1, 1, 1, 1, 1)
+    
+    if isGameOver() then
+        gameOver()
+    end
+end
+
+function recoverHitpoint(point)
+    point = point or 0.1
+    local x, y, z = hitpointBar.bar:getScl()
+    if x >= 1 then
+        return
+    end
+    if player.action then
+        player.action:stop()
+        player.action = nil
+    end
+    
+    hitpointBar.bar:addScl(point, 0, 0)
+    player:setColor(0.5, 0.5, 1, 1)
+    player.action = player:seekColor(1, 1, 1, 1, 1)
+end
+
+function recreateFloor(floor)
+    floor.body:destroy()
+    table.removeElement(floors, floor)
+    local lastFloor = floors[#floors]
+    floor = makeFloor(lastFloor.floorIndex + 1)
+    floor.body:setY(lastFloor.body:getY() + FLOOR_MARGIN)
 end
