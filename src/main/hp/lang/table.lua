@@ -158,7 +158,7 @@ function M.removeElement(t, o)
     if i == 0 then
         return 0
     end
-    M.remove(t, o)
+    M.remove(t, i)
     return i
 end
 
