@@ -22,7 +22,7 @@ function onCreate(params)
     textbox3:setSize(layer:getViewWidth(), 25)
     textbox3:setPos(0, textbox2:getBottom())
     
-    -- If the first argument string, and the texture parameters.
+    -- If the first argument string, and the text parameters.
     textbox4 = TextLabel("テキスト")
     textbox4:setLayer(layer)
     textbox4:setSize(layer:getViewWidth(), 25)

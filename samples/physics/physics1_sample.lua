@@ -297,6 +297,9 @@ function updatePlayer()
     if player:getSheetAnim(direction) and not player:isCurrentAnim(direction) then
         player:playAnim(direction)
     end
+    if player.body:getY() > gameLayer:getViewHeight() + 32 then
+        damageHitpoint(-2)
+    end
 end
 
 function updateFloors()
@@ -341,13 +344,20 @@ function isGameOver()
 end
 
 function gameOver()
+    if player.action then
+        player.action:stop()
+        player.action = nil
+    end
     
-    player:seekScl(2, 2, 1, 1)
+    player:seekScl(3, 3, 1, 1)
     player:seekColor(0, 0, 0, 0, 1)
+    
+    gameLayer:seekColor(0, 0, 0, 0, 3)
     
     makeGameOverLabel()
     gameOverLabel:setScl(0, 0, 1)
     gameOverLabel:seekScl(1, 1, 1, 1)
+    gameOverLabel:moveRot(0, 0, 360 * 2, 1)
     
     physicsWorld:stop()
 end
