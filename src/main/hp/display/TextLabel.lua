@@ -25,6 +25,7 @@ function M:init(params)
     DisplayObject.init(self)
 
     params = params or {}
+    params = type(params) == "string" and {text = params} or params
 
     local font = FontManager:request(params.font)
     self:setFont(font)

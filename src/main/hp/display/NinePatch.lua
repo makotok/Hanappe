@@ -22,9 +22,9 @@ local interface = MOAIProp.getInterfaceTable()
 --------------------------------------------------------------------------------
 function M:init(params)
     DisplayObject.init(self)
-
-    assert(params, "params is nil!")
-    assert(params.texture, "texture is nil!")
+    
+    params = params or {}
+    params = type(params) == "string" and {texture = params} or params
 
     local deck = MOAIStretchPatch2D.new()
     self:setDeck(deck)
@@ -75,6 +75,8 @@ end
 --サイズを設定します.
 --------------------------------------------------------------------------------
 function M:setSize(width, height)
+    assert(self.texture)
+
     local tw, th = self.texture:getSize()
     local left, top = self:getPos()
     local sclX, sclY, sclZ = self:getScl()

@@ -21,14 +21,15 @@ local M = class(DisplayObject, TextureDrawable)
 --     texture:Path of the texture. Or, MOAITexture instance.<br>
 --     sheets:See setSheets function.<br>
 --     sheetAnims = See setSheetAnims function.<br>
--- @return インスタンス
+-- @return instance
 --------------------------------------------------------------------------------
 function M:init(params)
     DisplayObject.init(self)
 
     params = params or {}
-    local deck = MOAIGfxQuadDeck2D.new()
+    params = type(params) == "string" and {texture = params} or params
 
+    local deck = MOAIGfxQuadDeck2D.new()
     self:setDeck(deck)
     self.deck = deck
     self.animTable = {}

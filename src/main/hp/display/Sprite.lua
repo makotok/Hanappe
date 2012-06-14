@@ -20,6 +20,7 @@ function M:init(params)
     DisplayObject.init(self)
 
     params = params or {}
+    params = type(params) == "string" and {texture = params} or params
     
     local deck = MOAIGfxQuad2D.new()
     deck:setUVRect(0, 0, 1, 1)

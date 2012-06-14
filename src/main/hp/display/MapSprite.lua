@@ -16,6 +16,9 @@ local M = class(DisplayObject, TextureDrawable)
 --------------------------------------------------------------------------------
 function M:init(params)
     DisplayObject.init(self)
+    
+    params = params or {}
+    params = type(params) == "string" and {texture = params} or params
 
     local deck = MOAIGfxQuadDeck2D.new()
     local grid = MOAIGrid.new ()

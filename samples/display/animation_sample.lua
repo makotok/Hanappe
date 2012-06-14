@@ -27,12 +27,12 @@ function onCreate(params)
         :moveScl(1, 1, 0)
         :wait(3)
         :sequence(
-            Animation({sprite1}, 1):moveScl(-1, -1, 0):moveRot(0, 0, -180):moveLoc(-50, -50, 0),
-            Animation({sprite2}, 1):moveScl(-1, -1, 0):moveRot(0, 0, -180):moveLoc(-50, -50, 0))
+            Animation(sprite1, 1):moveScl(-1, -1, 0):moveRot(0, 0, -180):moveLoc(-50, -50, 0),
+            Animation(sprite2, 1):moveScl(-1, -1, 0):moveRot(0, 0, -180):moveLoc(-50, -50, 0))
         :wait(3)
         :parallel(
-            Animation({sprite1}, 1):setLeft(10):setTop(10),
-            Animation({sprite2}, 1):setLeft(10):setTop(sprite1:getHeight() + 10))
+            Animation(sprite1, 1):setLeft(10):setTop(10),
+            Animation(sprite2, 1):setLeft(10):setTop(sprite1:getHeight() + 10))
             
     anim2 = Animation():loop(5, 
         Animation({sprite3, sprite4}, 1)
