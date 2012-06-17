@@ -1,19 +1,24 @@
+--------------------------------------------------------------------------------
+-- This class draws the grid. <br>
+-- Without the use of MOAITileDeck, use the MOAIGfxQuadDeck2D. <br>
+-- Corresponding to the format can be flexibility. <br>
+--
+-- @auther Makoto
+-- @class table
+-- @name MapSprite
+--------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local DisplayObject = require("hp/display/DisplayObject")
 local TextureDrawable = require("hp/display/TextureDrawable")
 
---------------------------------------------------------------------------------
--- Gridを描画するモジュールです.<br>
--- 通常のMOAITileDeckとは異なり、marginやspacingの指定が可能です.
--- @class table
--- @name MapSprite
---------------------------------------------------------------------------------
 local M = class(DisplayObject, TextureDrawable)
 
---------------------------------------------------------------------------------
--- インスタンスを生成して返します.
---------------------------------------------------------------------------------
+----------------------------------------------------------------
+-- The constructor.
+-- @param params (option)Parameter is set to Object.<br>
+----------------------------------------------------------------
 function M:init(params)
     DisplayObject.init(self)
     
@@ -32,7 +37,8 @@ function M:init(params)
 end
 
 --------------------------------------------------------------------------------
--- パラメータを各プロパティにコピーします.
+-- Set the parameter setter function.
+-- @param params Parameter is set to Object.<br>
 --------------------------------------------------------------------------------
 function M:copyParams(params)
     if params.texture and self.setTexture then
@@ -45,7 +51,13 @@ function M:copyParams(params)
 end
 
 --------------------------------------------------------------------------------
--- タイル形式のシートデータを生成して設定します.
+-- Sets the data to generate a sheet of tile form.
+-- @param tileWidth Width of the tile.
+-- @param tileHeight Height of the tile.
+-- @param tileX number of tiles in the x-direction.
+-- @param tileY number of tiles in the y-direction.
+-- @param spacing (option)Space size of each tile.
+-- @param margin (option)Margin of tile.
 --------------------------------------------------------------------------------
 function M:setMapSheets(tileWidth, tileHeight, tileX, tileY, spacing, margin)
     spacing = spacing or 0
@@ -62,7 +74,8 @@ function M:setMapSheets(tileWidth, tileHeight, tileX, tileY, spacing, margin)
 end
 
 --------------------------------------------------------------------------------
--- シートデータを設定します.
+-- Sets the data sheet.
+-- @param sheets Data sheet.
 --------------------------------------------------------------------------------
 function M:setSheets(sheets)
     assert(self.texture)
@@ -78,14 +91,19 @@ function M:setSheets(sheets)
 end
 
 --------------------------------------------------------------------------------
--- マップサイズを設定します.
+-- Set the map size.
+-- @param mapWidth Height of the map.
+-- @param mapHeight Height of the map.
+-- @param tileWidth Width of the tile.
+-- @param tileHeight Height of the tile.
 --------------------------------------------------------------------------------
 function M:setMapSize(mapWidth, mapHeight, tileWidth, tileHeight)
     self.grid:setSize(mapWidth, mapHeight, tileWidth, tileHeight)
 end
 
 --------------------------------------------------------------------------------
--- マップの行データを設定します.
+-- Set the map data.
+-- @rows Multiple rows of data.
 --------------------------------------------------------------------------------
 function M:setRows(rows)
     for i, row in ipairs(rows) do
@@ -94,7 +112,8 @@ function M:setRows(rows)
 end
 
 --------------------------------------------------------------------------------
--- マップの行データを設定します.
+-- Set the map data.
+-- @... rows of data.
 --------------------------------------------------------------------------------
 function M:setRow(...)
     self.grid:setRow(...)

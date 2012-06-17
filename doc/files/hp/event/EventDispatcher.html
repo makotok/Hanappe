@@ -355,33 +355,33 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:addEventListener">M:addEventListener</a>&nbsp;(eventType, callback, source, priority)</td>
-	<td class="summary">イベントリスナを登録します.</td>
+	<td class="name" nowrap><a href="#M:addEventListener">M:addEventListener</a>&nbsp;(eventType, callback, source, priority, evenType)</td>
+	<td class="summary">Adds an event listener.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:clearEventListeners">M:clearEventListeners</a>&nbsp;()</td>
-	<td class="summary">イベントリスナをすべて削除します.</td>
+	<td class="summary">Remove all event listeners.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:dispatchEvent">M:dispatchEvent</a>&nbsp;(event)</td>
-	<td class="summary">イベントをディスパッチします  </td>
+	<td class="summary">Dispatches the event.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:hasEventListener">M:hasEventListener</a>&nbsp;(eventType, callback, source)</td>
-	<td class="summary">イベントリスナが登録済か返します.</td>
+	<td class="summary">Returns true if you have an event listener.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;()</td>
-	<td class="summary">コンストラクタです  </td>
+	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(eventType)</td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:removeEventListener">M:removeEventListener</a>&nbsp;(eventType, callback, source)</td>
-	<td class="summary">イベントリスナを削除します.</td>
+	<td class="summary">Removes an event listener.</td>
 	</tr>
 
 </table>
@@ -394,7 +394,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#EventDispatcher ">EventDispatcher </a></td>
-	<td class="summary">イベント処理を行うための基本クラスです.</td>
+	<td class="summary">This class is has a function of event notification.</td>
 	</tr>
 
 </table>
@@ -412,9 +412,9 @@
 
 
 
-<dt><a name="M:addEventListener"></a><strong>M:addEventListener</strong>&nbsp;(eventType, callback, source, priority)</dt>
+<dt><a name="M:addEventListener"></a><strong>M:addEventListener</strong>&nbsp;(eventType, callback, source, priority, evenType)</dt>
 <dd>
-イベントリスナを登録します. callbackは、呼び出されるコールバック関数です. sourceは、オブジェクトの関数だった場合に指定します. nilの場合は、callback(event)となり、 指定ありの場合、callback(self, event)で呼ばれます. priorityは、優先度です. 優先度が小さい値程、最初に関数が呼ばれます. 
+Adds an event listener. <br> will now catch the events that are sent in the dispatchEvent. <br>
 
 
 <h3>Parameters</h3>
@@ -425,15 +425,19 @@
 	</li>
 	
 	<li>
-	  callback: 
+	  callback: The callback function.
 	</li>
 	
 	<li>
-	  source: 
+	  source: (option)The first argument passed to the callback function.
 	</li>
 	
 	<li>
-	  priority: 
+	  priority: (option)Notification order. 
+	</li>
+	
+	<li>
+	  evenType: Target event type.
 	</li>
 	
 </ul>
@@ -452,7 +456,7 @@
 
 <dt><a name="M:clearEventListeners"></a><strong>M:clearEventListeners</strong>&nbsp;()</dt>
 <dd>
-イベントリスナをすべて削除します. 
+Remove all event listeners. 
 
 
 
@@ -469,7 +473,7 @@
 
 <dt><a name="M:dispatchEvent"></a><strong>M:dispatchEvent</strong>&nbsp;(event)</dt>
 <dd>
-イベントをディスパッチします 
+Dispatches the event. 
 
 
 <h3>Parameters</h3>
@@ -495,7 +499,7 @@
 
 <dt><a name="M:hasEventListener"></a><strong>M:hasEventListener</strong>&nbsp;(eventType, callback, source)</dt>
 <dd>
-イベントリスナが登録済か返します. 
+Returns true if you have an event listener. <br>
 
 
 <h3>Parameters</h3>
@@ -520,6 +524,9 @@
 
 
 
+<h3>Return value:</h3>
+Returns true if you have an event listener. 
+
 
 
 </dd>
@@ -527,10 +534,19 @@
 
 
 
-<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;()</dt>
+<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(eventType)</dt>
 <dd>
-コンストラクタです 
+The constructor.
 
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  eventType: (option)The type of event. 
+	</li>
+	
+</ul>
 
 
 
@@ -546,7 +562,7 @@
 
 <dt><a name="M:removeEventListener"></a><strong>M:removeEventListener</strong>&nbsp;(eventType, callback, source)</dt>
 <dd>
-イベントリスナを削除します. 
+Removes an event listener. 
 
 
 <h3>Parameters</h3>
@@ -585,7 +601,7 @@
 <dl class="table">
 
 <dt><a name="EventDispatcher "></a><strong>EventDispatcher </strong></dt>
-<dd>イベント処理を行うための基本クラスです. イベントの発出した結果を、登録したイベントリスナがキャッチして イベント処理を行います.
+<dd>This class is has a function of event notification. <br> 
 
 
 

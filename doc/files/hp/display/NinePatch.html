@@ -356,17 +356,17 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:copyParams">M:copyParams</a>&nbsp;(params)</td>
-	<td class="summary">パラメータテーブルの値を元に、各setter関数の引数にセットしてコールします.</td>
+	<td class="summary">Set the parameter setter function.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getBounds">M:getBounds</a>&nbsp;()</td>
-	<td class="summary">境界座標を返します.</td>
+	<td class="summary">Returns the boundary position.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getScl">M:getScl</a>&nbsp;()</td>
-	<td class="summary">スケールを返します.</td>
+	<td class="summary">Returns a virtual scale.<br> TODO:Can not cope with if you want to move dynamically.<br> </td>
 	</tr>
 
 	<tr>
@@ -376,27 +376,27 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:seekScl">M:seekScl</a>&nbsp;(x, y, z, sec, mode)</td>
-	<td class="summary">スケールを移動します.</td>
+	<td class="summary">Seek a virtual scale.<br> TODO:Does not work </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setScl">M:setScl</a>&nbsp;(x, y, z)</td>
-	<td class="summary">スケールを設定します.</td>
+	<td class="summary">Sets the virtual scale.<br> Value to be set will vary.<br> TODO:Can not cope with if you want to move dynamically.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setSize">M:setSize</a>&nbsp;(width, height)</td>
-	<td class="summary">サイズを設定します.</td>
+	<td class="summary">Sets the size.<br> When you set the size, set by calculating the scale.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setStretchColumns">M:setStretchColumns</a>&nbsp;(col1, col2, col3)</td>
-	<td class="summary">固定的な列の長さを設定します.</td>
+	<td class="summary">Sets the ratio of the columns.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:setStretchRows">M:setStretchRows</a>&nbsp;(row1, row2, row3)</td>
-	<td class="summary">固定的な行の長さを設定します.</td>
+	<td class="name" nowrap><a href="#M:setStretchRows">M:setStretchRows</a>&nbsp;(row1, row2, row3, col1, col2, col3)</td>
+	<td class="summary">Sets the ratio of the rows.</td>
 	</tr>
 
 </table>
@@ -409,7 +409,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#NinePatch ">NinePatch </a></td>
-	<td class="summary">NinePatch class is the scale is partially configured.<br> When you set the size, scale will be reconfigured dynamically.<br> Will help you build a widget.<br> Extends : DisplayObject, TextureDrawable, Resizable<br> </td>
+	<td class="summary">NinePatch class is the scale is partially configured.</td>
 	</tr>
 
 </table>
@@ -429,14 +429,14 @@
 
 <dt><a name="M:copyParams"></a><strong>M:copyParams</strong>&nbsp;(params)</dt>
 <dd>
-パラメータテーブルの値を元に、各setter関数の引数にセットしてコールします. 
+Set the parameter setter function.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  params: Parameter is set to Object.<br> 
 	</li>
 	
 </ul>
@@ -455,13 +455,16 @@
 
 <dt><a name="M:getBounds"></a><strong>M:getBounds</strong>&nbsp;()</dt>
 <dd>
-境界座標を返します. 
+Returns the boundary position.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+xMin, yMin, zMin, xMax, yMax, zMax 
 
 
 
@@ -472,13 +475,16 @@
 
 <dt><a name="M:getScl"></a><strong>M:getScl</strong>&nbsp;()</dt>
 <dd>
-スケールを返します. 
+Returns a virtual scale.<br> TODO:Can not cope with if you want to move dynamically.<br>
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+scaleX, scaleY, scaleZ. 
 
 
 
@@ -515,30 +521,30 @@ The constructor.
 
 <dt><a name="M:seekScl"></a><strong>M:seekScl</strong>&nbsp;(x, y, z, sec, mode)</dt>
 <dd>
-スケールを移動します. TODO:おそらく上手くいかない。実装方法の検討が必要。 
+Seek a virtual scale.<br> TODO:Does not work
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  x: 
+	  x: X of scale.
 	</li>
 	
 	<li>
-	  y: 
+	  y: Y of scale.
 	</li>
 	
 	<li>
-	  z: 
+	  z: Z of scale.
 	</li>
 	
 	<li>
-	  sec: 
+	  sec: seconds.
 	</li>
 	
 	<li>
-	  mode: 
+	  mode: MOAIEaseType.
 	</li>
 	
 </ul>
@@ -547,6 +553,9 @@ The constructor.
 
 
 
+
+<h3>Return value:</h3>
+MOAIEase 
 
 
 
@@ -557,22 +566,22 @@ The constructor.
 
 <dt><a name="M:setScl"></a><strong>M:setScl</strong>&nbsp;(x, y, z)</dt>
 <dd>
-スケールを設定します. 
+Sets the virtual scale.<br> Value to be set will vary.<br> TODO:Can not cope with if you want to move dynamically.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  x: 
+	  x: scaleX.
 	</li>
 	
 	<li>
-	  y: 
+	  y: scaleY.
 	</li>
 	
 	<li>
-	  z: 
+	  z: scaleZ. 
 	</li>
 	
 </ul>
@@ -591,18 +600,18 @@ The constructor.
 
 <dt><a name="M:setSize"></a><strong>M:setSize</strong>&nbsp;(width, height)</dt>
 <dd>
-サイズを設定します. 
+Sets the size.<br> When you set the size, set by calculating the scale.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  width: 
+	  width: width.
 	</li>
 	
 	<li>
-	  height: 
+	  height: height. 
 	</li>
 	
 </ul>
@@ -621,22 +630,22 @@ The constructor.
 
 <dt><a name="M:setStretchColumns"></a><strong>M:setStretchColumns</strong>&nbsp;(col1, col2, col3)</dt>
 <dd>
-固定的な列の長さを設定します. 
+Sets the ratio of the columns.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  col1: 
+	  col1: Fixed ratio of the column.
 	</li>
 	
 	<li>
-	  col2: 
+	  col2: Dynamic ratio of the column.
 	</li>
 	
 	<li>
-	  col3: 
+	  col3: Fixed ratio of the column. 
 	</li>
 	
 </ul>
@@ -653,9 +662,9 @@ The constructor.
 
 
 
-<dt><a name="M:setStretchRows"></a><strong>M:setStretchRows</strong>&nbsp;(row1, row2, row3)</dt>
+<dt><a name="M:setStretchRows"></a><strong>M:setStretchRows</strong>&nbsp;(row1, row2, row3, col1, col2, col3)</dt>
 <dd>
-固定的な行の長さを設定します. 
+Sets the ratio of the rows.
 
 
 <h3>Parameters</h3>
@@ -671,6 +680,18 @@ The constructor.
 	
 	<li>
 	  row3: 
+	</li>
+	
+	<li>
+	  col1: Fixed ratio of the row.
+	</li>
+	
+	<li>
+	  col2: Dynamic ratio of the row.
+	</li>
+	
+	<li>
+	  col3: Fixed ratio of the row. 
 	</li>
 	
 </ul>
@@ -694,7 +715,7 @@ The constructor.
 <dl class="table">
 
 <dt><a name="NinePatch "></a><strong>NinePatch </strong></dt>
-<dd>NinePatch class is the scale is partially configured.<br> When you set the size, scale will be reconfigured dynamically.<br> Will help you build a widget.<br> Extends : DisplayObject, TextureDrawable, Resizable<br>
+<dd>NinePatch class is the scale is partially configured. <br> When you set the size, scale will be reconfigured dynamically. <br> Will help you build a widget. <br> Base Classes => DisplayObject, TextureDrawable, Resizable <br> 
 
 
 

@@ -1,3 +1,13 @@
+--------------------------------------------------------------------------------
+-- This is a class to draw a gradient mesh. <br>
+-- This source has been implemented by Nenad Katic. <br>
+-- Has been partially modified. <br>
+--
+-- @auther Nenad Katic
+-- @class table
+-- @name Mesh
+--------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local string = require("hp/lang/string")
@@ -5,14 +15,6 @@ local DisplayObject = require("hp/display/DisplayObject")
 local ShaderManager = require("hp/manager/ShaderManager")
 local Triangulation = require("hp/util/Triangulation")
 
---------------------------------------------------------------------------------
--- This is a class to draw a gradient mesh.<br>
--- This source has been implemented by Nenad Katic.<br>
--- Has been partially modified.<br>
--- @auther Nenad Katic
--- @class table
--- @name Mesh
---------------------------------------------------------------------------------
 local M = class(DisplayObject)
 
 local DEFAULT_COLOR = "#FF00FF"

@@ -1,14 +1,9 @@
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local DisplayObject = require("hp/display/DisplayObject")
-local Resizable = require("hp/display/Resizable")
-
 --------------------------------------------------------------------------------
--- The DisplayObject that has graphics capabilities.<br>
--- You can call in the method chain MOAIDraw.<br>
--- See MOAIDraw.<br>
+-- The DisplayObject that has graphics capabilities. <br>
+-- You can call in the method chain MOAIDraw. <br>
+-- See MOAIDraw. <br>
 -- <br>
--- Extends -> DisplayObject, Resizable<br>
+-- Base Classes => DisplayObject, Resizable<br>
 -- <code>
 -- example)<br>
 -- local g = Graphics({width = 100, height = 100})<br>
@@ -17,9 +12,16 @@ local Resizable = require("hp/display/Resizable")
 -- g:setLayer(layer)<br>
 -- </code>
 --
+-- @auther Makoto
 -- @class table
 -- @name Graphics
 --------------------------------------------------------------------------------
+
+local table = require("hp/lang/table")
+local class = require("hp/lang/class")
+local DisplayObject = require("hp/display/DisplayObject")
+local Resizable = require("hp/display/Resizable")
+
 local M = class(DisplayObject, Resizable)
 
 --------------------------------------------------------------------------------

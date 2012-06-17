@@ -1,3 +1,33 @@
+----------------------------------------------------------------
+-- This class is a top-level container to build a scene graph. <br>
+-- Use this class to build a game scene. <br>
+-- <br>
+-- Scene is managed by the SceneManager. <br>
+-- Use by specifying the module from the SceneManager. <br>
+-- Scene will be generated internally. <br>
+-- <br>
+-- The Scene is the life cycle exists. <br>
+-- It is important to understand the life cycle. <br>
+-- <br>
+-- 1. onCreate(params)<br>
+--   Called when created.<br>
+--   Initializes the scene graph in this function.<br>
+-- 2. onStart()<br>
+--   Called when started.<br>
+--   Called after the animation is complete.<br>
+-- 3. onResume()<br>
+--   Called when resumed.
+-- 4. onPause()<br>
+--   Called when paused.<br>
+-- 5. onStop()<br>
+--   Called when the stoped.<br>
+-- 6. onDestroy()<br>
+--   Called when destroyed.<br>
+--
+-- @class table
+-- @name Scene
+----------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local Group = require("hp/display/Group")
@@ -5,27 +35,13 @@ local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
 local Application = require("hp/Application")
 
-----------------------------------------------------------------
--- Sceneはシーングラフを構築するトップレベルコンテナです.<br>
--- このクラスを使用して、画面を構築します.<br>
--- Sceneのライフサイクルについて<br>
--- 1. onCreate()  ... 生成時に呼ばれます.<br>
--- 2. onStart()   ... 開始時に呼ばれます.<br>
--- 3. onResume()   ... 再開時に呼ばれます.<br>
--- 4. onPause()   ... 一時停止時に呼ばれます.<br>
--- 5. onStop()     ... 終了時に呼ばれます.<br>
--- 6. onDestroy() ... 破棄時に呼ばれます.<br>
--- @class table
--- @name Scene
-----------------------------------------------------------------
 local M = class(Group)
-M.new = Group.new
 
-local ENTER_FRAME_EVENT = Event:new("enterFrame")
+local ENTER_FRAME_EVENT = Event("enterFrame")
 
----------------------------------------
--- コンストラクタです
----------------------------------------
+--------------------------------------------------------------------------------
+-- The constructor.
+--------------------------------------------------------------------------------
 function M:init()
     Group.init(self)
     
@@ -38,12 +54,13 @@ function M:init()
     self.touchDownFlag = false
 
     self:setCenterPiv()
-    self:setLeft(0)
-    self:setTop(0)
+    self:setPos(0, 0)
 end
 
 ----------------------------------------------------------------
--- visibleを設定します.
+-- Sets the visible.<br>
+-- If set to false, excluded from the target rendering.<br>
+-- @param value visible.
 ----------------------------------------------------------------
 function M:setVisible(value)
     self.visible = value
@@ -51,28 +68,30 @@ function M:setVisible(value)
 end
 
 ----------------------------------------------------------------
--- visibleを返します.
+-- Returns the visible.
+-- @return visible.
 ----------------------------------------------------------------
 function M:getVisible()
     return self.visible
 end
 
 ---------------------------------------
--- シーンを最前面に表示します.
+-- Display to the front Scene.
 ---------------------------------------
 function M:orderToFront()
     self.sceneManager:orderToFront(self)
 end
 
 ---------------------------------------
--- シーンを最背面に表示します.
+-- Display to the back Scene.
 ---------------------------------------
 function M:orderToBack()
     self.sceneManager:orderToBack(self)
 end
 
 ---------------------------------------
--- 描画テーブルを返します.
+-- Returns the rendering table.<br>
+-- @return renderTable.
 ---------------------------------------
 function M:getRenderTable()
     local renderTable = {}
@@ -87,7 +106,7 @@ function M:getRenderTable()
 end
 
 ---------------------------------------
--- シーンの生成処理時に一度だけ呼ばれます.
+-- Called when it is created.
 ---------------------------------------
 function M:onCreate(params)
     if self.sceneHandler.onCreate then
@@ -96,7 +115,7 @@ function M:onCreate(params)
 end
 
 ---------------------------------------
--- シーンの開始時に一度だけ呼ばれます.
+-- Called when it is started.
 ---------------------------------------
 function M:onStart()
     if self.sceneHandler.onStart then
@@ -105,8 +124,7 @@ function M:onStart()
 end
 
 ---------------------------------------
--- シーンの再開時に呼ばれます.
--- pauseした場合に、再開処理で呼ばれます.
+-- Called when resumed.
 ---------------------------------------
 function M:onResume()
     if self.sceneHandler.onResume then
@@ -115,7 +133,7 @@ function M:onResume()
 end
 
 ---------------------------------------
--- シーンの一時停止時に呼ばれます.
+-- Called when paused.
 ---------------------------------------
 function M:onPause()
     if self.sceneHandler.onPause then
@@ -124,9 +142,7 @@ function M:onPause()
 end
 
 ---------------------------------------
--- シーンの停止時に呼ばれます.
--- 停止された後、他シーン遷移が完了した後に
--- onDestoryが呼ばれます.
+-- Called when stoped.
 ---------------------------------------
 function M:onStop()
     if self.sceneHandler.onStop then
@@ -135,8 +151,7 @@ function M:onStop()
 end
 
 ---------------------------------------
--- シーンの破棄時に呼ばれます.
--- この時点でシーンは破棄されて使用できなくなります.
+-- Called when destroyed.
 ---------------------------------------
 function M:onDestroy()
     if self.sceneHandler.onDestroy then
@@ -145,7 +160,7 @@ function M:onDestroy()
 end
 
 ---------------------------------------
--- フレーム毎の処理を行います.
+-- Called when updated.
 ---------------------------------------
 function M:onEnterFrame()
     if self.sceneHandler.onEnterFrame then
@@ -157,7 +172,8 @@ function M:onEnterFrame()
 end
 
 ---------------------------------------
--- キーボード入力時の処理を行います.
+-- Called when keyboard input.
+-- @param event Keybord event.
 ---------------------------------------
 function M:onKeyDown(event)
     if self.sceneHandler.onKeyDown then
@@ -169,7 +185,8 @@ function M:onKeyDown(event)
 end
 
 ---------------------------------------
--- キーボード入力時の処理を行います.
+-- Called when keyboard input.
+-- @param event Keybord event.
 ---------------------------------------
 function M:onKeyUp(event)
     if self.sceneHandler.onKeyUp then
@@ -181,7 +198,8 @@ function M:onKeyUp(event)
 end
 
 ---------------------------------------
--- 画面をタッチした時のイベント処理です.
+-- Called when screen touched.
+-- @param event Event.
 ---------------------------------------
 function M:onTouchDown(event)
     self.touchDownFlag = true
@@ -194,7 +212,8 @@ function M:onTouchDown(event)
 end
 
 ---------------------------------------
--- 画面をタッチした時のイベント処理です.
+-- Called when screen touched.
+-- @param event Event.
 ---------------------------------------
 function M:onTouchUp(event)
     if self.sceneHandler.onTouchUp and self.touchDownFlag then
@@ -207,7 +226,8 @@ function M:onTouchUp(event)
 end
 
 ---------------------------------------
--- 画面をタッチした時のイベント処理です.
+-- Called when screen touched.
+-- @param event Event.
 ---------------------------------------
 function M:onTouchMove(event)
     if self.sceneHandler.onTouchMove and self.touchDownFlag then
@@ -219,7 +239,8 @@ function M:onTouchMove(event)
 end
 
 ---------------------------------------
--- 画面をタッチした時のイベント処理です.
+-- Called when screen touched.
+-- @param event Event.
 ---------------------------------------
 function M:onTouchCancel(event)
     if self.sceneHandler.onTouchCancel then

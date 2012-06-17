@@ -1,11 +1,12 @@
-local Logger = require("hp/util/Logger")
-
 ----------------------------------------------------------------
--- Fontのキャッシュです.
--- フレームワーク内部で使用します.
+-- This is a class to manage the Font.
+--
+-- @auther Makoto
 -- @class table
 -- @name FontManager
 ----------------------------------------------------------------
+
+local Logger = require("hp/util/Logger")
 
 local M = {
     config = {

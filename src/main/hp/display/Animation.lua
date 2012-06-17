@@ -1,18 +1,24 @@
+--------------------------------------------------------------------------------
+-- This is a class to animate the MOAIProp. <br>
+-- You can define the animation to flow. <br>
+-- If you want to achieve complex animations, will say only this class. <br>
+--
+-- @auther Makoto
+-- @class table
+-- @name Animation
+--------------------------------------------------------------------------------
+
 local class = require("hp/lang/class")
 local MOAIPropUtil = require("hp/util/MOAIPropUtil")
 
-----------------------------------------------------------------
--- ツゥイーンアニメーションする為のクラスです.
--- 移動、回転、拡大や、フレームアニメーションに対応します.
---
--- @class table
--- @name Animation
-----------------------------------------------------------------
 local M = class()
 
----------------------------------------
--- コンストラクタです
----------------------------------------
+--------------------------------------------------------------------------------
+-- The constructor.
+-- @param targets (option)MOAIProp array. Or, MOAIProp instance.
+-- @param sec (option)Animation time of each command.
+-- @param easeType MOAIEaseType.
+--------------------------------------------------------------------------------
 function M:init(targets, sec, easeType)
     if type(targets) == "userdata" then
         targets = {targets}
@@ -29,16 +35,20 @@ function M:init(targets, sec, easeType)
     }
 end
 
----------------------------------------
--- アニメーション中かどうか返します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Returns whether the animation.
+-- @return True in the case of animation.
+--------------------------------------------------------------------------------
 function M:isRunning()
     return self.internal.running
 end
 
----------------------------------------
--- 対象オブジェクトを移動させます.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets the position of the target object.<br>
+-- When they are performed is done at the time of animation.
+-- @param left Left of the position.
+-- @return self
+--------------------------------------------------------------------------------
 function M:setLeft(left)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
@@ -51,9 +61,12 @@ function M:setLeft(left)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを移動させます.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets the position of the target object.<br>
+-- When they are performed is done at the time of animation.
+-- @param top Top of the position.
+-- @return self
+--------------------------------------------------------------------------------
 function M:setTop(top)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
@@ -66,9 +79,12 @@ function M:setTop(top)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを移動させます.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets the position of the target object.<br>
+-- When they are performed is done at the time of animation.
+-- @param right Right of the position.
+-- @return self
+--------------------------------------------------------------------------------
 function M:setRight(right)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
@@ -81,9 +97,12 @@ function M:setRight(right)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを移動させます.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets the position of the target object.<br>
+-- When they are performed is done at the time of animation.
+-- @param bottom Bottom of the position.
+-- @return self
+--------------------------------------------------------------------------------
 function M:setBottom(bottom)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
@@ -96,9 +115,13 @@ function M:setBottom(bottom)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを移動させます.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets the position of the target object.<br>
+-- When they are performed is done at the time of animation.
+-- @param left Left of the position.
+-- @param top Top of the position.
+-- @return self
+--------------------------------------------------------------------------------
 function M:setPos(left, top)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
@@ -111,9 +134,14 @@ function M:setPos(left, top)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを移動させます.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets the position of the target object.<br>
+-- When they are performed is done at the time of animation.
+-- @param x X of the position.
+-- @param y Y of the position.
+-- @param z Z of the position.
+-- @return self
+--------------------------------------------------------------------------------
 function M:setLoc(x, y, z)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
@@ -126,9 +154,16 @@ function M:setLoc(x, y, z)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを移動させます.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Move the target objects.<br>
+-- When they are performed is done at the time of animation.
+-- @param moveX X of the position.
+-- @param moveY Y of the position.
+-- @param moveZ Z of the position.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
 function M:moveLoc(moveX, moveY, moveZ, sec, mode)
     local actionFunc = function(target, tSec, tMode)
         return target:moveLoc(moveX, moveY, moveZ, tSec, tMode)
@@ -138,21 +173,32 @@ function M:moveLoc(moveX, moveY, moveZ, sec, mode)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを移動させます.
----------------------------------------
-function M:seekLoc(moveX, moveY, moveZ, sec, mode)
+--------------------------------------------------------------------------------
+-- Seek the target objects.<br>
+-- When they are performed is done at the time of animation.
+-- @param x X of the position.
+-- @param y Y of the position.
+-- @param z Z of the position.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
+function M:seekLoc(x, y, z, sec, mode)
     local actionFunc = function(target, tSec, tMode)
-        return target:seekLoc(moveX, moveY, moveZ, tSec, tMode)
+        return target:seekLoc(x, y, z, tSec, tMode)
     end
     local command = self:newActionCommand(actionFunc, sec, mode)
     self:addCommand(command)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを移動させます.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets the rotation of the object.
+-- @param x Rotation of the x-axis.
+-- @param y Rotation of the y-axis.
+-- @param z Rotation of the z-axis.
+-- @return self
+--------------------------------------------------------------------------------
 function M:setRot(x, y, z)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
@@ -165,33 +211,49 @@ function M:setRot(x, y, z)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを回転させます.
----------------------------------------
-function M:moveRot(rx, ry, rz, sec, mode)
+--------------------------------------------------------------------------------
+-- Move the rotation of the object.
+-- @param x Rotation of the x-axis.
+-- @param y Rotation of the y-axis.
+-- @param z Rotation of the z-axis.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
+function M:moveRot(x, y, z, sec, mode)
     local actionFunc = function(target, tSec, tMode)
-        return target:moveRot(rx, ry, rz, tSec, tMode)
+        return target:moveRot(x, y, z, tSec, tMode)
     end
     local command = self:newActionCommand(actionFunc, sec, mode)
     self:addCommand(command)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを回転させます.
----------------------------------------
-function M:seekRot(rx, ry, rz, sec, mode)
+--------------------------------------------------------------------------------
+-- Seek the rotation of the object.
+-- @param x Rotation of the x-axis.
+-- @param y Rotation of the y-axis.
+-- @param z Rotation of the z-axis.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
+function M:seekRot(x, y, z, sec, mode)
     local actionFunc = function(target, sec, mode)
-        return target:seekRot(rx, ry, rz, sec, mode)
+        return target:seekRot(x, y, z, sec, mode)
     end
     local command = self:newActionCommand(actionFunc, sec, mode)
     self:addCommand(command)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを拡大させます.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets the scale of the target object.
+-- @param x Scale of the x-axis
+-- @param y Scale of the y-axis.
+-- @param z Scale of the z-axis.
+-- @return self
+--------------------------------------------------------------------------------
 function M:setScl(x, y, z)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
@@ -204,33 +266,48 @@ function M:setScl(x, y, z)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを拡大します.
----------------------------------------
-function M:moveScl(scaleX, scaleY, scaleZ, sec, mode)
+--------------------------------------------------------------------------------
+-- Move the scale of the target object.
+-- @param x Scale of the x-axis
+-- @param y Scale of the y-axis.
+-- @param z Scale of the z-axis.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
+function M:moveScl(x, y, z, sec, mode)
     local actionFunc = function(target, sec, mode)
-        return target:moveScl(scaleX, scaleY, scaleZ, sec, mode)
+        return target:moveScl(x, y, z, sec, mode)
     end
     local command = self:newActionCommand(actionFunc, sec, mode)
     self:addCommand(command)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトを拡大します.
----------------------------------------
-function M:seekScl(scaleX, scaleY, scaleZ, sec, mode)
+--------------------------------------------------------------------------------
+-- Seek the scale of the target object.
+-- @param x Scale of the x-axis
+-- @param y Scale of the y-axis.
+-- @param z Scale of the z-axis.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
+function M:seekScl(x, y, z, sec, mode)
     local actionFunc = function(target, sec, mode)
-        return target:seekScl(scaleX, scaleY, scaleZ, sec, mode)
+        return target:seekScl(x, y, z, sec, mode)
     end
     local command = self:newActionCommand(actionFunc, sec, mode)
     self:addCommand(command)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトの属性値を設定します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets the value of an attribute of the object.
+-- @param attrID Attribute.
+-- @param value Value.
+-- @return self
+--------------------------------------------------------------------------------
 function M:setAttr(attrID, value)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
@@ -243,9 +320,14 @@ function M:setAttr(attrID, value)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトの属性値を設定します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Move the value of an attribute of the object.
+-- @param attrID Attribute.
+-- @param value Value.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
 function M:moveAttr(attrID, value, sec, mode)
     local actionFunc = function(target, sec, mode)
         return target:moveAttr(attrID, value, sec, mode)
@@ -255,9 +337,14 @@ function M:moveAttr(attrID, value, sec, mode)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトの属性値を設定します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Seek the value of an attribute of the object.
+-- @param attrID Attribute.
+-- @param value Value.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
 function M:seekAttr(attrID, value, sec, mode)
     local actionFunc = function(target, sec, mode)
         return target:seekAttr(attrID, value, sec, mode)
@@ -267,10 +354,12 @@ function M:seekAttr(attrID, value, sec, mode)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトのindex値を設定します.
----------------------------------------
-function M:setIndex(index, sec, mode)
+--------------------------------------------------------------------------------
+-- Sets the index.
+-- @param index Index.
+-- @return self
+--------------------------------------------------------------------------------
+function M:setIndex(index)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
             v:setIndex(index)
@@ -282,9 +371,13 @@ function M:setIndex(index, sec, mode)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトのindex値を設定します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Move the indexes.
+-- @param indexes Array of indices.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
 function M:moveIndex(indexes, sec, mode)
 
     local curve = MOAIAnimCurve.new()
@@ -328,9 +421,12 @@ function M:moveIndex(indexes, sec, mode)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトをフェードインします.
----------------------------------------
+--------------------------------------------------------------------------------
+-- The fade in objects.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
 function M:fadeIn(sec, mode)
     local actionFunc = function(target, sec, mode)
         target:setColor(0, 0, 0, 0)
@@ -341,9 +437,12 @@ function M:fadeIn(sec, mode)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトをフェードアウトします.
----------------------------------------
+--------------------------------------------------------------------------------
+-- The fade out objects.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
 function M:fadeOut(sec, mode)
     local actionFunc = function(target, sec, mode)
         target:setColor(1, 1, 1, 1)
@@ -354,9 +453,14 @@ function M:fadeOut(sec, mode)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトの色を設定します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets the color of the object.
+-- @param red Red.
+-- @param green Green.
+-- @param blue Blue.
+-- @param alpha Alpha.
+-- @return self
+--------------------------------------------------------------------------------
 function M:setColor(red, green, blue, alpha)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
@@ -369,9 +473,16 @@ function M:setColor(red, green, blue, alpha)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトの色をアニメーションします.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Move the color of the object.
+-- @param red Red.
+-- @param green Green.
+-- @param blue Blue.
+-- @param alpha Alpha.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
 function M:moveColor(red, green, blue, alpha, sec, mode)
     local actionFunc = function(target, sec, mode)
         return target:moveColor(red, green, blue, alpha, sec, mode)
@@ -381,9 +492,16 @@ function M:moveColor(red, green, blue, alpha, sec, mode)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトの色をアニメーションします.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Seek the color of the object.
+-- @param red Red.
+-- @param green Green.
+-- @param blue Blue.
+-- @param alpha Alpha.
+-- @param sec (option)Time animation.
+-- @param mode (option)MOAIEaseType.
+-- @return self
+--------------------------------------------------------------------------------
 function M:seekColor(red, green, blue, alpha, sec, mode)
     local actionFunc = function(target, sec, mode)
         return target:seekColor(red, green, blue, alpha, sec, mode)
@@ -393,9 +511,11 @@ function M:seekColor(red, green, blue, alpha, sec, mode)
     return self
 end
 
----------------------------------------
--- 対象オブジェクトのvisibleを設定します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets the target object visible.
+-- @param value Visible.
+-- @return self
+--------------------------------------------------------------------------------
 function M:setVisible(value)
     local playFunc = function(obj, callback)
         for i, v in ipairs(self.internal.targets) do
@@ -408,9 +528,11 @@ function M:setVisible(value)
     return self
 end
 
----------------------------------------
--- 指定されたアニメーションを並列実行します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- The parallel execution of the animation of the argument.
+-- @param ... Animations
+-- @return self
+--------------------------------------------------------------------------------
 function M:parallel(...)
     local internal = self.internal
     local animations = {...}
@@ -440,9 +562,11 @@ function M:parallel(...)
     return self
 end
 
----------------------------------------
--- 指定されたアニメーションを順次実行します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- The sequential execution of the animation argument.
+-- @param ... Animations
+-- @return self
+--------------------------------------------------------------------------------
 function M:sequence(...)
     local internal = self.internal
     local animations = {...}
@@ -480,14 +604,15 @@ function M:sequence(...)
     return self
 end
 
----------------------------------------
--- 指定されたアニメーションを指定回数だけ実行します.
--- 0の場合は、無限にアニメーションし続けます.
--- onLoop関数がtrueを返すと、ループは終了します.
+--------------------------------------------------------------------------------
+-- Run the specified number the animation of the argument.<br>
+-- If you specify a 0 to maxCount is an infinite loop.<br>
+-- If maxCount of the function, and loop until it returns the function's return value is true.<br>
 -- 
--- @param count ループ回数、もしくはループ判定関数
--- @param ... アニメーション
----------------------------------------
+-- @param maxCount Loop count, or, End judgment function.
+-- @animation Animation
+-- @return self
+--------------------------------------------------------------------------------
 function M:loop(maxCount, animation)
     local internal = self.internal
     local loopFunc = type(maxCount) == "function" and maxCount
@@ -519,10 +644,11 @@ function M:loop(maxCount, animation)
     return self
 end
 
----------------------------------------
--- 一定時間待機します.
--- @param sec 待機時間
----------------------------------------
+--------------------------------------------------------------------------------
+-- Wait a specified amount of time.
+-- @param sec Waiting time.
+-- @return self
+--------------------------------------------------------------------------------
 function M:wait(sec)
     local timer = MOAITimer.new()
     timer:setSpan(sec)
@@ -541,14 +667,13 @@ function M:wait(sec)
     return self
 end
 
----------------------------------------
--- アニメーションを開始します.
--- 一時停止していた場合は最初から再開します.
+--------------------------------------------------------------------------------
+-- To start the animation.<br>
+-- If during the start will be ignored.<br>
 -- 
--- 引数のparamsでいくつかの動作を制御できます.
--- params.onComplete(e)に関数を指定すると
--- 完了時に関数がコールされます.
----------------------------------------
+-- @param params (option)Parameters that control the behavior.
+-- @return self
+--------------------------------------------------------------------------------
 function M:play(params)
     params = params or {}
     local internal = self.internal
@@ -573,9 +698,10 @@ function M:play(params)
     return self
 end
 
----------------------------------------
--- コマンドを実行します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- To execute the command.<br>
+-- You will not be accessible from the outside.
+--------------------------------------------------------------------------------
 function M:executeCommand(index)
     local internal = self.internal
     
@@ -586,9 +712,10 @@ function M:executeCommand(index)
     end
 end
 
----------------------------------------
--- コマンド完了時のハンドラです.
----------------------------------------
+--------------------------------------------------------------------------------
+-- The event handler when the command completes.<br>
+-- You will not be accessible from the outside.
+--------------------------------------------------------------------------------
 function M:onCommandComplete()
     local internal = self.internal
 
@@ -607,9 +734,9 @@ function M:onCommandComplete()
     end
 end
 
----------------------------------------
--- アニメーションを停止します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Stop the animation.
+--------------------------------------------------------------------------------
 function M:stop()
     local internal = self.internal
 
@@ -622,9 +749,9 @@ function M:stop()
     return self
 end
 
----------------------------------------
--- コマンドをクリアします.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Clears the definition animation.
+--------------------------------------------------------------------------------
 function M:clear()
     if self.isRunning() then
         return self
@@ -633,25 +760,23 @@ function M:clear()
     return self
 end
 
----------------------------------------
--- アニメーション実行コマンドを追加します.
--- 通常は使用する必要がありませんが、
--- カスタムコマンドを追加する事もできます.
--- @param command play,stop,restart関数
----------------------------------------
+--------------------------------------------------------------------------------
+-- Add a command run animation.<br>
+-- Usually does not need to be used.<br>
+-- You can add a custom command.<br>
+-- @param command play,stop,restart
+--------------------------------------------------------------------------------
 function M:addCommand(command)
     table.insert(self.internal.commands, command)
     return self
 end
 
----------------------------------------
--- アニメーション実行コマンドを生成します.
--- 実行コマンドは単純なテーブルです.
--- 指定しなかった関数は空関数がセットされます.
--- @param playFunc 開始 playFunc(callback)
--- @param stopFunc 停止 stopFunc()
--- @return command コマンドテーブル
----------------------------------------
+--------------------------------------------------------------------------------
+-- Command to generate the animation.<br>
+-- @param playFunc playFunc(callback)
+-- @param stopFunc stopFunc()
+-- @return command
+--------------------------------------------------------------------------------
 function M:newCommand(playFunc, stopFunc)
     local emptyFunc = function(obj, callback) end
     playFunc = playFunc
@@ -661,15 +786,13 @@ function M:newCommand(playFunc, stopFunc)
     return command
 end
 
----------------------------------------
--- 非同期なアクションを伴う、
--- アニメーション実行コマンドを生成します.
--- @param funcName 関数名
--- @param args sec, modeをのぞく引数
--- @param sec 秒
--- @param mode EaseType
--- @return command コマンドテーブル
----------------------------------------
+--------------------------------------------------------------------------------
+-- To generate the asynchronous command with the action.
+-- @param actionFunc 関数名
+-- @param sec Time Animation.
+-- @param mode MOAIEaseType.
+-- @return command
+--------------------------------------------------------------------------------
 function M:newActionCommand(actionFunc, sec, mode)
     local internal = self.internal
 

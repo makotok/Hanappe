@@ -1,15 +1,17 @@
+--------------------------------------------------------------------------------
+-- Class that inherits from MOAIBox2DWorld.<br>
+--
+-- @auther Makoto
+-- @class table
+-- @name PhysicsWorld
+--------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local EventDispatcher = require("hp/event/EventDispatcher")
 local PhysicsBody = require("hp/physics/PhysicsBody")
 local MOAIPropUtil = require("hp/util/MOAIPropUtil")
 
---------------------------------------------------------------------------------
--- Class that inherits from MOAIBox2DWorld.<br>
--- TODO:Not implemented
--- @class table
--- @name PhysicsWorld
---------------------------------------------------------------------------------
 local M = class(EventDispatcher)
 local Interface = MOAIBox2DWorld.getInterfaceTable()
 

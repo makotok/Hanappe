@@ -1,10 +1,13 @@
-local Logger = require("hp/util/Logger")
-
 ----------------------------------------------------------------
--- テクスチャを要求するとキャッシュして、Textureを返します.<br>
+-- This is a class to manage the Texture.<br>
+-- 
+-- @auther Makoto
 -- @class table
 -- @name TextureManager
 ----------------------------------------------------------------
+
+local Logger = require("hp/util/Logger")
+
 local M = {}
 local cache = {}
 
@@ -15,9 +18,10 @@ local function gcHandler(udata)
 end
 
 ----------------------------------------------------------------
--- テクスチャを要求します.
--- @param path テクスチャのパス
--- @return テクスチャ
+-- Requests the texture. <br>
+-- The textures are cached internally.
+-- @param path path
+-- @return MOAITexture instance.
 ----------------------------------------------------------------
 function M:request(path)
     if cache[path] == nil then

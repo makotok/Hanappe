@@ -1,17 +1,19 @@
-local TextureManager = require("hp/manager/TextureManager")
-
 --------------------------------------------------------------------------------
--- テクスチャを描画するオブジェクトが実装するモジュールです.<br>
--- このモジュール単体では使用できません.<br>
--- self.deckが存在する必要があります.<br>
+-- This module object on which to draw the texture to be implemented. <br>
+-- This module by itself can not be used.<br>
+-- 
+-- @auther Makoto
 -- @class table
 -- @name TextureDrawable
 --------------------------------------------------------------------------------
+
+local TextureManager = require("hp/manager/TextureManager")
+
 local M = {}
 
 --------------------------------------------------------------------------------
--- Textureをdeckに設定します.
--- @param texture path
+-- Set the Texture to self.deck. 
+-- @param texture Path or texture.
 --------------------------------------------------------------------------------
 function M:setTexture(texture)
     assert(texture, "texture nil value!")

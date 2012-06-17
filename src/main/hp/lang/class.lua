@@ -1,16 +1,19 @@
-local table = require("hp/lang/table")
-
 --------------------------------------------------------------------------------
--- Class that enable you to easily object-oriented.<br>
--- Provide the basic functionality of the class.<br>
+-- Class that enable you to easily object-oriented. <br>
+-- Provide the basic functionality of the class. <br>
 -- <br>
--- class does not perform inheritance setmetatable.<br>
--- The inheritance by copying it to the table.<br>
+-- class does not perform inheritance setmetatable. <br>
+-- The inheritance by copying it to the table. <br>
 -- Will consume a little more memory,
--- the performance does not deteriorate if the inheritance is deep.<br>
+-- the performance does not deteriorate if the inheritance is deep. <br>
+--
+-- @auther Makoto
 -- @class table
 -- @name class
 --------------------------------------------------------------------------------
+
+local table = require("hp/lang/table")
+
 local M = {}
 setmetatable(M, M)
 

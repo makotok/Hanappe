@@ -356,27 +356,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:initialize">M:initialize</a>&nbsp;()</td>
-	<td class="summary">初期化処理です  </td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#onClick">onClick</a>&nbsp;(down)</td>
-	<td class="summary">マウスクリック処理  </td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#onKeyboard">onKeyboard</a>&nbsp;(key, down)</td>
-	<td class="summary">キーボード入力時のイベント処理です.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#onPointer">onPointer</a>&nbsp;(x, y)</td>
-	<td class="summary">ポインター処理  </td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#onTouch">onTouch</a>&nbsp;(eventType, idx, x, y, tapCount)</td>
-	<td class="summary">タッチ処理  </td>
+	<td class="summary">Initialize InputManager.</td>
 	</tr>
 
 </table>
@@ -389,7 +369,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#InputManager ">InputManager </a></td>
-	<td class="summary">画面の操作をキャッチして、イベントを発出するクラスです.</td>
+	<td class="summary">To catch the operation of the screen, and sends the event.</td>
 	</tr>
 
 </table>
@@ -409,136 +389,8 @@
 
 <dt><a name="M:initialize"></a><strong>M:initialize</strong>&nbsp;()</dt>
 <dd>
-初期化処理です 
+Initialize InputManager. <br> Register a callback function for input operations. 
 
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="onClick"></a><strong>onClick</strong>&nbsp;(down)</dt>
-<dd>
-マウスクリック処理 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  down: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="onKeyboard"></a><strong>onKeyboard</strong>&nbsp;(key, down)</dt>
-<dd>
-キーボード入力時のイベント処理です. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  key: 
-	</li>
-	
-	<li>
-	  down: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="onPointer"></a><strong>onPointer</strong>&nbsp;(x, y)</dt>
-<dd>
-ポインター処理 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  x: 
-	</li>
-	
-	<li>
-	  y: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="onTouch"></a><strong>onTouch</strong>&nbsp;(eventType, idx, x, y, tapCount)</dt>
-<dd>
-タッチ処理 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  eventType: 
-	</li>
-	
-	<li>
-	  idx: 
-	</li>
-	
-	<li>
-	  x: 
-	</li>
-	
-	<li>
-	  y: 
-	</li>
-	
-	<li>
-	  tapCount: 
-	</li>
-	
-</ul>
 
 
 
@@ -559,7 +411,7 @@
 <dl class="table">
 
 <dt><a name="InputManager "></a><strong>InputManager </strong></dt>
-<dd>画面の操作をキャッチして、イベントを発出するクラスです. タッチ、キーボードの操作が該当します
+<dd>To catch the operation of the screen, and sends the event. <br> 
 
 
 

@@ -1,17 +1,20 @@
+--------------------------------------------------------------------------------
+-- NinePatch class is the scale is partially configured. <br>
+-- When you set the size, scale will be reconfigured dynamically. <br>
+-- Will help you build a widget. <br>
+-- Base Classes => DisplayObject, TextureDrawable, Resizable <br>
+--
+-- @auther Makoto
+-- @class table
+-- @name NinePatch
+--------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local DisplayObject = require("hp/display/DisplayObject")
 local Resizable = require("hp/display/Resizable")
 local TextureDrawable = require("hp/display/TextureDrawable")
 
---------------------------------------------------------------------------------
--- NinePatch class is the scale is partially configured.<br>
--- When you set the size, scale will be reconfigured dynamically.<br>
--- Will help you build a widget.<br>
--- Extends : DisplayObject, TextureDrawable, Resizable<br>
--- @class table
--- @name NinePatch
---------------------------------------------------------------------------------
 local M = class(DisplayObject, TextureDrawable, Resizable)
 
 local interface = MOAIProp.getInterfaceTable()
@@ -57,7 +60,8 @@ function M:init(params)
 end
 
 --------------------------------------------------------------------------------
--- パラメータテーブルの値を元に、各setter関数の引数にセットしてコールします.
+-- Set the parameter setter function.
+-- @param params Parameter is set to Object.<br>
 --------------------------------------------------------------------------------
 function M:copyParams(params)
     if params.texture and self.setTexture then
@@ -72,7 +76,10 @@ function M:copyParams(params)
 end
 
 --------------------------------------------------------------------------------
---サイズを設定します.
+-- Sets the size.<br>
+-- When you set the size, set by calculating the scale.
+-- @param width width.
+-- @param height height.
 --------------------------------------------------------------------------------
 function M:setSize(width, height)
     assert(self.texture)
@@ -92,7 +99,12 @@ function M:setSize(width, height)
 end
 
 --------------------------------------------------------------------------------
--- スケールを設定します.
+-- Sets the virtual scale.<br>
+-- Value to be set will vary.<br>
+-- TODO:Can not cope with if you want to move dynamically.
+-- @param x scaleX.
+-- @param y scaleY.
+-- @param z scaleZ.
 --------------------------------------------------------------------------------
 function M:setScl(x, y, z)
     self:setPrivate("sclX", x)
@@ -105,15 +117,23 @@ function M:setScl(x, y, z)
 end
 
 --------------------------------------------------------------------------------
--- スケールを返します.
+-- Returns a virtual scale.<br>
+-- TODO:Can not cope with if you want to move dynamically.<br>
+-- @return scaleX, scaleY, scaleZ.
 --------------------------------------------------------------------------------
 function M:getScl()
     return self:getPrivate("sclX"), self:getPrivate("sclY"), self:getPrivate("sclZ")
 end
 
 --------------------------------------------------------------------------------
--- スケールを移動します.
--- TODO:おそらく上手くいかない。実装方法の検討が必要。
+-- Seek a virtual scale.<br>
+-- TODO:Does not work
+-- @param x X of scale.
+-- @param y Y of scale.
+-- @param z Z of scale.
+-- @param sec seconds.
+-- @param mode MOAIEaseType.
+-- @return MOAIEase
 --------------------------------------------------------------------------------
 function M:seekScl(x, y, z, sec, mode)
     local sclX, sclY, sclZ = self:getOrignScl()
@@ -122,7 +142,10 @@ function M:seekScl(x, y, z, sec, mode)
 end
 
 --------------------------------------------------------------------------------
--- 固定的な列の長さを設定します.
+-- Sets the ratio of the columns.
+-- @param col1 Fixed ratio of the column.
+-- @param col2 Dynamic ratio of the column.
+-- @param col3 Fixed ratio of the column.
 --------------------------------------------------------------------------------
 function M:setStretchColumns(col1, col2, col3)
     self.deck:setColumn ( 1, col1, false )
@@ -131,7 +154,10 @@ function M:setStretchColumns(col1, col2, col3)
 end
 
 --------------------------------------------------------------------------------
--- 固定的な行の長さを設定します.
+-- Sets the ratio of the rows.
+-- @param col1 Fixed ratio of the row.
+-- @param col2 Dynamic ratio of the row.
+-- @param col3 Fixed ratio of the row.
 --------------------------------------------------------------------------------
 function M:setStretchRows(row1, row2, row3)
     self.deck:setRow ( 1, row1, false )
@@ -140,7 +166,8 @@ function M:setStretchRows(row1, row2, row3)
 end
 
 --------------------------------------------------------------------------------
--- 境界座標を返します.
+-- Returns the boundary position.
+-- @return xMin, yMin, zMin, xMax, yMax, zMax
 --------------------------------------------------------------------------------
 function M:getBounds()
     local width, height = self:getPrivate("width"), self:getPrivate("height")

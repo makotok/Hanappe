@@ -1,20 +1,24 @@
+--------------------------------------------------------------------------------
+-- This class inherits the MOAILayer. <br>
+-- Simplifies the generation of a set of size and layer. <br>
+--
+-- @auther Makoto
+-- @class table
+-- @name Layer
+--------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local Application = require("hp/Application")
 local DisplayObject = require("hp/display/DisplayObject")
 
---------------------------------------------------------------------------------
--- MOAILayerを拡張したクラスです.<br>
--- サイズの設定など、レイヤーの生成を簡略化します.<br>
--- @class table
--- @name Layer
---------------------------------------------------------------------------------
 local M = class(DisplayObject)
 M.MOAI_CLASS = MOAILayer
 
---------------------------------------------------------------------------------
--- Layerインスタンスを生成して返します.
---------------------------------------------------------------------------------
+----------------------------------------------------------------
+-- The constructor.
+-- @param params (option)Parameter is set to Object.<br>
+----------------------------------------------------------------
 function M:init(params)
     DisplayObject.init(self)
     
@@ -32,14 +36,14 @@ function M:init(params)
     self:setViewSize(Application.viewWidth, Application.viewHeight)
     self:setOffset(-1, 1)
     
-    -- set params
     self:copyParams(params)
     
     MOAIRenderMgr.pushRenderPass(self)
 end
 
 --------------------------------------------------------------------------------
--- パラメータを各プロパティにコピーします.
+-- Set the parameter setter function.
+-- @param params Parameter is set to Object.<br>
 --------------------------------------------------------------------------------
 function M:copyParams(params)
     if params.width and params.height then
@@ -59,31 +63,33 @@ function M:copyParams(params)
 end
 
 --------------------------------------------------------------------------------
--- 画面上のレイヤーのサイズを返します.
--- TODO:変数によるアクセスは将来的に削除される予定です.
+-- Returns the size of the layer on the screen.
+-- @return Width of screen.
 --------------------------------------------------------------------------------
 function M:getScreenWidth()
     return self.screenWidth
 end
 
 --------------------------------------------------------------------------------
--- 画面上のレイヤーのサイズを返します.
--- TODO:変数によるアクセスは将来的に削除される予定です.
+-- Returns the size of the layer on the screen.
+-- @return Height of screen.
 --------------------------------------------------------------------------------
 function M:getScreenHeight()
     return self.screenHeight
 end
 
 --------------------------------------------------------------------------------
--- 画面上のレイヤーのサイズを返します.
--- TODO:変数によるアクセスは将来的に削除される予定です.
+-- Returns the size of the layer on the screen.
+-- @return width, height
 --------------------------------------------------------------------------------
 function M:getScreenSize()
     return self:getScreenWidth(), self:getScreenHeight()
 end
 
 --------------------------------------------------------------------------------
--- 画面上のレイヤーのサイズを設定します.
+-- Sets the size of the layer on the screen.
+-- @param width Width of the screen.
+-- @param height Height of the screen.
 --------------------------------------------------------------------------------
 function M:setScreenSize(width, height)
     self.screenWidth = width
@@ -92,28 +98,33 @@ function M:setScreenSize(width, height)
 end
 
 --------------------------------------------------------------------------------
--- レイヤーのビューポートサイズを設定します.
+-- Returns the viewport size of the layer.
+-- @return viewWidth.
 --------------------------------------------------------------------------------
 function M:getViewWidth()
     return self.viewWidth
 end
 
 --------------------------------------------------------------------------------
--- レイヤーのビューポートサイズを設定します.
+-- Returns the viewport size of the layer.
+-- @return viewHeight.
 --------------------------------------------------------------------------------
 function M:getViewHeight()
     return self.viewHeight
 end
 
 --------------------------------------------------------------------------------
--- レイヤーのビューポートサイズを設定します.
+-- Returns the viewport size of the layer.
+-- @return viewWidth, viewHeight.
 --------------------------------------------------------------------------------
 function M:getViewSize()
     return self:getViewWidth(), self:getViewHeight()
 end
 
 --------------------------------------------------------------------------------
--- レイヤーのビューポートサイズを設定します.
+-- Sets the viewport size of the layer.
+-- @param width Width of the viewport.
+-- @param height Height of the viewport.
 --------------------------------------------------------------------------------
 function M:setViewSize(width, height)
     self.viewWidth = width
@@ -122,7 +133,9 @@ function M:setViewSize(width, height)
 end
 
 --------------------------------------------------------------------------------
--- ビューポートのオフセットを設定します.
+-- Sets the offset of the viewport.
+-- @param offsetX offsetX.
+-- @param offsetY offsetY.
 --------------------------------------------------------------------------------
 function M:setOffset(offsetX, offsetY)
     self.offsetX = offsetX
@@ -130,29 +143,34 @@ function M:setOffset(offsetX, offsetY)
     self.viewport:setOffset(offsetX, offsetY)
 end
 
----------------------------------------
--- スクリーンとViewportのスケールを返します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Returns the scale of the screen and viewport.
+-- @return scaleX, scaleY.
+--------------------------------------------------------------------------------
 function M:getViewScale()
     return self.screenWidth / self.viewWidth, self.screenHeight / self.viewHeight
 end
 
----------------------------------------
--- スクリーンとViewportのスケールを返します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Returns the scale of the screen and viewport.
+-- @return scaleX
+--------------------------------------------------------------------------------
 function M:getViewScaleX()
     return self.screenWidth / self.viewWidth
 end
 
----------------------------------------
--- スクリーンとViewportのスケールを返します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Returns the scale of the screen and viewport.
+-- @return scaleY.
+--------------------------------------------------------------------------------
 function M:getViewScaleY()
     return self.screenHeight / self.viewHeight
 end
 
 --------------------------------------------------------------------------------
--- シーンを設定します.
+-- Sets the scene.<br>
+-- By setting the scene, and then draw in the scene.
+-- @param scene scene.
 --------------------------------------------------------------------------------
 function M:setScene(scene)
     if self.scene == scene then

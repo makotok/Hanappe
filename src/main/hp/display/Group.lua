@@ -1,16 +1,19 @@
+----------------------------------------------------------------
+-- This is a class to grouping the DisplayObject. <br>
+-- Will be used as a dummy MOAIProp. <br>
+-- Base Classes => DisplayObject, Resizable <br>
+--
+-- @auther Makoto
+-- @class table
+-- @name Group
+----------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local delegate = require("hp/lang/delegate")
 local DisplayObject = require("hp/display/DisplayObject")
 local Resizable = require("hp/display/Resizable")
 
-----------------------------------------------------------------
--- This is a class to grouping the DisplayObject.<br>
--- Will be used as a dummy MOAIProp.<br>
--- Extends : DisplayObject, Resizable<br>
--- @class table
--- @name Group
-----------------------------------------------------------------
 local M = class(DisplayObject, Resizable)
 
 local MOAIPropInterface = MOAIProp.getInterfaceTable()

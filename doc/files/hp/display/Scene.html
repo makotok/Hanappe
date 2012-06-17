@@ -356,97 +356,97 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getRenderTable">M:getRenderTable</a>&nbsp;()</td>
-	<td class="summary">描画テーブルを返します.</td>
+	<td class="summary">Returns the rendering table.<br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getVisible">M:getVisible</a>&nbsp;()</td>
-	<td class="summary">visibleを返します.</td>
+	<td class="summary">Returns the visible.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;()</td>
-	<td class="summary">コンストラクタです  </td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onCreate">M:onCreate</a>&nbsp;(params)</td>
-	<td class="summary">シーンの生成処理時に一度だけ呼ばれます.</td>
+	<td class="summary">Called when it is created.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onDestroy">M:onDestroy</a>&nbsp;()</td>
-	<td class="summary">シーンの破棄時に呼ばれます.</td>
+	<td class="summary">Called when destroyed.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onEnterFrame">M:onEnterFrame</a>&nbsp;()</td>
-	<td class="summary">フレーム毎の処理を行います.</td>
+	<td class="summary">Called when updated.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onKeyDown">M:onKeyDown</a>&nbsp;(event)</td>
-	<td class="summary">キーボード入力時の処理を行います.</td>
+	<td class="summary">Called when keyboard input.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onKeyUp">M:onKeyUp</a>&nbsp;(event)</td>
-	<td class="summary">キーボード入力時の処理を行います.</td>
+	<td class="summary">Called when keyboard input.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onPause">M:onPause</a>&nbsp;()</td>
-	<td class="summary">シーンの一時停止時に呼ばれます.</td>
+	<td class="summary">Called when paused.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onResume">M:onResume</a>&nbsp;()</td>
-	<td class="summary">シーンの再開時に呼ばれます.</td>
+	<td class="summary">Called when resumed.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onStart">M:onStart</a>&nbsp;()</td>
-	<td class="summary">シーンの開始時に一度だけ呼ばれます.</td>
+	<td class="summary">Called when it is started.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onStop">M:onStop</a>&nbsp;()</td>
-	<td class="summary">シーンの停止時に呼ばれます.</td>
+	<td class="summary">Called when stoped.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onTouchCancel">M:onTouchCancel</a>&nbsp;(event)</td>
-	<td class="summary">画面をタッチした時のイベント処理です.</td>
+	<td class="summary">Called when screen touched.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onTouchDown">M:onTouchDown</a>&nbsp;(event)</td>
-	<td class="summary">画面をタッチした時のイベント処理です.</td>
+	<td class="summary">Called when screen touched.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onTouchMove">M:onTouchMove</a>&nbsp;(event)</td>
-	<td class="summary">画面をタッチした時のイベント処理です.</td>
+	<td class="summary">Called when screen touched.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onTouchUp">M:onTouchUp</a>&nbsp;(event)</td>
-	<td class="summary">画面をタッチした時のイベント処理です.</td>
+	<td class="summary">Called when screen touched.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:orderToBack">M:orderToBack</a>&nbsp;()</td>
-	<td class="summary">シーンを最背面に表示します.</td>
+	<td class="summary">Display to the back Scene.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:orderToFront">M:orderToFront</a>&nbsp;()</td>
-	<td class="summary">シーンを最前面に表示します.</td>
+	<td class="summary">Display to the front Scene.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setVisible">M:setVisible</a>&nbsp;(value)</td>
-	<td class="summary">visibleを設定します.</td>
+	<td class="summary">Sets the visible.<br> If set to false, excluded from the target rendering.<br> </td>
 	</tr>
 
 </table>
@@ -459,7 +459,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#Scene ">Scene </a></td>
-	<td class="summary">Sceneはシーングラフを構築するトップレベルコンテナです.<br> このクラスを使用して、画面を構築します.<br> Sceneのライフサイクルについて<br> 1.</td>
+	<td class="summary">This class is a top-level container to build a scene graph.</td>
 	</tr>
 
 </table>
@@ -479,13 +479,16 @@
 
 <dt><a name="M:getRenderTable"></a><strong>M:getRenderTable</strong>&nbsp;()</dt>
 <dd>
-描画テーブルを返します. 
+Returns the rendering table.<br>
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+renderTable. 
 
 
 
@@ -496,13 +499,16 @@
 
 <dt><a name="M:getVisible"></a><strong>M:getVisible</strong>&nbsp;()</dt>
 <dd>
-visibleを返します. 
+Returns the visible.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+visible. 
 
 
 
@@ -513,7 +519,7 @@ visibleを返します.
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;()</dt>
 <dd>
-コンストラクタです 
+The constructor. 
 
 
 
@@ -530,7 +536,7 @@ visibleを返します.
 
 <dt><a name="M:onCreate"></a><strong>M:onCreate</strong>&nbsp;(params)</dt>
 <dd>
-シーンの生成処理時に一度だけ呼ばれます. 
+Called when it is created. 
 
 
 <h3>Parameters</h3>
@@ -556,7 +562,7 @@ visibleを返します.
 
 <dt><a name="M:onDestroy"></a><strong>M:onDestroy</strong>&nbsp;()</dt>
 <dd>
-シーンの破棄時に呼ばれます. この時点でシーンは破棄されて使用できなくなります. 
+Called when destroyed. 
 
 
 
@@ -573,7 +579,7 @@ visibleを返します.
 
 <dt><a name="M:onEnterFrame"></a><strong>M:onEnterFrame</strong>&nbsp;()</dt>
 <dd>
-フレーム毎の処理を行います. 
+Called when updated. 
 
 
 
@@ -590,14 +596,14 @@ visibleを返します.
 
 <dt><a name="M:onKeyDown"></a><strong>M:onKeyDown</strong>&nbsp;(event)</dt>
 <dd>
-キーボード入力時の処理を行います. 
+Called when keyboard input.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  event: 
+	  event: Keybord event. 
 	</li>
 	
 </ul>
@@ -616,14 +622,14 @@ visibleを返します.
 
 <dt><a name="M:onKeyUp"></a><strong>M:onKeyUp</strong>&nbsp;(event)</dt>
 <dd>
-キーボード入力時の処理を行います. 
+Called when keyboard input.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  event: 
+	  event: Keybord event. 
 	</li>
 	
 </ul>
@@ -642,7 +648,7 @@ visibleを返します.
 
 <dt><a name="M:onPause"></a><strong>M:onPause</strong>&nbsp;()</dt>
 <dd>
-シーンの一時停止時に呼ばれます. 
+Called when paused. 
 
 
 
@@ -659,7 +665,7 @@ visibleを返します.
 
 <dt><a name="M:onResume"></a><strong>M:onResume</strong>&nbsp;()</dt>
 <dd>
-シーンの再開時に呼ばれます. pauseした場合に、再開処理で呼ばれます. 
+Called when resumed. 
 
 
 
@@ -676,7 +682,7 @@ visibleを返します.
 
 <dt><a name="M:onStart"></a><strong>M:onStart</strong>&nbsp;()</dt>
 <dd>
-シーンの開始時に一度だけ呼ばれます. 
+Called when it is started. 
 
 
 
@@ -693,7 +699,7 @@ visibleを返します.
 
 <dt><a name="M:onStop"></a><strong>M:onStop</strong>&nbsp;()</dt>
 <dd>
-シーンの停止時に呼ばれます. 停止された後、他シーン遷移が完了した後に onDestoryが呼ばれます. 
+Called when stoped. 
 
 
 
@@ -710,14 +716,14 @@ visibleを返します.
 
 <dt><a name="M:onTouchCancel"></a><strong>M:onTouchCancel</strong>&nbsp;(event)</dt>
 <dd>
-画面をタッチした時のイベント処理です. 
+Called when screen touched.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  event: 
+	  event: Event. 
 	</li>
 	
 </ul>
@@ -736,14 +742,14 @@ visibleを返します.
 
 <dt><a name="M:onTouchDown"></a><strong>M:onTouchDown</strong>&nbsp;(event)</dt>
 <dd>
-画面をタッチした時のイベント処理です. 
+Called when screen touched.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  event: 
+	  event: Event. 
 	</li>
 	
 </ul>
@@ -762,14 +768,14 @@ visibleを返します.
 
 <dt><a name="M:onTouchMove"></a><strong>M:onTouchMove</strong>&nbsp;(event)</dt>
 <dd>
-画面をタッチした時のイベント処理です. 
+Called when screen touched.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  event: 
+	  event: Event. 
 	</li>
 	
 </ul>
@@ -788,14 +794,14 @@ visibleを返します.
 
 <dt><a name="M:onTouchUp"></a><strong>M:onTouchUp</strong>&nbsp;(event)</dt>
 <dd>
-画面をタッチした時のイベント処理です. 
+Called when screen touched.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  event: 
+	  event: Event. 
 	</li>
 	
 </ul>
@@ -814,7 +820,7 @@ visibleを返します.
 
 <dt><a name="M:orderToBack"></a><strong>M:orderToBack</strong>&nbsp;()</dt>
 <dd>
-シーンを最背面に表示します. 
+Display to the back Scene. 
 
 
 
@@ -831,7 +837,7 @@ visibleを返します.
 
 <dt><a name="M:orderToFront"></a><strong>M:orderToFront</strong>&nbsp;()</dt>
 <dd>
-シーンを最前面に表示します. 
+Display to the front Scene. 
 
 
 
@@ -848,14 +854,14 @@ visibleを返します.
 
 <dt><a name="M:setVisible"></a><strong>M:setVisible</strong>&nbsp;(value)</dt>
 <dd>
-visibleを設定します. 
+Sets the visible.<br> If set to false, excluded from the target rendering.<br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  value: 
+	  value: visible. 
 	</li>
 	
 </ul>
@@ -879,7 +885,7 @@ visibleを設定します.
 <dl class="table">
 
 <dt><a name="Scene "></a><strong>Scene </strong></dt>
-<dd>Sceneはシーングラフを構築するトップレベルコンテナです.<br> このクラスを使用して、画面を構築します.<br> Sceneのライフサイクルについて<br> 1. onCreate()  ... 生成時に呼ばれます.<br> 2. onStart()   ... 開始時に呼ばれます.<br> 3. onResume()   ... 再開時に呼ばれます.<br> 4. onPause()   ... 一時停止時に呼ばれます.<br> 5. onStop()     ... 終了時に呼ばれます.<br> 6. onDestroy() ... 破棄時に呼ばれます.<br>
+<dd>This class is a top-level container to build a scene graph. <br> Use this class to build a game scene. <br> <br> Scene is managed by the SceneManager. <br> Use by specifying the module from the SceneManager. <br> Scene will be generated internally. <br> <br> The Scene is the life cycle exists. <br> It is important to understand the life cycle. <br> <br> 1. onCreate(params)<br> Called when created.<br> Initializes the scene graph in this function.<br> 2. onStart()<br> Called when started.<br> Called after the animation is complete.<br> 3. onResume()<br> Called when resumed. 4. onPause()<br> Called when paused.<br> 5. onStop()<br> Called when the stoped.<br> 6. onDestroy()<br> Called when destroyed.<br> 
 
 
 

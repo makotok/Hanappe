@@ -17,5 +17,5 @@ SceneManager:openScene("samples/sample_main", {animation = "fade"})
 -- If you do not want to use the SceneManager.
 --[[
 local layer = Layer()
-local sprite1 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0})
+local sprite1 = Sprite {texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0}
 --]]

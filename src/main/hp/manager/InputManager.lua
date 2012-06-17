@@ -1,15 +1,16 @@
+--------------------------------------------------------------------------------
+-- To catch the operation of the screen, and sends the event. <br>
+--
+-- @auther Makoto
+-- @class table
+-- @name InputManager
+--------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
 
-----------------------------------------------------------------
--- 画面の操作をキャッチして、イベントを発出するクラスです.
--- タッチ、キーボードの操作が該当します
--- @class table
--- @name InputManager
-----------------------------------------------------------------
-
-local M = EventDispatcher:new()
+local M = EventDispatcher()
 local pointer = {x = 0, y = 0, down = false}
 local keyboard = {key = 0, down = false}
 local touchEventStack = {}
@@ -20,9 +21,6 @@ TOUCH_EVENTS[MOAITouchSensor.TOUCH_UP] = Event.TOUCH_UP
 TOUCH_EVENTS[MOAITouchSensor.TOUCH_MOVE] = Event.TOUCH_MOVE
 TOUCH_EVENTS[MOAITouchSensor.TOUCH_CANCEL] = Event.TOUCH_CANCEL
 
-----------------------------------------------------------------
--- タッチ処理
-----------------------------------------------------------------
 local function onTouch(eventType, idx, x, y, tapCount)
     -- event
     local event = Event(TOUCH_EVENTS[eventType], M)
@@ -49,9 +47,6 @@ local function onTouch(eventType, idx, x, y, tapCount)
     M:dispatchEvent(event)
 end
 
-----------------------------------------------------------------
--- ポインター処理
-----------------------------------------------------------------
 local function onPointer(x, y)
     pointer.x = x
     pointer.y = y
@@ -61,9 +56,6 @@ local function onPointer(x, y)
     end
 end
 
----------------------------------------
--- マウスクリック処理
----------------------------------------
 local function onClick(down)
     pointer.down = down
 
@@ -77,9 +69,6 @@ local function onClick(down)
     onTouch(eventType, 1, pointer.x, pointer.y, 1)
 end
 
----------------------------------------
--- キーボード入力時のイベント処理です.
----------------------------------------
 local function onKeyboard(key, down)
     keyboard.key = key
     keyboard.down = down
@@ -91,9 +80,10 @@ local function onKeyboard(key, down)
     M:dispatchEvent(event)
 end
 
----------------------------------------
--- 初期化処理です
----------------------------------------
+--------------------------------------------------------------------------------
+-- Initialize InputManager. <br>
+-- Register a callback function for input operations.
+--------------------------------------------------------------------------------
 function M:initialize()
     -- コールバック関数の登録
     if MOAIInputMgr.device.pointer then

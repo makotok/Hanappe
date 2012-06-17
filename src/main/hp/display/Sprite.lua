@@ -1,15 +1,18 @@
+--------------------------------------------------------------------------------
+-- This is a class to draw the texture. <br>
+-- Base Classes => DisplayObject, TextureDrawable, Resizable <br>
+-- 
+-- @auther Makoto
+-- @class table
+-- @name Sprite
+--------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local DisplayObject = require("hp/display/DisplayObject")
 local TextureDrawable = require("hp/display/TextureDrawable")
 local Resizable = require("hp/display/Resizable")
 
---------------------------------------------------------------------------------
--- This is a class to draw the texture.<br>
--- Extends : DisplayObject, TextureDrawable, Resizable<br>
--- @class table
--- @name Sprite
---------------------------------------------------------------------------------
 local M = class(DisplayObject, TextureDrawable, Resizable)
 
 --------------------------------------------------------------------------------
@@ -33,7 +36,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Set the parameter setter function.
--- @param params Parameter is set to Object.<br>
+-- @param params Parameter is set to Object.
 --      (params:texture, width, height)
 --------------------------------------------------------------------------------
 function M:copyParams(params)

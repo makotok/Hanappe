@@ -1,85 +1,91 @@
+--------------------------------------------------------------------------------
+-- This module to animate the Scene. <br>
+-- You are not required to refer to the function is not available. <br>
+-- Animation is possible with the function name specified in the SceneManager. <br>
+--
+-- @auther Makoto
+-- @class table
+-- @name SceneAnimation
+--------------------------------------------------------------------------------
+
 local Animation = require("hp/display/Animation")
 
---------------------------------------------------------------------------------
--- Sceneクラスをアニメーションする為の関数群です.
--- @class table
--- @name M
---------------------------------------------------------------------------------
 local M = {}
+
 local defaultSecond = 0.5
 
 local function createShowAnimation(scene, sec)
-    return Animation:new({scene}, sec)
+    return Animation({scene}, sec)
         :setColor(1, 1, 1, 1):setVisible(true)
         :setLeft(0):setTop(0):setScl(1, 1, 1):setRot(0, 0, 0)
 end
 
----------------------------------------
--- 即座に表示します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- The displayed immediately.
+--------------------------------------------------------------------------------
 function M.changeNow(currentScene, nextScene, params)
-    return Animation:new():parallel(
-        Animation:new({currentScene}, 0):setVisible(false),
+    return Animation():parallel(
+        Animation({currentScene}, 0):setVisible(false),
         createShowAnimation(nextScene, 0)
     )
 end
 
----------------------------------------
--- ポップアップ表示します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- The pop-up display.
+--------------------------------------------------------------------------------
 function M.popIn(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
-    return Animation:new():parallel(
-        Animation:new({currentScene}, sec)
+    return Animation():parallel(
+        Animation({currentScene}, sec)
             :seekColor(0.5, 0.5, 0.5, 0.5),
         createShowAnimation(nextScene, sec)
             :setScl(0, 0, 1):seekScl(1, 1, 1)
     )
 end
 
----------------------------------------
--- ポップアップ表示をクローズします.
--- ポップアップ表示したシーンに対してのみ有効です.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Close the pop-up display. <br>
+-- Valid only for scene that displays pop-up.
+--------------------------------------------------------------------------------
 function M.popOut(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
-    return Animation:new():parallel(
-        Animation:new({currentScene}, sec):seekScl(0, 0, 1):setVisible(false),
-        Animation:new({nextScene}, sec):seekColor(1, 1, 1, 1)
+    return Animation():parallel(
+        Animation({currentScene}, sec):seekScl(0, 0, 1):setVisible(false),
+        Animation({nextScene}, sec):seekColor(1, 1, 1, 1)
     )
 end
 
----------------------------------------
--- fadeOut,fadeInを順次行います.
----------------------------------------
+--------------------------------------------------------------------------------
+-- order to run fadeOut, fadeIn.
+--------------------------------------------------------------------------------
 function M.fade(currentScene, nextScene, params)
     local sec = params.sec and params.sec or M.defaultSecond
-    return Animation:new():sequence(
-        Animation:new({nextScene}, sec):setColor(0, 0, 0, 0),
-        Animation:new({currentScene}, sec):setVisible(true):fadeOut():setVisible(false),
+    return Animation():sequence(
+        Animation({nextScene}, sec):setColor(0, 0, 0, 0),
+        Animation({currentScene}, sec):setVisible(true):fadeOut():setVisible(false),
         createShowAnimation(nextScene, sec):fadeIn()
     )
 end
 
----------------------------------------
--- fadeOut,fadeInを並列して行います.
----------------------------------------
+--------------------------------------------------------------------------------
+-- The parallel execution fadeOut, fadeIn.
+--------------------------------------------------------------------------------
 function M.crossFade(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
-    return Animation:new():parallel(
-        Animation:new({currentScene}, sec):setVisible(true):fadeOut():setVisible(false),
+    return Animation():parallel(
+        Animation({currentScene}, sec):setVisible(true):fadeOut():setVisible(false),
         createShowAnimation(nextScene, sec):fadeIn()
     )
 end
 
----------------------------------------
--- 画面上の移動します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Slide the top.
+--------------------------------------------------------------------------------
 function M.slideToTop(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
     local sw, sh = currentScene:getWidth(), currentScene:getHeight()
-    return Animation:new():parallel(
-        Animation:new({currentScene}, sec)
+    return Animation():parallel(
+        Animation({currentScene}, sec)
             :setVisible(true)
             :moveLoc(0, -sh, 0)
             :setVisible(false),
@@ -90,14 +96,14 @@ function M.slideToTop(currentScene, nextScene, params)
     )
 end
 
----------------------------------------
--- 画面下の移動します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Slide the bottom.
+--------------------------------------------------------------------------------
 function M.slideToBottom(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
     local sw, sh = currentScene:getWidth(), currentScene:getHeight()
-    return Animation:new():parallel(
-        Animation:new({currentScene}, sec)
+    return Animation():parallel(
+        Animation({currentScene}, sec)
             :moveLoc(0, sh, 0)
             :setVisible(false),
         createShowAnimation(nextScene, sec)
@@ -107,14 +113,14 @@ function M.slideToBottom(currentScene, nextScene, params)
     )
 end
 
----------------------------------------
--- 画面左の移動します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Slide the left.
+--------------------------------------------------------------------------------
 function M.slideToLeft(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
     local sw, sh = currentScene:getWidth(), currentScene:getHeight()
-    return Animation:new():parallel(
-        Animation:new({currentScene}, sec)
+    return Animation():parallel(
+        Animation({currentScene}, sec)
             :setLeft(0):setTop(0)
             :moveLoc(-sw, 0, 0)
             :setVisible(false),
@@ -126,14 +132,14 @@ function M.slideToLeft(currentScene, nextScene, params)
     
 end
 
----------------------------------------
--- 画面右の移動します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Slide the right.
+--------------------------------------------------------------------------------
 function M.slideToRight(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
     local sw, sh = currentScene:getWidth(), currentScene:getHeight()
-    return Animation:new():parallel(
-        Animation:new({currentScene}, sec)
+    return Animation():parallel(
+        Animation({currentScene}, sec)
             :setLeft(0):setTop(0)
             :moveLoc(sw, 0, 0)
             :setVisible(false),

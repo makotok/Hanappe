@@ -1,19 +1,23 @@
+--------------------------------------------------------------------------------
+-- The base class for all display objects. <br>
+-- To inherit MOAIPropUtil, you can use the convenience function. <br>
+-- To inherit EventDispatcher, you can use the event notification. <br>
+-- <br>
+-- Use the MOAIProp class. <br>
+-- By changing the M.MOAI_CLASS, you can change to another class. <br>
+-- See MOAIProp.<br>
+-- Base Classes => EventDispatcher, MOAIPropUtil<br>
+--
+-- @auther Makoto
+-- @class table
+-- @name DisplayObject
+--------------------------------------------------------------------------------
+
 local class = require("hp/lang/class")
 local table = require("hp/lang/table")
 local MOAIPropUtil = require("hp/util/MOAIPropUtil")
 local EventDispatcher = require("hp/event/EventDispatcher")
 
---------------------------------------------------------------------------------
--- The base class for all display objects.<br>
--- To inherit MOAIPropUtil, you can use the convenience function.<br>
--- To inherit EventDispatcher, you can use the event notification.<br>
--- <br>
--- Use the MOAIProp class.<br>
--- By changing the M.MOAI_CLASS, you can change to another class.<br>
--- Extends : EventDispatcher, MOAIPropUtil<br>
--- @class table
--- @name DisplayObject
---------------------------------------------------------------------------------
 local M = class(EventDispatcher, MOAIPropUtil)
 
 M.MOAI_CLASS = MOAIProp

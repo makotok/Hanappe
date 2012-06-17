@@ -356,197 +356,197 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:addCommand">M:addCommand</a>&nbsp;(command)</td>
-	<td class="summary">アニメーション実行コマンドを追加します.</td>
+	<td class="summary">Add a command run animation.<br> Usually does not need to be used.<br> You can add a custom command.<br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:clear">M:clear</a>&nbsp;()</td>
-	<td class="summary">コマンドをクリアします.</td>
+	<td class="summary">Clears the definition animation.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:executeCommand">M:executeCommand</a>&nbsp;(index)</td>
-	<td class="summary">コマンドを実行します.</td>
+	<td class="summary">To execute the command.<br> You will not be accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:fadeIn">M:fadeIn</a>&nbsp;(sec, mode)</td>
-	<td class="summary">対象オブジェクトをフェードインします.</td>
+	<td class="summary">The fade in objects.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:fadeOut">M:fadeOut</a>&nbsp;(sec, mode)</td>
-	<td class="summary">対象オブジェクトをフェードアウトします.</td>
+	<td class="summary">The fade out objects.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(targets, sec, easeType)</td>
-	<td class="summary">コンストラクタです  </td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:isRunning">M:isRunning</a>&nbsp;()</td>
-	<td class="summary">アニメーション中かどうか返します.</td>
+	<td class="summary">Returns whether the animation.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:loop">M:loop</a>&nbsp;(maxCount, animation, count, ...)</td>
-	<td class="summary">指定されたアニメーションを指定回数だけ実行します.</td>
+	<td class="name" nowrap><a href="#M:loop">M:loop</a>&nbsp;(maxCount, animation)</td>
+	<td class="summary">Run the specified number the animation of the argument.<br> If you specify a 0 to maxCount is an infinite loop.<br> If maxCount of the function, and loop until it returns the function's return value is true.<br>  </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:moveAttr">M:moveAttr</a>&nbsp;(attrID, value, sec, mode)</td>
-	<td class="summary">対象オブジェクトの属性値を設定します.</td>
+	<td class="summary">Move the value of an attribute of the object.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:moveColor">M:moveColor</a>&nbsp;(red, green, blue, alpha, sec, mode)</td>
-	<td class="summary">対象オブジェクトの色をアニメーションします.</td>
+	<td class="summary">Move the color of the object.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:moveIndex">M:moveIndex</a>&nbsp;(indexes, sec, mode)</td>
-	<td class="summary">対象オブジェクトのindex値を設定します.</td>
+	<td class="summary">Move the indexes.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:moveLoc">M:moveLoc</a>&nbsp;(moveX, moveY, moveZ, sec, mode)</td>
-	<td class="summary">対象オブジェクトを移動させます.</td>
+	<td class="summary">Move the target objects.<br> When they are performed is done at the time of animation.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:moveRot">M:moveRot</a>&nbsp;(rx, ry, rz, sec, mode)</td>
-	<td class="summary">対象オブジェクトを回転させます.</td>
+	<td class="name" nowrap><a href="#M:moveRot">M:moveRot</a>&nbsp;(x, y, z, sec, mode)</td>
+	<td class="summary">Move the rotation of the object.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:moveScl">M:moveScl</a>&nbsp;(scaleX, scaleY, scaleZ, sec, mode)</td>
-	<td class="summary">対象オブジェクトを拡大します.</td>
+	<td class="name" nowrap><a href="#M:moveScl">M:moveScl</a>&nbsp;(x, y, z, sec, mode)</td>
+	<td class="summary">Move the scale of the target object.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:newActionCommand">M:newActionCommand</a>&nbsp;(actionFunc, sec, mode, funcName, args)</td>
-	<td class="summary">非同期なアクションを伴う、 アニメーション実行コマンドを生成します.</td>
+	<td class="name" nowrap><a href="#M:newActionCommand">M:newActionCommand</a>&nbsp;(actionFunc, sec, mode)</td>
+	<td class="summary">To generate the asynchronous command with the action.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:newCommand">M:newCommand</a>&nbsp;(playFunc, stopFunc)</td>
-	<td class="summary">アニメーション実行コマンドを生成します.</td>
+	<td class="summary">Command to generate the animation.<br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:onCommandComplete">M:onCommandComplete</a>&nbsp;()</td>
-	<td class="summary">コマンド完了時のハンドラです.</td>
+	<td class="summary">The event handler when the command completes.<br> You will not be accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parallel">M:parallel</a>&nbsp;(...)</td>
-	<td class="summary">指定されたアニメーションを並列実行します.</td>
+	<td class="summary">The parallel execution of the animation of the argument.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:play">M:play</a>&nbsp;(params)</td>
-	<td class="summary">アニメーションを開始します.</td>
+	<td class="summary">To start the animation.<br> If during the start will be ignored.<br>  </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:seekAttr">M:seekAttr</a>&nbsp;(attrID, value, sec, mode)</td>
-	<td class="summary">対象オブジェクトの属性値を設定します.</td>
+	<td class="summary">Seek the value of an attribute of the object.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:seekColor">M:seekColor</a>&nbsp;(red, green, blue, alpha, sec, mode)</td>
-	<td class="summary">対象オブジェクトの色をアニメーションします.</td>
+	<td class="summary">Seek the color of the object.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:seekLoc">M:seekLoc</a>&nbsp;(moveX, moveY, moveZ, sec, mode)</td>
-	<td class="summary">対象オブジェクトを移動させます.</td>
+	<td class="name" nowrap><a href="#M:seekLoc">M:seekLoc</a>&nbsp;(x, y, z, sec, mode)</td>
+	<td class="summary">Seek the target objects.<br> When they are performed is done at the time of animation.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:seekRot">M:seekRot</a>&nbsp;(rx, ry, rz, sec, mode)</td>
-	<td class="summary">対象オブジェクトを回転させます.</td>
+	<td class="name" nowrap><a href="#M:seekRot">M:seekRot</a>&nbsp;(x, y, z, sec, mode)</td>
+	<td class="summary">Seek the rotation of the object.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:seekScl">M:seekScl</a>&nbsp;(scaleX, scaleY, scaleZ, sec, mode)</td>
-	<td class="summary">対象オブジェクトを拡大します.</td>
+	<td class="name" nowrap><a href="#M:seekScl">M:seekScl</a>&nbsp;(x, y, z, sec, mode)</td>
+	<td class="summary">Seek the scale of the target object.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:sequence">M:sequence</a>&nbsp;(...)</td>
-	<td class="summary">指定されたアニメーションを順次実行します.</td>
+	<td class="summary">The sequential execution of the animation argument.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setAttr">M:setAttr</a>&nbsp;(attrID, value)</td>
-	<td class="summary">対象オブジェクトの属性値を設定します.</td>
+	<td class="summary">Sets the value of an attribute of the object.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setBottom">M:setBottom</a>&nbsp;(bottom)</td>
-	<td class="summary">対象オブジェクトを移動させます.</td>
+	<td class="summary">Sets the position of the target object.<br> When they are performed is done at the time of animation.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setColor">M:setColor</a>&nbsp;(red, green, blue, alpha)</td>
-	<td class="summary">対象オブジェクトの色を設定します.</td>
+	<td class="summary">Sets the color of the object.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:setIndex">M:setIndex</a>&nbsp;(index, sec, mode)</td>
-	<td class="summary">対象オブジェクトのindex値を設定します.</td>
+	<td class="name" nowrap><a href="#M:setIndex">M:setIndex</a>&nbsp;(index)</td>
+	<td class="summary">Sets the index.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setLeft">M:setLeft</a>&nbsp;(left)</td>
-	<td class="summary">対象オブジェクトを移動させます.</td>
+	<td class="summary">Sets the position of the target object.<br> When they are performed is done at the time of animation.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setLoc">M:setLoc</a>&nbsp;(x, y, z)</td>
-	<td class="summary">対象オブジェクトを移動させます.</td>
+	<td class="summary">Sets the position of the target object.<br> When they are performed is done at the time of animation.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setPos">M:setPos</a>&nbsp;(left, top)</td>
-	<td class="summary">対象オブジェクトを移動させます.</td>
+	<td class="summary">Sets the position of the target object.<br> When they are performed is done at the time of animation.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setRight">M:setRight</a>&nbsp;(right)</td>
-	<td class="summary">対象オブジェクトを移動させます.</td>
+	<td class="summary">Sets the position of the target object.<br> When they are performed is done at the time of animation.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setRot">M:setRot</a>&nbsp;(x, y, z)</td>
-	<td class="summary">対象オブジェクトを移動させます.</td>
+	<td class="summary">Sets the rotation of the object.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setScl">M:setScl</a>&nbsp;(x, y, z)</td>
-	<td class="summary">対象オブジェクトを拡大させます.</td>
+	<td class="summary">Sets the scale of the target object.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setTop">M:setTop</a>&nbsp;(top)</td>
-	<td class="summary">対象オブジェクトを移動させます.</td>
+	<td class="summary">Sets the position of the target object.<br> When they are performed is done at the time of animation.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setVisible">M:setVisible</a>&nbsp;(value)</td>
-	<td class="summary">対象オブジェクトのvisibleを設定します.</td>
+	<td class="summary">Sets the target object visible.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:stop">M:stop</a>&nbsp;()</td>
-	<td class="summary">アニメーションを停止します.</td>
+	<td class="summary">Stop the animation.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:wait">M:wait</a>&nbsp;(sec)</td>
-	<td class="summary">一定時間待機します.</td>
+	<td class="summary">Wait a specified amount of time.</td>
 	</tr>
 
 </table>
@@ -559,7 +559,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#Animation ">Animation </a></td>
-	<td class="summary">ツゥイーンアニメーションする為のクラスです.</td>
+	<td class="summary">This is a class to animate the MOAIProp.</td>
 	</tr>
 
 </table>
@@ -579,14 +579,14 @@
 
 <dt><a name="M:addCommand"></a><strong>M:addCommand</strong>&nbsp;(command)</dt>
 <dd>
-アニメーション実行コマンドを追加します. 通常は使用する必要がありませんが、 カスタムコマンドを追加する事もできます.
+Add a command run animation.<br> Usually does not need to be used.<br> You can add a custom command.<br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  command: play,stop,restart関数 
+	  command: play,stop,restart 
 	</li>
 	
 </ul>
@@ -605,7 +605,7 @@
 
 <dt><a name="M:clear"></a><strong>M:clear</strong>&nbsp;()</dt>
 <dd>
-コマンドをクリアします. 
+Clears the definition animation. 
 
 
 
@@ -622,7 +622,7 @@
 
 <dt><a name="M:executeCommand"></a><strong>M:executeCommand</strong>&nbsp;(index)</dt>
 <dd>
-コマンドを実行します. 
+To execute the command.<br> You will not be accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -648,18 +648,18 @@
 
 <dt><a name="M:fadeIn"></a><strong>M:fadeIn</strong>&nbsp;(sec, mode)</dt>
 <dd>
-対象オブジェクトをフェードインします. 
+The fade in objects.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  sec: 
+	  sec: (option)Time animation.
 	</li>
 	
 	<li>
-	  mode: 
+	  mode: (option)MOAIEaseType.
 	</li>
 	
 </ul>
@@ -668,6 +668,9 @@
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -678,18 +681,18 @@
 
 <dt><a name="M:fadeOut"></a><strong>M:fadeOut</strong>&nbsp;(sec, mode)</dt>
 <dd>
-対象オブジェクトをフェードアウトします. 
+The fade out objects.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  sec: 
+	  sec: (option)Time animation.
 	</li>
 	
 	<li>
-	  mode: 
+	  mode: (option)MOAIEaseType.
 	</li>
 	
 </ul>
@@ -698,6 +701,9 @@
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -708,22 +714,22 @@
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(targets, sec, easeType)</dt>
 <dd>
-コンストラクタです 
+The constructor.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  targets: 
+	  targets: (option)MOAIProp array. Or, MOAIProp instance.
 	</li>
 	
 	<li>
-	  sec: 
+	  sec: (option)Animation time of each command.
 	</li>
 	
 	<li>
-	  easeType: 
+	  easeType: MOAIEaseType. 
 	</li>
 	
 </ul>
@@ -742,13 +748,16 @@
 
 <dt><a name="M:isRunning"></a><strong>M:isRunning</strong>&nbsp;()</dt>
 <dd>
-アニメーション中かどうか返します. 
+Returns whether the animation.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+True in the case of animation. 
 
 
 
@@ -757,28 +766,20 @@
 
 
 
-<dt><a name="M:loop"></a><strong>M:loop</strong>&nbsp;(maxCount, animation, count, ...)</dt>
+<dt><a name="M:loop"></a><strong>M:loop</strong>&nbsp;(maxCount, animation)</dt>
 <dd>
-指定されたアニメーションを指定回数だけ実行します. 0の場合は、無限にアニメーションし続けます. onLoop関数がtrueを返すと、ループは終了します. 
+Run the specified number the animation of the argument.<br> If you specify a 0 to maxCount is an infinite loop.<br> If maxCount of the function, and loop until it returns the function's return value is true.<br> 
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  maxCount: 
+	  maxCount: Loop count, or, End judgment function.
 	</li>
 	
 	<li>
 	  animation: 
-	</li>
-	
-	<li>
-	  count: ループ回数、もしくはループ判定関数
-	</li>
-	
-	<li>
-	  ...: アニメーション 
 	</li>
 	
 </ul>
@@ -787,6 +788,9 @@
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -797,26 +801,26 @@
 
 <dt><a name="M:moveAttr"></a><strong>M:moveAttr</strong>&nbsp;(attrID, value, sec, mode)</dt>
 <dd>
-対象オブジェクトの属性値を設定します. 
+Move the value of an attribute of the object.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  attrID: 
+	  attrID: Attribute.
 	</li>
 	
 	<li>
-	  value: 
+	  value: Value.
 	</li>
 	
 	<li>
-	  sec: 
+	  sec: (option)Time animation.
 	</li>
 	
 	<li>
-	  mode: 
+	  mode: (option)MOAIEaseType.
 	</li>
 	
 </ul>
@@ -825,6 +829,9 @@
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -835,34 +842,34 @@
 
 <dt><a name="M:moveColor"></a><strong>M:moveColor</strong>&nbsp;(red, green, blue, alpha, sec, mode)</dt>
 <dd>
-対象オブジェクトの色をアニメーションします. 
+Move the color of the object.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  red: 
+	  red: Red.
 	</li>
 	
 	<li>
-	  green: 
+	  green: Green.
 	</li>
 	
 	<li>
-	  blue: 
+	  blue: Blue.
 	</li>
 	
 	<li>
-	  alpha: 
+	  alpha: Alpha.
 	</li>
 	
 	<li>
-	  sec: 
+	  sec: (option)Time animation.
 	</li>
 	
 	<li>
-	  mode: 
+	  mode: (option)MOAIEaseType.
 	</li>
 	
 </ul>
@@ -871,6 +878,9 @@
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -881,22 +891,22 @@
 
 <dt><a name="M:moveIndex"></a><strong>M:moveIndex</strong>&nbsp;(indexes, sec, mode)</dt>
 <dd>
-対象オブジェクトのindex値を設定します. 
+Move the indexes.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  indexes: 
+	  indexes: Array of indices.
 	</li>
 	
 	<li>
-	  sec: 
+	  sec: (option)Time animation.
 	</li>
 	
 	<li>
-	  mode: 
+	  mode: (option)MOAIEaseType.
 	</li>
 	
 </ul>
@@ -905,6 +915,9 @@
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -915,156 +928,30 @@
 
 <dt><a name="M:moveLoc"></a><strong>M:moveLoc</strong>&nbsp;(moveX, moveY, moveZ, sec, mode)</dt>
 <dd>
-対象オブジェクトを移動させます. 
+Move the target objects.<br> When they are performed is done at the time of animation.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  moveX: 
+	  moveX: X of the position.
 	</li>
 	
 	<li>
-	  moveY: 
+	  moveY: Y of the position.
 	</li>
 	
 	<li>
-	  moveZ: 
+	  moveZ: Z of the position.
 	</li>
 	
 	<li>
-	  sec: 
+	  sec: (option)Time animation.
 	</li>
 	
 	<li>
-	  mode: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:moveRot"></a><strong>M:moveRot</strong>&nbsp;(rx, ry, rz, sec, mode)</dt>
-<dd>
-対象オブジェクトを回転させます. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  rx: 
-	</li>
-	
-	<li>
-	  ry: 
-	</li>
-	
-	<li>
-	  rz: 
-	</li>
-	
-	<li>
-	  sec: 
-	</li>
-	
-	<li>
-	  mode: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:moveScl"></a><strong>M:moveScl</strong>&nbsp;(scaleX, scaleY, scaleZ, sec, mode)</dt>
-<dd>
-対象オブジェクトを拡大します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  scaleX: 
-	</li>
-	
-	<li>
-	  scaleY: 
-	</li>
-	
-	<li>
-	  scaleZ: 
-	</li>
-	
-	<li>
-	  sec: 
-	</li>
-	
-	<li>
-	  mode: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:newActionCommand"></a><strong>M:newActionCommand</strong>&nbsp;(actionFunc, sec, mode, funcName, args)</dt>
-<dd>
-非同期なアクションを伴う、 アニメーション実行コマンドを生成します.
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  actionFunc: 
-	</li>
-	
-	<li>
-	  sec: 秒
-	</li>
-	
-	<li>
-	  mode: EaseType
-	</li>
-	
-	<li>
-	  funcName: 関数名
-	</li>
-	
-	<li>
-	  args: sec, modeをのぞく引数
+	  mode: (option)MOAIEaseType.
 	</li>
 	
 </ul>
@@ -1075,7 +962,134 @@
 
 
 <h3>Return value:</h3>
-command コマンドテーブル 
+self 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:moveRot"></a><strong>M:moveRot</strong>&nbsp;(x, y, z, sec, mode)</dt>
+<dd>
+Move the rotation of the object.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x: Rotation of the x-axis.
+	</li>
+	
+	<li>
+	  y: Rotation of the y-axis.
+	</li>
+	
+	<li>
+	  z: Rotation of the z-axis.
+	</li>
+	
+	<li>
+	  sec: (option)Time animation.
+	</li>
+	
+	<li>
+	  mode: (option)MOAIEaseType.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+self 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:moveScl"></a><strong>M:moveScl</strong>&nbsp;(x, y, z, sec, mode)</dt>
+<dd>
+Move the scale of the target object.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  x: Scale of the x-axis
+	</li>
+	
+	<li>
+	  y: Scale of the y-axis.
+	</li>
+	
+	<li>
+	  z: Scale of the z-axis.
+	</li>
+	
+	<li>
+	  sec: (option)Time animation.
+	</li>
+	
+	<li>
+	  mode: (option)MOAIEaseType.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+self 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:newActionCommand"></a><strong>M:newActionCommand</strong>&nbsp;(actionFunc, sec, mode)</dt>
+<dd>
+To generate the asynchronous command with the action.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  actionFunc: 関数名
+	</li>
+	
+	<li>
+	  sec: Time Animation.
+	</li>
+	
+	<li>
+	  mode: MOAIEaseType.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+command 
 
 
 
@@ -1086,18 +1100,18 @@ command コマンドテーブル
 
 <dt><a name="M:newCommand"></a><strong>M:newCommand</strong>&nbsp;(playFunc, stopFunc)</dt>
 <dd>
-アニメーション実行コマンドを生成します. 実行コマンドは単純なテーブルです. 指定しなかった関数は空関数がセットされます.
+Command to generate the animation.<br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  playFunc: 開始 playFunc(callback)
+	  playFunc: playFunc(callback)
 	</li>
 	
 	<li>
-	  stopFunc: 停止 stopFunc()
+	  stopFunc: stopFunc()
 	</li>
 	
 </ul>
@@ -1108,7 +1122,7 @@ command コマンドテーブル
 
 
 <h3>Return value:</h3>
-command コマンドテーブル 
+command 
 
 
 
@@ -1119,7 +1133,7 @@ command コマンドテーブル
 
 <dt><a name="M:onCommandComplete"></a><strong>M:onCommandComplete</strong>&nbsp;()</dt>
 <dd>
-コマンド完了時のハンドラです. 
+The event handler when the command completes.<br> You will not be accessible from the outside. 
 
 
 
@@ -1136,14 +1150,14 @@ command コマンドテーブル
 
 <dt><a name="M:parallel"></a><strong>M:parallel</strong>&nbsp;(...)</dt>
 <dd>
-指定されたアニメーションを並列実行します. 
+The parallel execution of the animation of the argument.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  ...: 
+	  ...: Animations
 	</li>
 	
 </ul>
@@ -1152,6 +1166,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1162,14 +1179,14 @@ command コマンドテーブル
 
 <dt><a name="M:play"></a><strong>M:play</strong>&nbsp;(params)</dt>
 <dd>
-アニメーションを開始します. 一時停止していた場合は最初から再開します.  引数のparamsでいくつかの動作を制御できます. params.onComplete(e)に関数を指定すると 完了時に関数がコールされます. 
+To start the animation.<br> If during the start will be ignored.<br> 
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  params: (option)Parameters that control the behavior.
 	</li>
 	
 </ul>
@@ -1178,6 +1195,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1188,26 +1208,26 @@ command コマンドテーブル
 
 <dt><a name="M:seekAttr"></a><strong>M:seekAttr</strong>&nbsp;(attrID, value, sec, mode)</dt>
 <dd>
-対象オブジェクトの属性値を設定します. 
+Seek the value of an attribute of the object.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  attrID: 
+	  attrID: Attribute.
 	</li>
 	
 	<li>
-	  value: 
+	  value: Value.
 	</li>
 	
 	<li>
-	  sec: 
+	  sec: (option)Time animation.
 	</li>
 	
 	<li>
-	  mode: 
+	  mode: (option)MOAIEaseType.
 	</li>
 	
 </ul>
@@ -1216,6 +1236,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1226,34 +1249,34 @@ command コマンドテーブル
 
 <dt><a name="M:seekColor"></a><strong>M:seekColor</strong>&nbsp;(red, green, blue, alpha, sec, mode)</dt>
 <dd>
-対象オブジェクトの色をアニメーションします. 
+Seek the color of the object.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  red: 
+	  red: Red.
 	</li>
 	
 	<li>
-	  green: 
+	  green: Green.
 	</li>
 	
 	<li>
-	  blue: 
+	  blue: Blue.
 	</li>
 	
 	<li>
-	  alpha: 
+	  alpha: Alpha.
 	</li>
 	
 	<li>
-	  sec: 
+	  sec: (option)Time animation.
 	</li>
 	
 	<li>
-	  mode: 
+	  mode: (option)MOAIEaseType.
 	</li>
 	
 </ul>
@@ -1262,6 +1285,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1270,32 +1296,32 @@ command コマンドテーブル
 
 
 
-<dt><a name="M:seekLoc"></a><strong>M:seekLoc</strong>&nbsp;(moveX, moveY, moveZ, sec, mode)</dt>
+<dt><a name="M:seekLoc"></a><strong>M:seekLoc</strong>&nbsp;(x, y, z, sec, mode)</dt>
 <dd>
-対象オブジェクトを移動させます. 
+Seek the target objects.<br> When they are performed is done at the time of animation.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  moveX: 
+	  x: X of the position.
 	</li>
 	
 	<li>
-	  moveY: 
+	  y: Y of the position.
 	</li>
 	
 	<li>
-	  moveZ: 
+	  z: Z of the position.
 	</li>
 	
 	<li>
-	  sec: 
+	  sec: (option)Time animation.
 	</li>
 	
 	<li>
-	  mode: 
+	  mode: (option)MOAIEaseType.
 	</li>
 	
 </ul>
@@ -1304,6 +1330,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1312,32 +1341,32 @@ command コマンドテーブル
 
 
 
-<dt><a name="M:seekRot"></a><strong>M:seekRot</strong>&nbsp;(rx, ry, rz, sec, mode)</dt>
+<dt><a name="M:seekRot"></a><strong>M:seekRot</strong>&nbsp;(x, y, z, sec, mode)</dt>
 <dd>
-対象オブジェクトを回転させます. 
+Seek the rotation of the object.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  rx: 
+	  x: Rotation of the x-axis.
 	</li>
 	
 	<li>
-	  ry: 
+	  y: Rotation of the y-axis.
 	</li>
 	
 	<li>
-	  rz: 
+	  z: Rotation of the z-axis.
 	</li>
 	
 	<li>
-	  sec: 
+	  sec: (option)Time animation.
 	</li>
 	
 	<li>
-	  mode: 
+	  mode: (option)MOAIEaseType.
 	</li>
 	
 </ul>
@@ -1346,6 +1375,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1354,32 +1386,32 @@ command コマンドテーブル
 
 
 
-<dt><a name="M:seekScl"></a><strong>M:seekScl</strong>&nbsp;(scaleX, scaleY, scaleZ, sec, mode)</dt>
+<dt><a name="M:seekScl"></a><strong>M:seekScl</strong>&nbsp;(x, y, z, sec, mode)</dt>
 <dd>
-対象オブジェクトを拡大します. 
+Seek the scale of the target object.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  scaleX: 
+	  x: Scale of the x-axis
 	</li>
 	
 	<li>
-	  scaleY: 
+	  y: Scale of the y-axis.
 	</li>
 	
 	<li>
-	  scaleZ: 
+	  z: Scale of the z-axis.
 	</li>
 	
 	<li>
-	  sec: 
+	  sec: (option)Time animation.
 	</li>
 	
 	<li>
-	  mode: 
+	  mode: (option)MOAIEaseType.
 	</li>
 	
 </ul>
@@ -1388,6 +1420,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1398,14 +1433,14 @@ command コマンドテーブル
 
 <dt><a name="M:sequence"></a><strong>M:sequence</strong>&nbsp;(...)</dt>
 <dd>
-指定されたアニメーションを順次実行します. 
+The sequential execution of the animation argument.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  ...: 
+	  ...: Animations
 	</li>
 	
 </ul>
@@ -1414,6 +1449,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1424,18 +1462,18 @@ command コマンドテーブル
 
 <dt><a name="M:setAttr"></a><strong>M:setAttr</strong>&nbsp;(attrID, value)</dt>
 <dd>
-対象オブジェクトの属性値を設定します. 
+Sets the value of an attribute of the object.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  attrID: 
+	  attrID: Attribute.
 	</li>
 	
 	<li>
-	  value: 
+	  value: Value.
 	</li>
 	
 </ul>
@@ -1444,6 +1482,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1454,14 +1495,14 @@ command コマンドテーブル
 
 <dt><a name="M:setBottom"></a><strong>M:setBottom</strong>&nbsp;(bottom)</dt>
 <dd>
-対象オブジェクトを移動させます. 
+Sets the position of the target object.<br> When they are performed is done at the time of animation.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  bottom: 
+	  bottom: Bottom of the position.
 	</li>
 	
 </ul>
@@ -1470,6 +1511,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1480,26 +1524,26 @@ command コマンドテーブル
 
 <dt><a name="M:setColor"></a><strong>M:setColor</strong>&nbsp;(red, green, blue, alpha)</dt>
 <dd>
-対象オブジェクトの色を設定します. 
+Sets the color of the object.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  red: 
+	  red: Red.
 	</li>
 	
 	<li>
-	  green: 
+	  green: Green.
 	</li>
 	
 	<li>
-	  blue: 
+	  blue: Blue.
 	</li>
 	
 	<li>
-	  alpha: 
+	  alpha: Alpha.
 	</li>
 	
 </ul>
@@ -1508,6 +1552,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1516,24 +1563,16 @@ command コマンドテーブル
 
 
 
-<dt><a name="M:setIndex"></a><strong>M:setIndex</strong>&nbsp;(index, sec, mode)</dt>
+<dt><a name="M:setIndex"></a><strong>M:setIndex</strong>&nbsp;(index)</dt>
 <dd>
-対象オブジェクトのindex値を設定します. 
+Sets the index.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  index: 
-	</li>
-	
-	<li>
-	  sec: 
-	</li>
-	
-	<li>
-	  mode: 
+	  index: Index.
 	</li>
 	
 </ul>
@@ -1542,6 +1581,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1552,14 +1594,14 @@ command コマンドテーブル
 
 <dt><a name="M:setLeft"></a><strong>M:setLeft</strong>&nbsp;(left)</dt>
 <dd>
-対象オブジェクトを移動させます. 
+Sets the position of the target object.<br> When they are performed is done at the time of animation.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  left: 
+	  left: Left of the position.
 	</li>
 	
 </ul>
@@ -1568,6 +1610,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1578,22 +1623,22 @@ command コマンドテーブル
 
 <dt><a name="M:setLoc"></a><strong>M:setLoc</strong>&nbsp;(x, y, z)</dt>
 <dd>
-対象オブジェクトを移動させます. 
+Sets the position of the target object.<br> When they are performed is done at the time of animation.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  x: 
+	  x: X of the position.
 	</li>
 	
 	<li>
-	  y: 
+	  y: Y of the position.
 	</li>
 	
 	<li>
-	  z: 
+	  z: Z of the position.
 	</li>
 	
 </ul>
@@ -1602,6 +1647,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1612,18 +1660,18 @@ command コマンドテーブル
 
 <dt><a name="M:setPos"></a><strong>M:setPos</strong>&nbsp;(left, top)</dt>
 <dd>
-対象オブジェクトを移動させます. 
+Sets the position of the target object.<br> When they are performed is done at the time of animation.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  left: 
+	  left: Left of the position.
 	</li>
 	
 	<li>
-	  top: 
+	  top: Top of the position.
 	</li>
 	
 </ul>
@@ -1632,6 +1680,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1642,14 +1693,14 @@ command コマンドテーブル
 
 <dt><a name="M:setRight"></a><strong>M:setRight</strong>&nbsp;(right)</dt>
 <dd>
-対象オブジェクトを移動させます. 
+Sets the position of the target object.<br> When they are performed is done at the time of animation.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  right: 
+	  right: Right of the position.
 	</li>
 	
 </ul>
@@ -1658,6 +1709,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1668,22 +1722,22 @@ command コマンドテーブル
 
 <dt><a name="M:setRot"></a><strong>M:setRot</strong>&nbsp;(x, y, z)</dt>
 <dd>
-対象オブジェクトを移動させます. 
+Sets the rotation of the object.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  x: 
+	  x: Rotation of the x-axis.
 	</li>
 	
 	<li>
-	  y: 
+	  y: Rotation of the y-axis.
 	</li>
 	
 	<li>
-	  z: 
+	  z: Rotation of the z-axis.
 	</li>
 	
 </ul>
@@ -1692,6 +1746,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1702,22 +1759,22 @@ command コマンドテーブル
 
 <dt><a name="M:setScl"></a><strong>M:setScl</strong>&nbsp;(x, y, z)</dt>
 <dd>
-対象オブジェクトを拡大させます. 
+Sets the scale of the target object.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  x: 
+	  x: Scale of the x-axis
 	</li>
 	
 	<li>
-	  y: 
+	  y: Scale of the y-axis.
 	</li>
 	
 	<li>
-	  z: 
+	  z: Scale of the z-axis.
 	</li>
 	
 </ul>
@@ -1726,6 +1783,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1736,14 +1796,14 @@ command コマンドテーブル
 
 <dt><a name="M:setTop"></a><strong>M:setTop</strong>&nbsp;(top)</dt>
 <dd>
-対象オブジェクトを移動させます. 
+Sets the position of the target object.<br> When they are performed is done at the time of animation.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  top: 
+	  top: Top of the position.
 	</li>
 	
 </ul>
@@ -1752,6 +1812,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1762,14 +1825,14 @@ command コマンドテーブル
 
 <dt><a name="M:setVisible"></a><strong>M:setVisible</strong>&nbsp;(value)</dt>
 <dd>
-対象オブジェクトのvisibleを設定します. 
+Sets the target object visible.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  value: 
+	  value: Visible.
 	</li>
 	
 </ul>
@@ -1778,6 +1841,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1788,7 +1854,7 @@ command コマンドテーブル
 
 <dt><a name="M:stop"></a><strong>M:stop</strong>&nbsp;()</dt>
 <dd>
-アニメーションを停止します. 
+Stop the animation. 
 
 
 
@@ -1805,14 +1871,14 @@ command コマンドテーブル
 
 <dt><a name="M:wait"></a><strong>M:wait</strong>&nbsp;(sec)</dt>
 <dd>
-一定時間待機します.
+Wait a specified amount of time.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  sec: 待機時間 
+	  sec: Waiting time.
 	</li>
 	
 </ul>
@@ -1821,6 +1887,9 @@ command コマンドテーブル
 
 
 
+
+<h3>Return value:</h3>
+self 
 
 
 
@@ -1836,7 +1905,7 @@ command コマンドテーブル
 <dl class="table">
 
 <dt><a name="Animation "></a><strong>Animation </strong></dt>
-<dd>ツゥイーンアニメーションする為のクラスです. 移動、回転、拡大や、フレームアニメーションに対応します. 
+<dd>This is a class to animate the MOAIProp. <br> You can define the animation to flow. <br> If you want to achieve complex animations, will say only this class. <br> 
 
 
 

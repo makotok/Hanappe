@@ -356,77 +356,77 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:copyParams">M:copyParams</a>&nbsp;(params)</td>
-	<td class="summary">パラメータを各プロパティにコピーします.</td>
+	<td class="summary">Set the parameter setter function.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getScreenHeight">M:getScreenHeight</a>&nbsp;()</td>
-	<td class="summary">画面上のレイヤーのサイズを返します.</td>
+	<td class="summary">Returns the size of the layer on the screen.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getScreenSize">M:getScreenSize</a>&nbsp;()</td>
-	<td class="summary">画面上のレイヤーのサイズを返します.</td>
+	<td class="summary">Returns the size of the layer on the screen.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getScreenWidth">M:getScreenWidth</a>&nbsp;()</td>
-	<td class="summary">画面上のレイヤーのサイズを返します.</td>
+	<td class="summary">Returns the size of the layer on the screen.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getViewHeight">M:getViewHeight</a>&nbsp;()</td>
-	<td class="summary">レイヤーのビューポートサイズを設定します.</td>
+	<td class="summary">Returns the viewport size of the layer.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getViewScale">M:getViewScale</a>&nbsp;()</td>
-	<td class="summary">スクリーンとViewportのスケールを返します.</td>
+	<td class="summary">Returns the scale of the screen and viewport.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getViewScaleX">M:getViewScaleX</a>&nbsp;()</td>
-	<td class="summary">スクリーンとViewportのスケールを返します.</td>
+	<td class="summary">Returns the scale of the screen and viewport.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getViewScaleY">M:getViewScaleY</a>&nbsp;()</td>
-	<td class="summary">スクリーンとViewportのスケールを返します.</td>
+	<td class="summary">Returns the scale of the screen and viewport.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getViewSize">M:getViewSize</a>&nbsp;()</td>
-	<td class="summary">レイヤーのビューポートサイズを設定します.</td>
+	<td class="summary">Returns the viewport size of the layer.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getViewWidth">M:getViewWidth</a>&nbsp;()</td>
-	<td class="summary">レイヤーのビューポートサイズを設定します.</td>
+	<td class="summary">Returns the viewport size of the layer.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">Layerインスタンスを生成して返します.</td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setOffset">M:setOffset</a>&nbsp;(offsetX, offsetY)</td>
-	<td class="summary">ビューポートのオフセットを設定します.</td>
+	<td class="summary">Sets the offset of the viewport.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setScene">M:setScene</a>&nbsp;(scene)</td>
-	<td class="summary">シーンを設定します.</td>
+	<td class="summary">Sets the scene.<br> By setting the scene, and then draw in the scene.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setScreenSize">M:setScreenSize</a>&nbsp;(width, height)</td>
-	<td class="summary">画面上のレイヤーのサイズを設定します.</td>
+	<td class="summary">Sets the size of the layer on the screen.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setViewSize">M:setViewSize</a>&nbsp;(width, height)</td>
-	<td class="summary">レイヤーのビューポートサイズを設定します.</td>
+	<td class="summary">Sets the viewport size of the layer.</td>
 	</tr>
 
 </table>
@@ -439,7 +439,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#Layer ">Layer </a></td>
-	<td class="summary">MOAILayerを拡張したクラスです.<br> サイズの設定など、レイヤーの生成を簡略化します.<br> </td>
+	<td class="summary">This class inherits the MOAILayer.</td>
 	</tr>
 
 </table>
@@ -459,14 +459,14 @@
 
 <dt><a name="M:copyParams"></a><strong>M:copyParams</strong>&nbsp;(params)</dt>
 <dd>
-パラメータを各プロパティにコピーします. 
+Set the parameter setter function.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  params: Parameter is set to Object.<br> 
 	</li>
 	
 </ul>
@@ -485,13 +485,16 @@
 
 <dt><a name="M:getScreenHeight"></a><strong>M:getScreenHeight</strong>&nbsp;()</dt>
 <dd>
-画面上のレイヤーのサイズを返します. TODO:変数によるアクセスは将来的に削除される予定です. 
+Returns the size of the layer on the screen.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+Height of screen. 
 
 
 
@@ -502,13 +505,16 @@
 
 <dt><a name="M:getScreenSize"></a><strong>M:getScreenSize</strong>&nbsp;()</dt>
 <dd>
-画面上のレイヤーのサイズを返します. TODO:変数によるアクセスは将来的に削除される予定です. 
+Returns the size of the layer on the screen.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+width, height 
 
 
 
@@ -519,13 +525,16 @@
 
 <dt><a name="M:getScreenWidth"></a><strong>M:getScreenWidth</strong>&nbsp;()</dt>
 <dd>
-画面上のレイヤーのサイズを返します. TODO:変数によるアクセスは将来的に削除される予定です. 
+Returns the size of the layer on the screen.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+Width of screen. 
 
 
 
@@ -536,13 +545,16 @@
 
 <dt><a name="M:getViewHeight"></a><strong>M:getViewHeight</strong>&nbsp;()</dt>
 <dd>
-レイヤーのビューポートサイズを設定します. 
+Returns the viewport size of the layer.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+viewHeight. 
 
 
 
@@ -553,13 +565,16 @@
 
 <dt><a name="M:getViewScale"></a><strong>M:getViewScale</strong>&nbsp;()</dt>
 <dd>
-スクリーンとViewportのスケールを返します. 
+Returns the scale of the screen and viewport.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+scaleX, scaleY. 
 
 
 
@@ -570,13 +585,16 @@
 
 <dt><a name="M:getViewScaleX"></a><strong>M:getViewScaleX</strong>&nbsp;()</dt>
 <dd>
-スクリーンとViewportのスケールを返します. 
+Returns the scale of the screen and viewport.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+scaleX 
 
 
 
@@ -587,13 +605,16 @@
 
 <dt><a name="M:getViewScaleY"></a><strong>M:getViewScaleY</strong>&nbsp;()</dt>
 <dd>
-スクリーンとViewportのスケールを返します. 
+Returns the scale of the screen and viewport.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+scaleY. 
 
 
 
@@ -604,13 +625,16 @@
 
 <dt><a name="M:getViewSize"></a><strong>M:getViewSize</strong>&nbsp;()</dt>
 <dd>
-レイヤーのビューポートサイズを設定します. 
+Returns the viewport size of the layer.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+viewWidth, viewHeight. 
 
 
 
@@ -621,13 +645,16 @@
 
 <dt><a name="M:getViewWidth"></a><strong>M:getViewWidth</strong>&nbsp;()</dt>
 <dd>
-レイヤーのビューポートサイズを設定します. 
+Returns the viewport size of the layer.
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+viewWidth. 
 
 
 
@@ -638,14 +665,14 @@
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
 <dd>
-Layerインスタンスを生成して返します. 
+The constructor.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  params: (option)Parameter is set to Object.<br> 
 	</li>
 	
 </ul>
@@ -664,18 +691,18 @@ Layerインスタンスを生成して返します.
 
 <dt><a name="M:setOffset"></a><strong>M:setOffset</strong>&nbsp;(offsetX, offsetY)</dt>
 <dd>
-ビューポートのオフセットを設定します. 
+Sets the offset of the viewport.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  offsetX: 
+	  offsetX: offsetX.
 	</li>
 	
 	<li>
-	  offsetY: 
+	  offsetY: offsetY. 
 	</li>
 	
 </ul>
@@ -694,14 +721,14 @@ Layerインスタンスを生成して返します.
 
 <dt><a name="M:setScene"></a><strong>M:setScene</strong>&nbsp;(scene)</dt>
 <dd>
-シーンを設定します. 
+Sets the scene.<br> By setting the scene, and then draw in the scene.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  scene: 
+	  scene: scene. 
 	</li>
 	
 </ul>
@@ -720,18 +747,18 @@ Layerインスタンスを生成して返します.
 
 <dt><a name="M:setScreenSize"></a><strong>M:setScreenSize</strong>&nbsp;(width, height)</dt>
 <dd>
-画面上のレイヤーのサイズを設定します. 
+Sets the size of the layer on the screen.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  width: 
+	  width: Width of the screen.
 	</li>
 	
 	<li>
-	  height: 
+	  height: Height of the screen. 
 	</li>
 	
 </ul>
@@ -750,18 +777,18 @@ Layerインスタンスを生成して返します.
 
 <dt><a name="M:setViewSize"></a><strong>M:setViewSize</strong>&nbsp;(width, height)</dt>
 <dd>
-レイヤーのビューポートサイズを設定します. 
+Sets the viewport size of the layer.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  width: 
+	  width: Width of the viewport.
 	</li>
 	
 	<li>
-	  height: 
+	  height: Height of the viewport. 
 	</li>
 	
 </ul>
@@ -785,7 +812,7 @@ Layerインスタンスを生成して返します.
 <dl class="table">
 
 <dt><a name="Layer "></a><strong>Layer </strong></dt>
-<dd>MOAILayerを拡張したクラスです.<br> サイズの設定など、レイヤーの生成を簡略化します.<br>
+<dd>This class inherits the MOAILayer. <br> Simplifies the generation of a set of size and layer. <br> 
 
 
 

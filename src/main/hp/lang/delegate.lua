@@ -1,5 +1,7 @@
 ----------------------------------------------------------------
--- Modules to perform additional functions by delegation.<br>
+-- Modules to perform additional functions by delegation. <br>
+--
+-- @auther Makoto
 -- @class table
 -- @name delegate
 ----------------------------------------------------------------

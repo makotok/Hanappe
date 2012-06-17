@@ -2,8 +2,10 @@ local class = require("hp/lang/class")
 local Event = require("hp/event/Event")
 
 --------------------------------------------------------------------------------
--- イベントリスナーです.
--- ライブラリ内部で使用されます.
+-- This class is an event listener. <br>
+-- Framework will be used internally. <br>
+--
+-- @auther Makoto
 -- @class table
 -- @name EventListener
 --------------------------------------------------------------------------------

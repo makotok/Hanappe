@@ -1,16 +1,16 @@
-local class = require("hp/lang/class")
-
 --------------------------------------------------------------------------------
--- Eventの基本クラスです.<br>
--- Eventのタイプ、送信元などの情報を保持します.
+-- The base class Event. <br>
+-- Holds the data of the Event. <br>
+--
+-- @auther Makoto
 -- @class table
 -- @name Event
 --------------------------------------------------------------------------------
 
+local class = require("hp/lang/class")
+
 local M = class()
 
--- 定数
--- 典型的なイベントを定義
 M.OPEN = "open"
 M.CLOSE = "close"
 M.ACTIVATE = "activate"
@@ -38,19 +38,27 @@ M.PRIORITY_MIN = 0
 M.PRIORITY_DEFAULT = 1000
 M.PRIORITY_MAX = 10000000
 
----------------------------------------
---- コンストラクタです
----------------------------------------
+--------------------------------------------------------------------------------
+-- The constructor.
+-- @param eventType (option)The type of event.
+--------------------------------------------------------------------------------
 function M:init(eventType)
     self.type = eventType
     self.stoped = false
 end
 
+--------------------------------------------------------------------------------
+-- Sets the event listener by EventDispatcher. <br>
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:setListener(callback, source)
     self.callback = callback
     self.source = source
 end
 
+--------------------------------------------------------------------------------
+--Stop the propagation of the event.
+--------------------------------------------------------------------------------
 function M:stop()
     self.stoped = true
 end

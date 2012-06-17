@@ -356,7 +356,17 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(eventType)</td>
-	<td class="summary">コンストラクタです  </td>
+	<td class="summary">The constructor.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setListener">M:setListener</a>&nbsp;(callback, source)</td>
+	<td class="summary">Sets the event listener by EventDispatcher.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:stop">M:stop</a>&nbsp;()</td>
+	<td class="summary">Stop the propagation of the event.</td>
 	</tr>
 
 </table>
@@ -369,7 +379,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#Event ">Event </a></td>
-	<td class="summary">Eventの基本クラスです.<br> Eventのタイプ、送信元などの情報を保持します.</td>
+	<td class="summary">The base class Event.</td>
 	</tr>
 
 </table>
@@ -389,17 +399,64 @@
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(eventType)</dt>
 <dd>
-コンストラクタです 
+The constructor.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  eventType: 
+	  eventType: (option)The type of event. 
 	</li>
 	
 </ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setListener"></a><strong>M:setListener</strong>&nbsp;(callback, source)</dt>
+<dd>
+Sets the event listener by EventDispatcher. <br> Please do not accessible from the outside. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  callback: 
+	</li>
+	
+	<li>
+	  source: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:stop"></a><strong>M:stop</strong>&nbsp;()</dt>
+<dd>
+Stop the propagation of the event. 
+
 
 
 
@@ -420,7 +477,7 @@
 <dl class="table">
 
 <dt><a name="Event "></a><strong>Event </strong></dt>
-<dd>Eventの基本クラスです.<br> Eventのタイプ、送信元などの情報を保持します.
+<dd>The base class Event. <br> Holds the data of the Event. <br> 
 
 
 

@@ -1,17 +1,19 @@
+--------------------------------------------------------------------------------
+-- This is a class to draw the sheet switching. <br>
+-- Sheet can be defined in any shape. <br>
+-- <br>
+-- Base Classes => DisplayObject, TextureDrawable<br>
+-- 
+-- @auther Makoto
+-- @class table
+-- @name SpriteSheet
+--------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local DisplayObject = require("hp/display/DisplayObject")
 local TextureDrawable = require("hp/display/TextureDrawable")
 
---------------------------------------------------------------------------------
--- This is a class to draw the sheet switching.<br>
--- Sheet can be defined in any shape.<br>
--- <br>
--- Extends -> DisplayObject, TextureDrawable<br>
--- 
--- @class table
--- @name SpriteSheet
---------------------------------------------------------------------------------
 local M = class(DisplayObject, TextureDrawable)
 
 --------------------------------------------------------------------------------

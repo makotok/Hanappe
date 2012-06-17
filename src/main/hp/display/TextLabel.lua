@@ -1,16 +1,18 @@
+--------------------------------------------------------------------------------
+-- This is a class to draw the text.<br>
+-- See MOAITextBox.<br>
+-- Base Classes => DisplayObject, Resizable<br>
+--
+-- @auther Makoto
+-- @class table
+-- @name TextLabel
+--------------------------------------------------------------------------------
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local DisplayObject = require("hp/display/DisplayObject")
 local Resizable = require("hp/display/Resizable")
 local FontManager = require("hp/manager/FontManager")
 
---------------------------------------------------------------------------------
--- This is a class to draw the text.<br>
--- See MOAITextBox.<br>
--- Extends : DisplayObject, Resizable<br>
--- @class table
--- @name TextLabel
---------------------------------------------------------------------------------
 local M = class(DisplayObject, Resizable)
 
 M.MOAI_CLASS = MOAITextBox

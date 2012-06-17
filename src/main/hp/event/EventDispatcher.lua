@@ -1,38 +1,39 @@
+--------------------------------------------------------------------------------
+-- This class is has a function of event notification. <br>
+--
+-- @auther Makoto
+-- @class table
+-- @name EventDispatcher
+--------------------------------------------------------------------------------
+
 local class = require("hp/lang/class")
 local Event = require("hp/event/Event")
 local EventListener = require("hp/event/EventListener")
 
-----------------------------------------------------------------
--- イベント処理を行うための基本クラスです.
--- イベントの発出した結果を、登録したイベントリスナがキャッチして
--- イベント処理を行います.
--- @class table
--- @name EventDispatcher
-----------------------------------------------------------------
 local M = class()
 
----------------------------------------
--- コンストラクタです
----------------------------------------
+--------------------------------------------------------------------------------
+-- The constructor.
+-- @param eventType (option)The type of event.
+--------------------------------------------------------------------------------
 function M:init()
     self.eventlisteners = {}
 end
 
----------------------------------------
--- イベントリスナを登録します.
--- callbackは、呼び出されるコールバック関数です.
--- sourceは、オブジェクトの関数だった場合に指定します.
--- nilの場合は、callback(event)となり、
--- 指定ありの場合、callback(self, event)で呼ばれます.
--- priorityは、優先度です.
--- 優先度が小さい値程、最初に関数が呼ばれます.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Adds an event listener. <br>
+-- will now catch the events that are sent in the dispatchEvent. <br>
+-- @param evenType Target event type.
+-- @param callback The callback function.
+-- @param source (option)The first argument passed to the callback function.
+-- @param priority (option)Notification order.
+--------------------------------------------------------------------------------
 function M:addEventListener(eventType, callback, source, priority)
     if self:hasEventListener(eventType, callback, source) then
         return false
     end
 
-    local listener = EventListener:new(eventType, callback, source, priority)
+    local listener = EventListener(eventType, callback, source, priority)
 
     for i, v in ipairs(self.eventlisteners) do
         if listener.priority < v.priority then
@@ -45,9 +46,9 @@ function M:addEventListener(eventType, callback, source, priority)
     return true
 end
 
----------------------------------------
---- イベントリスナを削除します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Removes an event listener.
+--------------------------------------------------------------------------------
 function M:removeEventListener(eventType, callback, source)
     for key, obj in ipairs(self.eventlisteners) do
         if obj.type == eventType and obj.callback == callback and obj.source == source then
@@ -58,9 +59,10 @@ function M:removeEventListener(eventType, callback, source)
     return false
 end
 
----------------------------------------
--- イベントリスナが登録済か返します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Returns true if you have an event listener. <br>
+-- @return Returns true if you have an event listener.
+--------------------------------------------------------------------------------
 function M:hasEventListener(eventType, callback, source)
     assert(eventType)
     for key, obj in ipairs(self.eventlisteners) do
@@ -77,9 +79,9 @@ function M:hasEventListener(eventType, callback, source)
     return false
 end
 
----------------------------------------
--- イベントをディスパッチします
----------------------------------------
+--------------------------------------------------------------------------------
+-- Dispatches the event.
+--------------------------------------------------------------------------------
 function M:dispatchEvent(event)
     event = type(event) == "string" and Event(event) or event
     event.stoped = false
@@ -95,9 +97,9 @@ function M:dispatchEvent(event)
     end
 end
 
----------------------------------------
--- イベントリスナをすべて削除します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Remove all event listeners.
+--------------------------------------------------------------------------------
 function M:clearEventListeners()
     self.eventlisteners = {}
 end
