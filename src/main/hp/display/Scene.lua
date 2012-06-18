@@ -34,10 +34,19 @@ local Group = require("hp/display/Group")
 local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
 local Application = require("hp/Application")
+local Logger = require("hp/util/Logger")
 
 local M = class(Group)
 
 local ENTER_FRAME_EVENT = Event("enterFrame")
+
+local function destroyModule(m)
+    if m and m._M and m._NAME then
+        package.loaded[m._NAME] = nil
+        _G[m._NAME] = nil
+        Logger.debug("Scene module destroyed:", m._NAME)
+    end
+end
 
 --------------------------------------------------------------------------------
 -- The constructor.
@@ -157,6 +166,8 @@ function M:onDestroy()
     if self.sceneHandler.onDestroy then
         self.sceneHandler.onDestroy()
     end
+    
+    destroyModule(self.sceneHandler)
 end
 
 ---------------------------------------
