@@ -15,6 +15,7 @@ setmetatable(cache, {__mode = "v"})
 
 local function gcHandler(udata)
     Logger.debug("[TextureManager] destroyed => " .. udata.path)
+    udata:release()
 end
 
 ----------------------------------------------------------------
