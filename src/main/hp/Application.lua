@@ -96,6 +96,7 @@ function M:importClasses(t, prefix)
     t[prefix .. "TextureManager"]   = require("hp/manager/TextureManager")
     t[prefix .. "FontManager"]      = require("hp/manager/FontManager")
     t[prefix .. "WidgetManager"]    = require("hp/manager/WidgetManager")
+    t[prefix .. "ShaderManager"]    = require("hp/manager/ShaderManager")
 
     -- tmx classes
     t[prefix .. "TMXLayer"]         = require("hp/tmx/TMXLayer")
