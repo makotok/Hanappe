@@ -17,6 +17,8 @@ local M = class(DisplayObject, Resizable)
 
 M.MOAI_CLASS = MOAITextBox
 
+M.DEFAULT_COLOR = {1, 1, 1, 1}
+
 local interface = MOAITextBox.getInterfaceTable()
 
 --------------------------------------------------------------------------------
@@ -32,6 +34,7 @@ function M:init(params)
     local font = FontManager:request(params.font)
     self:setFont(font)
     self:setTextSize(FontManager.config.textSize)
+    self:setColor(unpack(M.DEFAULT_COLOR))
     self:copyParams(params)
 end
 
