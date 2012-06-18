@@ -1,17 +1,17 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    layer = Layer({scene = scene})
+    layer = Layer {scene = scene}
 
     -- Can be set in the parameter of the argument.
-    sprite1 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0})
+    sprite1 = Sprite {texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0}
     
     -- Values ​​can be set later.
-    sprite2 = Sprite({texture = "samples/assets/cathead.png", layer = layer})
+    sprite2 = Sprite {texture = "samples/assets/cathead.png", layer = layer}
     sprite2:setPos(0, sprite1:getBottom())
     
     -- Values ​​can be set later.
-    sprite3 = Sprite({texture = "samples/assets/cathead.png"})
+    sprite3 = Sprite {texture = "samples/assets/cathead.png"}
     sprite3:setLeft(0)
     sprite3:setTop(sprite2:getBottom())
     layer:insertProp(sprite3)
