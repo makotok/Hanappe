@@ -127,6 +127,28 @@ function M.setPos(prop, left, top)
 end
 
 --------------------------------------------------------------------------------
+-- Returns the position of the center.
+-- @param prop MOAIProp instance.
+-- @return centerX, centerY.
+--------------------------------------------------------------------------------
+function M.getCenterPos(prop)
+    local left, top = M.getPos(prop)
+    local w, h = M.getSize(prop)
+    return left + w / 2, top + h / 2
+end
+
+--------------------------------------------------------------------------------
+-- Sets the position of the centeX and centerY.
+-- @param prop MOAIProp
+-- @param x Position of the centerX.
+-- @param y Position of the centerY.
+--------------------------------------------------------------------------------
+function M.setCenterPos(prop, x, y)
+    local w, h = M.getSize(prop)
+    M.setPos(prop, x - w / 2, y - h / 2)
+end
+
+--------------------------------------------------------------------------------
 -- Returns the position of the left and top.
 -- @param prop MOAIProp instance.
 -- @return Position of the left and top.
