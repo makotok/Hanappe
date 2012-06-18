@@ -1,3 +1,9 @@
+----------------------------------------------------------------
+-- ボタンウィジットクラスです.<br>
+-- @class table
+-- @name Button
+----------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local NinePatch = require("hp/display/NinePatch")
@@ -6,11 +12,6 @@ local Event = require("hp/event/Event")
 local Widget = require("hp/widget/Widget")
 local WidgetManager = require("hp/manager/WidgetManager")
 
-----------------------------------------------------------------
--- ボタンウィジットクラスです.<br>
--- @class table
--- @name Button
-----------------------------------------------------------------
 local M = class(Widget)
 
 local super = Widget
@@ -26,11 +27,11 @@ function M:init(params)
     self:overrideTheme(params)
     local theme = self:getTheme()
     
-    self.background = NinePatch({texture = theme.upSkin, width = params.width, height = params.height})
+    self.background = NinePatch {texture = theme.upSkin, width = params.width, height = params.height}
     self.background:setLeft(0)
     self.background:setTop(0)
     
-    self.textLabel = TextLabel:new({text = params.text, textSize = theme.fontSize})
+    self.textLabel = TextLabel {text = params.text, textSize = theme.fontSize}
     self.textLabel:setWidth(self.background:getWidth() - theme.paddingLeft - theme.paddingRight)
     self.textLabel:setHeight(self.background:getHeight() - theme.paddingTop - theme.paddingBottom)
     self.textLabel:setLeft(theme.paddingLeft)
@@ -42,11 +43,11 @@ function M:init(params)
     
     self:setSize(self.background:getWidth(), self.background:getHeight())
 
-    self.buttonDownEvent = Event:new(Event.BUTTON_DOWN)
-    self.buttonUpEvent = Event:new(Event.BUTTON_UP)
-    self.clickEvent = Event:new(Event.CLICK)
-    self.cancelEvent = Event:new(Event.CANCEL)
-    self.buttonDownFlag = false
+    self.buttonDownEvent = Event(Event.BUTTON_DOWN)
+    self.buttonUpEvent = Event(Event.BUTTON_UP)
+    self.clickEvent = Event(Event.CLICK)
+    self.cancelEvent = Event(Event.CANCEL)
+    self.buttonDownFlag = true
     self.buttonTouching = false
     self:setToggle(theme.toggle or false)
     
