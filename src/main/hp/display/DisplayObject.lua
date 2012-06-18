@@ -63,6 +63,9 @@ function M:copyParams(params)
     if params.top then
         self:setTop(params.top)
     end
+    if params.color and type(params.color) == "table" then
+        self:setColor(unpack(params.color))
+    end
     if params.layer then
         self:setLayer(params.layer)
     end
