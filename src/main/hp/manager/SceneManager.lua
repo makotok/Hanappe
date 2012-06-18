@@ -1,3 +1,10 @@
+----------------------------------------------------------------
+-- This is a class to manage the Scene. <br>
+-- Order to manage the rendering of the scene and event notification. <br>
+-- @class table
+-- @name SceneManager
+----------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local SceneAnimation = require("hp/display/SceneAnimation")
 local SceneFactory = require("hp/factory/SceneFactory")
@@ -5,13 +12,7 @@ local InputManager = require("hp/manager/InputManager")
 local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
 
-----------------------------------------------------------------
--- Sceneを管理するマネージャクラスです.<br>
--- シーンのライフサイクルの管理やイベント制御を行います.
--- @class table
--- @name SceneManager
-----------------------------------------------------------------
-local M = EventDispatcher:new()
+local M = EventDispatcher()
 
 -- private var
 local scenes = {}
@@ -24,9 +25,6 @@ local sceneAnimation = nil
 local renderTable = {}
 local updateRenderFlag = false
 
-----------------------------------------------------------------
--- private functions
-----------------------------------------------------------------
 
 local function onTouchDown(e)
     if currentScene and not transitioning then
@@ -131,7 +129,7 @@ end
 
 local function openComplete()
     if currentScene and currentClosing then
-        self:removeScene(currentScene)
+        removeScene(currentScene)
         currentScene:onDestroy()
     end
     
@@ -177,27 +175,32 @@ thread:run(
     end
 )
 
-----------------------------------------------------------------
--- public functions
-----------------------------------------------------------------
-
----------------------------------------
--- 新しいシーンを表示します.
--- 現在のシーンはそのままスタックされた状態で、
--- 次のシーンを表示します.
+--------------------------------------------------------------------------------
+-- Open a new scene. <br>
+-- The current scene is the stack intact. <br>
+-- But if set to true currentClosing, close the current scene. <br>
+-- <br>
+-- You can specify the behavior in the argument params. <br>
+-- 1. params.sceneClass <br>
+--    Specifies the class of scenes to be generated. <br>
+-- 2. params.animation <br>
+--    Specifies the animation of the scene transitions. <br>
+-- 3. params.sec <br>
+--    Specifies the time of the animation.<br>
+-- 4. params.currentClosing <br>
+--    Specify whether to close the current scene. <br>
 --
--- params引数で、いくつかの動作を変更できます.
--- 1. params.sceneClassを指定した場合、
---    Sceneクラスではなく、別のクラスをnewします.
--- 2. params.animationを指定した場合、
---    
----------------------------------------
+-- @param sceneName The unique name of the scene. Scene module path.
+-- @param params (option)Parameters that define the behavior.
+-- @return If you generate a return to the scene.
+--------------------------------------------------------------------------------
 function M:openScene(sceneName, params)
     if transitioning then
         return
     end
 
     params = params or {}
+    currentClosing = params.currentClosing or false
     
     -- get next scene
     nextScene = self:findSceneByName(sceneName)
@@ -209,7 +212,7 @@ function M:openScene(sceneName, params)
     -- stop current scene
     if currentScene then
         currentScene:onPause()
-        if params.currentClosing then
+        if currentClosing then
             currentScene:onStop()
         end
     end
@@ -225,20 +228,25 @@ function M:openScene(sceneName, params)
     return nextScene
 end
 
----------------------------------------
--- 次のシーンに遷移します.
--- 現在のシーンは終了します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Open to the next scene. <br>
+-- The current scene will be closed. <br>
+-- See M:openScene(). <br>
+-- @param The unique name of the scene. Scene module path.
+-- @param params (option)Parameters that define the behavior.
+-- @return If you generate a return to the scene.
+--------------------------------------------------------------------------------
 function M:openNextScene(sceneName, params)
     params = params and params or {}
-    params.closing = true
+    params.currentClosing = true
     return self:openScene(sceneName, params)
 end
 
----------------------------------------
--- 現在のシーンを終了します.
--- 前のシーンに遷移します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Close the current scene. <br>
+-- To resume the previous scene.
+-- @param params (option)Parameters that define the behavior.
+--------------------------------------------------------------------------------
 function M:closeScene(params)
     if transitioning then
         return
@@ -257,25 +265,29 @@ function M:closeScene(params)
     return nextScene
 end
 
----------------------------------------
--- 描画を更新します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Update the drawing order of layers. <br>
+-- Normally, you need to manipulate this function is not available. <br>
+-- Timing to be updated, in fact, is done in EnterFrame.
+--------------------------------------------------------------------------------
 function M:updateRender()
     updateRenderFlag = true
 end
 
----------------------------------------
--- 描画を更新します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Update the drawing order of layers. <br>
+-- Normally, you need to manipulate this function is not available.
+--------------------------------------------------------------------------------
 function M:forceUpdateRender()
     updateRender()
 end
 
 
----------------------------------------
--- シーン名からシーンを検索して返します.
--- 見つからない場合はnilを返します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Returns the scene to find the scene name.
+-- @param sceneName Name of the target scene.
+-- @return If a match is found the scene.
+--------------------------------------------------------------------------------
 function M:findSceneByName(sceneName)
     for i, scene in ipairs(scenes) do
         if scene.name == sceneName then
@@ -285,13 +297,16 @@ function M:findSceneByName(sceneName)
     return nil
 end
 
----------------------------------------
--- シーンを最前面に移動します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Move to the front scene. <br>
+-- @param scene Scene or scene name.
+--------------------------------------------------------------------------------
 function M:orderToFront(scene)
     if #scenes <= 1 then
         return
     end
+    
+    scene = type(scene) == "string" and self:findSceneByName(scene) or scene
     
     local i = table.indexOf(scenes, scene)
     if i > 0 then
@@ -302,13 +317,17 @@ function M:orderToFront(scene)
     end
 end
 
----------------------------------------
--- シーンを最背面に移動します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Move to the back scene. <br>
+-- @param scene Scene or scene name.
+--------------------------------------------------------------------------------
 function M:orderToBack(scene)
     if #scenes <= 1 then
         return
-    end    
+    end
+
+    scene = type(scene) == "string" and self:findSceneByName(scene) or scene
+
     local i = table.indexOf(scenes, scene)
     if i > 0 then
         table.remove(scenes, i)
@@ -318,16 +337,19 @@ function M:orderToBack(scene)
     end
 end
 
----------------------------------------
--- SceneFactoryを設定します.<br>
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets the SceneFactory. <br>
+-- If you need to use your own factory. <br>
+-- @param factory Scene factory module.
+--------------------------------------------------------------------------------
 function M:setSceneFactory(factory)
     sceneFactory = assert(factory, "sceneFactory is nil!")
 end
 
----------------------------------------
--- currentSceneを返します.<br>
----------------------------------------
+--------------------------------------------------------------------------------
+-- Returns the current scene. <br>
+-- @return currentScene.
+--------------------------------------------------------------------------------
 function M:getCurrentScene()
     return currentScene
 end
