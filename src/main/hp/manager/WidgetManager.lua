@@ -1,22 +1,23 @@
-local Event = require("hp/event/Event")
-local EventDispatcher = require("hp/event/EventDispatcher")
-
 ----------------------------------------------------------------
--- ウィジットクラスを管理するクラスです.<br>
--- ウィジットのテーマや名前生成を管理します.
+-- This is a class to manage widgets.<br>
+--
+-- @auther Makoto
 -- @class table
 -- @name WidgetManager
 ----------------------------------------------------------------
-local M = EventDispatcher:new()
+
+local Event = require("hp/event/Event")
+local EventDispatcher = require("hp/event/EventDispatcher")
+
+local M = EventDispatcher()
 
 -- variables
 local defaultTheme
 local defaultThemeCangedEvent = Event:new("defaultThemeChanged")
 
 ----------------------------------------------------------------
--- ウィジットが使用するデフォルトテーマを設定します.
--- 生成済ウィジットには影響がありません.
--- 新規に生成するウィジットはデフォルトテーマを使用します.
+-- Sets the default widget theme to use.
+-- @param theme Widget theme.
 ----------------------------------------------------------------
 function M:setDefaultThemes(theme)
     theme = type(theme) == "string" and require(theme) or theme
@@ -27,7 +28,8 @@ function M:setDefaultThemes(theme)
 end
 
 ----------------------------------------------------------------
--- 現在のデフォルトテーマを返します.
+-- Returns the current default theme.
+-- @return default theme.
 ----------------------------------------------------------------
 function M:getDefaultThemes()
     return defaultTheme
