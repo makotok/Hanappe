@@ -1,6 +1,5 @@
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
-local Application = require("hp/Application")
 local Layer = require("hp/display/Layer")
 local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
