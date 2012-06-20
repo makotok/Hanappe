@@ -8,12 +8,10 @@
 
 local Logger = require("hp/util/Logger")
 
-local M = {
-    config = {
-        fontPath = "assets/fonts/ipag.ttf",
-        textSize = 24,
-    }
-}
+local M = {}
+
+M.DEFAULT_FONT = "assets/fonts/ipag.ttf"
+
 local cache = {}
 setmetatable(cache, {__mode = "v"})
 
@@ -22,7 +20,7 @@ local function gcHandler(udata)
 end
 
 function M:request(path)
-    path = path or self.config.fontPath
+    path = path or self.DEFAULT_FONT
     
     for i, font in ipairs(cache) do
         if font.path == path then
