@@ -1,3 +1,9 @@
+--------------------------------------------------------------------------------
+-- View the class is to draw the TMXMap.<br>
+-- @class table
+-- @name TMXMapView
+--------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local Layer = require("hp/display/Layer")
@@ -6,12 +12,6 @@ local SpriteSheet = require("hp/display/SpriteSheet")
 local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
 local TextureManager = require("hp/manager/TextureManager")
-
---------------------------------------------------------------------------------
--- TMXMapを描画するViewクラスです.<br>
--- @class table
--- @name TMXMapView
---------------------------------------------------------------------------------
 
 local M = class(EventDispatcher)
 
@@ -203,7 +203,7 @@ function M:createDisplayObject(object)
     local tileCol = math.floor((tw + spacing) / tilewidth)
     local tileRow = math.floor((th + spacing) / tileheight)
     
-    local sprite = SpriteSheet:new({texture = texture})
+    local sprite = SpriteSheet {texture = texture}
     sprite:setTiledSheets(tilewidth, tileheight, tileCol, tileRow)
     sprite.mapObject = object
     sprite:setLeft(object.x)
@@ -244,7 +244,8 @@ end
 --------------------------------------------------------------------------------
 function M:scrollCamera(x, y)
     local viewWidth, viewHeight = self:getViewSize()
-    local maxX, maxY = viewWidth - Application.viewWidth, viewWidth - Application.viewHeight
+    local firstLayer = self.layers[1]
+    local maxX, maxY = viewWidth - firstLayer:getViewWidth(), viewWidth - firstLayer:getViewHeight()
     
     x = x < 0 and 0 or x
     x = x > maxX and maxX or x
@@ -259,7 +260,8 @@ end
 -- 範囲外の領域が指定された表示されないように位置を調整します
 --------------------------------------------------------------------------------
 function M:scrollCameraToCenter(x, y)
-    local cx, cy = Application.viewWidth / 2, Application.viewHeight / 2
+    local firstLayer = self.layers[1]
+    local cx, cy = firstLayer:getViewWidth() / 2, firstLayer:getViewHeight() / 2
     self:scrollCamera(x - cx, y - cy)
 end
 
