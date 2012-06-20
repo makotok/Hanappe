@@ -92,6 +92,19 @@ function M:setTiledSheets(tileWidth, tileHeight, tileX, tileY, spacing, margin)
 end
 
 --------------------------------------------------------------------------------
+-- Sets the tile size.
+-- @param tileX number of tiles in the x-direction.
+-- @param tileY number of tiles in the y-direction.
+--------------------------------------------------------------------------------
+function M:setTileSize(tileX, tileY)
+    assert(self.texture)
+    
+    local tw, th = self.texture:getSize()
+    local w, h = tw / tileX, th / tileY
+    self:setTiledSheets(w, h, tileX, tileY)
+end
+
+--------------------------------------------------------------------------------
 -- Set the data sheet.<br>
 -- Sheet in accordance with the following format: Please.<br>
 -- {x = Start position, y = Start position, width = The width of the sheet, height = The height of the sheet} <br>
