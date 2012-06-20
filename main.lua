@@ -1,15 +1,14 @@
 -- requires
-local config = require("config")
-local Application = require("hp/Application")
+local config    = require("config")
+local classes   = require("hp/classes")
 
--- application start
-Application:appStart(config)
+-- Classes import.
+-- If you hate to be imported into the global,
+-- Please to require the necessary classes.
+classes.import(_G)
 
--- classes import
-Application:importClasses(_G, "")
-
--- widget theme
-WidgetManager:setDefaultThemes("assets/themes/basic/Themes")
+-- Application start.
+Application:start(config)
 
 -- If you are using the SceneManager.
 SceneManager:openScene("samples/sample_main", {animation = "fade"})
