@@ -9,7 +9,7 @@
 
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
-local Application = require("hp/Application")
+local Application = require("hp/core/Application")
 local DisplayObject = require("hp/display/DisplayObject")
 
 local M = class(DisplayObject)

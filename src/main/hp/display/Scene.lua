@@ -33,7 +33,7 @@ local class = require("hp/lang/class")
 local Group = require("hp/display/Group")
 local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
-local Application = require("hp/Application")
+local Application = require("hp/core/Application")
 local Logger = require("hp/util/Logger")
 
 local M = class(Group)
