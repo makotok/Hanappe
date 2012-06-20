@@ -7,6 +7,7 @@
 -- @class table
 -- @name TextLabel
 --------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local DisplayObject = require("hp/display/DisplayObject")
@@ -17,6 +18,7 @@ local M = class(DisplayObject, Resizable)
 
 M.MOAI_CLASS = MOAITextBox
 
+M.DEFAULT_TEXT_SIZE = 24
 M.DEFAULT_COLOR = {1, 1, 1, 1}
 
 local interface = MOAITextBox.getInterfaceTable()
@@ -33,7 +35,7 @@ function M:init(params)
 
     local font = FontManager:request(params.font)
     self:setFont(font)
-    self:setTextSize(FontManager.config.textSize)
+    self:setTextSize(M.DEFAULT_TEXT_SIZE)
     self:setColor(unpack(M.DEFAULT_COLOR))
     self:copyParams(params)
 end
