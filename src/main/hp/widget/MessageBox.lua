@@ -5,6 +5,7 @@ local NinePatch = require("hp/display/NinePatch")
 local TextLabel = require("hp/display/TextLabel")
 local Event = require("hp/event/Event")
 local Widget = require("hp/widget/Widget")
+local Panel = require("hp/widget/Panel")
 local WidgetManager = require("hp/manager/WidgetManager")
 
 ----------------------------------------------------------------
