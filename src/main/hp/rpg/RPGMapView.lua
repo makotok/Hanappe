@@ -1,6 +1,5 @@
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
-local Application = require("hp/Application")
 local TMXMapView = require("hp/tmx/TMXMapView")
 local RPGSprite = require("hp/rpg/RPGSprite")
 
