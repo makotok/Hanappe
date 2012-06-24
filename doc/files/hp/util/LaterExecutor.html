@@ -39,7 +39,7 @@
 <ul>
 
 	<li>
-		<a href="../../../files/hp/Application.html">hp/Application.lua</a>
+		<a href="../../../files/hp/core/Application.html">hp/core/Application.lua</a>
 	</li>
 
 	<li>
@@ -75,6 +75,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/Particles.html">hp/display/Particles.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
 
@@ -102,28 +106,6 @@
 		<a href="../../../files/hp/display/TextureDrawable.html">hp/display/TextureDrawable.lua</a>
 	</li>
 
-	<li><strong>hp/dungeon/DungeonMap.lua</strong></li>
-	
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonMapBuilder.html">hp/dungeon/DungeonMapBuilder.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonObject.html">hp/dungeon/DungeonObject.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRange.html">hp/dungeon/DungeonRange.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRoad.html">hp/dungeon/DungeonRoad.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRoom.html">hp/dungeon/DungeonRoom.lua</a>
-	</li>
-
 	<li>
 		<a href="../../../files/hp/event/Event.html">hp/event/Event.lua</a>
 	</li>
@@ -137,15 +119,7 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/factory/DisplayFactory.html">hp/factory/DisplayFactory.lua</a>
-	</li>
-
-	<li>
 		<a href="../../../files/hp/factory/SceneFactory.html">hp/factory/SceneFactory.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/factory/WidgetFactory.html">hp/factory/WidgetFactory.lua</a>
 	</li>
 
 	<li>
@@ -194,6 +168,10 @@
 
 	<li>
 		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/manager/SoundManager.html">hp/manager/SoundManager.lua</a>
 	</li>
 
 	<li>
@@ -256,16 +234,14 @@
 		<a href="../../../files/hp/util/CompareUtil.html">hp/util/CompareUtil.lua</a>
 	</li>
 
+	<li><strong>hp/util/LaterExecutor.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/util/Logger.html">hp/util/Logger.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/util/MOAIPropUtil.html">hp/util/MOAIPropUtil.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
 	</li>
 
 	<li>
@@ -343,7 +319,7 @@
 
 <div id="content">
 
-<h1>File <code>hp/dungeon/DungeonMap.lua</code></h1>
+<h1>File <code>hp/util/LaterExecutor.lua</code></h1>
 
 
 
@@ -355,53 +331,8 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:addObject">M:addObject</a>&nbsp;(object)</td>
-	<td class="summary">オブジェクトを追加します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:addRange">M:addRange</a>&nbsp;(range)</td>
-	<td class="summary">領域を追加します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:addRoad">M:addRoad</a>&nbsp;(road)</td>
-	<td class="summary">道を追加します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:addRoom">M:addRoom</a>&nbsp;(room)</td>
-	<td class="summary">部屋を追加します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:findObjectAt">M:findObjectAt</a>&nbsp;(x, y)</td>
-	<td class="summary">指定した座標のオブジェクトを返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
-	<td class="summary">コンストラクタです.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:removeObject">M:removeObject</a>&nbsp;(object)</td>
-	<td class="summary">オブジェクトを削除します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:removeRange">M:removeRange</a>&nbsp;(range)</td>
-	<td class="summary">領域を削除します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:removeRoad">M:removeRoad</a>&nbsp;(road)</td>
-	<td class="summary">道を削除します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:removeRoom">M:removeRoom</a>&nbsp;(room)</td>
-	<td class="summary">部屋を削除します.</td>
+	<td class="name" nowrap><a href="#M.callLater">M.callLater</a>&nbsp;(func, ...)</td>
+	<td class="summary">指定した関数を遅延実行します.<br> </td>
 	</tr>
 
 </table>
@@ -413,8 +344,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#DungeonBuilder ">DungeonBuilder </a></td>
-	<td class="summary">ランダムダンジョンのマップを生成機です.</td>
+	<td class="name" nowrap><a href="#LaterExecutor ">LaterExecutor </a></td>
+	<td class="summary">This is a utility class to do a comparison of the object.<br> </td>
 	</tr>
 
 </table>
@@ -432,254 +363,20 @@
 
 
 
-<dt><a name="M:addObject"></a><strong>M:addObject</strong>&nbsp;(object)</dt>
+<dt><a name="M.callLater"></a><strong>M.callLater</strong>&nbsp;(func, ...)</dt>
 <dd>
-オブジェクトを追加します. 
+指定した関数を遅延実行します.<br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  object: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:addRange"></a><strong>M:addRange</strong>&nbsp;(range)</dt>
-<dd>
-領域を追加します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  range: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:addRoad"></a><strong>M:addRoad</strong>&nbsp;(road)</dt>
-<dd>
-道を追加します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  road: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:addRoom"></a><strong>M:addRoom</strong>&nbsp;(room)</dt>
-<dd>
-部屋を追加します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  room: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:findObjectAt"></a><strong>M:findObjectAt</strong>&nbsp;(x, y)</dt>
-<dd>
-指定した座標のオブジェクトを返します. 存在しなかった場合はnilを返します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  x: 
+	  func: 対象の関数.
 	</li>
 	
 	<li>
-	  y: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
-<dd>
-コンストラクタです. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  params: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:removeObject"></a><strong>M:removeObject</strong>&nbsp;(object)</dt>
-<dd>
-オブジェクトを削除します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  object: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:removeRange"></a><strong>M:removeRange</strong>&nbsp;(range)</dt>
-<dd>
-領域を削除します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  range: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:removeRoad"></a><strong>M:removeRoad</strong>&nbsp;(road)</dt>
-<dd>
-道を削除します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  road: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:removeRoom"></a><strong>M:removeRoom</strong>&nbsp;(room)</dt>
-<dd>
-部屋を削除します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  room: 
+	  ...: 関数に渡す引数. 
 	</li>
 	
 </ul>
@@ -702,8 +399,8 @@
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="DungeonBuilder "></a><strong>DungeonBuilder </strong></dt>
-<dd>ランダムダンジョンのマップを生成機です. 任意のデータを与える事で、よくあるランダムダンジョンのマップデータの基礎を生成します.
+<dt><a name="LaterExecutor "></a><strong>LaterExecutor </strong></dt>
+<dd>This is a utility class to do a comparison of the object.<br>
 
 
 

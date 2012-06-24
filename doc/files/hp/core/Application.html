@@ -38,10 +38,8 @@
 <h1>Files</h1>
 <ul>
 
-	<li>
-		<a href="../../../files/hp/Application.html">hp/Application.lua</a>
-	</li>
-
+	<li><strong>hp/core/Application.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/display/Animation.html">hp/display/Animation.lua</a>
 	</li>
@@ -75,6 +73,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/Particles.html">hp/display/Particles.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
 
@@ -103,30 +105,6 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/dungeon/DungeonMap.html">hp/dungeon/DungeonMap.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonMapBuilder.html">hp/dungeon/DungeonMapBuilder.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonObject.html">hp/dungeon/DungeonObject.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRange.html">hp/dungeon/DungeonRange.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRoad.html">hp/dungeon/DungeonRoad.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRoom.html">hp/dungeon/DungeonRoom.lua</a>
-	</li>
-
-	<li>
 		<a href="../../../files/hp/event/Event.html">hp/event/Event.lua</a>
 	</li>
 
@@ -138,14 +116,8 @@
 		<a href="../../../files/hp/event/EventListener.html">hp/event/EventListener.lua</a>
 	</li>
 
-	<li><strong>hp/factory/DisplayFactory.lua</strong></li>
-	
 	<li>
 		<a href="../../../files/hp/factory/SceneFactory.html">hp/factory/SceneFactory.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/factory/WidgetFactory.html">hp/factory/WidgetFactory.lua</a>
 	</li>
 
 	<li>
@@ -194,6 +166,10 @@
 
 	<li>
 		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/manager/SoundManager.html">hp/manager/SoundManager.lua</a>
 	</li>
 
 	<li>
@@ -257,15 +233,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/LaterExecutor.html">hp/util/LaterExecutor.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/util/Logger.html">hp/util/Logger.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/util/MOAIPropUtil.html">hp/util/MOAIPropUtil.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
 	</li>
 
 	<li>
@@ -343,13 +319,43 @@
 
 <div id="content">
 
-<h1>File <code>hp/factory/DisplayFactory.lua</code></h1>
+<h1>File <code>hp/core/Application.lua</code></h1>
 
 
 
 
 
 
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#M:getViewScale">M:getViewScale</a>&nbsp;()</td>
+	<td class="summary">Returns the scale of the Viewport to the screen.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:isDesktop">M:isDesktop</a>&nbsp;()</td>
+	<td class="summary">Returns whether the desktop execution environment.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:isMobile">M:isMobile</a>&nbsp;()</td>
+	<td class="summary">Returns whether the mobile execution environment.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setClearColor">M:setClearColor</a>&nbsp;(r, g, b, a)</td>
+	<td class="summary">Sets the background color.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:start">M:start</a>&nbsp;(config)</td>
+	<td class="summary">Start the application.</td>
+	</tr>
+
+</table>
 
 
 
@@ -358,8 +364,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#DisplayFactory ">DisplayFactory </a></td>
-	<td class="summary">描画オブジェクトのファクトリークラスです.<br> 各クラスをimportすると名前衝突する場合があるので、こちらを使用することもできます.</td>
+	<td class="name" nowrap><a href="#Application ">Application </a></td>
+	<td class="summary">Module for the start of the application.<br>  </td>
 	</tr>
 
 </table>
@@ -372,14 +378,143 @@
 
 
 
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="M:getViewScale"></a><strong>M:getViewScale</strong>&nbsp;()</dt>
+<dd>
+Returns the scale of the Viewport to the screen.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+scale of the x-direction, scale of the y-direction, 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:isDesktop"></a><strong>M:isDesktop</strong>&nbsp;()</dt>
+<dd>
+Returns whether the desktop execution environment.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+True in the case of desktop. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:isMobile"></a><strong>M:isMobile</strong>&nbsp;()</dt>
+<dd>
+Returns whether the mobile execution environment.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+True in the case of mobile. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setClearColor"></a><strong>M:setClearColor</strong>&nbsp;(r, g, b, a)</dt>
+<dd>
+Sets the background color. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  r: 
+	</li>
+	
+	<li>
+	  g: 
+	</li>
+	
+	<li>
+	  b: 
+	</li>
+	
+	<li>
+	  a: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:start"></a><strong>M:start</strong>&nbsp;(config)</dt>
+<dd>
+Start the application. <br> You can specify the behavior of the entire application by the config.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  config: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+</dl>
+
 
 
 
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="DisplayFactory "></a><strong>DisplayFactory </strong></dt>
-<dd>描画オブジェクトのファクトリークラスです.<br> 各クラスをimportすると名前衝突する場合があるので、こちらを使用することもできます.
+<dt><a name="Application "></a><strong>Application </strong></dt>
+<dd>Module for the start of the application.<br> 
 
 
 

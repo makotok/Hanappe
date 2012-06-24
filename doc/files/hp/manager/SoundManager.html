@@ -39,7 +39,7 @@
 <ul>
 
 	<li>
-		<a href="../../../files/hp/Application.html">hp/Application.lua</a>
+		<a href="../../../files/hp/core/Application.html">hp/core/Application.lua</a>
 	</li>
 
 	<li>
@@ -75,6 +75,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/Particles.html">hp/display/Particles.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
 
@@ -103,30 +107,6 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/dungeon/DungeonMap.html">hp/dungeon/DungeonMap.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonMapBuilder.html">hp/dungeon/DungeonMapBuilder.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonObject.html">hp/dungeon/DungeonObject.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRange.html">hp/dungeon/DungeonRange.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRoad.html">hp/dungeon/DungeonRoad.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRoom.html">hp/dungeon/DungeonRoom.lua</a>
-	</li>
-
-	<li>
 		<a href="../../../files/hp/event/Event.html">hp/event/Event.lua</a>
 	</li>
 
@@ -139,15 +119,7 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/factory/DisplayFactory.html">hp/factory/DisplayFactory.lua</a>
-	</li>
-
-	<li>
 		<a href="../../../files/hp/factory/SceneFactory.html">hp/factory/SceneFactory.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/factory/WidgetFactory.html">hp/factory/WidgetFactory.lua</a>
 	</li>
 
 	<li>
@@ -198,6 +170,8 @@
 		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
 	</li>
 
+	<li><strong>hp/manager/SoundManager.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/manager/TextureManager.html">hp/manager/TextureManager.lua</a>
 	</li>
@@ -259,6 +233,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/LaterExecutor.html">hp/util/LaterExecutor.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/util/Logger.html">hp/util/Logger.lua</a>
 	</li>
 
@@ -266,8 +244,6 @@
 		<a href="../../../files/hp/util/MOAIPropUtil.html">hp/util/MOAIPropUtil.lua</a>
 	</li>
 
-	<li><strong>hp/util/TexturePackerLoader.lua</strong></li>
-	
 	<li>
 		<a href="../../../files/hp/util/Triangulation.html">hp/util/Triangulation.lua</a>
 	</li>
@@ -343,13 +319,23 @@
 
 <div id="content">
 
-<h1>File <code>hp/util/TexturePackerLoader.lua</code></h1>
+<h1>File <code>hp/manager/SoundManager.lua</code></h1>
 
 
 
 
 
 
+
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#M.getSound">M.getSound</a>&nbsp;(path, volume, looping)</td>
+	<td class="summary">Returns the untz sound.</td>
+	</tr>
+
+</table>
 
 
 
@@ -358,8 +344,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#TexturePackerLoader ">TexturePackerLoader </a></td>
-	<td class="summary">TexturePackerのファイルを読み込むクラスです.<br> TODO:未実装 </td>
+	<td class="name" nowrap><a href="#SoundManager ">SoundManager </a></td>
+	<td class="summary">This is a class to manage the MOAIUntzSound.<br>  </td>
 	</tr>
 
 </table>
@@ -372,14 +358,56 @@
 
 
 
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="M.getSound"></a><strong>M.getSound</strong>&nbsp;(path, volume, looping)</dt>
+<dd>
+Returns the untz sound. <br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  path: path
+	</li>
+	
+	<li>
+	  volume: 
+	</li>
+	
+	<li>
+	  looping: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+MOAIUntzSound instance. 
+
+
+
+</dd>
+
+
+</dl>
+
 
 
 
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="TexturePackerLoader "></a><strong>TexturePackerLoader </strong></dt>
-<dd>TexturePackerのファイルを読み込むクラスです.<br> TODO:未実装
+<dt><a name="SoundManager "></a><strong>SoundManager </strong></dt>
+<dd>This is a class to manage the MOAIUntzSound.<br> 
 
 
 

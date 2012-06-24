@@ -39,7 +39,7 @@
 <ul>
 
 	<li>
-		<a href="../../../files/hp/Application.html">hp/Application.lua</a>
+		<a href="../../../files/hp/core/Application.html">hp/core/Application.lua</a>
 	</li>
 
 	<li>
@@ -74,6 +74,8 @@
 		<a href="../../../files/hp/display/NinePatch.html">hp/display/NinePatch.lua</a>
 	</li>
 
+	<li><strong>hp/display/Particles.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
@@ -103,28 +105,6 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/dungeon/DungeonMap.html">hp/dungeon/DungeonMap.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonMapBuilder.html">hp/dungeon/DungeonMapBuilder.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonObject.html">hp/dungeon/DungeonObject.lua</a>
-	</li>
-
-	<li><strong>hp/dungeon/DungeonRange.lua</strong></li>
-	
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRoad.html">hp/dungeon/DungeonRoad.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRoom.html">hp/dungeon/DungeonRoom.lua</a>
-	</li>
-
-	<li>
 		<a href="../../../files/hp/event/Event.html">hp/event/Event.lua</a>
 	</li>
 
@@ -137,15 +117,7 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/factory/DisplayFactory.html">hp/factory/DisplayFactory.lua</a>
-	</li>
-
-	<li>
 		<a href="../../../files/hp/factory/SceneFactory.html">hp/factory/SceneFactory.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/factory/WidgetFactory.html">hp/factory/WidgetFactory.lua</a>
 	</li>
 
 	<li>
@@ -194,6 +166,10 @@
 
 	<li>
 		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/manager/SoundManager.html">hp/manager/SoundManager.lua</a>
 	</li>
 
 	<li>
@@ -257,15 +233,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/LaterExecutor.html">hp/util/LaterExecutor.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/util/Logger.html">hp/util/Logger.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/util/MOAIPropUtil.html">hp/util/MOAIPropUtil.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
 	</li>
 
 	<li>
@@ -343,7 +319,7 @@
 
 <div id="content">
 
-<h1>File <code>hp/dungeon/DungeonRange.lua</code></h1>
+<h1>File <code>hp/display/Particles.lua</code></h1>
 
 
 
@@ -355,18 +331,13 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:collisionAt">M:collisionAt</a>&nbsp;(x, y)</td>
-	<td class="summary">指定した座標が衝突するか返します.</td>
+	<td class="name" nowrap><a href="#M:copyParams">M:copyParams</a>&nbsp;(params)</td>
+	<td class="summary">Set the parameter setter function.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:getType">M:getType</a>&nbsp;()</td>
-	<td class="summary">ダンジョン上での型を返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(x, y, width, height)</td>
-	<td class="summary">コンストラクタです.</td>
+	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 </table>
@@ -378,8 +349,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#DungeonRange ">DungeonRange </a></td>
-	<td class="summary">ダンジョンの領域です.</td>
+	<td class="name" nowrap><a href="#Particles ">Particles </a></td>
+	<td class="summary">This is a class to draw the texture.</td>
 	</tr>
 
 </table>
@@ -397,20 +368,16 @@
 
 
 
-<dt><a name="M:collisionAt"></a><strong>M:collisionAt</strong>&nbsp;(x, y)</dt>
+<dt><a name="M:copyParams"></a><strong>M:copyParams</strong>&nbsp;(params)</dt>
 <dd>
-指定した座標が衝突するか返します. 
+Set the parameter setter function.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  x: 
-	</li>
-	
-	<li>
-	  y: 
+	  params: Parameter is set to Object. (params:texture, width, height) 
 	</li>
 	
 </ul>
@@ -427,45 +394,16 @@
 
 
 
-<dt><a name="M:getType"></a><strong>M:getType</strong>&nbsp;()</dt>
+<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
 <dd>
-ダンジョン上での型を返します. 
-
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(x, y, width, height)</dt>
-<dd>
-コンストラクタです. 
+The constructor.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  x: 
-	</li>
-	
-	<li>
-	  y: 
-	</li>
-	
-	<li>
-	  width: 
-	</li>
-	
-	<li>
-	  height: 
+	  params: (option)Parameter is set to Object.<br> 
 	</li>
 	
 </ul>
@@ -488,8 +426,8 @@
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="DungeonRange "></a><strong>DungeonRange </strong></dt>
-<dd>ダンジョンの領域です.
+<dt><a name="Particles "></a><strong>Particles </strong></dt>
+<dd>This is a class to draw the texture. <br> Base Classes => DisplayObject, TextureDrawable, Resizable <br> 
 
 
 

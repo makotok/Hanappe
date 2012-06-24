@@ -39,7 +39,7 @@
 <ul>
 
 	<li>
-		<a href="../../../files/hp/Application.html">hp/Application.lua</a>
+		<a href="../../../files/hp/core/Application.html">hp/core/Application.lua</a>
 	</li>
 
 	<li>
@@ -75,6 +75,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/Particles.html">hp/display/Particles.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
 
@@ -101,30 +105,6 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/dungeon/DungeonMap.html">hp/dungeon/DungeonMap.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonMapBuilder.html">hp/dungeon/DungeonMapBuilder.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonObject.html">hp/dungeon/DungeonObject.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRange.html">hp/dungeon/DungeonRange.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRoad.html">hp/dungeon/DungeonRoad.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRoom.html">hp/dungeon/DungeonRoom.lua</a>
-	</li>
-
-	<li>
 		<a href="../../../files/hp/event/Event.html">hp/event/Event.lua</a>
 	</li>
 
@@ -137,15 +117,7 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/factory/DisplayFactory.html">hp/factory/DisplayFactory.lua</a>
-	</li>
-
-	<li>
 		<a href="../../../files/hp/factory/SceneFactory.html">hp/factory/SceneFactory.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/factory/WidgetFactory.html">hp/factory/WidgetFactory.lua</a>
 	</li>
 
 	<li>
@@ -194,6 +166,10 @@
 
 	<li>
 		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/manager/SoundManager.html">hp/manager/SoundManager.lua</a>
 	</li>
 
 	<li>
@@ -257,15 +233,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/LaterExecutor.html">hp/util/LaterExecutor.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/util/Logger.html">hp/util/Logger.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/util/MOAIPropUtil.html">hp/util/MOAIPropUtil.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
 	</li>
 
 	<li>
@@ -392,6 +368,11 @@
 	<tr>
 	<td class="name" nowrap><a href="#M:setSheets">M:setSheets</a>&nbsp;(sheets)</td>
 	<td class="summary">Set the data sheet.<br> Sheet in accordance with the following format: Please.<br> {x = Start position, y = Start position, width = The width of the sheet, height = The height of the sheet} <br> TODO:Setting of the flip.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:setTileSize">M:setTileSize</a>&nbsp;(tileX, tileY)</td>
+	<td class="summary">Sets the tile size.</td>
 	</tr>
 
 	<tr>
@@ -649,6 +630,36 @@ Set the data sheet.<br> Sheet in accordance with the following format: Please.<b
 	
 	<li>
 	  sheets: sheet data 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:setTileSize"></a><strong>M:setTileSize</strong>&nbsp;(tileX, tileY)</dt>
+<dd>
+Sets the tile size.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  tileX: number of tiles in the x-direction.
+	</li>
+	
+	<li>
+	  tileY: number of tiles in the y-direction. 
 	</li>
 	
 </ul>

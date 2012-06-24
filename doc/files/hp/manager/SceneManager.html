@@ -39,7 +39,7 @@
 <ul>
 
 	<li>
-		<a href="../../../files/hp/Application.html">hp/Application.lua</a>
+		<a href="../../../files/hp/core/Application.html">hp/core/Application.lua</a>
 	</li>
 
 	<li>
@@ -75,6 +75,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/display/Particles.html">hp/display/Particles.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/display/Resizable.html">hp/display/Resizable.lua</a>
 	</li>
 
@@ -103,30 +107,6 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/dungeon/DungeonMap.html">hp/dungeon/DungeonMap.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonMapBuilder.html">hp/dungeon/DungeonMapBuilder.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonObject.html">hp/dungeon/DungeonObject.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRange.html">hp/dungeon/DungeonRange.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRoad.html">hp/dungeon/DungeonRoad.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/dungeon/DungeonRoom.html">hp/dungeon/DungeonRoom.lua</a>
-	</li>
-
-	<li>
 		<a href="../../../files/hp/event/Event.html">hp/event/Event.lua</a>
 	</li>
 
@@ -139,15 +119,7 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/factory/DisplayFactory.html">hp/factory/DisplayFactory.lua</a>
-	</li>
-
-	<li>
 		<a href="../../../files/hp/factory/SceneFactory.html">hp/factory/SceneFactory.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/factory/WidgetFactory.html">hp/factory/WidgetFactory.lua</a>
 	</li>
 
 	<li>
@@ -194,6 +166,10 @@
 	
 	<li>
 		<a href="../../../files/hp/manager/ShaderManager.html">hp/manager/ShaderManager.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/manager/SoundManager.html">hp/manager/SoundManager.lua</a>
 	</li>
 
 	<li>
@@ -257,15 +233,15 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/util/LaterExecutor.html">hp/util/LaterExecutor.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/util/Logger.html">hp/util/Logger.lua</a>
 	</li>
 
 	<li>
 		<a href="../../../files/hp/util/MOAIPropUtil.html">hp/util/MOAIPropUtil.lua</a>
-	</li>
-
-	<li>
-		<a href="../../../files/hp/util/TexturePackerLoader.html">hp/util/TexturePackerLoader.lua</a>
 	</li>
 
 	<li>
@@ -356,57 +332,57 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:closeScene">M:closeScene</a>&nbsp;(params)</td>
-	<td class="summary">現在のシーンを終了します.</td>
+	<td class="summary">Close the current scene.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:destroyScene">M:destroyScene</a>&nbsp;(scene)</td>
+	<td class="summary">Destroy the scene.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:findSceneByName">M:findSceneByName</a>&nbsp;(sceneName)</td>
-	<td class="summary">シーン名からシーンを検索して返します.</td>
+	<td class="summary">Returns the scene to find the scene name.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:forceUpdateRender">M:forceUpdateRender</a>&nbsp;()</td>
-	<td class="summary">描画を更新します.</td>
+	<td class="summary">Update the drawing order of layers.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getCurrentScene">M:getCurrentScene</a>&nbsp;()</td>
-	<td class="summary">currentSceneを返します.<br>  </td>
+	<td class="summary">Returns the current scene.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:openNextScene">M:openNextScene</a>&nbsp;(sceneName, params)</td>
-	<td class="summary">次のシーンに遷移します.</td>
+	<td class="name" nowrap><a href="#M:openNextScene">M:openNextScene</a>&nbsp;(sceneName, params, The)</td>
+	<td class="summary">Open to the next scene.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:openScene">M:openScene</a>&nbsp;(sceneName, params)</td>
-	<td class="summary">新しいシーンを表示します.</td>
+	<td class="summary">Open a new scene.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:orderToBack">M:orderToBack</a>&nbsp;(scene)</td>
-	<td class="summary">シーンを最背面に移動します.</td>
+	<td class="summary">Move to the back scene.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:orderToFront">M:orderToFront</a>&nbsp;(scene)</td>
-	<td class="summary">シーンを最前面に移動します.</td>
+	<td class="summary">Move to the front scene.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setSceneFactory">M:setSceneFactory</a>&nbsp;(factory)</td>
-	<td class="summary">SceneFactoryを設定します.<br>  </td>
+	<td class="summary">Sets the SceneFactory.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:updateRender">M:updateRender</a>&nbsp;()</td>
-	<td class="summary">描画を更新します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#onTouchDown">onTouchDown</a>&nbsp;(e)</td>
-	<td class="summary">private functions  </td>
+	<td class="summary">Update the drawing order of layers.</td>
 	</tr>
 
 </table>
@@ -419,7 +395,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#SceneManager ">SceneManager </a></td>
-	<td class="summary">Sceneを管理するマネージャクラスです.<br> シーンのライフサイクルの管理やイベント制御を行います.</td>
+	<td class="summary">This is a class to manage the Scene.</td>
 	</tr>
 
 </table>
@@ -439,14 +415,40 @@
 
 <dt><a name="M:closeScene"></a><strong>M:closeScene</strong>&nbsp;(params)</dt>
 <dd>
-現在のシーンを終了します. 前のシーンに遷移します. 
+Close the current scene. <br> To resume the previous scene.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  params: 
+	  params: (option)Parameters that define the behavior. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:destroyScene"></a><strong>M:destroyScene</strong>&nbsp;(scene)</dt>
+<dd>
+Destroy the scene. <br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  scene: 
 	</li>
 	
 </ul>
@@ -465,14 +467,14 @@
 
 <dt><a name="M:findSceneByName"></a><strong>M:findSceneByName</strong>&nbsp;(sceneName)</dt>
 <dd>
-シーン名からシーンを検索して返します. 見つからない場合はnilを返します. 
+Returns the scene to find the scene name.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  sceneName: 
+	  sceneName: Name of the target scene.
 	</li>
 	
 </ul>
@@ -481,6 +483,9 @@
 
 
 
+
+<h3>Return value:</h3>
+If a match is found the scene. 
 
 
 
@@ -491,7 +496,7 @@
 
 <dt><a name="M:forceUpdateRender"></a><strong>M:forceUpdateRender</strong>&nbsp;()</dt>
 <dd>
-描画を更新します. 
+Update the drawing order of layers. <br> Normally, you need to manipulate this function is not available. 
 
 
 
@@ -508,13 +513,16 @@
 
 <dt><a name="M:getCurrentScene"></a><strong>M:getCurrentScene</strong>&nbsp;()</dt>
 <dd>
-currentSceneを返します.<br> 
+Returns the current scene. <br>
 
 
 
 
 
 
+
+<h3>Return value:</h3>
+currentScene. 
 
 
 
@@ -523,9 +531,9 @@ currentSceneを返します.<br>
 
 
 
-<dt><a name="M:openNextScene"></a><strong>M:openNextScene</strong>&nbsp;(sceneName, params)</dt>
+<dt><a name="M:openNextScene"></a><strong>M:openNextScene</strong>&nbsp;(sceneName, params, The)</dt>
 <dd>
-次のシーンに遷移します. 現在のシーンは終了します. 
+Open to the next scene. <br> The current scene will be closed. <br> See M:openScene(). <br>
 
 
 <h3>Parameters</h3>
@@ -536,7 +544,11 @@ currentSceneを返します.<br>
 	</li>
 	
 	<li>
-	  params: 
+	  params: (option)Parameters that define the behavior.
+	</li>
+	
+	<li>
+	  The: unique name of the scene. Scene module path.
 	</li>
 	
 </ul>
@@ -545,6 +557,9 @@ currentSceneを返します.<br>
 
 
 
+
+<h3>Return value:</h3>
+If you generate a return to the scene. 
 
 
 
@@ -555,18 +570,18 @@ currentSceneを返します.<br>
 
 <dt><a name="M:openScene"></a><strong>M:openScene</strong>&nbsp;(sceneName, params)</dt>
 <dd>
-新しいシーンを表示します. 現在のシーンはそのままスタックされた状態で、 次のシーンを表示します.  params引数で、いくつかの動作を変更できます. 1. params.sceneClassを指定した場合、 Sceneクラスではなく、別のクラスをnewします. 2. params.animationを指定した場合、  
+Open a new scene. <br> The current scene is the stack intact. <br> But if set to true currentClosing, close the current scene. <br> <br> You can specify the behavior in the argument params. <br> 1. params.sceneClass <br> Specifies the class of scenes to be generated. <br> 2. params.animation <br> Specifies the animation of the scene transitions. <br> 3. params.sec <br> Specifies the time of the animation.<br> 4. params.currentClosing <br> Specify whether to close the current scene. <br> 
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  sceneName: 
+	  sceneName: The unique name of the scene. Scene module path.
 	</li>
 	
 	<li>
-	  params: 
+	  params: (option)Parameters that define the behavior.
 	</li>
 	
 </ul>
@@ -575,6 +590,9 @@ currentSceneを返します.<br>
 
 
 
+
+<h3>Return value:</h3>
+If you generate a return to the scene. 
 
 
 
@@ -585,14 +603,14 @@ currentSceneを返します.<br>
 
 <dt><a name="M:orderToBack"></a><strong>M:orderToBack</strong>&nbsp;(scene)</dt>
 <dd>
-シーンを最背面に移動します. 
+Move to the back scene. <br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  scene: 
+	  scene: Scene or scene name. 
 	</li>
 	
 </ul>
@@ -611,14 +629,14 @@ currentSceneを返します.<br>
 
 <dt><a name="M:orderToFront"></a><strong>M:orderToFront</strong>&nbsp;(scene)</dt>
 <dd>
-シーンを最前面に移動します. 
+Move to the front scene. <br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  scene: 
+	  scene: Scene or scene name. 
 	</li>
 	
 </ul>
@@ -637,14 +655,14 @@ currentSceneを返します.<br>
 
 <dt><a name="M:setSceneFactory"></a><strong>M:setSceneFactory</strong>&nbsp;(factory)</dt>
 <dd>
-SceneFactoryを設定します.<br> 
+Sets the SceneFactory. <br> If you need to use your own factory. <br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  factory: 
+	  factory: Scene factory module. 
 	</li>
 	
 </ul>
@@ -663,34 +681,8 @@ SceneFactoryを設定します.<br>
 
 <dt><a name="M:updateRender"></a><strong>M:updateRender</strong>&nbsp;()</dt>
 <dd>
-描画を更新します. 
+Update the drawing order of layers. <br> Normally, you need to manipulate this function is not available. <br> Timing to be updated, in fact, is done in EnterFrame. 
 
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="onTouchDown"></a><strong>onTouchDown</strong>&nbsp;(e)</dt>
-<dd>
-private functions 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  e: 
-	</li>
-	
-</ul>
 
 
 
@@ -711,7 +703,7 @@ private functions
 <dl class="table">
 
 <dt><a name="SceneManager "></a><strong>SceneManager </strong></dt>
-<dd>Sceneを管理するマネージャクラスです.<br> シーンのライフサイクルの管理やイベント制御を行います.
+<dd>This is a class to manage the Scene. <br> Order to manage the rendering of the scene and event notification. <br>
 
 
 
