@@ -39,25 +39,25 @@ local config = {
 -- Hanappe Application customize
 --------------------------------------------------------------------------------
 
-local hp = require("hp/classes")
+local classes = require("classes")
 
 -- Shader setting.
-hp.ShaderManager.SHADERS_DIRECTORY = "src/main/hp/shader/"
+classes.ShaderManager.SHADERS_DIRECTORY = "src/main/hp/shader/"
 
 -- Widget themes setting.
-hp.WidgetManager:setDefaultThemes("assets/themes/basic/Themes")
+classes.WidgetManager:setDefaultThemes("assets/themes/basic/Themes")
 
 -- Font setting
-hp.FontManager.DEFAULT_FONT = "assets/fonts/ipag.ttf"
+classes.FontManager.DEFAULT_FONT = "assets/fonts/ipag.ttf"
 
 -- TextLabel setting
-hp.TextLabel.DEFAULT_COLOR = {1, 1, 1, 1}
-hp.TextLabel.DEFAULT_TEXT_SIZE = 24
+classes.TextLabel.DEFAULT_COLOR = {1, 1, 1, 1}
+classes.TextLabel.DEFAULT_TEXT_SIZE = 24
 
 -- Background color style.
 --[[
-hp.Application:setClearColor(1, 1, 1, 1)
-hp.TextLabel.DEFAULT_COLOR = {0, 0, 0, 1}
+classes.Application:setClearColor(1, 1, 1, 1)
+classes.TextLabel.DEFAULT_COLOR = {0, 0, 0, 1}
 --]]
 
 return config
