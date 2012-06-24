@@ -1,6 +1,6 @@
 -- requires
 local config    = require("config")
-local classes   = require("hp/classes")
+local classes   = require("classes")
 
 -- Classes import.
 -- If you hate to be imported into the global,
