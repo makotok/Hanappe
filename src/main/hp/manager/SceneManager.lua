@@ -24,6 +24,7 @@ local transitioning = false
 local sceneAnimation = nil
 local renderTable = {}
 local updateRenderFlag = false
+local hudLayers = {}
 
 
 local function onTouchDown(e)
@@ -128,16 +129,17 @@ local function animateScene(params, completeFunc)
 end
 
 local function openComplete()
+    transitioning = false
     if currentScene and currentClosing then
         removeScene(currentScene)
         currentScene:onDestroy()
     end
     
-    transitioning = false
     currentScene = nextScene
     currentScene:onStart()
     currentScene:onResume()
-    updateRenderFlag = true
+    
+    M:updateRender()
 end
 
 local function closeComplete()
@@ -147,11 +149,11 @@ local function closeComplete()
     currentScene = nextScene
     
     --collectgarbage("collect")
-    if nextScene then
-        nextScene:onResume()
+    if currentScene then
+        currentScene:onResume()
     end
     
-    updateRender()
+    M:updateRender()
 end
 
 InputManager:addEventListener(Event.TOUCH_DOWN, onTouchDown)
@@ -266,6 +268,28 @@ function M:closeScene(params)
 end
 
 --------------------------------------------------------------------------------
+-- Destroy the scene. <br>
+-- @param scene
+--------------------------------------------------------------------------------
+function M:destroyScene(scene)
+    if #scenes == 0 or transitioning then
+        return
+    end
+    
+    scene = type(scene) == "string" and self:findSceneByName(scene) or scene
+    
+    local i = table.indexOf(scenes, scene)
+    if i > 0 then
+        scene:onStop()
+        scene:onDestroy()
+        
+        table.remove(scenes, i)
+        currentScene = scenes[#scenes]
+        self:updateRender()
+    end
+end
+
+--------------------------------------------------------------------------------
 -- Update the drawing order of layers. <br>
 -- Normally, you need to manipulate this function is not available. <br>
 -- Timing to be updated, in fact, is done in EnterFrame.
@@ -302,7 +326,7 @@ end
 -- @param scene Scene or scene name.
 --------------------------------------------------------------------------------
 function M:orderToFront(scene)
-    if #scenes <= 1 then
+    if #scenes <= 1 or transitioning then
         return
     end
     
@@ -322,7 +346,7 @@ end
 -- @param scene Scene or scene name.
 --------------------------------------------------------------------------------
 function M:orderToBack(scene)
-    if #scenes <= 1 then
+    if #scenes <= 1 or transitioning then
         return
     end
 
