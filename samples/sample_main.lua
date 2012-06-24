@@ -17,6 +17,8 @@ local sceneItems = {
     {text = "drag", scene = "samples/display/drag_sample", animation = "fade"},
     {text = "drag2", scene = "samples/display/drag2_sample", animation = "fade"},
     {text = "mesh", scene = "samples/display/mesh_sample", animation = "fade"},
+    {text = "particles", scene = "samples/display/particles_sample", animation = "fade"},
+
     -- manager
     {text = "scenemanager", scene = "samples/manager/scenemanager_sample"},
 
@@ -30,11 +32,15 @@ local sceneItems = {
     {text = "scrollview", scene = "samples/widget/scrollview_sample", animation = "fade"},
     {text = "textview", scene = "samples/widget/textview_sample", animation = "fade"},
 
+    -- sound
+    {text = "sound1", scene = "samples/sound/sound1_sample", animation = "fade"},
+
     -- physics
     {text = "physics1", scene = "samples/physics/physics1_sample", animation = "fade"},
 
     -- tmx
     {text = "tiledmap", scene = "samples/tmx/tiledmap_sample", animation = "fade"},
+    
     -- rpg
     {text = "rpgmap", scene = "samples/rpg/rpgmap_sample", animation = "fade"},
 }
