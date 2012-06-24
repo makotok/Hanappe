@@ -1,9 +1,12 @@
-local config = require("config")
-local TestCase = require("TestCase")
-local Application = require("hp/Application")
+-- requires
+local config    = require("config")
+local classes   = require("classes")
+local Application = require("hp/core/Application")
 
-Application:appStart(config)
+-- Application start.
+Application:start(config)
 
 -- test run
+require("TestCase")
 require("luaunit")
 LuaUnit:run()

@@ -1,5 +1,5 @@
 local Layer = require("hp/display/Layer")
-local Application = require("hp/Application")
+local Application = require("hp/core/Application")
 
 local M = {}
 
