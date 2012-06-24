@@ -22,20 +22,11 @@ local super = Layer
 -- コンストラクタです.
 ----------------------------------------------------------------
 function M:init(params)
-    Layer.init(self)
+    Layer.init(self, params)
     ThemeClient.init(self)
     
     self:setPrivate("children", {})
     self:setPrivate("enabled", true)
-end
-
---------------------------------------------------------------------------------
--- 画面上のサイズを設定します.
--- サイズを設定すると、Viewのサイズも設定されます.
---------------------------------------------------------------------------------
-function M:setScreenSize(width, height)
-    super.setScreenSize(self, width, height)
-    --self.viewport:setSize(width, height)
 end
 
 --------------------------------------------------------------------------------
