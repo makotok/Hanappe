@@ -29,6 +29,9 @@ end
 -- @param priority (option)Notification order.
 --------------------------------------------------------------------------------
 function M:addEventListener(eventType, callback, source, priority)
+    assert(eventType)
+    assert(callback)
+
     if self:hasEventListener(eventType, callback, source) then
         return false
     end
@@ -50,6 +53,9 @@ end
 -- Removes an event listener.
 --------------------------------------------------------------------------------
 function M:removeEventListener(eventType, callback, source)
+    assert(eventType)
+    assert(callback)
+    
     for key, obj in ipairs(self.eventlisteners) do
         if obj.type == eventType and obj.callback == callback and obj.source == source then
             table.remove(self.eventlisteners, key)
@@ -65,6 +71,7 @@ end
 --------------------------------------------------------------------------------
 function M:hasEventListener(eventType, callback, source)
     assert(eventType)
+    
     for key, obj in ipairs(self.eventlisteners) do
         if obj.type == eventType then
             if callback or source then
@@ -86,6 +93,8 @@ function M:dispatchEvent(event)
     event = type(event) == "string" and Event(event) or event
     event.stoped = false
     event.target = self.eventTarget or self
+
+    assert(event.type)
     for key, obj in ipairs(self.eventlisteners) do
         if obj.type == event.type then
             event:setListener(obj.callback, obj.source)
