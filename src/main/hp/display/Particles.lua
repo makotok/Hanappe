@@ -7,29 +7,27 @@
 -- @name Particles
 --------------------------------------------------------------------------------
 
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local DisplayObject = require("hp/display/DisplayObject")
-local TextureDrawable = require("hp/display/TextureDrawable")
+local table             = require("hp/lang/table")
+local class             = require("hp/lang/class")
+local DisplayObject     = require("hp/display/DisplayObject")
+local TextureDrawable   = require("hp/display/TextureDrawable")
+local ResourceManager   = require("hp/manager/ResourceManager")
 
 local M = class(DisplayObject, TextureDrawable)
+
 M.MOAI_CLASS = MOAIParticleSystem
 
-local function delegates(self)
-
-end
-
-function M.fromPex(particleName, resourceDirectory)
-    resourceDirectory = resourceDirectory or ""
-    local plugin =  MOAIParticlePexPlugin.load(resourceDirectory .. particleName)
+function M.fromPex(particleName)
+    local filePath = ResourceManager:getFilePath(particleName)
+    local plugin =  MOAIParticlePexPlugin.load(filePath)
     
-    local self = M(resourceDirectory .. plugin:getTextureName())
+    local self = M(plugin:getTextureName())
     self:reserveParticles(plugin:getMaxParticles(), plugin:getSize())
     self:reserveSprites(plugin:getMaxParticles())
     self:reserveStates(1)
     self:setBlendMode(plugin:getBlendMode())
 
-    local state = MOAIParticleState.new ()
+    local state = MOAIParticleState.new()
     state:setTerm(plugin:getLifespan())
     state:setPlugin(plugin)
     
@@ -40,9 +38,15 @@ function M.fromPex(particleName, resourceDirectory)
     emitter:setFrequency(plugin:getFrequency())
     emitter:setRect(plugin:getRect())
     
+    local timer = MOAITimer.new()
+    timer:setSpan(plugin:getDuration())
+    timer:setMode(MOAITimer.NORMAL)
+    timer:setListener(MOAIAction.EVENT_STOP, function() self:stopParticle() end)
+    
     self.plugin = plugin
     self.emitter = emitter
     self.state = state
+    self.timer = timer
     
     self:setState(1, state)
     
@@ -80,6 +84,20 @@ function M:copyParams(params)
     end
 
     DisplayObject.copyParams(self, params)
+end
+
+function M:startParticle()
+    self.emitter:start()
+    if self.plugin:getDuration() > -1 then
+        self.timer:start()
+    end
+end
+
+function M:stopParticle()
+    self.emitter:stop()
+    if self.plugin:getDuration() > -1 then
+        self.timer:stop()
+    end
 end
 
 return M
