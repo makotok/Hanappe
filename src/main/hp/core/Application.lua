@@ -20,7 +20,7 @@ local defaultConfig = {
 local function getScreenSize(self, config)
     local w, h = config.screenWidth, config.screenHeight
     if self:isMobile() then
-        local w, h = MOAIEnvironment.screenWidth, MOAIEnvironment.screenHeight
+        local w, h = assert(MOAIEnvironment.horizontalResolution), assert(MOAIEnvironment.verticalResolution)
     end
     if config.landscape then
         return h, w
