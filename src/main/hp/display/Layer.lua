@@ -174,9 +174,14 @@ end
 --------------------------------------------------------------------------------
 function M:setScene(scene)
     if self.scene == scene then
+        return
+    end
+    if self.scene then
         self.scene:removeChild(self)
     end
+    
     self.scene = scene
+    
     if self.scene then
         self.scene:addChild(self)
     end
