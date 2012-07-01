@@ -7,6 +7,6 @@ local Application = require("hp/core/Application")
 Application:start(config)
 
 -- test run
-require("TestCase")
+require("tests")
 require("luaunit")
 LuaUnit:run()
