@@ -11,8 +11,11 @@ local SceneFactory = require("hp/factory/SceneFactory")
 local InputManager = require("hp/manager/InputManager")
 local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
+local Logger = require("hp/util/Logger")
 
 local M = EventDispatcher()
+
+local LOG_TAG = "SceneManager"
 
 -- private var
 local scenes = {}
@@ -20,6 +23,7 @@ local sceneFactory = SceneFactory
 local currentScene = nil
 local currentClosing = false
 local nextScene = nil
+local closingScene = nil
 local transitioning = false
 local sceneAnimation = nil
 local renderTable = {}
@@ -129,7 +133,6 @@ local function animateScene(params, completeFunc)
 end
 
 local function openComplete()
-    transitioning = false
     if currentScene and currentClosing then
         removeScene(currentScene)
         currentScene:onDestroy()
@@ -140,20 +143,23 @@ local function openComplete()
     currentScene:onResume()
     
     M:updateRender()
+    transitioning = false
 end
 
 local function closeComplete()
-    transitioning = false
-    removeScene(currentScene)
-    currentScene:onDestroy()
-    currentScene = nextScene
+    removeScene(closingScene)
+    closingScene:onDestroy()
+    closingScene = nil
     
-    --collectgarbage("collect")
+    currentScene = nextScene or currentScene
+    currentScene = #scenes > 0 and currentScene or nil
+    
     if currentScene then
         currentScene:onResume()
     end
     
     M:updateRender()
+    transitioning = false
 end
 
 InputManager:addEventListener(Event.TOUCH_DOWN, onTouchDown)
@@ -198,6 +204,7 @@ thread:run(
 --------------------------------------------------------------------------------
 function M:openScene(sceneName, params)
     if transitioning then
+        Logger.warn(LOG_TAG, "openScene()", "Scene transitioning!")
         return
     end
 
@@ -251,6 +258,7 @@ end
 --------------------------------------------------------------------------------
 function M:closeScene(params)
     if transitioning then
+        Logger.warn(LOG_TAG, "closeScene()", "Scene transitioning!")
         return
     end
     if #scenes == 0 then
@@ -258,35 +266,19 @@ function M:closeScene(params)
     end
     
     params = params and params or {}
+    closingScene = params.closingScene or currentScene
+    closingScene = type(closingScene) == "string" and self:findSceneByName(closingScene) or closingScene
     
-    nextScene = scenes[#scenes - 1]
-    currentScene:onStop()
+    if not closingScene then
+        return
+    end
+    
+    nextScene = closingScene == currentScene and scenes[#scenes - 1] or nil
+    closingScene:onStop()
     
     animateScene(params, closeComplete)
     
     return nextScene
-end
-
---------------------------------------------------------------------------------
--- Destroy the scene. <br>
--- @param scene
---------------------------------------------------------------------------------
-function M:destroyScene(scene)
-    if #scenes == 0 or transitioning then
-        return
-    end
-    
-    scene = type(scene) == "string" and self:findSceneByName(scene) or scene
-    
-    local i = table.indexOf(scenes, scene)
-    if i > 0 then
-        scene:onStop()
-        scene:onDestroy()
-        
-        table.remove(scenes, i)
-        currentScene = scenes[#scenes]
-        self:updateRender()
-    end
 end
 
 --------------------------------------------------------------------------------
@@ -305,7 +297,6 @@ end
 function M:forceUpdateRender()
     updateRender()
 end
-
 
 --------------------------------------------------------------------------------
 -- Returns the scene to find the scene name.
