@@ -1,8 +1,45 @@
 -------------------------------------------------------------------
 -- Hanappe Framework Version:1.5.0
 -- Moai SDK Version 1.2 Build 56
+-- Update: 2012/07/01
 -------------------------------------------------------------------
+In this version, we have a lot of improvements and refactoring.
+Some care must be taken, so compatibility has been lost.
 
+1.Change the path of the Application.
+Before: require("hp/Application")
+After : require("hp/core/Application")
+
+2.Renaming a Method of Application.
+Before: Application:appStart()
+After : Application:start()
+
+3.Change on how to import the class.
+Available classes has increased in Hanappe.
+Was changed to the class how to be aware that use the framework to be imported.
+
+Before: Application:import(t, prefix)
+After : classes.import(t)
+
+4.Added ResourceManager.
+Description has become easier by using the ResourceManager.
+Makes it easy to switch over the resource.
+In addition, the conventional method is also possible.
+
+Before: Sprite(filePath)
+After : Sprite(fileName)
+
+5.Added SoundManager.
+
+6.Added Particles.
+Add a class for easy use of the Particle.
+However, still many problems.
+In addition, there is a bug in the MOAI SDK.
+pex file can not be interpreted correctly.
+
+7.Has re-written in English of the source document.
+
+8.Others, such as improvement bug.
 
 -------------------------------------------------------------------
 -- Hanappe Framework Version:1.4.2
