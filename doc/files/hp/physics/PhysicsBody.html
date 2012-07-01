@@ -163,6 +163,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ResourceManager.html">hp/manager/ResourceManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/SceneManager.html">hp/manager/SceneManager.lua</a>
 	</li>
 
@@ -233,7 +237,11 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/util/LaterExecutor.html">hp/util/LaterExecutor.lua</a>
+		<a href="../../../files/hp/util/Executors.html">hp/util/Executors.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/FpsMonitor.html">hp/util/FpsMonitor.lua</a>
 	</li>
 
 	<li>
@@ -332,27 +340,27 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:addCircle">M:addCircle</a>&nbsp;(x, y, radius)</td>
-	<td class="summary">サークルを追加します.</td>
+	<td class="summary">Add a circle.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:addEdges">M:addEdges</a>&nbsp;(verts)</td>
-	<td class="summary">エッジを追加します.</td>
+	<td class="summary">Add the edge.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:addEventListener">M:addEventListener</a>&nbsp;(eventType, callback, source, priority)</td>
-	<td class="summary">座標を設定します.</td>
+	<td class="summary">Adds an event listener.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:addPhysicsData">M:addPhysicsData</a>&nbsp;(...)</td>
-	<td class="summary">PhysicsEditorで作成したPhysicsDataを追加します.</td>
+	<td class="summary">Add the PhysicsData was created in PhysicsEditor.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:addPolygon">M:addPolygon</a>&nbsp;(verts)</td>
-	<td class="summary">ポリゴンを追加します.</td>
+	<td class="summary">Adds a polygon.</td>
 	</tr>
 
 	<tr>
@@ -362,32 +370,42 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:addRect">M:addRect</a>&nbsp;(xMin, yMin, xMax, yMax)</td>
-	<td class="summary">四角形を追加します.</td>
+	<td class="summary">Add a rectangle.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:findFixtureByName">M:findFixtureByName</a>&nbsp;(name)</td>
-	<td class="summary">名前から検索して、一致した最初のFixtureを返します.</td>
+	<td class="summary">Search from the name, and returns the Fixture was the first match.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:findFixturesByName">M:findFixturesByName</a>&nbsp;(name)</td>
-	<td class="summary">名前から検索して、一致したFixtureのリストを返します.</td>
+	<td class="summary">Search from the name, it returns a list of Fixture match.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:getFixtureAt">M:getFixtureAt</a>&nbsp;(i)</td>
+	<td class="summary">Returns a Fixture at the specified index.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getFixtures">M:getFixtures</a>&nbsp;()</td>
-	<td class="summary"> </td>
+	<td class="summary">Returns the Fixture for all.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:getPos">M:getPos</a>&nbsp;()</td>
+	<td class="summary">Returns the position.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getX">M:getX</a>&nbsp;()</td>
-	<td class="summary">x座標を返します.</td>
+	<td class="summary">Returns the position x.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getY">M:getY</a>&nbsp;()</td>
-	<td class="summary">y座標を返します.</td>
+	<td class="summary">Returns the position y.</td>
 	</tr>
 
 	<tr>
@@ -402,22 +420,22 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setAngle">M:setAngle</a>&nbsp;(angle)</td>
-	<td class="summary">angleを設定します.</td>
+	<td class="summary">Sets angle.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setPos">M:setPos</a>&nbsp;(x, y)</td>
-	<td class="summary">座標を設定します.</td>
+	<td class="summary">Sets the position.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setX">M:setX</a>&nbsp;(x)</td>
-	<td class="summary">x座標を設定します.</td>
+	<td class="summary">Sets the position x.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setY">M:setY</a>&nbsp;(y)</td>
-	<td class="summary">y座標を設定します.</td>
+	<td class="summary">Sets the position y.</td>
 	</tr>
 
 </table>
@@ -429,8 +447,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#PhysicsWorld ">PhysicsWorld </a></td>
-	<td class="summary">Class that inherits from MOAIBox2DWorld.<br> TODO:Not implemented </td>
+	<td class="name" nowrap><a href="#PhysicsBody ">PhysicsBody </a></td>
+	<td class="summary">Class that inherits from MOAIBox2DBody.<br> </td>
 	</tr>
 
 </table>
@@ -450,7 +468,7 @@
 
 <dt><a name="M:addCircle"></a><strong>M:addCircle</strong>&nbsp;(x, y, radius)</dt>
 <dd>
-サークルを追加します. 
+Add a circle. 
 
 
 <h3>Parameters</h3>
@@ -484,7 +502,7 @@
 
 <dt><a name="M:addEdges"></a><strong>M:addEdges</strong>&nbsp;(verts)</dt>
 <dd>
-エッジを追加します. 
+Add the edge. 
 
 
 <h3>Parameters</h3>
@@ -510,7 +528,7 @@
 
 <dt><a name="M:addEventListener"></a><strong>M:addEventListener</strong>&nbsp;(eventType, callback, source, priority)</dt>
 <dd>
-座標を設定します. 
+Adds an event listener. <br> Also responsible for handling of Fixture. 
 
 
 <h3>Parameters</h3>
@@ -548,7 +566,7 @@
 
 <dt><a name="M:addPhysicsData"></a><strong>M:addPhysicsData</strong>&nbsp;(...)</dt>
 <dd>
-PhysicsEditorで作成したPhysicsDataを追加します.
+Add the PhysicsData was created in PhysicsEditor. <br> Partially, it is proprietary.
 
 
 <h3>Parameters</h3>
@@ -574,7 +592,7 @@ PhysicsEditorで作成したPhysicsDataを追加します.
 
 <dt><a name="M:addPolygon"></a><strong>M:addPolygon</strong>&nbsp;(verts)</dt>
 <dd>
-ポリゴンを追加します. 
+Adds a polygon. 
 
 
 <h3>Parameters</h3>
@@ -630,7 +648,7 @@ PhysicsEditorで作成したPhysicsDataを追加します.
 
 <dt><a name="M:addRect"></a><strong>M:addRect</strong>&nbsp;(xMin, yMin, xMax, yMax)</dt>
 <dd>
-四角形を追加します. 
+Add a rectangle. 
 
 
 <h3>Parameters</h3>
@@ -668,14 +686,14 @@ PhysicsEditorで作成したPhysicsDataを追加します.
 
 <dt><a name="M:findFixtureByName"></a><strong>M:findFixtureByName</strong>&nbsp;(name)</dt>
 <dd>
-名前から検索して、一致した最初のFixtureを返します. 
+Search from the name, and returns the Fixture was the first match.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  name: 
+	  name: Fixture name.
 	</li>
 	
 </ul>
@@ -684,6 +702,9 @@ PhysicsEditorで作成したPhysicsDataを追加します.
 
 
 
+
+<h3>Return value:</h3>
+Fixture instance. 
 
 
 
@@ -694,14 +715,14 @@ PhysicsEditorで作成したPhysicsDataを追加します.
 
 <dt><a name="M:findFixturesByName"></a><strong>M:findFixturesByName</strong>&nbsp;(name)</dt>
 <dd>
-名前から検索して、一致したFixtureのリストを返します. 
+Search from the name, it returns a list of Fixture match.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  name: 
+	  name: Fixture name.
 	</li>
 	
 </ul>
@@ -710,6 +731,38 @@ PhysicsEditorで作成したPhysicsDataを追加します.
 
 
 
+
+<h3>Return value:</h3>
+Fixture instance list. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:getFixtureAt"></a><strong>M:getFixtureAt</strong>&nbsp;(i)</dt>
+<dd>
+Returns a Fixture at the specified index.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  i: index
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+Fixture instance. 
 
 
 
@@ -720,6 +773,7 @@ PhysicsEditorで作成したPhysicsDataを追加します.
 
 <dt><a name="M:getFixtures"></a><strong>M:getFixtures</strong>&nbsp;()</dt>
 <dd>
+Returns the Fixture for all.
 
 
 
@@ -727,6 +781,28 @@ PhysicsEditorで作成したPhysicsDataを追加します.
 
 
 
+<h3>Return value:</h3>
+Fixtures 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:getPos"></a><strong>M:getPos</strong>&nbsp;()</dt>
+<dd>
+Returns the position.
+
+
+
+
+
+
+
+<h3>Return value:</h3>
+x, y. 
 
 
 
@@ -737,7 +813,7 @@ PhysicsEditorで作成したPhysicsDataを追加します.
 
 <dt><a name="M:getX"></a><strong>M:getX</strong>&nbsp;()</dt>
 <dd>
-x座標を返します.
+Returns the position x.
 
 
 
@@ -757,7 +833,7 @@ x
 
 <dt><a name="M:getY"></a><strong>M:getY</strong>&nbsp;()</dt>
 <dd>
-y座標を返します.
+Returns the position y.
 
 
 
@@ -820,7 +896,7 @@ The constructor.
 
 <dt><a name="M:setAngle"></a><strong>M:setAngle</strong>&nbsp;(angle)</dt>
 <dd>
-angleを設定します.
+Sets angle.
 
 
 <h3>Parameters</h3>
@@ -846,7 +922,7 @@ angleを設定します.
 
 <dt><a name="M:setPos"></a><strong>M:setPos</strong>&nbsp;(x, y)</dt>
 <dd>
-座標を設定します. 
+Sets the position.
 
 
 <h3>Parameters</h3>
@@ -876,7 +952,7 @@ angleを設定します.
 
 <dt><a name="M:setX"></a><strong>M:setX</strong>&nbsp;(x)</dt>
 <dd>
-x座標を設定します. 
+Sets the position x.
 
 
 <h3>Parameters</h3>
@@ -902,7 +978,7 @@ x座標を設定します.
 
 <dt><a name="M:setY"></a><strong>M:setY</strong>&nbsp;(y)</dt>
 <dd>
-y座標を設定します. 
+Sets the position y.
 
 
 <h3>Parameters</h3>
@@ -932,8 +1008,8 @@ y座標を設定します.
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="PhysicsWorld "></a><strong>PhysicsWorld </strong></dt>
-<dd>Class that inherits from MOAIBox2DWorld.<br> TODO:Not implemented
+<dt><a name="PhysicsBody "></a><strong>PhysicsBody </strong></dt>
+<dd>Class that inherits from MOAIBox2DBody.<br>
 
 
 

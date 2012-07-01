@@ -163,6 +163,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ResourceManager.html">hp/manager/ResourceManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/SceneManager.html">hp/manager/SceneManager.lua</a>
 	</li>
 
@@ -233,7 +237,11 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/util/LaterExecutor.html">hp/util/LaterExecutor.lua</a>
+		<a href="../../../files/hp/util/Executors.html">hp/util/Executors.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/FpsMonitor.html">hp/util/FpsMonitor.lua</a>
 	</li>
 
 	<li>
@@ -332,87 +340,87 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;()</td>
-	<td class="summary">コンストラクタです  </td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:loadFile">M:loadFile</a>&nbsp;(filename)</td>
-	<td class="summary">TMX形式のファイルを読み込みます。 読み込んだ結果をTMXMapで返します。  </td>
+	<td class="summary">Read the file format of TMX.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:loadString">M:loadString</a>&nbsp;(data)</td>
-	<td class="summary">TMX形式の文字列を読み込みます。 読み込んだ結果をTMXMapで返します。  </td>
+	<td class="summary">Read the string format of TMX.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNode">M:parseNode</a>&nbsp;(node)</td>
-	<td class="summary">ノードを読み込みます。  </td>
+	<td class="summary">Reads the node.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeAttributes">M:parseNodeAttributes</a>&nbsp;(node, dest)</td>
-	<td class="summary">ノードの属性を読み込みます。 読み込んだ結果は、destに設定します。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeData">M:parseNodeData</a>&nbsp;(node, layer)</td>
-	<td class="summary">dataのノードを読み込みます。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeDataForBase64">M:parseNodeDataForBase64</a>&nbsp;(node, layer, data)</td>
-	<td class="summary">base64形式のdataのノードを読み込みます。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeDataForCsv">M:parseNodeDataForCsv</a>&nbsp;(node, layer, data)</td>
-	<td class="summary">csv形式のdataのノードを読み込みます。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeDataForPlane">M:parseNodeDataForPlane</a>&nbsp;(node, layer, data)</td>
-	<td class="summary">無圧縮形式のdataのノードを読み込みます。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeImage">M:parseNodeImage</a>&nbsp;(node, tileset)</td>
-	<td class="summary">imageのノードを読み込みます。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeLayer">M:parseNodeLayer</a>&nbsp;(node)</td>
-	<td class="summary">Layerのノードを読み込みます。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeMap">M:parseNodeMap</a>&nbsp;(node)</td>
-	<td class="summary">Mapのノードを読み込みます。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeObject">M:parseNodeObject</a>&nbsp;(node, group)</td>
-	<td class="summary">ObjectGroup.objectのノードを読み込みます。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeObjectGroup">M:parseNodeObjectGroup</a>&nbsp;(node)</td>
-	<td class="summary">ObjectGroupのノードを読み込みます。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeProperties">M:parseNodeProperties</a>&nbsp;(node, dest)</td>
-	<td class="summary">TMXファイルのノードを読み込みます。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeTile">M:parseNodeTile</a>&nbsp;(node, tileset)</td>
-	<td class="summary">tileのノードを読み込みます。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:parseNodeTileset">M:parseNodeTileset</a>&nbsp;(node)</td>
-	<td class="summary">tilesetのノードを読み込みます。  </td>
+	<td class="summary">Please do not accessible from the outside.</td>
 	</tr>
 
 </table>
@@ -425,7 +433,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#TMXMapLoader ">TMXMapLoader </a></td>
-	<td class="summary">TMXMapLoaderはtmxファイルを読み込んで、TMXMapを生成するクラスです.<br> TODO:抽象的な入力ストリームに対応するといいかも </td>
+	<td class="summary">TMXMapLoader is a class that reads the file format tmx, to create a TMXMap.</td>
 	</tr>
 
 </table>
@@ -445,7 +453,7 @@
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;()</dt>
 <dd>
-コンストラクタです 
+The constructor. 
 
 
 
@@ -462,7 +470,7 @@
 
 <dt><a name="M:loadFile"></a><strong>M:loadFile</strong>&nbsp;(filename)</dt>
 <dd>
-TMX形式のファイルを読み込みます。 読み込んだ結果をTMXMapで返します。 
+Read the file format of TMX. <br> Returns TMXMap a result of reading.
 
 
 <h3>Parameters</h3>
@@ -479,6 +487,9 @@ TMX形式のファイルを読み込みます。 読み込んだ結果をTMXMap�
 
 
 
+<h3>Return value:</h3>
+TMXMap instance. 
+
 
 
 </dd>
@@ -488,7 +499,7 @@ TMX形式のファイルを読み込みます。 読み込んだ結果をTMXMap�
 
 <dt><a name="M:loadString"></a><strong>M:loadString</strong>&nbsp;(data)</dt>
 <dd>
-TMX形式の文字列を読み込みます。 読み込んだ結果をTMXMapで返します。 
+Read the string format of TMX. <br> Returns TMXMap a result of reading.
 
 
 <h3>Parameters</h3>
@@ -505,6 +516,9 @@ TMX形式の文字列を読み込みます。 読み込んだ結果をTMXMapで�
 
 
 
+<h3>Return value:</h3>
+TMXMap instance. 
+
 
 
 </dd>
@@ -514,7 +528,7 @@ TMX形式の文字列を読み込みます。 読み込んだ結果をTMXMapで�
 
 <dt><a name="M:parseNode"></a><strong>M:parseNode</strong>&nbsp;(node)</dt>
 <dd>
-ノードを読み込みます。 
+Reads the node. <br> Has been left for inheritance. <br> Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -540,7 +554,7 @@ TMX形式の文字列を読み込みます。 読み込んだ結果をTMXMapで�
 
 <dt><a name="M:parseNodeAttributes"></a><strong>M:parseNodeAttributes</strong>&nbsp;(node, dest)</dt>
 <dd>
-ノードの属性を読み込みます。 読み込んだ結果は、destに設定します。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -570,7 +584,7 @@ TMX形式の文字列を読み込みます。 読み込んだ結果をTMXMapで�
 
 <dt><a name="M:parseNodeData"></a><strong>M:parseNodeData</strong>&nbsp;(node, layer)</dt>
 <dd>
-dataのノードを読み込みます。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -600,7 +614,7 @@ dataのノードを読み込みます。
 
 <dt><a name="M:parseNodeDataForBase64"></a><strong>M:parseNodeDataForBase64</strong>&nbsp;(node, layer, data)</dt>
 <dd>
-base64形式のdataのノードを読み込みます。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -634,7 +648,7 @@ base64形式のdataのノードを読み込みます。
 
 <dt><a name="M:parseNodeDataForCsv"></a><strong>M:parseNodeDataForCsv</strong>&nbsp;(node, layer, data)</dt>
 <dd>
-csv形式のdataのノードを読み込みます。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -668,7 +682,7 @@ csv形式のdataのノードを読み込みます。
 
 <dt><a name="M:parseNodeDataForPlane"></a><strong>M:parseNodeDataForPlane</strong>&nbsp;(node, layer, data)</dt>
 <dd>
-無圧縮形式のdataのノードを読み込みます。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -702,7 +716,7 @@ csv形式のdataのノードを読み込みます。
 
 <dt><a name="M:parseNodeImage"></a><strong>M:parseNodeImage</strong>&nbsp;(node, tileset)</dt>
 <dd>
-imageのノードを読み込みます。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -732,7 +746,7 @@ imageのノードを読み込みます。
 
 <dt><a name="M:parseNodeLayer"></a><strong>M:parseNodeLayer</strong>&nbsp;(node)</dt>
 <dd>
-Layerのノードを読み込みます。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -758,7 +772,7 @@ Layerのノードを読み込みます。
 
 <dt><a name="M:parseNodeMap"></a><strong>M:parseNodeMap</strong>&nbsp;(node)</dt>
 <dd>
-Mapのノードを読み込みます。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -784,7 +798,7 @@ Mapのノードを読み込みます。
 
 <dt><a name="M:parseNodeObject"></a><strong>M:parseNodeObject</strong>&nbsp;(node, group)</dt>
 <dd>
-ObjectGroup.objectのノードを読み込みます。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -814,7 +828,7 @@ ObjectGroup.objectのノードを読み込みます。
 
 <dt><a name="M:parseNodeObjectGroup"></a><strong>M:parseNodeObjectGroup</strong>&nbsp;(node)</dt>
 <dd>
-ObjectGroupのノードを読み込みます。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -840,7 +854,7 @@ ObjectGroupのノードを読み込みます。
 
 <dt><a name="M:parseNodeProperties"></a><strong>M:parseNodeProperties</strong>&nbsp;(node, dest)</dt>
 <dd>
-TMXファイルのノードを読み込みます。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -870,7 +884,7 @@ TMXファイルのノードを読み込みます。
 
 <dt><a name="M:parseNodeTile"></a><strong>M:parseNodeTile</strong>&nbsp;(node, tileset)</dt>
 <dd>
-tileのノードを読み込みます。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -900,7 +914,7 @@ tileのノードを読み込みます。
 
 <dt><a name="M:parseNodeTileset"></a><strong>M:parseNodeTileset</strong>&nbsp;(node)</dt>
 <dd>
-tilesetのノードを読み込みます。 
+Please do not accessible from the outside. 
 
 
 <h3>Parameters</h3>
@@ -931,7 +945,7 @@ tilesetのノードを読み込みます。
 <dl class="table">
 
 <dt><a name="TMXMapLoader "></a><strong>TMXMapLoader </strong></dt>
-<dd>TMXMapLoaderはtmxファイルを読み込んで、TMXMapを生成するクラスです.<br> TODO:抽象的な入力ストリームに対応するといいかも
+<dd>TMXMapLoader is a class that reads the file format tmx, to create a TMXMap. <br> <br> Some functions, please do not see from the outside. <br> Dare, leaving for the inheritance. <br> 
 
 
 

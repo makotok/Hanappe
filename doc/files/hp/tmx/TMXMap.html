@@ -163,6 +163,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ResourceManager.html">hp/manager/ResourceManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/SceneManager.html">hp/manager/SceneManager.lua</a>
 	</li>
 
@@ -233,7 +237,11 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/util/LaterExecutor.html">hp/util/LaterExecutor.lua</a>
+		<a href="../../../files/hp/util/Executors.html">hp/util/Executors.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/FpsMonitor.html">hp/util/FpsMonitor.lua</a>
 	</li>
 
 	<li>
@@ -332,57 +340,72 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:addLayer">M:addLayer</a>&nbsp;(layer)</td>
-	<td class="summary">レイヤーを追加します.</td>
+	<td class="summary">Add a layer.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:addObjectGroup">M:addObjectGroup</a>&nbsp;(objectGroup)</td>
-	<td class="summary">タイルセットを追加します.</td>
+	<td class="summary">Add the ObjectGroup.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:addTileset">M:addTileset</a>&nbsp;(tileset)</td>
-	<td class="summary">タイルセットを追加します.</td>
+	<td class="summary">Add the tile set.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:findLayerByName">M:findLayerByName</a>&nbsp;(name)</td>
-	<td class="summary">レイヤーを検索して返します.</td>
+	<td class="summary">Finds and returns the layer.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:findTilesetByGid">M:findTilesetByGid</a>&nbsp;(gid)</td>
-	<td class="summary">指定されたGIDからタイルセットを検索して返します.</td>
+	<td class="summary">Finds and returns the tileset from the specified gid.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getProperty">M:getProperty</a>&nbsp;(key)</td>
-	<td class="summary">指定したキーのプロパティを返します.</td>
+	<td class="summary">Returns the property with the specified key.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;()</td>
-	<td class="summary">コンストラクタです  </td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:printDebug">M:printDebug</a>&nbsp;()</td>
-	<td class="summary">TMXMapの情報を標準出力します.</td>
+	<td class="summary">The information on the standard output TMXMap.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:removeLayer">M:removeLayer</a>&nbsp;(layer)</td>
+	<td class="summary">Remove a layer.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:removeLayerAt">M:removeLayerAt</a>&nbsp;(index)</td>
-	<td class="summary">レイヤーを削除します.</td>
+	<td class="summary">Remove a layer.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:removeObjectGroup">M:removeObjectGroup</a>&nbsp;(objectGroup)</td>
+	<td class="summary">Remove the ObjectGroup.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:removeObjectGroupAt">M:removeObjectGroupAt</a>&nbsp;(index)</td>
-	<td class="summary">タイルセットを削除します.</td>
+	<td class="summary">Remove the ObjectGroup.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:removeTileset">M:removeTileset</a>&nbsp;(tileset)</td>
+	<td class="summary">Remove the tile set.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:removeTilesetAt">M:removeTilesetAt</a>&nbsp;(index)</td>
-	<td class="summary">タイルセットを削除します.</td>
+	<td class="summary">Remove the tile set.</td>
 	</tr>
 
 </table>
@@ -395,7 +418,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#TMXMap ">TMXMap </a></td>
-	<td class="summary">タイルマップ形式のデータを保持するTMXMapクラスです.<br> タイルマップエディタについては、以下を参照してください.<br> http://www.mapeditor.org/ </td>
+	<td class="summary">This class stores data in the form of map tiles.</td>
 	</tr>
 
 </table>
@@ -415,14 +438,14 @@
 
 <dt><a name="M:addLayer"></a><strong>M:addLayer</strong>&nbsp;(layer)</dt>
 <dd>
-レイヤーを追加します. 
+Add a layer.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  layer: 
+	  layer: layer. 
 	</li>
 	
 </ul>
@@ -441,7 +464,7 @@
 
 <dt><a name="M:addObjectGroup"></a><strong>M:addObjectGroup</strong>&nbsp;(objectGroup)</dt>
 <dd>
-タイルセットを追加します. 
+Add the ObjectGroup. 
 
 
 <h3>Parameters</h3>
@@ -467,14 +490,14 @@
 
 <dt><a name="M:addTileset"></a><strong>M:addTileset</strong>&nbsp;(tileset)</dt>
 <dd>
-タイルセットを追加します. 
+Add the tile set.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  tileset: 
+	  tileset: tileset. 
 	</li>
 	
 </ul>
@@ -493,14 +516,14 @@
 
 <dt><a name="M:findLayerByName"></a><strong>M:findLayerByName</strong>&nbsp;(name)</dt>
 <dd>
-レイヤーを検索して返します. 
+Finds and returns the layer.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  name: 
+	  name: Find name. 
 	</li>
 	
 </ul>
@@ -519,7 +542,7 @@
 
 <dt><a name="M:findTilesetByGid"></a><strong>M:findTilesetByGid</strong>&nbsp;(gid)</dt>
 <dd>
-指定されたGIDからタイルセットを検索して返します.
+Finds and returns the tileset from the specified gid.
 
 
 <h3>Parameters</h3>
@@ -548,7 +571,7 @@ TMXTileset
 
 <dt><a name="M:getProperty"></a><strong>M:getProperty</strong>&nbsp;(key)</dt>
 <dd>
-指定したキーのプロパティを返します. 
+Returns the property with the specified key. 
 
 
 <h3>Parameters</h3>
@@ -574,7 +597,7 @@ TMXTileset
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;()</dt>
 <dd>
-コンストラクタです 
+The constructor. 
 
 
 
@@ -591,8 +614,34 @@ TMXTileset
 
 <dt><a name="M:printDebug"></a><strong>M:printDebug</strong>&nbsp;()</dt>
 <dd>
-TMXMapの情報を標準出力します. 
+The information on the standard output TMXMap. 
 
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:removeLayer"></a><strong>M:removeLayer</strong>&nbsp;(layer)</dt>
+<dd>
+Remove a layer. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  layer: 
+	</li>
+	
+</ul>
 
 
 
@@ -608,7 +657,7 @@ TMXMapの情報を標準出力します.
 
 <dt><a name="M:removeLayerAt"></a><strong>M:removeLayerAt</strong>&nbsp;(index)</dt>
 <dd>
-レイヤーを削除します. 
+Remove a layer. 
 
 
 <h3>Parameters</h3>
@@ -616,6 +665,32 @@ TMXMapの情報を標準出力します.
 	
 	<li>
 	  index: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:removeObjectGroup"></a><strong>M:removeObjectGroup</strong>&nbsp;(objectGroup)</dt>
+<dd>
+Remove the ObjectGroup. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  objectGroup: 
 	</li>
 	
 </ul>
@@ -634,7 +709,7 @@ TMXMapの情報を標準出力します.
 
 <dt><a name="M:removeObjectGroupAt"></a><strong>M:removeObjectGroupAt</strong>&nbsp;(index)</dt>
 <dd>
-タイルセットを削除します. 
+Remove the ObjectGroup. 
 
 
 <h3>Parameters</h3>
@@ -658,9 +733,35 @@ TMXMapの情報を標準出力します.
 
 
 
+<dt><a name="M:removeTileset"></a><strong>M:removeTileset</strong>&nbsp;(tileset)</dt>
+<dd>
+Remove the tile set. 
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  tileset: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
 <dt><a name="M:removeTilesetAt"></a><strong>M:removeTilesetAt</strong>&nbsp;(index)</dt>
 <dd>
-タイルセットを削除します. 
+Remove the tile set. 
 
 
 <h3>Parameters</h3>
@@ -691,7 +792,7 @@ TMXMapの情報を標準出力します.
 <dl class="table">
 
 <dt><a name="TMXMap "></a><strong>TMXMap </strong></dt>
-<dd>タイルマップ形式のデータを保持するTMXMapクラスです.<br> タイルマップエディタについては、以下を参照してください.<br> http://www.mapeditor.org/
+<dd>This class stores data in the form of map tiles. <br> Applies to the Model class. <br> <br> Display function is not held. <br> Use the TMXMapView. <br> <br> For tile map editor, please see below. <br> http://www.mapeditor.org/ <br>
 
 
 

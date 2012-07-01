@@ -163,6 +163,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ResourceManager.html">hp/manager/ResourceManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/SceneManager.html">hp/manager/SceneManager.lua</a>
 	</li>
 
@@ -233,7 +237,11 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/util/LaterExecutor.html">hp/util/LaterExecutor.lua</a>
+		<a href="../../../files/hp/util/Executors.html">hp/util/Executors.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/FpsMonitor.html">hp/util/FpsMonitor.lua</a>
 	</li>
 
 	<li>
@@ -332,12 +340,12 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getTileIndexByGid">M:getTileIndexByGid</a>&nbsp;(gid)</td>
-	<td class="summary">gidからタイルインデックスを返します.</td>
+	<td class="summary">Returns the tile-index of the specified gid <br> </td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(tmxMap)</td>
-	<td class="summary">コンストラクタです  </td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 </table>
@@ -350,7 +358,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#TMXTileset ">TMXTileset </a></td>
-	<td class="summary">TMXMapのタイルセットクラスです.</td>
+	<td class="summary">Class is a tileset of TMXMap.</td>
 	</tr>
 
 </table>
@@ -370,14 +378,14 @@
 
 <dt><a name="M:getTileIndexByGid"></a><strong>M:getTileIndexByGid</strong>&nbsp;(gid)</dt>
 <dd>
-gidからタイルインデックスを返します. 
+Returns the tile-index of the specified gid <br>
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  gid: 
+	  gid: gid.
 	</li>
 	
 </ul>
@@ -386,6 +394,9 @@ gidからタイルインデックスを返します.
 
 
 
+
+<h3>Return value:</h3>
+tile-index. 
 
 
 
@@ -396,7 +407,7 @@ gidからタイルインデックスを返します.
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(tmxMap)</dt>
 <dd>
-コンストラクタです 
+The constructor. 
 
 
 <h3>Parameters</h3>
@@ -427,7 +438,7 @@ gidからタイルインデックスを返します.
 <dl class="table">
 
 <dt><a name="TMXTileset "></a><strong>TMXTileset </strong></dt>
-<dd>TMXMapのタイルセットクラスです. 
+<dd>Class is a tileset of TMXMap. 
 
 
 

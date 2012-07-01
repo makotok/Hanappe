@@ -163,6 +163,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ResourceManager.html">hp/manager/ResourceManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/SceneManager.html">hp/manager/SceneManager.lua</a>
 	</li>
 
@@ -233,7 +237,11 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/util/LaterExecutor.html">hp/util/LaterExecutor.lua</a>
+		<a href="../../../files/hp/util/Executors.html">hp/util/Executors.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/FpsMonitor.html">hp/util/FpsMonitor.lua</a>
 	</li>
 
 	<li>
@@ -327,6 +335,41 @@
 
 
 
+<h2>Functions</h2>
+<table class="function_list">
+
+	<tr>
+	<td class="name" nowrap><a href="#M:addBody">M:addBody</a>&nbsp;(bodyType)</td>
+	<td class="summary">Add the PhysicsBody object.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:copyParams">M:copyParams</a>&nbsp;(params)</td>
+	<td class="summary">Set the parameter setter function.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:createBodyFromProp">M:createBodyFromProp</a>&nbsp;(prop, bodyType, ...)</td>
+	<td class="summary">Create a Body based on MOAIProp.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:createRect">M:createRect</a>&nbsp;(left, top, width, height, params)</td>
+	<td class="summary">To create a rectangle.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(params)</td>
+	<td class="summary">The constructor.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:new">M:new</a>&nbsp;(...)</td>
+	<td class="summary">Instance generating functions.<br> Unlike an ordinary class, and based on the MOAI_CLASS.<br> To inherit this function is not recommended.<br> </td>
+	</tr>
+
+</table>
+
 
 
 
@@ -335,7 +378,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#PhysicsWorld ">PhysicsWorld </a></td>
-	<td class="summary">Class that inherits from MOAIBox2DWorld.<br>  </td>
+	<td class="summary">Class that inherits from MOAIBox2DWorld.</td>
 	</tr>
 
 </table>
@@ -348,6 +391,203 @@
 
 
 
+<h2><a name="functions"></a>Functions</h2>
+<dl class="function">
+
+
+
+<dt><a name="M:addBody"></a><strong>M:addBody</strong>&nbsp;(bodyType)</dt>
+<dd>
+Add the PhysicsBody object.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  bodyType: Can also be specified in the extended string.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+PhysicsBody instance. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:copyParams"></a><strong>M:copyParams</strong>&nbsp;(params)</dt>
+<dd>
+Set the parameter setter function.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  params: Parameter is set to Object.<br> (params:gravity, unitsToMeters) 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:createBodyFromProp"></a><strong>M:createBodyFromProp</strong>&nbsp;(prop, bodyType, ...)</dt>
+<dd>
+Create a Body based on MOAIProp.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  prop: MOAIProp instance.
+	</li>
+	
+	<li>
+	  bodyType: The type of the Body.
+	</li>
+	
+	<li>
+	  ...: physicsDatas. Data that was created in PhysicsEditor can be used.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+PhysicsBody instance. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:createRect"></a><strong>M:createRect</strong>&nbsp;(left, top, width, height, params)</dt>
+<dd>
+To create a rectangle.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  left: 
+	</li>
+	
+	<li>
+	  top: 
+	</li>
+	
+	<li>
+	  width: 
+	</li>
+	
+	<li>
+	  height: 
+	</li>
+	
+	<li>
+	  params: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+PhysicsBody instance. 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(params)</dt>
+<dd>
+The constructor.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  params: 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:new"></a><strong>M:new</strong>&nbsp;(...)</dt>
+<dd>
+Instance generating functions.<br> Unlike an ordinary class, and based on the MOAI_CLASS.<br> To inherit this function is not recommended.<br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  ...: params.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+instance. 
+
+
+
+</dd>
+
+
+</dl>
+
 
 
 
@@ -355,7 +595,7 @@
 <dl class="table">
 
 <dt><a name="PhysicsWorld "></a><strong>PhysicsWorld </strong></dt>
-<dd>Class that inherits from MOAIBox2DWorld.<br> 
+<dd>Class that inherits from MOAIBox2DWorld. <br> Has been prepared to create an object, a useful function.
 
 
 

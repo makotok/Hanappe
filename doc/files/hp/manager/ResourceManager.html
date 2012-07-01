@@ -162,10 +162,8 @@
 		<a href="../../../files/hp/manager/InputManager.html">hp/manager/InputManager.lua</a>
 	</li>
 
-	<li>
-		<a href="../../../files/hp/manager/ResourceManager.html">hp/manager/ResourceManager.lua</a>
-	</li>
-
+	<li><strong>hp/manager/ResourceManager.lua</strong></li>
+	
 	<li>
 		<a href="../../../files/hp/manager/SceneManager.html">hp/manager/SceneManager.lua</a>
 	</li>
@@ -198,8 +196,10 @@
 		<a href="../../../files/hp/physics/PhysicsWorld.html">hp/physics/PhysicsWorld.lua</a>
 	</li>
 
-	<li><strong>hp/rpg/RPGMapView.lua</strong></li>
-	
+	<li>
+		<a href="../../../files/hp/rpg/RPGMapView.html">hp/rpg/RPGMapView.lua</a>
+	</li>
+
 	<li>
 		<a href="../../../files/hp/rpg/RPGSprite.html">hp/rpg/RPGSprite.lua</a>
 	</li>
@@ -327,7 +327,7 @@
 
 <div id="content">
 
-<h1>File <code>hp/rpg/RPGMapView.lua</code></h1>
+<h1>File <code>hp/manager/ResourceManager.lua</code></h1>
 
 
 
@@ -339,63 +339,23 @@
 <table class="function_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#M:collisionWith">M:collisionWith</a>&nbsp;(object, x, y)</td>
-	<td class="summary">指定した位置の衝突判定を行います.</td>
+	<td class="name" nowrap><a href="#M:addPath">M:addPath</a>&nbsp;(path)</td>
+	<td class="summary">Add the resource directory path.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:collisionWithMap">M:collisionWithMap</a>&nbsp;(x, y)</td>
-	<td class="summary">指定した位置と衝突判定レイヤーが衝突するか判定します.</td>
+	<td class="name" nowrap><a href="#M:clearPaths">M:clearPaths</a>&nbsp;()</td>
+	<td class="summary">Clear the resource directory paths.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:collisionWithObjects">M:collisionWithObjects</a>&nbsp;(x, y)</td>
-	<td class="summary">指定した位置とオブジェクトが衝突するか判定します.</td>
+	<td class="name" nowrap><a href="#M:getFilePath">M:getFilePath</a>&nbsp;(fileName, defaultPath)</td>
+	<td class="summary">Returns the filePath from fileName.</td>
 	</tr>
 
 	<tr>
-	<td class="name" nowrap><a href="#M:createDisplayObject">M:createDisplayObject</a>&nbsp;(object)</td>
-	<td class="summary">表示オブジェクトを作成します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:findCollisionLayer">M:findCollisionLayer</a>&nbsp;()</td>
-	<td class="summary">Collisionというnameのレイヤーを検索して返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:findEventLayer">M:findEventLayer</a>&nbsp;()</td>
-	<td class="summary">Eventというnameのレイヤーを検索して返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:findObjectsByPosition">M:findObjectsByPosition</a>&nbsp;(x, y)</td>
-	<td class="summary">指定した座標のオブジェクトを検索して返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:findPlayerObject">M:findPlayerObject</a>&nbsp;()</td>
-	<td class="summary">Playerというnameのオブジェクトを検索して返します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(resourceDirectory)</td>
-	<td class="summary">コンストラクタです.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:loadMap">M:loadMap</a>&nbsp;(tmxMap)</td>
-	<td class="summary">マップ読み込み後、カメラの位置をプレイヤーの座標に設定します.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:onEnterFrame">M:onEnterFrame</a>&nbsp;()</td>
-	<td class="summary">フレーム毎の処理を行います.</td>
-	</tr>
-
-	<tr>
-	<td class="name" nowrap><a href="#M:scrollCameraToFocusObject">M:scrollCameraToFocusObject</a>&nbsp;()</td>
-	<td class="summary">カメラの位置をプレイヤーの座標まで移動します.</td>
+	<td class="name" nowrap><a href="#M:removePath">M:removePath</a>&nbsp;(path)</td>
+	<td class="summary">Remove the resource directory path.</td>
 	</tr>
 
 </table>
@@ -407,8 +367,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#RPGMapView ">RPGMapView </a></td>
-	<td class="summary">RPG用のMapViewクラスです.<br> マップで表示するオブジェクトがRPGSpriteになります.</td>
+	<td class="name" nowrap><a href="#ResourceManager ">ResourceManager </a></td>
+	<td class="summary">This is a class to manage the resources.<br>  </td>
 	</tr>
 
 </table>
@@ -426,24 +386,16 @@
 
 
 
-<dt><a name="M:collisionWith"></a><strong>M:collisionWith</strong>&nbsp;(object, x, y)</dt>
+<dt><a name="M:addPath"></a><strong>M:addPath</strong>&nbsp;(path)</dt>
 <dd>
-指定した位置の衝突判定を行います. 
+Add the resource directory path. 
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  object: 
-	</li>
-	
-	<li>
-	  x: 
-	</li>
-	
-	<li>
-	  y: 
+	  path: 
 	</li>
 	
 </ul>
@@ -460,20 +412,37 @@
 
 
 
-<dt><a name="M:collisionWithMap"></a><strong>M:collisionWithMap</strong>&nbsp;(x, y)</dt>
+<dt><a name="M:clearPaths"></a><strong>M:clearPaths</strong>&nbsp;()</dt>
 <dd>
-指定した位置と衝突判定レイヤーが衝突するか判定します. 
+Clear the resource directory paths. 
+
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:getFilePath"></a><strong>M:getFilePath</strong>&nbsp;(fileName, defaultPath)</dt>
+<dd>
+Returns the filePath from fileName. 
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  x: 
+	  fileName: 
 	</li>
 	
 	<li>
-	  y: 
+	  defaultPath: 
 	</li>
 	
 </ul>
@@ -490,216 +459,19 @@
 
 
 
-<dt><a name="M:collisionWithObjects"></a><strong>M:collisionWithObjects</strong>&nbsp;(x, y)</dt>
+<dt><a name="M:removePath"></a><strong>M:removePath</strong>&nbsp;(path)</dt>
 <dd>
-指定した位置とオブジェクトが衝突するか判定します. 
+Remove the resource directory path. 
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  x: 
-	</li>
-	
-	<li>
-	  y: 
+	  path: 
 	</li>
 	
 </ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:createDisplayObject"></a><strong>M:createDisplayObject</strong>&nbsp;(object)</dt>
-<dd>
-表示オブジェクトを作成します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  object: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:findCollisionLayer"></a><strong>M:findCollisionLayer</strong>&nbsp;()</dt>
-<dd>
-Collisionというnameのレイヤーを検索して返します. 
-
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:findEventLayer"></a><strong>M:findEventLayer</strong>&nbsp;()</dt>
-<dd>
-Eventというnameのレイヤーを検索して返します. 
-
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:findObjectsByPosition"></a><strong>M:findObjectsByPosition</strong>&nbsp;(x, y)</dt>
-<dd>
-指定した座標のオブジェクトを検索して返します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  x: 
-	</li>
-	
-	<li>
-	  y: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:findPlayerObject"></a><strong>M:findPlayerObject</strong>&nbsp;()</dt>
-<dd>
-Playerというnameのオブジェクトを検索して返します. 
-
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(resourceDirectory)</dt>
-<dd>
-コンストラクタです. この段階では表示オブジェクトは生成しません. loadMap関数を使用する事で、表示オブジェクトを生成します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  resourceDirectory: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:loadMap"></a><strong>M:loadMap</strong>&nbsp;(tmxMap)</dt>
-<dd>
-マップ読み込み後、カメラの位置をプレイヤーの座標に設定します. 
-
-
-<h3>Parameters</h3>
-<ul>
-	
-	<li>
-	  tmxMap: 
-	</li>
-	
-</ul>
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:onEnterFrame"></a><strong>M:onEnterFrame</strong>&nbsp;()</dt>
-<dd>
-フレーム毎の処理を行います. 
-
-
-
-
-
-
-
-
-
-</dd>
-
-
-
-
-<dt><a name="M:scrollCameraToFocusObject"></a><strong>M:scrollCameraToFocusObject</strong>&nbsp;()</dt>
-<dd>
-カメラの位置をプレイヤーの座標まで移動します. 
-
 
 
 
@@ -719,8 +491,8 @@ Playerというnameのオブジェクトを検索して返します.
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="RPGMapView "></a><strong>RPGMapView </strong></dt>
-<dd>RPG用のMapViewクラスです.<br> マップで表示するオブジェクトがRPGSpriteになります.
+<dt><a name="ResourceManager "></a><strong>ResourceManager </strong></dt>
+<dd>This is a class to manage the resources.<br> 
 
 
 

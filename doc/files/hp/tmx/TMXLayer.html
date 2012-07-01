@@ -163,6 +163,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ResourceManager.html">hp/manager/ResourceManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/SceneManager.html">hp/manager/SceneManager.lua</a>
 	</li>
 
@@ -233,7 +237,11 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/util/LaterExecutor.html">hp/util/LaterExecutor.lua</a>
+		<a href="../../../files/hp/util/Executors.html">hp/util/Executors.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/FpsMonitor.html">hp/util/FpsMonitor.lua</a>
 	</li>
 
 	<li>
@@ -332,27 +340,27 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:checkBounds">M:checkBounds</a>&nbsp;(x, y)</td>
-	<td class="summary">x,y座標が範囲内かどうか判定します.</td>
+	<td class="summary">Tests whether the position is within the range specified.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getGid">M:getGid</a>&nbsp;(x, y)</td>
-	<td class="summary">x,y座標のGIDを返します.</td>
+	<td class="summary">Returns the gid of the specified position.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getProperty">M:getProperty</a>&nbsp;(key)</td>
-	<td class="summary">プロパティを返します.</td>
+	<td class="summary">Returns the property.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:init">M:init</a>&nbsp;(tmxMap)</td>
-	<td class="summary">コンストラクタです  </td>
+	<td class="summary">The constructor.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setGid">M:setGid</a>&nbsp;(x, y, gid)</td>
-	<td class="summary">x,y座標のGIDを設定します.</td>
+	<td class="summary">Sets gid of the specified position.</td>
 	</tr>
 
 </table>
@@ -365,7 +373,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#TMXLayer ">TMXLayer </a></td>
-	<td class="summary">TMXMapのレイヤークラスです.</td>
+	<td class="summary">Class is a layer of TMXMap.</td>
 	</tr>
 
 </table>
@@ -385,18 +393,18 @@
 
 <dt><a name="M:checkBounds"></a><strong>M:checkBounds</strong>&nbsp;(x, y)</dt>
 <dd>
-x,y座標が範囲内かどうか判定します. 
+Tests whether the position is within the range specified.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  x: 
+	  x: potision of x.
 	</li>
 	
 	<li>
-	  y: 
+	  y: potision of y.
 	</li>
 	
 </ul>
@@ -405,6 +413,9 @@ x,y座標が範囲内かどうか判定します.
 
 
 
+
+<h3>Return value:</h3>
+True if in the range. 
 
 
 
@@ -415,18 +426,18 @@ x,y座標が範囲内かどうか判定します.
 
 <dt><a name="M:getGid"></a><strong>M:getGid</strong>&nbsp;(x, y)</dt>
 <dd>
-x,y座標のGIDを返します. 
+Returns the gid of the specified position. <br> If is out of range, return nil.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  x: 
+	  x: potision of x.
 	</li>
 	
 	<li>
-	  y: 
+	  y: potision of y.
 	</li>
 	
 </ul>
@@ -435,6 +446,9 @@ x,y座標のGIDを返します.
 
 
 
+
+<h3>Return value:</h3>
+gid. 
 
 
 
@@ -445,14 +459,14 @@ x,y座標のGIDを返します.
 
 <dt><a name="M:getProperty"></a><strong>M:getProperty</strong>&nbsp;(key)</dt>
 <dd>
-プロパティを返します. 
+Returns the property.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  key: 
+	  key: key.
 	</li>
 	
 </ul>
@@ -461,6 +475,9 @@ x,y座標のGIDを返します.
 
 
 
+
+<h3>Return value:</h3>
+value. 
 
 
 
@@ -471,7 +488,7 @@ x,y座標のGIDを返します.
 
 <dt><a name="M:init"></a><strong>M:init</strong>&nbsp;(tmxMap)</dt>
 <dd>
-コンストラクタです 
+The constructor. 
 
 
 <h3>Parameters</h3>
@@ -497,22 +514,22 @@ x,y座標のGIDを返します.
 
 <dt><a name="M:setGid"></a><strong>M:setGid</strong>&nbsp;(x, y, gid)</dt>
 <dd>
-x,y座標のGIDを設定します. 
+Sets gid of the specified position. <br> If you set the position is out of range to error.
 
 
 <h3>Parameters</h3>
 <ul>
 	
 	<li>
-	  x: 
+	  x: potision of x.
 	</li>
 	
 	<li>
-	  y: 
+	  y: potision of y.
 	</li>
 	
 	<li>
-	  gid: 
+	  gid: global id. 
 	</li>
 	
 </ul>
@@ -536,7 +553,7 @@ x,y座標のGIDを設定します.
 <dl class="table">
 
 <dt><a name="TMXLayer "></a><strong>TMXLayer </strong></dt>
-<dd>TMXMapのレイヤークラスです.
+<dd>Class is a layer of TMXMap.
 
 
 

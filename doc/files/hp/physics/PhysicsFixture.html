@@ -163,6 +163,10 @@
 	</li>
 
 	<li>
+		<a href="../../../files/hp/manager/ResourceManager.html">hp/manager/ResourceManager.lua</a>
+	</li>
+
+	<li>
 		<a href="../../../files/hp/manager/SceneManager.html">hp/manager/SceneManager.lua</a>
 	</li>
 
@@ -233,7 +237,11 @@
 	</li>
 
 	<li>
-		<a href="../../../files/hp/util/LaterExecutor.html">hp/util/LaterExecutor.lua</a>
+		<a href="../../../files/hp/util/Executors.html">hp/util/Executors.lua</a>
+	</li>
+
+	<li>
+		<a href="../../../files/hp/util/FpsMonitor.html">hp/util/FpsMonitor.lua</a>
 	</li>
 
 	<li>
@@ -337,12 +345,12 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:destroy">M:destroy</a>&nbsp;()</td>
-	<td class="summary">Fixtureを破棄します.</td>
+	<td class="summary">Destroys the Fixture.</td>
 	</tr>
 
 	<tr>
 	<td class="name" nowrap><a href="#M:getName">M:getName</a>&nbsp;()</td>
-	<td class="summary">名前を返します.</td>
+	<td class="summary">Returns the name.</td>
 	</tr>
 
 	<tr>
@@ -357,7 +365,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:setName">M:setName</a>&nbsp;(name)</td>
-	<td class="summary">名前を設定します.</td>
+	<td class="summary">Sets the name.</td>
 	</tr>
 
 </table>
@@ -369,8 +377,8 @@
 <table class="table_list">
 
 	<tr>
-	<td class="name" nowrap><a href="#PhysicsWorld ">PhysicsWorld </a></td>
-	<td class="summary">Class that inherits from MOAIBox2DWorld.<br> TODO:Not implemented </td>
+	<td class="name" nowrap><a href="#PhysicsFixture ">PhysicsFixture </a></td>
+	<td class="summary">Class that inherits from MOAIBox2DFixture.<br> </td>
 	</tr>
 
 </table>
@@ -416,7 +424,7 @@ Set the parameter setter function.
 
 <dt><a name="M:destroy"></a><strong>M:destroy</strong>&nbsp;()</dt>
 <dd>
-Fixtureを破棄します. Bodyからも削除されます. 
+Destroys the Fixture. 
 
 
 
@@ -433,7 +441,7 @@ Fixtureを破棄します. Bodyからも削除されます.
 
 <dt><a name="M:getName"></a><strong>M:getName</strong>&nbsp;()</dt>
 <dd>
-名前を返します.
+Returns the name.
 
 
 
@@ -509,7 +517,7 @@ The constructor.
 
 <dt><a name="M:setName"></a><strong>M:setName</strong>&nbsp;(name)</dt>
 <dd>
-名前を設定します.
+Sets the name.
 
 
 <h3>Parameters</h3>
@@ -539,8 +547,8 @@ The constructor.
 <h2><a name="tables"></a>Tables</h2>
 <dl class="table">
 
-<dt><a name="PhysicsWorld "></a><strong>PhysicsWorld </strong></dt>
-<dd>Class that inherits from MOAIBox2DWorld.<br> TODO:Not implemented
+<dt><a name="PhysicsFixture "></a><strong>PhysicsFixture </strong></dt>
+<dd>Class that inherits from MOAIBox2DFixture.<br>
 
 
 
