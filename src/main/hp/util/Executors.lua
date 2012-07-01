@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
 -- This is a utility class to do a comparison of the object.<br>
 -- @class table
--- @name LaterExecutor
+-- @name Executors
 --------------------------------------------------------------------------------
 local M = {}
 
