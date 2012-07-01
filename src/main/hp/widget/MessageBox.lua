@@ -178,6 +178,7 @@ function M:hidePopup()
         function()
             self:hide()
             self:setScl(1, 1, 1)
+            self:dispatchEvent("messageEnd")
         end
     )
 end
