@@ -1,12 +1,12 @@
 -- package config
 -- To specify the directory in the source.
-package.path = package.path .. ';src/main/?.lua'
+package.path = package.path .. ';src/main/?.lua;assets/?.lua'
 
 --------------------------------------------------------------------------------
 -- Hanappe Application config
 --------------------------------------------------------------------------------
 local config = {
-    title = "hanappe samples",
+    title = "Hanappe samples",
     
     -- iPhone 3GS
     screenWidth = 320,
@@ -16,10 +16,10 @@ local config = {
     
     -- iPhone 4S
     --[[
-    screenWidth = 640,
-    screenHeight = 960,
-    viewWidth = 640,
-    viewHeight = 960,
+    screenWidth = 320 * 2,
+    screenHeight = 480 * 2,
+    viewWidth = 320,
+    viewHeight = 480,
     --]]
     
     -- iPad
@@ -30,6 +30,17 @@ local config = {
     viewHeight = 1024,
     --]]
     
+    -- New iPad
+    --[[
+    screenWidth = 768 * 2,
+    screenHeight = 1024 * 2,
+    viewWidth = 768,
+    viewHeight = 1024,
+    --]]
+    
+    -- TODO:Scale mode
+    --scaleMode = "NON_SCALE",
+    
     landscape = false,
     showWindow = true,
     useInputManager = true,
@@ -39,25 +50,19 @@ local config = {
 -- Hanappe Application customize
 --------------------------------------------------------------------------------
 
-local classes = require("classes")
+local ResourceManager   = require("hp/manager/ResourceManager")
+local WidgetManager     = require("hp/manager/WidgetManager")
+local FontManager       = require("hp/manager/FontManager")
 
--- Shader setting.
-classes.ShaderManager.SHADERS_DIRECTORY = "src/main/hp/shader/"
+-- Resource setting.
+ResourceManager:addPath("samples/assets")
+ResourceManager:addPath("src/main")
+ResourceManager:addPath("assets")
 
 -- Widget themes setting.
-classes.WidgetManager:setDefaultThemes("assets/themes/basic/Themes")
+WidgetManager:setDefaultThemes("themes/basic/Themes")
 
 -- Font setting
-classes.FontManager.DEFAULT_FONT = "assets/fonts/ipag.ttf"
-
--- TextLabel setting
-classes.TextLabel.DEFAULT_COLOR = {1, 1, 1, 1}
-classes.TextLabel.DEFAULT_TEXT_SIZE = 24
-
--- Background color style.
---[[
-classes.Application:setClearColor(1, 1, 1, 1)
-classes.TextLabel.DEFAULT_COLOR = {0, 0, 0, 1}
---]]
+FontManager.DEFAULT_FONT = "fonts/ipag.ttf"
 
 return config
