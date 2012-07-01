@@ -22,13 +22,13 @@ local M = class(EventDispatcher, MOAIPropUtil)
 
 M.MOAI_CLASS = MOAIProp
 
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- Instance generating functions.<br>
 -- Unlike an ordinary class, and based on the MOAI_CLASS.<br>
 -- To inherit this function is not recommended.<br>
 -- @param ... params.
 -- @return instance.
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
 function M:new(...)
     local obj = self.MOAI_CLASS.new()
     table.copy(self, obj)
@@ -45,9 +45,9 @@ function M:new(...)
     return obj
 end
 
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- The constructor.
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
 function M:init(...)
 end
 
