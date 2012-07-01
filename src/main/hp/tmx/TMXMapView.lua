@@ -1,5 +1,7 @@
 --------------------------------------------------------------------------------
--- View the class is to draw the TMXMap.<br>
+-- View the class is to draw the TMXMap. <br>
+-- You can render TMXMap by the use of this class. <br>
+-- You can add your own processing can be inherited. <br>
 -- @class table
 -- @name TMXMapView
 --------------------------------------------------------------------------------
@@ -24,7 +26,7 @@ function M:init(resourceDirectory)
 end
 
 --------------------------------------------------------------------------------
--- マップデータを読み込んで、表示オブジェクトを生成します.
+-- Reads the map data, to generate a display object.
 --------------------------------------------------------------------------------
 function M:loadMap(tmxMap)
     self.tmxMap = tmxMap
@@ -41,8 +43,8 @@ function M:loadMap(tmxMap)
 end
 
 --------------------------------------------------------------------------------
--- 指定されたタイルセットのテクスチャをロードします.
--- 継承の為に残していますので、外部からコールしないでください.
+-- Load the texture of the tile set that is specified.
+-- Because of inheritance has been left for, please do not call from the outside.
 --------------------------------------------------------------------------------
 function M:loadTexture(tileset)
     local tmxMap = self.tmxMap
@@ -55,8 +57,8 @@ function M:loadTexture(tileset)
 end
 
 --------------------------------------------------------------------------------
--- 2Dカメラを生成します.
--- 継承の為に残していますので、外部からコールしないでください.
+-- To generate a 2D camera.
+-- Because of inheritance has been left for, please do not call from the outside.
 --------------------------------------------------------------------------------
 function M:createCamera()
     local camera = MOAICamera.new()
@@ -68,8 +70,8 @@ end
 
 
 --------------------------------------------------------------------------------
--- 全ての表示タイルレイヤーを生成します.
--- 継承の為に残していますので、外部からコールしないでください.
+-- Display to generate a tile layer.
+-- Because of inheritance has been left for, please do not call from the outside.
 --------------------------------------------------------------------------------
 function M:createDisplayLayers()
     local tmxMap = self.tmxMap
@@ -83,8 +85,8 @@ function M:createDisplayLayers()
 end
 
 --------------------------------------------------------------------------------
--- 表示タイルレイヤーを生成します.
--- 継承の為に残していますので、外部からコールしないでください.
+-- Display to generate a tile layer.
+-- Because of inheritance has been left for, please do not call from the outside.
 --------------------------------------------------------------------------------
 function M:createDisplayLayer(layer)
     local tmxMap = self.tmxMap
@@ -101,8 +103,8 @@ function M:createDisplayLayer(layer)
 end
 
 --------------------------------------------------------------------------------
--- 実際に描画するオブジェクトをを生成します.
--- 継承の為に残していますので、外部からコールしないでください.
+-- To generate the object on which to draw the layer.
+-- Because of inheritance has been left for, please do not call from the outside.
 --------------------------------------------------------------------------------
 function M:createDisplayLayerRenderer(displayLayer, tileset)
     local tmxMap = self.tmxMap
@@ -138,8 +140,8 @@ function M:createDisplayLayerRenderer(displayLayer, tileset)
 end
 
 --------------------------------------------------------------------------------
--- 指定されたレイヤーが使用するタイルセットのリストを生成します.
--- 継承の為に残していますので、外部からコールしないでください.
+-- To generate a list of tile set that is used by a given layer.
+-- Because of inheritance has been left for, please do not call from the outside.
 --------------------------------------------------------------------------------
 function M:createDisplayTilesets(layer)
     local tmxMap = self.tmxMap
@@ -155,8 +157,8 @@ function M:createDisplayTilesets(layer)
 end
 
 --------------------------------------------------------------------------------
--- オブジェクトレイヤーを生成します.
--- 継承の為に残していますので、外部からコールしないでください.
+-- To generate the object layer.
+-- Because of inheritance has been left for, please do not call from the outside.
 --------------------------------------------------------------------------------
 function M:createDisplayObjectLayers()
     local objectLayers = {}
@@ -168,8 +170,8 @@ function M:createDisplayObjectLayers()
 end
 
 --------------------------------------------------------------------------------
--- オブジェクトグループから表示オブジェクトレイヤーを生成します.
--- 継承の為に残していますので、外部からコールしないでください.
+-- Layer to generate a display object from the object group.
+-- Because of inheritance has been left for, please do not call from the outside.
 --------------------------------------------------------------------------------
 function M:createDisplayObjectLayer(objectGroup)
     local objectLayer = Layer:new()
@@ -185,8 +187,8 @@ function M:createDisplayObjectLayer(objectGroup)
 end
 
 --------------------------------------------------------------------------------
--- オブジェクトデータから表示オブジェクトを生成します.
--- 継承の為に残していますので、外部からコールしないでください.
+-- To generate a display object from the object data.
+-- Because of inheritance has been left for, please do not call from the outside.
 --------------------------------------------------------------------------------
 function M:createDisplayObject(object)
     local tmxMap = self.tmxMap
@@ -223,8 +225,8 @@ function M:createDisplayObject(object)
 end
 
 --------------------------------------------------------------------------------
--- Sceneを設定します.
--- Sceneに各レイヤーを追加します.
+-- Set the Scene.
+-- Add a layer for each Scene.
 --------------------------------------------------------------------------------
 function M:setScene(scene)
     
@@ -237,8 +239,8 @@ function M:setScene(scene)
 end
 
 --------------------------------------------------------------------------------
--- カメラをスクロールします.
--- 範囲外の領域が指定された表示されないように位置を調整します
+-- To scroll through the camera.
+-- Adjust the position so that it does not appear out-of-range region is specified.
 --------------------------------------------------------------------------------
 function M:scrollCamera(x, y)
     local viewWidth, viewHeight = self:getViewSize()
@@ -254,8 +256,8 @@ function M:scrollCamera(x, y)
 end
 
 --------------------------------------------------------------------------------
--- カメラを指定された位置の中央にスクロールします.
--- 範囲外の領域が指定された表示されないように位置を調整します
+-- Scroll to the specified position in the center of the camera.
+-- Adjust the position so that it does not appear out-of-range region is specified.
 --------------------------------------------------------------------------------
 function M:scrollCameraToCenter(x, y)
     local firstLayer = self.layers[1]
@@ -264,8 +266,8 @@ function M:scrollCameraToCenter(x, y)
 end
 
 --------------------------------------------------------------------------------
--- 名前からオブジェクトを検索して、最初に見つかったオブジェクトを返します.
--- 見つからない場合はnilを返します.
+-- To return the object to find the object from the name, the first one it finds.
+-- If not found, returns nil.
 --------------------------------------------------------------------------------
 function M:findObjectByName(name)
     for i, objectLayer in ipairs(self.objectLayers) do
@@ -278,7 +280,7 @@ function M:findObjectByName(name)
 end
 
 --------------------------------------------------------------------------------
--- 名前からオブジェクトを検索して、見つかったオブジェクトを全て返します.
+-- Returns all of the objects to find the object from the name, was found.
 --------------------------------------------------------------------------------
 function M:findObjectsByName(name)
     local objects = {}
@@ -293,7 +295,7 @@ function M:findObjectsByName(name)
 end
 
 --------------------------------------------------------------------------------
--- 名前からレイヤーを検索して、見つかったレイヤーを返します.
+-- Returns the layer by layer from the name search, was found.
 --------------------------------------------------------------------------------
 function M:findLayerByName(name)
     for i, layer in ipairs(self.layers) do
@@ -304,7 +306,7 @@ function M:findLayerByName(name)
 end
 
 --------------------------------------------------------------------------------
--- MapViewのサイズを返します.
+-- Returns the size of the MapView.
 --------------------------------------------------------------------------------
 function M:getViewSize()
     if not self.tmxMap then

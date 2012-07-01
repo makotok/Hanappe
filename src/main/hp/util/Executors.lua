@@ -1,14 +1,14 @@
 --------------------------------------------------------------------------------
--- This is a utility class to do a comparison of the object.<br>
+-- This is a utility class to execute.<br>
 -- @class table
 -- @name Executors
 --------------------------------------------------------------------------------
 local M = {}
 
 --------------------------------------------------------------------------------
--- 指定した関数を遅延実行します.<br>
--- @param func 対象の関数.
--- @param ... 関数に渡す引数.
+-- Run the specified function delay.<br>
+-- @param func Target function.
+-- @param ... Argument.
 --------------------------------------------------------------------------------
 function M.callLater(func, ...)
     local thread = MOAICoroutine.new()
@@ -19,7 +19,5 @@ function M.callLater(func, ...)
         end
     )
 end
-
-
 
 return M

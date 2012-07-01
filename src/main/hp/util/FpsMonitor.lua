@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- FPSを観測する為のクラスです.
+-- This class is to observe the FPS.
 --
 -- @class table
 -- @name FpsMonitor
@@ -10,9 +10,9 @@ local Logger = require("hp/util/Logger")
 
 local M = class()
 
----------------------------------------
---- コンストラクタです
----------------------------------------
+--------------------------------------------------------------------------------
+-- The constructor.
+--------------------------------------------------------------------------------
 function M:init(sec, onFPS)
     self._sec = sec
     self._onFPS = onFPS
@@ -26,17 +26,24 @@ function M:init(sec, onFPS)
 end
 
 function M:onTimer()
-    Logger.debug("FpsMonitor:onTimer", "FPS:" .. MOAISim.getPerformance())
+    local fps = MOAISim.getPerformance()
+    Logger.debug("FpsMonitor:onTimer", "FPS:" .. fps)
     if self._onFPS then
-        self._onFPS()
+        self._onFPS(fps)
     end
 end
 
+--------------------------------------------------------------------------------
+-- To start the measurement.
+--------------------------------------------------------------------------------
 function M:play()
     self.timer:start()
     return self
 end
 
+--------------------------------------------------------------------------------
+-- To end the measurement.
+--------------------------------------------------------------------------------
 function M:stop()
     self.timer:stop()
 end
