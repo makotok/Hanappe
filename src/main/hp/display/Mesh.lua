@@ -335,7 +335,7 @@ function M:init(vcoords, colors, primType)
     DisplayObject.init(self)
 
     local mesh =  createMesh(vcoords, colors, primType)
-    local shader = ShaderManager.getShader(ShaderManager.BASIC_COLOR_SHADER)
+    local shader = ShaderManager:getShader(ShaderManager.BASIC_COLOR_SHADER)
     self:setDeck(mesh)
     self:setShader(shader)
 end
