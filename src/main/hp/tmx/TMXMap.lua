@@ -1,12 +1,18 @@
-local class = require("hp/lang/class")
-
 --------------------------------------------------------------------------------
--- タイルマップ形式のデータを保持するTMXMapクラスです.<br>
--- タイルマップエディタについては、以下を参照してください.<br>
--- http://www.mapeditor.org/
+-- This class stores data in the form of map tiles. <br>
+-- Applies to the Model class. <br>
+-- <br>
+-- Display function is not held. <br>
+-- Use the TMXMapView. <br>
+-- <br>
+-- For tile map editor, please see below. <br>
+-- http://www.mapeditor.org/ <br>
 -- @class table
 -- @name TMXMap
 --------------------------------------------------------------------------------
+
+local class = require("hp/lang/class")
+local table = require("hp/lang/table")
 
 local M = class()
 
@@ -15,9 +21,9 @@ M.ATTRIBUTE_NAMES = {
     "version", "orientation", "width", "height", "tilewidth", "tileheight"
 }
 
----------------------------------------
--- コンストラクタです
----------------------------------------
+--------------------------------------------------------------------------------
+-- The constructor.
+--------------------------------------------------------------------------------
 function M:init()
     self.version = 0
     self.orientation = ""
@@ -31,9 +37,9 @@ function M:init()
     self.properties = {}
 end
 
----------------------------------------
--- TMXMapの情報を標準出力します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- The information on the standard output TMXMap.
+--------------------------------------------------------------------------------
 function M:printDebug()
     -- header
     print("<TMXMap>")
@@ -48,23 +54,32 @@ function M:printDebug()
 
 end
 
----------------------------------------
--- レイヤーを追加します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Add a layer.
+-- @param layer layer.
+--------------------------------------------------------------------------------
 function M:addLayer(layer)
     table.insert(self.layers, layer)
 end
 
----------------------------------------
--- レイヤーを削除します.
----------------------------------------
-function M:removeLayerAt(index)
-    table.remove(self.layers, index)
+--------------------------------------------------------------------------------
+-- Remove a layer.
+--------------------------------------------------------------------------------
+function M:removeLayer(layer)
+    return table.removeElement(self.layers, layer)
 end
 
----------------------------------------
--- レイヤーを検索して返します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Remove a layer.
+--------------------------------------------------------------------------------
+function M:removeLayerAt(index)
+    return table.remove(self.layers, index)
+end
+
+--------------------------------------------------------------------------------
+-- Finds and returns the layer.
+-- @param name Find name.
+--------------------------------------------------------------------------------
 function M:findLayerByName(name)
     for i, v in ipairs(self.layers) do
         if v.name == name then
@@ -74,25 +89,33 @@ function M:findLayerByName(name)
     return nil
 end
 
----------------------------------------
--- タイルセットを追加します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Add the tile set.
+-- @param tileset tileset.
+--------------------------------------------------------------------------------
 function M:addTileset(tileset)
     table.insert(self.tilesets, tileset)
 end
 
----------------------------------------
--- タイルセットを削除します.
----------------------------------------
-function M:removeTilesetAt(index)
-    table.remove(self.tilesets, index)
+--------------------------------------------------------------------------------
+-- Remove the tile set.
+--------------------------------------------------------------------------------
+function M:removeTileset(tileset)
+    return table.removeElement(self.tilesets, tileset)
 end
 
----------------------------------------
--- 指定されたGIDからタイルセットを検索して返します.
+--------------------------------------------------------------------------------
+-- Remove the tile set.
+--------------------------------------------------------------------------------
+function M:removeTilesetAt(index)
+    return table.remove(self.tilesets, index)
+end
+
+--------------------------------------------------------------------------------
+-- Finds and returns the tileset from the specified gid.
 -- @param gid
 -- @return TMXTileset
----------------------------------------
+--------------------------------------------------------------------------------
 function M:findTilesetByGid(gid)
     local matchTileset = nil
     for i, tileset in ipairs(self.tilesets) do
@@ -103,23 +126,30 @@ function M:findTilesetByGid(gid)
     return matchTileset
 end
 
----------------------------------------
--- タイルセットを追加します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Add the ObjectGroup.
+--------------------------------------------------------------------------------
 function M:addObjectGroup(objectGroup)
     table.insert(self.objectGroups, objectGroup)
 end
 
----------------------------------------
--- タイルセットを削除します.
----------------------------------------
-function M:removeObjectGroupAt(index)
-    table.remove(self.objectGroups, index)
+--------------------------------------------------------------------------------
+-- Remove the ObjectGroup.
+--------------------------------------------------------------------------------
+function M:removeObjectGroup(objectGroup)
+    return table.removeElement(self.objectGroups, objectGroup)
 end
 
----------------------------------------
--- 指定したキーのプロパティを返します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Remove the ObjectGroup.
+--------------------------------------------------------------------------------
+function M:removeObjectGroupAt(index)
+    return table.remove(self.objectGroups, index)
+end
+
+--------------------------------------------------------------------------------
+-- Returns the property with the specified key.
+--------------------------------------------------------------------------------
 function M:getProperty(key)
     return self.properties[key]
 end

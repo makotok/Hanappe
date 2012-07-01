@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
--- Class that inherits from MOAIBox2DWorld.<br>
---
+-- Class that inherits from MOAIBox2DWorld. <br>
+-- Has been prepared to create an object, a useful function.
 -- @auther Makoto
 -- @class table
 -- @name PhysicsWorld
@@ -15,17 +15,30 @@ local MOAIPropUtil = require("hp/util/MOAIPropUtil")
 local M = class(EventDispatcher)
 local Interface = MOAIBox2DWorld.getInterfaceTable()
 
+--------------------------------------------------------------------------------
+-- This is the default parameter set to MOAIBox2DWorld.
+--------------------------------------------------------------------------------
 M.DEFUALT_PARAMS = {
     gravity = {0, 10},
     unitsToMeters = 0.06,
 }
 
+--------------------------------------------------------------------------------
+-- Constants representing the type of the Body.
+--------------------------------------------------------------------------------
 M.BODY_TYPES = {
     dynamic = MOAIBox2DBody.DYNAMIC,
     static = MOAIBox2DBody.STATIC,
     kinematic = MOAIBox2DBody.KINEMATIC
 }
 
+----------------------------------------------------------------
+-- Instance generating functions.<br>
+-- Unlike an ordinary class, and based on the MOAI_CLASS.<br>
+-- To inherit this function is not recommended.<br>
+-- @param ... params.
+-- @return instance.
+----------------------------------------------------------------
 function M:new(...)
     local obj = MOAIBox2DWorld.new()
     table.copy(self, obj)
@@ -40,11 +53,20 @@ function M:new(...)
     return obj
 end
 
+--------------------------------------------------------------------------------
+-- The constructor.
+-- @param params 
+--------------------------------------------------------------------------------
 function M:init(params)
     params = params or M.DEFUALT_PARAMS
     self:copyParams(params)
 end
 
+--------------------------------------------------------------------------------
+-- Set the parameter setter function.
+-- @param params Parameter is set to Object.<br>
+--      (params:gravity, unitsToMeters)
+--------------------------------------------------------------------------------
 function M:copyParams(params)
     if params.gravity then
         self:setGravity(unpack(params.gravity))
@@ -54,6 +76,13 @@ function M:copyParams(params)
     end
 end
 
+--------------------------------------------------------------------------------
+-- Create a Body based on MOAIProp.
+-- @param prop MOAIProp instance.
+-- @param bodyType The type of the Body.
+-- @param ... physicsDatas. Data that was created in PhysicsEditor can be used.
+-- @return PhysicsBody instance.
+--------------------------------------------------------------------------------
 function M:createBodyFromProp(prop, bodyType, ...)
     local params = {...}
     if #params == 0 then
@@ -88,6 +117,10 @@ function M:createBodyFromProp(prop, bodyType, ...)
     return body
 end
 
+--------------------------------------------------------------------------------
+-- To create a rectangle.
+-- @return PhysicsBody instance.
+--------------------------------------------------------------------------------
 function M:createRect(left, top, width, height, params)
     params = params or {}
     
@@ -100,6 +133,11 @@ function M:createRect(left, top, width, height, params)
     return body
 end
 
+--------------------------------------------------------------------------------
+-- Add the PhysicsBody object.
+-- @param bodyType Can also be specified in the extended string.
+-- @return PhysicsBody instance.
+--------------------------------------------------------------------------------
 function M:addBody(bodyType)
     bodyType = bodyType or "dynamic"
     bodyType = type(bodyType) == "string" and M.BODY_TYPES[bodyType] or bodyType

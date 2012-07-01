@@ -1,12 +1,12 @@
+--------------------------------------------------------------------------------
+-- Class that inherits from MOAIBox2DFixture.<br>
+-- @class table
+-- @name PhysicsFixture
+--------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 
---------------------------------------------------------------------------------
--- Class that inherits from MOAIBox2DWorld.<br>
--- TODO:Not implemented
--- @class table
--- @name PhysicsWorld
---------------------------------------------------------------------------------
 local M = class()
 
 local Interface = MOAIBox2DFixture.getInterfaceTable()
@@ -65,8 +65,7 @@ function M:copyParams(params)
 end
 
 --------------------------------------------------------------------------------
--- Fixtureを破棄します.
--- Bodyからも削除されます.
+-- Destroys the Fixture.
 --------------------------------------------------------------------------------
 function M:destroy()
     local body = self:getBody()
@@ -77,7 +76,7 @@ function M:destroy()
 end
 
 --------------------------------------------------------------------------------
--- 名前を設定します.
+-- Sets the name.
 -- @param name
 --------------------------------------------------------------------------------
 function M:setName(name)
@@ -85,7 +84,7 @@ function M:setName(name)
 end
 
 --------------------------------------------------------------------------------
--- 名前を返します.
+-- Returns the name.
 -- @return name
 --------------------------------------------------------------------------------
 function M:getName()

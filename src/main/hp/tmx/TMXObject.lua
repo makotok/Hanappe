@@ -1,19 +1,20 @@
-local class = require("hp/lang/class")
-
 --------------------------------------------------------------------------------
--- TMXMapのObjectGroupです.
---
+-- Class is a object of TMXMap.
+-- @auther Makoto
 -- @class table
 -- @name TMXObject
 --------------------------------------------------------------------------------
+
+local class = require("hp/lang/class")
+
 local M = class()
 
 -- constraints
 M.ATTRIBUTE_NAMES = {"name", "type", "x", "y", "width", "height", "gid"}
 
----------------------------------------
--- コンストラクタです
----------------------------------------
+--------------------------------------------------------------------------------
+-- The constructor.
+--------------------------------------------------------------------------------
 function M:init()
     self.name = ""
     self.type = ""

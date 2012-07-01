@@ -16,13 +16,11 @@ local TextureManager = require("hp/manager/TextureManager")
 local M = class(EventDispatcher)
 
 --------------------------------------------------------------------------------
--- コンストラクタです.
--- この段階では表示オブジェクトは生成しません.
--- loadMap関数を使用する事で、表示オブジェクトを生成します.
+-- The constructor.
 --------------------------------------------------------------------------------
 function M:init(resourceDirectory)
     EventDispatcher.init(self)
-    self.resourceDirectory = assert(resourceDirectory)
+    self.resourceDirectory = resourceDirectory or ""
 end
 
 --------------------------------------------------------------------------------

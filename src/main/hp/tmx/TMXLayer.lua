@@ -1,15 +1,16 @@
-local class = require("hp/lang/class")
-
 --------------------------------------------------------------------------------
--- TMXMapのレイヤークラスです.
+-- Class is a layer of TMXMap.
 -- @class table
 -- @name TMXLayer
 --------------------------------------------------------------------------------
+
+local class = require("hp/lang/class")
+
 local M = class()
 
----------------------------------------
--- コンストラクタです
----------------------------------------
+--------------------------------------------------------------------------------
+-- The constructor.
+--------------------------------------------------------------------------------
 function M:init(tmxMap)
     self.tmxMap = tmxMap
     self.name = ""
@@ -23,16 +24,22 @@ function M:init(tmxMap)
     self.tiles = {}
 end
 
----------------------------------------
--- プロパティを返します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Returns the property.
+-- @param key key.
+-- @return value.
+--------------------------------------------------------------------------------
 function M:getProperty(key)
     return self.properties[key]
 end
 
----------------------------------------
--- x,y座標のGIDを返します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Returns the gid of the specified position. <br>
+-- If is out of range, return nil.
+-- @param x potision of x.
+-- @param y potision of y.
+-- @return gid.
+--------------------------------------------------------------------------------
 function M:getGid(x, y)
     if not self:checkBounds(x, y) then
         return nil
@@ -40,9 +47,13 @@ function M:getGid(x, y)
     return self.tiles[(y - 1) * self.width + x]
 end
 
----------------------------------------
--- x,y座標のGIDを設定します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Sets gid of the specified position. <br>
+-- If you set the position is out of range to error.
+-- @param x potision of x.
+-- @param y potision of y.
+-- @param gid global id.
+--------------------------------------------------------------------------------
 function M:setGid(x, y, gid)
     if not self:checkBounds(x, y) then
         error("index out of bounds!")
@@ -50,9 +61,12 @@ function M:setGid(x, y, gid)
     self.tiles[(y - 1) * self.width + x] = gid
 end
 
----------------------------------------
--- x,y座標が範囲内かどうか判定します.
----------------------------------------
+--------------------------------------------------------------------------------
+-- Tests whether the position is within the range specified.
+-- @param x potision of x.
+-- @param y potision of y.
+-- @return True if in the range.
+--------------------------------------------------------------------------------
 function M:checkBounds(x, y)
     if x < 1 or self.width < x then
         return false

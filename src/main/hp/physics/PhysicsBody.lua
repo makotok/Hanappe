@@ -1,15 +1,15 @@
+--------------------------------------------------------------------------------
+-- Class that inherits from MOAIBox2DBody.<br>
+-- @class table
+-- @name PhysicsBody
+--------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
 local PhysicsFixture = require("hp/physics/PhysicsFixture")
 
---------------------------------------------------------------------------------
--- Class that inherits from MOAIBox2DWorld.<br>
--- TODO:Not implemented
--- @class table
--- @name PhysicsWorld
---------------------------------------------------------------------------------
 local M = class(EventDispatcher)
 
 local Interface = MOAIBox2DBody.getInterfaceTable()
@@ -55,7 +55,8 @@ function M:init()
 end
 
 --------------------------------------------------------------------------------
--- PhysicsEditorで作成したPhysicsDataを追加します.
+-- Add the PhysicsData was created in PhysicsEditor. <br>
+-- Partially, it is proprietary.
 -- @param ... fixture datas
 --------------------------------------------------------------------------------
 function M:addPhysicsData(...)
@@ -74,7 +75,7 @@ function M:addPhysicsData(...)
 end
 
 --------------------------------------------------------------------------------
--- サークルを追加します.
+-- Add a circle.
 --------------------------------------------------------------------------------
 function M:addCircle(x, y, radius)
     local fixture = Interface.addCircle(self, x, y, radius)
@@ -85,7 +86,7 @@ function M:addCircle(x, y, radius)
 end
 
 --------------------------------------------------------------------------------
--- エッジを追加します.
+-- Add the edge.
 --------------------------------------------------------------------------------
 function M:addEdges(verts)
     local fixture = Interface.addEdges(self, verts)
@@ -96,7 +97,7 @@ function M:addEdges(verts)
 end
 
 --------------------------------------------------------------------------------
--- ポリゴンを追加します.
+-- Adds a polygon.
 --------------------------------------------------------------------------------
 function M:addPolygon(verts)
     local fixture = Interface.addPolygon(self, verts)
@@ -107,7 +108,7 @@ function M:addPolygon(verts)
 end
 
 --------------------------------------------------------------------------------
--- 四角形を追加します.
+-- Add a rectangle.
 --------------------------------------------------------------------------------
 function M:addRect(xMin, yMin, xMax, yMax)
     local fixture = Interface.addRect(self, xMin, yMin, xMax, yMax)
@@ -118,7 +119,9 @@ function M:addRect(xMin, yMin, xMax, yMax)
 end
 
 --------------------------------------------------------------------------------
--- 名前から検索して、一致した最初のFixtureを返します.
+-- Search from the name, and returns the Fixture was the first match.
+-- @param name Fixture name.
+-- @return Fixture instance.
 --------------------------------------------------------------------------------
 function M:findFixtureByName(name)
     for i, v in self:getFixtures() do
@@ -129,7 +132,9 @@ function M:findFixtureByName(name)
 end
 
 --------------------------------------------------------------------------------
--- 名前から検索して、一致したFixtureのリストを返します.
+-- Search from the name, it returns a list of Fixture match.
+-- @param name Fixture name.
+-- @return Fixture instance list.
 --------------------------------------------------------------------------------
 function M:findFixturesByName(name)
     local list = {}
@@ -142,18 +147,24 @@ function M:findFixturesByName(name)
 end
 
 --------------------------------------------------------------------------------
---
+-- Returns the Fixture for all.
+-- @return Fixtures
 --------------------------------------------------------------------------------
 function M:getFixtures()
     return self:getPrivate("fixtures")
 end
 
+--------------------------------------------------------------------------------
+-- Returns a Fixture at the specified index.
+-- @param i index
+-- @return Fixture instance.
+--------------------------------------------------------------------------------
 function M:getFixtureAt(i)
     return self:getFixtures()[i]
 end
 
 --------------------------------------------------------------------------------
--- angleを設定します.
+-- Sets angle.
 -- @param angle angle
 --------------------------------------------------------------------------------
 function M:setAngle(angle)
@@ -162,7 +173,7 @@ function M:setAngle(angle)
 end
 
 --------------------------------------------------------------------------------
--- x座標を返します.
+-- Returns the position x.
 -- @return x
 --------------------------------------------------------------------------------
 function M:getX()
@@ -171,14 +182,15 @@ function M:getX()
 end
 
 --------------------------------------------------------------------------------
--- x座標を設定します.
+-- Sets the position x.
+-- @parama x position x.
 --------------------------------------------------------------------------------
 function M:setX(x)
     self:setTransform(x, self:getY(), self:getAngle())
 end
 
 --------------------------------------------------------------------------------
--- y座標を返します.
+-- Returns the position y.
 -- @return y
 --------------------------------------------------------------------------------
 function M:getY()
@@ -187,19 +199,26 @@ function M:getY()
 end
 
 --------------------------------------------------------------------------------
--- y座標を設定します.
+-- Sets the position y.
+-- @parama y position y.
 --------------------------------------------------------------------------------
 function M:setY(y)
     self:setTransform(self:getX(), y, self:getAngle())
 end
 
 --------------------------------------------------------------------------------
--- 座標を設定します.
+-- Sets the position.
+-- @parama x position x.
+-- @parama y position y.
 --------------------------------------------------------------------------------
 function M:setPos(x, y)
     self:setTransform(x, y, self:getAngle())
 end
 
+--------------------------------------------------------------------------------
+-- Returns the position.
+-- @return x, y.
+--------------------------------------------------------------------------------
 function M:getPos()
     return self:getPosition()
 end
@@ -212,7 +231,8 @@ function M:addPos(x, y)
 end
 
 --------------------------------------------------------------------------------
--- 座標を設定します.
+-- Adds an event listener. <br>
+-- Also responsible for handling of Fixture.
 --------------------------------------------------------------------------------
 function M:addEventListener(eventType, callback, source, priority)
     EventDispatcher.addEventListener(self, eventType, callback, source, priority)

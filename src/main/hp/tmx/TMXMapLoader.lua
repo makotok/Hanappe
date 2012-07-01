@@ -1,3 +1,13 @@
+--------------------------------------------------------------------------------
+-- TMXMapLoader is a class that reads the file format tmx, to create a TMXMap. <br>
+-- <br>
+-- Some functions, please do not see from the outside. <br>
+-- Dare, leaving for the inheritance. <br>
+-- 
+-- @class table
+-- @name TMXMapLoader
+--------------------------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local TMXMap = require("hp/tmx/TMXMap")
@@ -5,22 +15,16 @@ local TMXTileset = require("hp/tmx/TMXTileset")
 local TMXLayer = require("hp/tmx/TMXLayer")
 local TMXObject = require("hp/tmx/TMXObject")
 local TMXObjectGroup = require("hp/tmx/TMXObjectGroup")
+local ResourceManager = require("hp/manager/ResourceManager")
 
-----------------------------------------------------------------
--- TMXMapLoaderはtmxファイルを読み込んで、TMXMapを生成するクラスです.<br>
--- TODO:抽象的な入力ストリームに対応するといいかも
--- @class table
--- @name TMXMapLoader
-----------------------------------------------------------------
 local M = class()
 
--- data encoding
 M.ENCODING_CSV = "csv"
 M.ENCODING_BASE64 = "base64"
 
----------------------------------------
--- コンストラクタです
----------------------------------------
+--------------------------------------------------------------------------------
+-- The constructor.
+--------------------------------------------------------------------------------
 function M:init()
     self.nodeParserNames = {
         map = "parseNodeMap",
@@ -30,12 +34,15 @@ function M:init()
     }
 end
 
----------------------------------------
--- TMX形式のファイルを読み込みます。
--- 読み込んだ結果をTMXMapで返します。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Read the file format of TMX. <br>
+-- Returns TMXMap a result of reading.
+-- @param filename
+-- @return TMXMap instance.
+--------------------------------------------------------------------------------
 function M:loadFile(filename)
-    local data = io.input(filename):read("*a")
+    local path = ResourceManager:getFilePath(filename)
+    local data = io.input(path):read("*a")
     return self:loadString(data)
 
     -- TODO:Windowsだとpackage.pathを使用した場合に動作しない
@@ -46,19 +53,23 @@ function M:loadFile(filename)
     --]]
 end
 
----------------------------------------
--- TMX形式の文字列を読み込みます。
--- 読み込んだ結果をTMXMapで返します。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Read the string format of TMX. <br>
+-- Returns TMXMap a result of reading.
+-- @param filename
+-- @return TMXMap instance.
+--------------------------------------------------------------------------------
 function M:loadString(data)
     local xml = MOAIXmlParser.parseString(data)
     self:parseNode(xml)
     return assert(self.map)
 end
 
----------------------------------------
--- ノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Reads the node. <br>
+-- Has been left for inheritance. <br>
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNode(node)
     local parser = self.nodeParserNames[node.type]
     if parser then
@@ -80,9 +91,9 @@ function M:parseNode(node)
     end
 end
 
----------------------------------------
--- Mapのノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeMap(node)
     print("parseNodeMap")
     local map = TMXMap:new()
@@ -93,10 +104,9 @@ function M:parseNodeMap(node)
 
 end
 
----------------------------------------
--- ノードの属性を読み込みます。
--- 読み込んだ結果は、destに設定します。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeAttributes(node, dest)
     for key, value in pairs(node.attributes) do
         if tonumber(value) ~= nil then
@@ -107,9 +117,9 @@ function M:parseNodeAttributes(node, dest)
     end
 end
 
----------------------------------------
--- tilesetのノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeTileset(node)
     local tileset = TMXTileset:new(self.map)
     self.map:addTileset(tileset)
@@ -120,9 +130,9 @@ function M:parseNodeTileset(node)
     self:parseNodeProperties(node, tileset.properties)
 end
 
----------------------------------------
--- imageのノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeImage(node, tileset)
     if not node.children.image then
         return
@@ -134,9 +144,9 @@ function M:parseNodeImage(node, tileset)
     end
 end
 
----------------------------------------
--- tileのノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeTile(node, tileset)
     if node.children.node == nil then
         return
@@ -150,9 +160,9 @@ function M:parseNodeTile(node, tileset)
     end
 end
 
----------------------------------------
--- Layerのノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeLayer(node)
     local layer = TMXLayer:new(self.map)
     self.map:addLayer(layer)
@@ -162,9 +172,9 @@ function M:parseNodeLayer(node)
     self:parseNodeProperties(node, layer.properties)
 end
 
----------------------------------------
--- dataのノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeData(node, layer)
     if node.children.data == nil or #node.children.data < 1 then
         return
@@ -184,25 +194,25 @@ function M:parseNodeData(node, layer)
 
 end
 
----------------------------------------
--- 無圧縮形式のdataのノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeDataForPlane(node, layer, data)
     for j, tile in ipairs(data.children.tile) do
         layer.tiles[j] = tonumber(tile.attributes.gid)
     end
 end
 
----------------------------------------
--- csv形式のdataのノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeDataForCsv(node, layer, data)
     layer.tiles = assert(loadstring("return {" .. data.value .. "}"))()
 end
 
----------------------------------------
--- base64形式のdataのノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeDataForBase64(node, layer, data)
     local decodedData = MOAIDataBuffer.base64Decode(data.value)
 
@@ -219,9 +229,9 @@ function M:parseNodeDataForBase64(node, layer, data)
     end
 end
 
----------------------------------------
--- ObjectGroupのノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeObjectGroup(node)
     local group = TMXObjectGroup:new(self.map)
     self.map:addObjectGroup(group)
@@ -231,9 +241,9 @@ function M:parseNodeObjectGroup(node)
     self:parseNodeProperties(node, group.properties)
 end
 
----------------------------------------
--- ObjectGroup.objectのノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeObject(node, group)
     if node.children.object == nil then
         return
@@ -247,9 +257,9 @@ function M:parseNodeObject(node, group)
     end
 end
 
----------------------------------------
--- TMXファイルのノードを読み込みます。
----------------------------------------
+--------------------------------------------------------------------------------
+-- Please do not accessible from the outside.
+--------------------------------------------------------------------------------
 function M:parseNodeProperties(node, dest)
     if not node.children then
         return
