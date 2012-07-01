@@ -6,15 +6,17 @@
 -- @name SoundManager
 ----------------------------------------------------------------
 
+local ResourceManager = require("hp/manager/ResourceManager")
+
 local M = {}
 local cache = {}
 
-local initialized = false
+M.initialized = false
 
-function M.initialize()
-    if not initialized then
+function M:initialize()
+    if not self.initialized then
         MOAIUntzSystem.initialize()
-        initialized = true
+        self.initialized = true
     end
 end
 
@@ -23,13 +25,16 @@ end
 -- @param path path
 -- @return MOAIUntzSound instance.
 ----------------------------------------------------------------
-function M.getSound(path, volume, looping)
-    if not initialized then
-        M.initialize()
+function M:getSound(path, volume, looping)
+    if not self.initialized then
+        self:initialize()
     end
+    
+    path = ResourceManager:getFilePath(path)
 
     if cache[path] == nil then
         local sound = MOAIUntzSound.new()
+        print("path:" .. path)
         sound:load(path)
         sound:setVolume(1)
         sound:setLooping(false)

@@ -6,7 +6,9 @@
 -- @name TextureManager
 ----------------------------------------------------------------
 
+local ResourceManager = require("hp/manager/ResourceManager")
 local Logger = require("hp/util/Logger")
+
 
 local M = {}
 local cache = {}
@@ -25,6 +27,8 @@ end
 -- @return MOAITexture instance.
 ----------------------------------------------------------------
 function M:request(path)
+    path = ResourceManager:getFilePath(path)
+
     if cache[path] == nil then
         local texture = MOAITexture.new()
         texture:load(path)

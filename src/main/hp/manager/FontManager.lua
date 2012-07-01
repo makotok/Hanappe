@@ -6,21 +6,23 @@
 -- @name FontManager
 ----------------------------------------------------------------
 
+local ResourceManager = require("hp/manager/ResourceManager")
 local Logger = require("hp/util/Logger")
 
 local M = {}
-
-M.DEFAULT_FONT = "assets/fonts/ipag.ttf"
-
 local cache = {}
-setmetatable(cache, {__mode = "v"})
 
-local function gcHandler(udata)
-    Logger.debug("[FontManager] destroyed => " .. udata.path)
-end
+M.DEFAULT_FONT = "fonts/ipag.ttf"
 
+----------------------------------------------------------------
+-- Requests the texture. <br>
+-- The textures are cached internally.
+-- @param path path
+-- @return MOAITexture instance.
+----------------------------------------------------------------
 function M:request(path)
     path = path or self.DEFAULT_FONT
+    path = ResourceManager:getFilePath(path)
     
     for i, font in ipairs(cache) do
         if font.path == path then
@@ -30,7 +32,6 @@ function M:request(path)
 
     local font = MOAIFont.new()
     font:load(path)
-    font.__gc = gcHandler
     font.path = path
     table.insert(cache, font)
 

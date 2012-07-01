@@ -8,44 +8,47 @@
 -- @name SceneManager
 ----------------------------------------------------------------
 
+local ResourceManager = require("hp/manager/ResourceManager")
+
 local M = {}
 M.shaders = {}
 
-M.SHADERS_DIRECTORY = "src/main/hp/shader/" -- TODO:Trying to do.
 M.BASIC_COLOR_SHADER = "simpleColor"
 
-function M.simpleColor()
-    if MOAIGfxDevice.isProgrammable () then
-    
-        local shader = MOAIShader.new ()
-        
-        local file = assert(io.open ( M.SHADERS_DIRECTORY .. 'shader_simple.vsh', mode ))
-        local vsh = file:read('*all')
-        file:close()
-        
-        file = assert(io.open(M.SHADERS_DIRECTORY .. 'shader_simple.fsh', mode))
-        local fsh = file:read('*all')
-        file:close()
-        
-        shader:reserveUniforms(2)
-        shader:declareUniform(1, 'transform', MOAIShader.UNIFORM_WORLD_VIEW_PROJ )
-        shader:declareUniform(2, 'ucolor', MOAIShader.UNIFORM_PEN_COLOR )
-        
-        shader:setVertexAttribute ( 1, 'position' )
-        shader:setVertexAttribute ( 2, 'color' )
-        
-        shader:load ( vsh, fsh )
-        return shader
+local function getFileData(filename)
+    local path = ResourceManager:getFilePath(filename)
+    local file = assert(io.open(path, mode))
+    local data = file:read('*all')
+    file:close()
+    return data
+end
+
+function M:simpleColor()
+    if not MOAIGfxDevice.isProgrammable () then
+        return
     end
+    local shader = MOAIShader.new ()
+    local vsh = getFileData("hp/shader/shader_simple.vsh")
+    local fsh = getFileData("hp/shader/shader_simple.fsh")
+    
+    shader:reserveUniforms(2)
+    shader:declareUniform(1, 'transform', MOAIShader.UNIFORM_WORLD_VIEW_PROJ )
+    shader:declareUniform(2, 'ucolor', MOAIShader.UNIFORM_PEN_COLOR )
+    
+    shader:setVertexAttribute ( 1, 'position' )
+    shader:setVertexAttribute ( 2, 'color' )
+    
+    shader:load ( vsh, fsh )
+    return shader
 end
 
 
-function M.getShader(shaderName)
-    if M.shaders[shaderName] then
-        return M.shaders[shaderName]
+function M:getShader(shaderName)
+    if self.shaders[shaderName] then
+        return self.shaders[shaderName]
     end
-    local shader = M[shaderName](M)
-    M.shaders[shaderName] = shader
+    local shader = self[shaderName](self)
+    self.shaders[shaderName] = shader
     return shader
 end
 
