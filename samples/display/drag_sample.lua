@@ -3,7 +3,7 @@ module(..., package.seeall)
 function onCreate(params)
     layer = Layer({scene = scene})
 
-    sprite1 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0})
+    sprite1 = Sprite({texture = "cathead.png", layer = layer, left = 0, top = 0})
     sprite1:setSize(64, 64)
 end
 

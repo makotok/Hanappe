@@ -1,5 +1,7 @@
 module(..., package.seeall)
 
+local FpsMonitor = require("hp/util/FpsMonitor")
+
 local sceneItems = {
     -- display
     {text = "graphics", scene = "samples/display/graphics_sample", animation = "changeNow"},
@@ -75,6 +77,8 @@ function onCreate(params)
         
         scrollView:addChild(group)
     end
+    
+    FpsMonitor(10):play()
 end
 
 function onTouchDown(event)

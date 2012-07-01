@@ -4,9 +4,9 @@ local touchX, touchY = 0, 0
 
 function onCreate(params)
     mapLoader = TMXMapLoader()
-    mapData = mapLoader:loadFile("samples/assets/platform.tmx")
+    mapData = mapLoader:loadFile("platform.tmx")
 
-    mapView = TMXMapView("samples/assets/")
+    mapView = TMXMapView()
     mapView:loadMap(mapData)
     mapView:setScene(scene)
 end

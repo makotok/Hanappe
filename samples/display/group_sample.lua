@@ -6,8 +6,8 @@ function onCreate(params)
     layer2 = Layer({scene = scene})
     
     -- sprite
-    sprite1 = Sprite({texture = "samples/assets/cathead.png", layer = layer1, left = 0, top = 0})
-    sprite2 = Sprite({texture = "samples/assets/cathead.png", layer = layer2, left = 0, top = sprite1:getBottom()})
+    sprite1 = Sprite({texture = "cathead.png", layer = layer1, left = 0, top = 0})
+    sprite2 = Sprite({texture = "cathead.png", layer = layer2, left = 0, top = sprite1:getBottom()})
     
     -- group
     group = Group({width = Application.viewWidth, height = Application.viewHeight})

@@ -4,12 +4,12 @@ function onCreate(params)
     view = View()
     view:setScene(scene)
     
-    button1 = Button({
-        upSkin = "samples/assets/button_a.png",
-        downSkin = "samples/assets/button_a.png",
+    button1 = Button {
+        upSkin = "button_a.png",
+        downSkin = "button_a.png",
         upColor = {red = 1, green = 1, blue = 1, alpha = 1},
         downColor = {red = 0.5, green = 0.5, blue = 0.5, alpha = 1},
-    })
+    }
     button1:addEventListener("buttonDown", onButtonTouchDown)
     button1:addEventListener("buttonUp", onButtonTouchUp)
     button1:addEventListener("click", onButtonClick)
@@ -17,8 +17,8 @@ function onCreate(params)
     view:addChild(button1)
     
     button2 = Button({
-        upSkin = "samples/assets/button_a.png",
-        downSkin = "samples/assets/button_a.png",
+        upSkin = "button_a.png",
+        downSkin = "button_a.png",
         upColor = {red = 1, green = 1, blue = 1, alpha = 1},
         downColor = {red = 0.5, green = 0.5, blue = 0.5, alpha = 1},
         toggle = true
@@ -31,8 +31,8 @@ function onCreate(params)
     view:addChild(button2)
     
     button3 = Button({
-        upSkin = "samples/assets/btn_up.png",
-        downSkin = "samples/assets/btn_down.png",
+        upSkin = "btn_up.png",
+        downSkin = "btn_down.png",
         text = "ハローボタン"
     })
     button3:setSize(200, 50)

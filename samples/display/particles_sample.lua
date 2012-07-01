@@ -3,9 +3,8 @@ module(..., package.seeall)
 function onCreate(params)
     layer = Layer {scene = scene}
 
-    particle = Particles.fromPex("particle.pex", "samples/assets/")
+    particle = Particles.fromPex("particle5.pex")
     particle:setLayer(layer)
-    
 end
 
 function onStart()
@@ -18,8 +17,15 @@ end
 function onTouchDown(e)
     local wx, wy = layer:wndToWorld(e.x, e.y, 0)
     particle.emitter:setLoc(wx, wy, 0)
+    particle.emitter:forceUpdate()
+    particle:startParticle()
 end
 
 function onTouchMove(e)
-    particle.emitter:addLoc(e.moveX, e.moveY, 0)
+    --particle.emitter:addLoc(e.moveX, e.moveY, 0)
+end
+
+function onTouchUp(e)
+    particle:stopParticle()
+    
 end

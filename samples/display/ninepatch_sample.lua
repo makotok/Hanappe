@@ -1,20 +1,20 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    layer = Layer({scene = scene})
+    layer = Layer {scene = scene}
 
-    ninePatch = NinePatch({texture = "samples/assets/btn_up.png", layer = layer})
+    ninePatch = NinePatch {texture = "btn_up.png", layer = layer}
     ninePatch:setSize(100, 100)
     ninePatch:setLeft(0)
     ninePatch:setTop(0)
     
-    ninePatch = NinePatch({texture = "assets/themes/basic/skins/panel.png", layer = layer})
+    ninePatch = NinePatch {texture = "themes/basic/skins/panel.png", layer = layer}
     ninePatch:setSize(100, 80)
     ninePatch:setLeft(0)
     ninePatch:setTop(110)
 
     -- If the first argument string, and the texture parameters.
-    ninePatch = NinePatch("assets/themes/basic/skins/panel.png")
+    ninePatch = NinePatch("themes/basic/skins/panel.png")
     ninePatch:setSize(100, 80)
     ninePatch:setPos(0, 200)
     ninePatch:setLayer(layer)

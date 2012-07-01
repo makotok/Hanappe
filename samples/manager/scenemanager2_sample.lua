@@ -15,7 +15,7 @@ end
 
 function onCreate(params)
     layer = Layer({scene = scene})
-    sprite1 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 32, top = 32})
+    sprite1 = Sprite({texture = "cathead.png", layer = layer, left = 32, top = 32})
 end
 
 function onStart()

@@ -14,7 +14,7 @@ function onCreate(params)
     button2:addEventListener("click", button2_onClick)
     view:addChild(button2)
     
-    sound = SoundManager.getSound("samples/assets/mono16.wav")
+    sound = SoundManager:getSound("mono16.wav")
 end
 
 function button1_onClick(e)

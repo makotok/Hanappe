@@ -2,8 +2,8 @@ module(..., package.seeall)
 
 function onCreate(params)
     print("onCreate(params)")
-    layer = Layer({scene = scene})
-    sprite1 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0})
+    layer = Layer {scene = scene}
+    sprite1 = Sprite {texture = "cathead.png", layer = layer, left = 0, top = 0}
 end
 
 function onStart()

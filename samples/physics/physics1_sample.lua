@@ -120,7 +120,7 @@ function makeGameLayer()
 end
 
 function makePlayer()
-    player = SpriteSheet {texture = "samples/assets/actor.png", layer = gameLayer}
+    player = SpriteSheet {texture = "actor.png", layer = gameLayer}
     player:setTiledSheets(32, 32)
     player:setSheetAnims(PLAYER_ANIMS)
     player.body = physicsWorld:createBodyFromProp(player, nil, {xMin = -12, xMax = 12, friction = 0})

@@ -3,9 +3,9 @@ module(..., package.seeall)
 function onCreate(params)
     layer = Layer({scene = scene})
 
-    sprite1 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0})
-    sprite2 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = sprite1:getBottom()})
-    sprite3 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = sprite2:getBottom()})
+    sprite1 = Sprite({texture = "cathead.png", layer = layer, left = 0, top = 0})
+    sprite2 = Sprite({texture = "cathead.png", layer = layer, left = 0, top = sprite1:getBottom()})
+    sprite3 = Sprite({texture = "cathead.png", layer = layer, left = 0, top = sprite2:getBottom()})
 end
 
 function onTouchDown(e)

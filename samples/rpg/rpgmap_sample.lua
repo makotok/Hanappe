@@ -26,8 +26,8 @@ function onCreate(params)
     -- map view load
     -- You might want to read from the params.
     mapLoader = TMXMapLoader()
-    mapData = mapLoader:loadFile("samples/assets/rpg_map.tmx")
-    mapView = RPGMapView("samples/assets/")
+    mapData = mapLoader:loadFile("rpg_map.tmx")
+    mapView = RPGMapView()
     mapView:loadMap(mapData)
     mapView:setScene(scene)
     
@@ -42,8 +42,8 @@ function onCreate(params)
     view = View()
     view:setScene(scene)
     joystick = Joystick({
-        baseTexture = "samples/assets/control_base.png",
-        knobTexture = "samples/assets/control_knob.png",
+        baseTexture = "control_base.png",
+        knobTexture = "control_knob.png",
         stickMode = Joystick.MODE_DIGITAL,
     })
     joystick:setLeft(0)
@@ -53,8 +53,8 @@ function onCreate(params)
     view:addChild(joystick)
     
     buttonA = Button({
-        upSkin = "samples/assets/button_a.png",
-        downSkin = "samples/assets/button_a.png",
+        upSkin = "button_a.png",
+        downSkin = "button_a.png",
         upColor = {red = 1, green = 1, blue = 1, alpha = 1},
         downColor = {red = 0.5, green = 0.5, blue = 0.5, alpha = 1},
     })

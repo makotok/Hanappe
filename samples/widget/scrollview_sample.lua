@@ -9,7 +9,7 @@ function onCreate(params)
     
     for y = 1, 10 do
         for x = 1, 10 do
-            local sprite = Sprite({texture = "samples/assets/cathead.png"})
+            local sprite = Sprite {texture = "cathead.png"}
             sprite:setPos((sprite:getWidth() + 10) * (x - 1), (10 + sprite:getHeight()) * (y - 1))
             scrollView:addChild(sprite)
         end

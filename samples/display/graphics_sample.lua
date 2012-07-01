@@ -1,7 +1,7 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    layer = Layer({scene = scene})
+    layer = Layer {scene = scene}
     
     -- Rect
     g1 = Graphics {width = 50, height = 50, left = 10, top = 10, layer = layer}

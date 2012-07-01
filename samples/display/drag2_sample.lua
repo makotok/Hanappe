@@ -6,13 +6,13 @@ function onCreate(params)
     layer = Layer()
     layer:setScene(scene)
 
-    sprite1 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 0})
+    sprite1 = Sprite({texture = "cathead.png", layer = layer, left = 0, top = 0})
     sprite1:setSize(64, 64)
 
-    sprite2 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 64, top = 0})
+    sprite2 = Sprite({texture = "cathead.png", layer = layer, left = 64, top = 0})
     sprite2:setSize(64, 64)
 
-    sprite3 = Sprite({texture = "samples/assets/cathead.png", layer = layer, left = 0, top = 64})
+    sprite3 = Sprite({texture = "cathead.png", layer = layer, left = 0, top = 64})
     sprite3:setSize(64, 64)
 end
 
