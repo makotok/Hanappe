@@ -7,15 +7,30 @@ M.LEVEL_WARN = 2
 M.LEVEL_ERROR = 3
 M.LEVEL_DEBUG = 4
 
--- 変数
-M.level = M.LEVEL_DEBUG
+--------------------------------------------------------------------------------
+-- 指定のレベルのログを出力するか
+--------------------------------------------------------------------------------
+M.selector = {}
+M.selector[M.LEVEL_INFO] = true
+M.selector[M.LEVEL_WARN] = true
+M.selector[M.LEVEL_ERROR] = true
+M.selector[M.LEVEL_DEBUG] = true
 
----------------------------------------
+--------------------------------------------------------------------------------
+-- コンソールに出力するターゲットです
+--------------------------------------------------------------------------------
+M.CONSOLE_TARGET = function(...)
+   print(...)
+end
+
+M.logTarget = M.CONSOLE_TARGET
+
+--------------------------------------------------------------------------------
 -- 通常ログを出力します.
----------------------------------------
+--------------------------------------------------------------------------------
 function M.info(...)
-    if M.level >= M.LEVEL_INFO then
-        print("[info]", ...)
+    if M.selector[M.LEVEL_INFO] then
+        M.logTarget("[info]", ...)
     end
 end
 
@@ -23,8 +38,8 @@ end
 -- 警告ログを出力します.
 ---------------------------------------
 function M.warn(...)
-    if M.level >= M.LEVEL_WARN then
-        print("[warn]", ...)
+    if M.selector[M.LEVEL_WARN] then
+        M.logTarget("[warn]", ...)
     end
 end
 
@@ -32,8 +47,8 @@ end
 -- エラーログを出力します.
 ---------------------------------------
 function M.error(...)
-    if M.level >= M.LEVEL_ERROR then
-        print("[error]", ...)
+    if M.selector[M.LEVEL_ERROR] then
+        M.logTarget("[error]", ...)
     end
 end
 
@@ -41,8 +56,8 @@ end
 -- デバッグログを出力します.
 ---------------------------------------
 function M.debug(...)
-    if M.level >= M.LEVEL_DEBUG then
-        print("[debug]", ...)
+    if M.selector[M.LEVEL_DEBUG] then
+        M.logTarget("[debug]", ...)
     end
 end
 
