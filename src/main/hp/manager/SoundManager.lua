@@ -34,7 +34,6 @@ function M:getSound(path, volume, looping)
 
     if cache[path] == nil then
         local sound = MOAIUntzSound.new()
-        print("path:" .. path)
         sound:load(path)
         sound:setVolume(1)
         sound:setLooping(false)

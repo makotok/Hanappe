@@ -43,9 +43,9 @@ function M:getFilePath(fileName, defaultPath)
     end
     for i, path in ipairs(paths) do
         local filePath = path .. SEPARETOR .. fileName
-		if MOAIFileSystem.checkFileExists(filePath) then
-			return filePath
-		end
+        if MOAIFileSystem.checkFileExists(filePath) then
+            return filePath
+        end
     end
     if not defaultPath then
         error("File not found error!")
