@@ -53,5 +53,16 @@ function M:getFilePath(fileName, defaultPath)
     return defaultPath
 end
 
+--------------------------------------------------------------------------------
+-- Returns the file data.
+--------------------------------------------------------------------------------
+function M:readFile(fileName)
+    local path = self:getFilePath(fileName)
+    local input = assert(io.input(path))
+    local data = input:read("*a")
+    input:close()
+    return data
+end
+
 
 return M

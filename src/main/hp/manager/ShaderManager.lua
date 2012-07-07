@@ -5,7 +5,7 @@
 -- 
 -- @auther Nenad Katic
 -- @class table
--- @name SceneManager
+-- @name ShaderManager
 ----------------------------------------------------------------
 
 local ResourceManager = require("hp/manager/ResourceManager")
@@ -16,11 +16,7 @@ M.shaders = {}
 M.BASIC_COLOR_SHADER = "simpleColor"
 
 local function getFileData(filename)
-    local path = ResourceManager:getFilePath(filename)
-    local file = assert(io.open(path, mode))
-    local data = file:read('*all')
-    file:close()
-    return data
+    return ResourceManager:readFile(filename)
 end
 
 function M:simpleColor()

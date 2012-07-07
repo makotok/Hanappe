@@ -41,8 +41,7 @@ end
 -- @return TMXMap instance.
 --------------------------------------------------------------------------------
 function M:loadFile(filename)
-    local path = ResourceManager:getFilePath(filename)
-    local data = io.input(path):read("*a")
+    local data = ResourceManager:readFile(filename)
     return self:loadString(data)
 
     -- TODO:Windowsだとpackage.pathを使用した場合に動作しない
