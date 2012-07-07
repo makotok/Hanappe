@@ -1,19 +1,19 @@
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local delegate = require("hp/lang/delegate")
-local NinePatch = require("hp/display/NinePatch")
-local TextLabel = require("hp/display/TextLabel")
-local Event = require("hp/event/Event")
-local Widget = require("hp/widget/Widget")
-local Panel = require("hp/widget/Panel")
-local WidgetManager = require("hp/manager/WidgetManager")
-
 ----------------------------------------------------------------
 -- パネル内にメッセージを表示するウィジットです.<br>
--- まだ色々機能が足りない.
 -- @class table
 -- @name MessageBox
 ----------------------------------------------------------------
+
+local table         = require("hp/lang/table")
+local class         = require("hp/lang/class")
+local NinePatch     = require("hp/display/NinePatch")
+local TextLabel     = require("hp/display/TextLabel")
+local Animation     = require("hp/display/Animation")
+local Event         = require("hp/event/Event")
+local Widget        = require("hp/widget/Widget")
+local Panel         = require("hp/widget/Panel")
+local WidgetManager = require("hp/manager/WidgetManager")
+
 local M = class(Panel)
 
 local super = Panel
@@ -25,9 +25,18 @@ function M:init(params)
     super.init(self, params)
     local theme = self:getTheme()
     
-    self.textLabel = TextLabel({text = theme.text, textSize = theme.textSize})
+    self.textLabel = TextLabel {text = theme.text, textSize = theme.textSize}
     self:updateTextLabel()
     self:addChild(self.textLabel)
+    
+    self.popInAnimation = Animation():parallel(
+        Animation(self, 0.5):setScl(0.8, 0.8, 1):seekScl(1, 1, 1),
+        Animation(self, 0.5):setColor(0, 0, 0, 0):seekColor(1, 1, 1, 1)
+    )
+    self.popOutAnimation = Animation():parallel(
+        Animation(self, 0.5):seekScl(0.8, 0.8, 1),
+        Animation(self, 0.5):seekColor(0, 0, 0, 0)
+    )
 end
 
 --------------------------------------------------------------------------------
@@ -158,29 +167,23 @@ end
 
 --------------------------------------------------------------------------------
 -- ポップアップエフェクトでメッセージボックスを表示します.
--- TODO:固定的なエフェクトなので、動的に設定可能なエフェクトに変更したい
 --------------------------------------------------------------------------------
 function M:showPopup()
     self:show()
     self:setCenterPiv()
     self.textLabel:setReveal(0)
-    self:setScl(0, 0, 0)
-    local action = self:seekScl(1, 1, 1, 0.5)
-    action:setListener(MOAIAction.EVENT_STOP, function() self:spool() end)
+    self.popInAnimation:play {onComplete = function() self:spool() end}
 end
 
 --------------------------------------------------------------------------------
 -- ポップアップエフェクトでメッセージボックスを非表示にします.
 --------------------------------------------------------------------------------
 function M:hidePopup()
-    local action = self:seekScl(0, 0, 0, 0.5)
-    action:setListener(MOAIAction.EVENT_STOP,
-        function()
-            self:hide()
-            self:setScl(1, 1, 1)
-            self:dispatchEvent("messageEnd")
-        end
-    )
+    if self.popInAnimation:isRunning() then
+        return
+    end
+    
+    self.popOutAnimation:play {onComplete = function() self:dispatchEvent("messageEnd") end}
 end
 
 return M

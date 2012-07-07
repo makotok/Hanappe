@@ -12,7 +12,7 @@ function onCreate(params)
     -- また、word wrapがスペースで行っているので、日本語に対応できていない。
     -- MEMO:Will improve in the next version of MOAI.
     local text =  ""
-    for i = 1, 20 do
+    for i = 1, 19 do
         text = text .. "メッセージ" .. i .. "\n"
     end
     messageBox = MessageBox(MY_MSGBOX_THEME)
