@@ -27,6 +27,13 @@ M.DIR_UP = 2
 M.DIR_RIGHT = 3
 M.DIR_DOWN = 4
 
+M.DIR_MAP = {
+    left = M.DIR_LEFT,
+    up = M.DIR_UP,
+    right = M.DIR_RIGHT,
+    down = M.DIR_DOWN,
+}
+
 -- 移動速度
 M.MOVE_SPEED = 2
 
@@ -169,6 +176,7 @@ end
 -- マップ上の座標を移動します.
 ----------------------------------------------------------------
 function M:moveMap(dir)
+    dir = type(dir) == "string" and self.DIR_MAP[dir] or dir
     if dir == M.DIR_LEFT then
         return self:moveMapLeft()
     end
