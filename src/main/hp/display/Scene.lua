@@ -38,7 +38,14 @@ local Logger = require("hp/util/Logger")
 
 local M = class(Group)
 
-local ENTER_FRAME_EVENT = Event("enterFrame")
+-- event caches
+local EVENT_ENTER_FRAME = Event("enterFrame")
+local EVENT_CREATE = Event("create")
+local EVENT_START = Event("start")
+local EVENT_RESUME = Event("resume")
+local EVENT_PAUSE = Event("pause")
+local EVENT_STOP = Event("stop")
+local EVENT_DESTROY = Event("destroy")
 
 local function destroyModule(m)
     if m and m._M and m._NAME then
@@ -121,6 +128,10 @@ function M:onCreate(params)
     if self.sceneHandler.onCreate then
         self.sceneHandler.onCreate(params)
     end
+    if self:hasEventListener("create") then
+        EVENT_CREATE.params = params
+        self:dispatchEvent(EVENT_CREATE)
+    end
 end
 
 ---------------------------------------
@@ -129,6 +140,9 @@ end
 function M:onStart()
     if self.sceneHandler.onStart then
         self.sceneHandler.onStart()
+    end
+    if self:hasEventListener("start") then
+        self:dispatchEvent(EVENT_START)
     end
 end
 
@@ -139,6 +153,9 @@ function M:onResume()
     if self.sceneHandler.onResume then
         self.sceneHandler.onResume()
     end
+    if self:hasEventListener("resume") then
+        self:dispatchEvent(EVENT_RESUME)
+    end
 end
 
 ---------------------------------------
@@ -147,6 +164,9 @@ end
 function M:onPause()
     if self.sceneHandler.onPause then
         self.sceneHandler.onPause()
+    end
+    if self:hasEventListener("pause") then
+        self:dispatchEvent(EVENT_PAUSE)
     end
 end
 
@@ -157,6 +177,9 @@ function M:onStop()
     if self.sceneHandler.onStop then
         self.sceneHandler.onStop()
     end
+    if self:hasEventListener("stop") then
+        self:dispatchEvent(EVENT_STOP)
+    end
 end
 
 ---------------------------------------
@@ -165,6 +188,9 @@ end
 function M:onDestroy()
     if self.sceneHandler.onDestroy then
         self.sceneHandler.onDestroy()
+    end
+    if self:hasEventListener("destroy") then
+        self:dispatchEvent(EVENT_DESTROY)
     end
     
     destroyModule(self.sceneHandler)
@@ -178,7 +204,7 @@ function M:onEnterFrame()
         self.sceneHandler.onEnterFrame()
     end
     if self:hasEventListener("enterFrame") then
-        self:dispatchEvent(ENTER_FRAME_EVENT)
+        self:dispatchEvent(EVENT_ENTER_FRAME)
     end
 end
 
@@ -204,7 +230,7 @@ function M:onKeyUp(event)
         self.sceneHandler.onKeyUp(event)
     end
     if self:hasEventListener(Event.KEY_UP) then
-        self:dispatchEvent(table.copy(event, Event:new()))
+        self:dispatchEvent(table.copy(event, Event()))
     end
 end
 
@@ -218,7 +244,7 @@ function M:onTouchDown(event)
         self.sceneHandler.onTouchDown(event)
     end
     if self:hasEventListener(Event.TOUCH_DOWN) then
-        self:dispatchEvent(table.copy(event, Event:new()))
+        self:dispatchEvent(table.copy(event, Event()))
     end
 end
 
@@ -232,7 +258,7 @@ function M:onTouchUp(event)
         self.sceneHandler.onTouchUp(event)
     end
     if self:hasEventListener(Event.TOUCH_UP) then
-        self:dispatchEvent(table.copy(event, Event:new()))
+        self:dispatchEvent(table.copy(event, Event()))
     end
 end
 
@@ -245,7 +271,7 @@ function M:onTouchMove(event)
         self.sceneHandler.onTouchMove(event)
     end
     if self:hasEventListener(Event.TOUCH_MOVE) then
-        self:dispatchEvent(table.copy(event, Event:new()))
+        self:dispatchEvent(table.copy(event, Event()))
     end
 end
 
@@ -258,7 +284,7 @@ function M:onTouchCancel(event)
         self.sceneHandler.onTouchCancel(event)
     end
     if self:hasEventListener(Event.TOUCH_CANCEL) then
-        self:dispatchEvent(table.copy(event, Event:new()))
+        self:dispatchEvent(table.copy(event, Event()))
     end
 end
 
