@@ -3,7 +3,7 @@ module(..., package.seeall)
 function onCreate(params)
     layer = Layer {scene = scene}
 
-    particle = Particles.fromPex("particle5.pex")
+    particle = Particles.fromPex("deathBlossomCharge.pex")
     particle:setLayer(layer)
 end
 
