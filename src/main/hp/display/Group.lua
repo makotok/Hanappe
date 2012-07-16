@@ -134,8 +134,17 @@ function M:getChildren()
 end
 
 ----------------------------------------------------------------
--- Add a child object.<br>
--- The child object to duplicate is not added.<br>
+-- Returns the childr object.
+-- @param i Index.
+-- @return child
+----------------------------------------------------------------
+function M:getChildAt(i)
+    return self.children[i]
+end
+
+----------------------------------------------------------------
+-- Add a child object. <br>
+-- The child object to duplicate is not added. <br>
 -- If you have set the Layer to the group, the layer is set to the child.
 -- @param Child to inherit the MOAIProp.
 ----------------------------------------------------------------
@@ -156,7 +165,7 @@ function M:addChild(child)
 end
 
 ----------------------------------------------------------------
--- Remove the child object.<br>
+-- Remove the child object. <br>
 -- If you have set the Layer to the group, layer of the child is removed.
 -- @param Child to inherit the MOAIProp.
 ----------------------------------------------------------------
@@ -176,6 +185,15 @@ function M:removeChild(child)
     end
     
     table.remove(children, index)
+end
+
+--------------------------------------------------------------------------------
+-- Remove the children object.
+--------------------------------------------------------------------------------
+function M:removeChildren()
+    for i, child in ipairs(self:getChildren()) do
+        self:removeChild(child)
+    end
 end
 
 --------------------------------------------------------------------------------
