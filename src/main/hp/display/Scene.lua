@@ -74,6 +74,24 @@ function M:init()
 end
 
 ----------------------------------------------------------------
+-- Add a child object. <br>
+-- @param Child to inherit the MOAILayer.
+----------------------------------------------------------------
+function M:addChild(child)
+    Group.addChild(self, child)
+    self.sceneManager:updateRender()
+end
+
+----------------------------------------------------------------
+-- Remove the child object. <br>
+-- @param Child to inherit the MOAILayer.
+----------------------------------------------------------------
+function M:removeChild(child)
+    Group.removeChild(self, child)
+    self.sceneManager:updateRender()
+end
+
+----------------------------------------------------------------
 -- Sets the visible.<br>
 -- If set to false, excluded from the target rendering.<br>
 -- @param value visible.
