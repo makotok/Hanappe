@@ -229,7 +229,7 @@ end
 -- Add a layer for each Scene.
 --------------------------------------------------------------------------------
 function M:setScene(scene)
-    
+    self.scene = scene
     for i, layer in ipairs(self.layers) do
         scene:addChild(layer)
     end
