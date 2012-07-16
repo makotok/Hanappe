@@ -1,4 +1,21 @@
 -------------------------------------------------------------------
+-- Hanappe Framework Version:1.5.1
+-- Moai SDK Version 1.2 Build 56
+-- Update: 2012/07/17
+-------------------------------------------------------------------
+There is no significant modification.
+Has a minor bug fixes.
+
+1. Some refactoring in the file.
+2. Add functions to the ResourceManager.
+3. Modify the pop-up effect of MessageBox.
+4. Add useful functions to delay execution of Executors.
+5. Scene add an event to be sent.
+6. Add functions to the Group.
+
+Others, such as bug fixes.
+
+-------------------------------------------------------------------
 -- Hanappe Framework Version:1.5.0
 -- Moai SDK Version 1.2 Build 56
 -- Update: 2012/07/01

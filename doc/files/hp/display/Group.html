@@ -340,7 +340,7 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:addChild">M:addChild</a>&nbsp;(child, Child)</td>
-	<td class="summary">Add a child object.<br> The child object to duplicate is not added.<br> If you have set the Layer to the group, the layer is set to the child.</td>
+	<td class="summary">Add a child object.</td>
 	</tr>
 
 	<tr>
@@ -351,6 +351,11 @@
 	<tr>
 	<td class="name" nowrap><a href="#M:getBounds">M:getBounds</a>&nbsp;()</td>
 	<td class="summary">Returns the bounds of the object.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:getChildAt">M:getChildAt</a>&nbsp;(i)</td>
+	<td class="summary">Returns the childr object.</td>
 	</tr>
 
 	<tr>
@@ -390,7 +395,12 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M:removeChild">M:removeChild</a>&nbsp;(child, Child)</td>
-	<td class="summary">Remove the child object.<br> If you have set the Layer to the group, layer of the child is removed.</td>
+	<td class="summary">Remove the child object.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M:removeChildren">M:removeChildren</a>&nbsp;()</td>
+	<td class="summary">Remove the children object.</td>
 	</tr>
 
 	<tr>
@@ -448,7 +458,7 @@
 
 <dt><a name="M:addChild"></a><strong>M:addChild</strong>&nbsp;(child, Child)</dt>
 <dd>
-Add a child object.<br> The child object to duplicate is not added.<br> If you have set the Layer to the group, the layer is set to the child.
+Add a child object. <br> The child object to duplicate is not added. <br> If you have set the Layer to the group, the layer is set to the child.
 
 
 <h3>Parameters</h3>
@@ -514,6 +524,35 @@ Returns the bounds of the object.
 
 <h3>Return value:</h3>
 xMin, yMin, zMin, xMax, yMax, zMax 
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:getChildAt"></a><strong>M:getChildAt</strong>&nbsp;(i)</dt>
+<dd>
+Returns the childr object.
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  i: Index.
+	</li>
+	
+</ul>
+
+
+
+
+
+
+<h3>Return value:</h3>
+child 
 
 
 
@@ -701,7 +740,7 @@ Returns true if the group.<br> Are used in internal decision.
 
 <dt><a name="M:removeChild"></a><strong>M:removeChild</strong>&nbsp;(child, Child)</dt>
 <dd>
-Remove the child object.<br> If you have set the Layer to the group, layer of the child is removed.
+Remove the child object. <br> If you have set the Layer to the group, layer of the child is removed.
 
 
 <h3>Parameters</h3>
@@ -716,6 +755,23 @@ Remove the child object.<br> If you have set the Layer to the group, layer of th
 	</li>
 	
 </ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M:removeChildren"></a><strong>M:removeChildren</strong>&nbsp;()</dt>
+<dd>
+Remove the children object. 
+
 
 
 

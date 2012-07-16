@@ -340,7 +340,17 @@
 
 	<tr>
 	<td class="name" nowrap><a href="#M.callLater">M.callLater</a>&nbsp;(func, ...)</td>
-	<td class="summary">Run the specified function delay.<br> </td>
+	<td class="summary">Run the specified function delay.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.callLaterFrame">M.callLaterFrame</a>&nbsp;(frame, func, ...)</td>
+	<td class="summary">Run the specified function delay.</td>
+	</tr>
+
+	<tr>
+	<td class="name" nowrap><a href="#M.callLaterTime">M.callLaterTime</a>&nbsp;(time, func, ...)</td>
+	<td class="summary">Run the specified function delay.</td>
 	</tr>
 
 </table>
@@ -373,11 +383,79 @@
 
 <dt><a name="M.callLater"></a><strong>M.callLater</strong>&nbsp;(func, ...)</dt>
 <dd>
-Run the specified function delay.<br>
+Run the specified function delay. <br>
 
 
 <h3>Parameters</h3>
 <ul>
+	
+	<li>
+	  func: Target function.
+	</li>
+	
+	<li>
+	  ...: Argument. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.callLaterFrame"></a><strong>M.callLaterFrame</strong>&nbsp;(frame, func, ...)</dt>
+<dd>
+Run the specified function delay. <br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  frame: Delay frame count.
+	</li>
+	
+	<li>
+	  func: Target function.
+	</li>
+	
+	<li>
+	  ...: Argument. 
+	</li>
+	
+</ul>
+
+
+
+
+
+
+
+
+</dd>
+
+
+
+
+<dt><a name="M.callLaterTime"></a><strong>M.callLaterTime</strong>&nbsp;(time, func, ...)</dt>
+<dd>
+Run the specified function delay. <br>
+
+
+<h3>Parameters</h3>
+<ul>
+	
+	<li>
+	  time: Delay seconds.
+	</li>
 	
 	<li>
 	  func: Target function.
