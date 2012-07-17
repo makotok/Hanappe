@@ -24,6 +24,100 @@ local Resizable = require("hp/display/Resizable")
 
 local M = class(DisplayObject, Resizable)
 
+
+--------------------------------------------------------------------------------
+-- private. <br>
+-- Outputs the vertex data is specified.
+--------------------------------------------------------------------------------
+local function writeBuffers(verts, ...)
+    for i, v in ipairs({...}) do
+        table.insert(verts, v)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- private. <br>
+-- To create a line in the corner.
+--------------------------------------------------------------------------------
+local function writeCornerLines(verts, cx, cy, rw, rh, angle0, angle1, steps)
+    local step = (angle1 - angle0) / steps
+    for angle = angle0, angle1, step do
+        local radian = angle / 180 * math.pi
+        local x, y = math.cos(radian) * rw + cx, -math.sin(radian) * rh + cy
+        writeBuffers(verts, x, y)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- private. <br>
+-- Create the vertex data to draw a rectangle with rounded corners.
+--------------------------------------------------------------------------------
+local function createRoundRectDrawData(x0, y0, x1, y1, rw, rh, steps)
+    if rw == 0 and rh == 0 then
+        return {x0, y0, x0, y1, x1, y1, x1, y0, x0, y0}
+    end
+    
+    local vertexs = {}
+    
+    -- x0, y0
+    writeBuffers(vertexs, x0 + 1, y0 + rh)
+    writeBuffers(vertexs, x0 + 1, y1 - rh)
+    writeCornerLines(vertexs, x0 + rw, y1 - rh, rw, rh, 180, 270, steps)
+
+    -- x0, y1
+    writeBuffers(vertexs, x0 + rw, y1)
+    writeBuffers(vertexs, x1 - rw, y1)
+    writeCornerLines(vertexs, x1 - rw, y1 - rh, rw, rh, 270, 360, steps)
+
+    -- x1, y1
+    writeBuffers(vertexs, x1, y1 - rh)
+    writeBuffers(vertexs, x1, y0 + rh)
+    writeCornerLines(vertexs, x1 - rw, y0 + rh, rw, rh, 0, 90, steps)
+
+    -- x1, y0
+    writeBuffers(vertexs, x1 - rw, y0 + 1)
+    writeBuffers(vertexs, x0 + rw, y0 + 1)
+    writeCornerLines(vertexs, x0 + rw, y0 + rh, rw, rh, 90, 180, steps)
+    
+    return vertexs
+end
+
+--------------------------------------------------------------------------------
+-- private. <br>
+-- Create the vertex data to fill the corners.
+--------------------------------------------------------------------------------
+local function createCornerFans(cx, cy, rw, rh, angle0, angle1, steps)
+    local verts = {}
+    local step = (angle1 - angle0) / steps
+    writeBuffers(verts, cx, cy)
+    for angle = angle0, angle1, step do
+        local radian = angle / 180 * math.pi
+        local x, y = math.cos(radian) * rw + cx, -math.sin(radian) * rh + cy
+        writeBuffers(verts, x, y)
+    end
+    return verts
+end
+
+--------------------------------------------------------------------------------
+-- private. <br>
+-- Create the vertex data to fill a rectangle with rounded corners.
+--------------------------------------------------------------------------------
+local function createRoundRectFillData(x0, y0, x1, y1, rw, rh, steps)
+    local fans = {}
+    -- rects
+    writeBuffers(fans, {x0 + rw, y0, x1 - rw, y0, x1 - rw, y1, x0 + rw, y1})
+    writeBuffers(fans, {x0, y0 + rh, x0 + rw, y0 + rh, x0 + rw, y1 - rh, x0, y1 - rh})
+    writeBuffers(fans, {x1 - rw, y0 + rh, x1, y0 + rh, x1, y1 - rh, x1 - rw, y1 - rh})
+    
+    -- fans
+    writeBuffers(fans, createCornerFans(x0 + rw, y0 + rh, rw, rh,  90, 180, steps))
+    writeBuffers(fans, createCornerFans(x1 - rw, y0 + rh, rw, rh,   0,  90, steps))
+    writeBuffers(fans, createCornerFans(x1 - rw, y1 - rh, rw, rh, 270, 360, steps))
+    writeBuffers(fans, createCornerFans(x0 + rw, y1 - rh, rw, rh, 180, 270, steps))
+    
+    return fans
+end
+
 --------------------------------------------------------------------------------
 -- The constructor.
 -- @param params (option)Parameter is set to Object.<br>
@@ -80,14 +174,14 @@ function M:setSize(width, height)
 end
 
 
----------------------------------------
+--------------------------------------------------------------------------------
 -- Draw a circle.<br>
 -- @param x Position of the left.
 -- @param y Position of the top.
 -- @param r Radius.(Not in diameter.)
 -- @param steps Number of points.
 -- @return self
----------------------------------------
+--------------------------------------------------------------------------------
 function M:drawCircle(x, y, r, steps)
     steps = steps or 360
     local command = function(self)
@@ -102,7 +196,7 @@ function M:drawCircle(x, y, r, steps)
     return self
 end
 
----------------------------------------
+--------------------------------------------------------------------------------
 -- Draw an ellipse.<br>
 -- @param Position of the left.
 -- @param Position of the top.
@@ -110,7 +204,7 @@ end
 -- @param yRad Radius.(Not in diameter.)
 -- @param steps Number of points.
 -- @return self
----------------------------------------
+--------------------------------------------------------------------------------
 function M:drawEllipse(x, y, xRad, yRad, steps)
     steps = steps or 360
     local command = function(self)
@@ -125,11 +219,11 @@ function M:drawEllipse(x, y, xRad, yRad, steps)
     return self
 end
 
----------------------------------------
+--------------------------------------------------------------------------------
 -- Draws a line.<br>
 -- @param ... Position of the points(x0, y0).
 -- @return self
----------------------------------------
+--------------------------------------------------------------------------------
 function M:drawLine(...)
     local args = {...}
     local command = function(self)
@@ -139,11 +233,11 @@ function M:drawLine(...)
     return self
 end
 
----------------------------------------
+--------------------------------------------------------------------------------
 -- Draws a point.
 -- @param ... Position of the points(x0, y0).
 -- @return self
----------------------------------------
+--------------------------------------------------------------------------------
 function M:drawPoints(...)
     local args = {...}
     local command = function(self)
@@ -153,14 +247,14 @@ function M:drawPoints(...)
     return self
 end
 
----------------------------------------
+--------------------------------------------------------------------------------
 -- Draw a ray.
 -- @param x Position of the left.
 -- @param y Position of the top.
 -- @param dx Direction.
 -- @param dy Direction.
 -- @return self
----------------------------------------
+--------------------------------------------------------------------------------
 function M:drawRay(x, y, dx, dy)
     local command = function(self)
         if x and y and dx and dy then
@@ -173,14 +267,14 @@ function M:drawRay(x, y, dx, dy)
     return self
 end
 
----------------------------------------
+--------------------------------------------------------------------------------
 -- Draw a rectangle.
 -- @param x0 Position of the left.
 -- @param y0 Position of the top.
 -- @param x1 Position of the right.
 -- @param y1 Position of the bottom
 -- @return self
----------------------------------------
+--------------------------------------------------------------------------------
 function M:drawRect(x0, y0, x1, y1)
     local command = function(self)
         if x0 and y0 and x1 and y1 then
@@ -193,14 +287,38 @@ function M:drawRect(x0, y0, x1, y1)
     return self
 end
 
----------------------------------------
+--------------------------------------------------------------------------------
+-- Draw a round rectangle.
+-- @param x0 Position of the left.
+-- @param y0 Position of the top.
+-- @param x1 Position of the right.
+-- @param y1 Position of the bottom.
+-- @param rw The width of the Corner.
+-- @param rh The height of the Corner.
+-- @param steps Number of points.
+-- @return self
+--------------------------------------------------------------------------------
+function M:drawRoundRect(x0, y0, x1, y1, rw, rh, steps)
+    rw = rw or 0
+    rh = rh or 0
+    steps = steps or 360 / 4
+    local vertexs = createRoundRectDrawData(x0, y0, x1, y1, rw, rh, steps)
+
+    local command = function(self)
+        MOAIDraw.drawLine(vertexs)
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+--------------------------------------------------------------------------------
 -- Fill the circle.
 -- @param x Position of the left.
 -- @param y Position of the top.
 -- @param r Radius.(Not in diameter.)
 -- @param steps Number of points.
 -- @return self
----------------------------------------
+--------------------------------------------------------------------------------
 function M:fillCircle(x, y, r, steps)
     steps = steps or 360
     local command = function(self)
@@ -215,7 +333,7 @@ function M:fillCircle(x, y, r, steps)
     return self
 end
 
----------------------------------------
+--------------------------------------------------------------------------------
 -- Fill an ellipse.
 -- @param x Position of the left.
 -- @param y Position of the top.
@@ -223,7 +341,7 @@ end
 -- @param yRad Radius.(Not in diameter.)
 -- @param steps Number of points.
 -- @return self
----------------------------------------
+--------------------------------------------------------------------------------
 function M:fillEllipse(x, y, xRad, yRad, steps)
     steps = steps or 360
     local command = function(self)
@@ -238,11 +356,11 @@ function M:fillEllipse(x, y, xRad, yRad, steps)
     return self
 end
 
----------------------------------------
+--------------------------------------------------------------------------------
 -- Fills the triangle.
 -- @param ... Position of the points(x0, y0).
 -- @return self
----------------------------------------
+--------------------------------------------------------------------------------
 function M:fillFan(...)
     local args = {...}
     local command = function(self)
@@ -252,20 +370,46 @@ function M:fillFan(...)
     return self
 end
 
----------------------------------------
+--------------------------------------------------------------------------------
 -- Fill a rectangle.
 -- @param x0 Position of the left.
 -- @param y0 Position of the top.
 -- @param x1 Position of the right.
 -- @param y1 Position of the bottom.
 -- @return self
----------------------------------------
+--------------------------------------------------------------------------------
 function M:fillRect(x0, y0, x1, y1)
     local command = function(self)
         if x0 and y0 and x1 and y1 then
             MOAIDraw.fillRect(x0, y0, x1, y1)
         else
             MOAIDraw.fillRect(0, 0, self:getWidth(), self:getHeight())
+        end
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+--------------------------------------------------------------------------------
+-- Fill a round rectangle.
+-- @param x0 Position of the left.
+-- @param y0 Position of the top.
+-- @param x1 Position of the right.
+-- @param y1 Position of the bottom.
+-- @param rw The width of the Corner.
+-- @param rh The height of the Corner.
+-- @param steps Number of points.
+-- @return self
+--------------------------------------------------------------------------------
+function M:fillRoundRect(x0, y0, x1, y1, rw, rh, steps)
+    rw = rw or 0
+    rh = rh or 0
+    steps = steps or 360 / 4
+    
+    local fillDatas = createRoundRectFillData(x0, y0, x1, y1, rw, rh, steps)
+    local command = function(self)
+        for i, verts in ipairs(fillDatas) do
+            MOAIDraw.fillFan(verts)
         end
     end
     table.insert(self.commands, command)

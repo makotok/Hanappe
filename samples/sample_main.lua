@@ -4,15 +4,16 @@ local FpsMonitor = require("hp/util/FpsMonitor")
 
 local sceneItems = {
     -- display
-    {text = "graphics", scene = "samples/display/graphics_sample", animation = "changeNow"},
-    {text = "group", scene = "samples/display/group_sample", animation = "fade"},
-    {text = "input", scene = "samples/display/input_sample", animation = "crossFade"},
     {text = "sprite", scene = "samples/display/sprite_sample", animation = "slideToTop"},
     {text = "spritesheet", scene = "samples/display/spritesheet_sample", animation = "slideToBottom"},
     {text = "mapsprite", scene = "samples/display/mapsprite_sample", animation = "slideToLeft"},
     {text = "text", scene = "samples/display/text_sample", animation = "slideToRight"},
-    {text = "animation", scene = "samples/display/animation_sample", animation = "fade"},
     {text = "ninepatch", scene = "samples/display/ninepatch_sample", animation = "fade"},
+    {text = "group", scene = "samples/display/group_sample", animation = "fade"},
+    {text = "graphics1", scene = "samples/display/graphics1_sample", animation = "changeNow"},
+    {text = "graphics2", scene = "samples/display/graphics2_sample", animation = "fade"},
+    {text = "input", scene = "samples/display/input_sample", animation = "crossFade"},
+    {text = "animation", scene = "samples/display/animation_sample", animation = "fade"},
     {text = "scene", scene = "samples/display/scene_sample", animation = "popIn"},
     {text = "moai", scene = "samples/display/moai_sample"},
     {text = "hittest", scene = "samples/display/hittest_sample", animation = "fade"},
