@@ -113,11 +113,11 @@ end
 function setItemDefaultColor(g)
     g:clear()
     g:setPenColor(1.0, 1.0, 0.9, 1):fillRect()
-    g:setPenColor(0.5, 0.5, 0.5, 1):drawRect()
+    g:setPenColor(0.5, 0.5, 0.5, 1):drawLine(0, 0, g:getWidth(), 0)
 end
 
 function setItemSelectedColor(g)
     g:clear()
     g:setPenColor(0.5, 0.5, 1.0, 1):fillRect()
-    g:setPenColor(0.5, 0.5, 0.5, 1):drawRect()
+    g:setPenColor(0.5, 0.5, 0.5, 1):drawLine(0, 0, g:getWidth(), 0)
 end

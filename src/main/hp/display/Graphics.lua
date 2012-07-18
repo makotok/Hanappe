@@ -24,6 +24,10 @@ local Resizable = require("hp/display/Resizable")
 
 local M = class(DisplayObject, Resizable)
 
+-- Offset value to use in case the drawing is shifted.
+M.ADJUST_OFFSET = 0.01
+
+M.DEFAULT_STEPS = 32
 
 --------------------------------------------------------------------------------
 -- private. <br>
@@ -53,16 +57,18 @@ end
 -- Create the vertex data to draw a rectangle with rounded corners.
 --------------------------------------------------------------------------------
 local function createRoundRectDrawData(x0, y0, x1, y1, rw, rh, steps)
-    if rw == 0 and rh == 0 then
-        return {x0, y0, x0, y1, x1, y1, x1, y0, x0, y0}
+    local offset = M.ADJUST_OFFSET
+    
+    if rw == 0 or rh == 0 then
+        return {x0 + offset, y0 + offset, x0 + offset, y1, x1, y1, x1, y0 + offset, x0, y0}
     end
     
     local vertexs = {}
     
     -- x0, y0
-    writeBuffers(vertexs, x0 + 1, y0 + rh)
-    writeBuffers(vertexs, x0 + 1, y1 - rh)
-    writeCornerLines(vertexs, x0 + rw, y1 - rh, rw, rh, 180, 270, steps)
+    writeBuffers(vertexs, x0 + offset, y0 + rh)
+    writeBuffers(vertexs, x0 + offset, y1 - rh)
+    writeCornerLines(vertexs, x0 + rw + offset, y1 - rh, rw, rh, 180, 270, steps)
 
     -- x0, y1
     writeBuffers(vertexs, x0 + rw, y1)
@@ -72,12 +78,12 @@ local function createRoundRectDrawData(x0, y0, x1, y1, rw, rh, steps)
     -- x1, y1
     writeBuffers(vertexs, x1, y1 - rh)
     writeBuffers(vertexs, x1, y0 + rh)
-    writeCornerLines(vertexs, x1 - rw, y0 + rh, rw, rh, 0, 90, steps)
+    writeCornerLines(vertexs, x1 - rw, y0 + rh + offset, rw, rh, 0, 90, steps)
 
     -- x1, y0
-    writeBuffers(vertexs, x1 - rw, y0 + 1)
-    writeBuffers(vertexs, x0 + rw, y0 + 1)
-    writeCornerLines(vertexs, x0 + rw, y0 + rh, rw, rh, 90, 180, steps)
+    writeBuffers(vertexs, x1 - rw, y0 + offset)
+    writeBuffers(vertexs, x0 + rw, y0 + offset)
+    writeCornerLines(vertexs, x0 + rw + offset, y0 + rh + offset, rw, rh, 90, 180, steps)
     
     return vertexs
 end
@@ -103,6 +109,10 @@ end
 -- Create the vertex data to fill a rectangle with rounded corners.
 --------------------------------------------------------------------------------
 local function createRoundRectFillData(x0, y0, x1, y1, rw, rh, steps)
+    if rw == 0 or rh == 0 then
+        return {{x0, y0, x1, y0, x1, y1, x0, y1}}
+    end
+
     local fans = {}
     -- rects
     writeBuffers(fans, {x0 + rw, y0, x1 - rw, y0, x1 - rw, y1, x0 + rw, y1})
@@ -183,7 +193,7 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:drawCircle(x, y, r, steps)
-    steps = steps or 360
+    steps = steps or M.DEFAULT_STEPS
     local command = function(self)
         if x and y and r and steps then
             MOAIDraw.drawCircle(x + r, y + r, r, steps)
@@ -206,7 +216,7 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:drawEllipse(x, y, xRad, yRad, steps)
-    steps = steps or 360
+    steps = steps or M.DEFAULT_STEPS
     local command = function(self)
         if x and y and xRad and yRad and steps then
             MOAIDraw.drawEllipse(x + xRad, y + yRad, xRad, yRad, steps)
@@ -301,7 +311,7 @@ end
 function M:drawRoundRect(x0, y0, x1, y1, rw, rh, steps)
     rw = rw or 0
     rh = rh or 0
-    steps = steps or 360 / 4
+    steps = steps or M.DEFAULT_STEPS / 4
     local vertexs = createRoundRectDrawData(x0, y0, x1, y1, rw, rh, steps)
 
     local command = function(self)
@@ -320,7 +330,7 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:fillCircle(x, y, r, steps)
-    steps = steps or 360
+    steps = steps or M.DEFAULT_STEPS
     local command = function(self)
         if x and y and r and steps then
             MOAIDraw.fillCircle(x + r, y + r, r, steps)
@@ -343,7 +353,7 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:fillEllipse(x, y, xRad, yRad, steps)
-    steps = steps or 360
+    steps = steps or M.DEFAULT_STEPS
     local command = function(self)
         if x and y and xRad and yRad then
             MOAIDraw.fillEllipse(x + xRad, y + yRad, xRad, yRad, steps)
@@ -404,7 +414,7 @@ end
 function M:fillRoundRect(x0, y0, x1, y1, rw, rh, steps)
     rw = rw or 0
     rh = rh or 0
-    steps = steps or 360 / 4
+    steps = steps or M.DEFAULT_STEPS / 4
     
     local fillDatas = createRoundRectFillData(x0, y0, x1, y1, rw, rh, steps)
     local command = function(self)
