@@ -1,3 +1,9 @@
+----------------------------------------------------------------
+-- RPGMapView用のスプライトクラスです.<br>
+-- @class table
+-- @name RPGSprite
+----------------------------------------------------------------
+
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local SpriteSheet = require("hp/display/SpriteSheet")
@@ -5,11 +11,6 @@ local Event = require("hp/event/Event")
 local EventDispatcher = require("hp/event/EventDispatcher")
 local RPGMoveFactory = require("hp/rpg/move/RPGMoveFactory")
 
-----------------------------------------------------------------
--- RPGMapView用のスプライトクラスです.<br>
--- @class table
--- @name RPGSprite
-----------------------------------------------------------------
 local M = class(SpriteSheet)
 
 -- constraints
@@ -22,16 +23,27 @@ M.SHEET_ANIMS = {
 }
 
 -- 移動方向
-M.DIR_LEFT = 1
-M.DIR_UP = 2
-M.DIR_RIGHT = 3
-M.DIR_DOWN = 4
+M.DIR_NONE = "none"
+M.DIR_LEFT = "left"
+M.DIR_UP = "up"
+M.DIR_RIGHT = "right"
+M.DIR_DOWN = "down"
 
-M.DIR_MAP = {
-    left = M.DIR_LEFT,
-    up = M.DIR_UP,
-    right = M.DIR_RIGHT,
-    down = M.DIR_DOWN,
+-- 移動方向と移動先座標のオフセット値
+M.DIR_NEXT = {
+    [M.DIR_NONE] = {0, 0},
+    [M.DIR_LEFT] = {-1, 0},
+    [M.DIR_UP] = {0, -1},
+    [M.DIR_RIGHT] = {1, 0},
+    [M.DIR_DOWN] = {0, 1},
+}
+
+-- 移動方向とアニメーションの表
+M.DIR_ANIMS = {
+    [M.DIR_LEFT] = "walkLeft",
+    [M.DIR_UP] = "walkUp",
+    [M.DIR_RIGHT] = "walkRight",
+    [M.DIR_DOWN] = "walkDown",
 }
 
 -- 移動速度
@@ -57,6 +69,7 @@ function M:init(params)
     self.moveLogicFactory = RPGMoveFactory
     self.moveSpeed = self.MOVE_SPEED
     
+    self.currentDirection = M.DIR_NONE
     self.currentMoveX = 0
     self.currentMoveY = 0
     self.currentMoveCount = 0
@@ -74,6 +87,59 @@ function M:onEnterFrame()
     
     -- 移動処理
     self:moveStep()
+end
+
+----------------------------------------------------------------
+-- マップ座標で衝突するか判定します.
+----------------------------------------------------------------
+function M:isCollisionByMapPosition(targetX, targetY, targetW, targetH)
+    targetW = targetW or 1
+    targetH = targetH or 1
+    local mapX, mapY = self:getMapLoc()
+    local mapW, mapH = self:getMapSize()
+    
+    for y = targetY, targetY + targetH - 1 do
+        for x = targetX, targetX + targetW - 1 do
+            if mapX <= x and x < mapX + mapW and mapY <= y and y < mapY + mapH then
+                return true
+            end
+        end
+    end
+    return false
+end
+
+----------------------------------------------------------------
+-- マップ座標で衝突するか判定します.
+----------------------------------------------------------------
+function M:isCollisionByMapObject(obj)
+    local mapX, mapY = obj:getMapLoc()
+    local mapW, mapH = obj:getMapSize()
+    return self:isCollisionByMapPosition(mapX, mapY, mapW, mapH)
+end
+
+----------------------------------------------------------------
+-- 次に移動する予定のマップ上の座標を返します.
+----------------------------------------------------------------
+function M:getNextMapLoc()
+    local mapX, mapY = self:getMapLoc()
+    local offsetMap = M.DIR_NEXT[self.currentDirection] or M.DIR_NEXT[M.DIR_NONE]
+    local offsetX, offsetY = offsetMap[1], offsetMap[2]
+    return mapX + offsetX, mapY + offsetY
+end
+
+----------------------------------------------------------------
+-- マップ上の座標を返します.
+----------------------------------------------------------------
+function M:getMapLoc()
+    return self:getMapX(), self:getMapY()
+end
+
+----------------------------------------------------------------
+-- マップ上の座標を設定します.
+----------------------------------------------------------------
+function M:setMapLoc(x, y)
+    self:setMapX(x)
+    self:setMapY(y)
 end
 
 ----------------------------------------------------------------
@@ -109,6 +175,13 @@ end
 ----------------------------------------------------------------
 -- マップ上の幅を返します.
 ----------------------------------------------------------------
+function M:getMapSize()
+    return self:getMapWidth(), self:getMapHeight()
+end
+
+----------------------------------------------------------------
+-- マップ上の幅を返します.
+----------------------------------------------------------------
 function M:getMapWidth()
     return math.ceil(self:getWidth() / self.mapTileWidth)
 end
@@ -126,6 +199,26 @@ end
 function M:setMoveType(moveType)
     self.moveType = moveType
     self.moveLogic = self.moveLogicFactory:createMove(self.moveType, {target = self})
+end
+
+----------------------------------------------------------------
+-- 現在の向きを設定します.
+-- ただし、移動中の場合は無視されます.
+----------------------------------------------------------------
+function M:setDirection(direction)
+    if self:isMoving() then
+        return
+    end
+    if self.currentDirection == direction then
+        return
+    end
+    
+    self.currentDirection = direction
+    
+    local animName = M.DIR_ANIMS[direction]
+    if animName then
+        self:playAnim(animName)
+    end
 end
 
 ----------------------------------------------------------------
@@ -154,19 +247,30 @@ end
 -- マップ上の座標を移動する共通処理です.
 -- TODO:リファクタリング
 ----------------------------------------------------------------
-function M:moveMapCommon(mapX, mapY, moveAnim)
+function M:moveMapLoc(direction)
     if self:isMoving() then
         return false
     end
-    
-    if not self:isCurrentAnim(moveAnim) then
-        self:playAnim(moveAnim)
+    if not M.DIR_NEXT[direction] then
+        return false
     end
-        
+    
+    -- 移動方向を設定
+    self:setDirection(direction)
+    
     -- 衝突判定
-    local nextMapX = self:getMapX() + mapX
-    local nextMapY = self:getMapY() + mapY
-    if self.mapView:collisionWith(self, nextMapX, nextMapY) then
+    local mapX, mapY = self:getMapLoc()
+    local mapW, mapH = self:getMapSize()
+    local nextMapX, nextMapY = self:getNextMapLoc()
+    local moveX, moveY = nextMapX - mapX, nextMapY - mapY
+    
+    -- 移動しない場合
+    if moveX == 0 and moveY == 0 then
+        return
+    end
+    
+    -- 移動先が衝突する場合
+    if self.mapView:collisionWith(self, nextMapX, nextMapY, mapW, mapH) then
         local e = Event(Event.MOVE_COLLISION)
         e.collisionMapX = nextMapX
         e.collisionMapY = nextMapY
@@ -176,8 +280,8 @@ function M:moveMapCommon(mapX, mapY, moveAnim)
     end
     
     -- 移動処理
-    self.currentMoveX = mapX * self.moveSpeed
-    self.currentMoveY = mapY * self.moveSpeed
+    self.currentMoveX = moveX * self.moveSpeed
+    self.currentMoveY = moveY * self.moveSpeed
     self.currentMoveCount = self.mapTileWidth / self.moveSpeed
     
     if self:hasEventListener(Event.MOVE_STARTED) then
@@ -190,49 +294,38 @@ end
 
 ----------------------------------------------------------------
 -- マップ上の座標を移動します.
+-- TODO:互換性の為に残しています.いずれ削除すべきです.
 ----------------------------------------------------------------
 function M:moveMap(dir)
-    dir = type(dir) == "string" and self.DIR_MAP[dir] or dir
-    if dir == M.DIR_LEFT then
-        return self:moveMapLeft()
-    end
-    if dir == M.DIR_UP then
-        return self:moveMapUp()
-    end
-    if dir == M.DIR_RIGHT then
-        return self:moveMapRight()
-    end
-    if dir == M.DIR_DOWN then
-        return self:moveMapDown()
-    end
+    return self:moveMapLoc(dir)
 end
 
 ----------------------------------------------------------------
 -- マップ上の座標を移動します.
 ----------------------------------------------------------------
 function M:moveMapLeft()
-    return self:moveMapCommon(-1, 0, "walkLeft")
+    return self:moveMapLoc(M.DIR_LEFT)
 end
 
 ----------------------------------------------------------------
 -- マップ上の座標を移動します.
 ----------------------------------------------------------------
 function M:moveMapUp()
-    return self:moveMapCommon(0, -1, "walkUp")
+    return self:moveMapLoc(M.DIR_UP)
 end
 
 ----------------------------------------------------------------
 -- マップ上の座標を移動します.
 ----------------------------------------------------------------
 function M:moveMapRight()
-    return self:moveMapCommon(1, 0, "walkRight")
+    return self:moveMapLoc(M.DIR_RIGHT)
 end
 
 ----------------------------------------------------------------
 -- マップ上の座標を移動します.
 ----------------------------------------------------------------
 function M:moveMapDown()
-    return self:moveMapCommon(0, 1, "walkDown")
+    return self:moveMapLoc(M.DIR_DOWN)
 end
 
 ----------------------------------------------------------------

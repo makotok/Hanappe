@@ -91,11 +91,11 @@ end
 --------------------------------------------------------------------------------
 -- 指定した位置の衝突判定を行います.
 --------------------------------------------------------------------------------
-function M:collisionWith(object, x, y)
-    if self:collisionWithMap(x, y) then
+function M:collisionWith(object, x, y, w, h)
+    if self:collisionWithMap(x, y, w, h) then
         return true
     end
-    if self:collisionWithObjects(x, y) then
+    if self:collisionWithObjects(object, x, y, w, h) then
         return true
     end
     return false
@@ -103,25 +103,35 @@ end
 --------------------------------------------------------------------------------
 -- 指定した位置と衝突判定レイヤーが衝突するか判定します.
 --------------------------------------------------------------------------------
-function M:collisionWithMap(x, y)
+function M:collisionWithMap(x, y, w, h)
     if not self.collisionLayer then
         return false
     end
     
-    local gid = self.collisionLayer:getGid(x, y)
-    return gid and gid > 0
+    w = w or 1
+    h = h or 1
+    
+    for ty = 1, h do
+        for tx = 1, w do
+            local gid = self.collisionLayer:getGid(x, y)
+            if gid and gid > 0 then
+                return true
+            end
+        end
+    end
+    return false
 end
 
 --------------------------------------------------------------------------------
 -- 指定した位置とオブジェクトが衝突するか判定します.
 --------------------------------------------------------------------------------
-function M:collisionWithObjects(x, y)
+function M:collisionWithObjects(target, x, y, w, h)
+    w = w or 1
+    h = h or 1
+    
     for i, objectLayer in ipairs(self.objectLayers) do
         for j, object in ipairs(objectLayer.objects) do
---            if object:getMapX() >= x and x < object:getMapX() + object:getMapWidth() and 
---               object:getMapY() >= y and y < object:getMapY() + object:getMapHeight() then
-            if object:getMapX() == x and 
-               object:getMapY() == y then
+            if target ~= object and object:isCollisionByMapPosition(x, y, w, h) then
                 return true
             end
         end
@@ -151,14 +161,26 @@ function M:findEventLayer()
 end
 
 --------------------------------------------------------------------------------
+-- 指定した座標のオブジェクトを検索して、最初に見つかったオブジェクトを返します.
+--------------------------------------------------------------------------------
+function M:findObjectByMapPosition(x, y, w, h)
+    for i, objectLayer in ipairs(self.objectLayers) do
+        for j, object in ipairs(objectLayer.objects) do
+            if object:isCollisionByMapPosition(x, y) then
+                return object
+            end
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
 -- 指定した座標のオブジェクトを検索して返します.
 --------------------------------------------------------------------------------
-function M:findObjectsByPosition(x, y)
+function M:findObjectsByMapPosition(x, y)
     local objects = {}
     for i, objectLayer in ipairs(self.objectLayers) do
         for j, object in ipairs(objectLayer.objects) do
-            if object:getMapX() >= x and object:getMapX() + object:getMapWidth() < x and 
-               object:getMapY() >= y and object:getMapY() + object:getMapHeight() < y then
+            if object:isCollisionByMapPosition(x, y) then
                 table.insert(objects, object)
             end
         end
