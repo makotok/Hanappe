@@ -28,8 +28,8 @@ local transitioning = false
 local sceneAnimation = nil
 local renderTable = {}
 local updateRenderFlag = false
-local hudLayers = {}
-
+local backgroundLayers = {}
+local frontLayers = {}
 
 local function onTouchDown(e)
     if currentScene and not transitioning then
@@ -76,11 +76,23 @@ end
 
 local function updateRender()
     renderTable = {}
+    -- background
+    for i, layer in ipairs(backgroundLayers) do
+        table.insert(renderTable, layer)
+    end
+    
+    -- scene
     for i, scene in ipairs(scenes) do
         if scene.visible then
             table.insert(renderTable, scene:getRenderTable())
         end
     end
+    
+    -- front
+    for i, layer in ipairs(frontLayers) do
+        table.insert(renderTable, layer)
+    end
+    
     MOAIRenderMgr.setRenderTable(renderTable)
 end
 
@@ -367,6 +379,100 @@ end
 --------------------------------------------------------------------------------
 function M:getCurrentScene()
     return currentScene
+end
+
+--------------------------------------------------------------------------------
+-- Returns the transitioning. <br>
+-- @return transitioning.
+--------------------------------------------------------------------------------
+function M:isTransitioning()
+    return transitioning
+end
+
+--------------------------------------------------------------------------------
+-- Add the background Layer. <br>
+-- @params layer.
+--------------------------------------------------------------------------------
+function M:addBackgroundLayer(layer)
+    M:updateRender()
+    return table.insertElement(backgroundLayers, layer)
+end
+
+--------------------------------------------------------------------------------
+-- remove the background Layer. <br>
+-- @params layer.
+--------------------------------------------------------------------------------
+function M:removeBackgroundLayer(layer)
+    M:updateRender()
+    return table.removeElement(backgroundLayers, layer)
+end
+
+--------------------------------------------------------------------------------
+-- Returns the background Layer. <br>
+-- @params i Index.
+-- @return layer.
+--------------------------------------------------------------------------------
+function M:getBackgroundLayerAt(i)
+    return backgroundLayers[i]
+end
+
+--------------------------------------------------------------------------------
+-- Returns the background Layers. <br>
+-- @return layers.
+--------------------------------------------------------------------------------
+function M:getBackgroundLayers()
+    return backgroundLayers
+end
+
+--------------------------------------------------------------------------------
+-- Returns the size for background Layers. <br>
+-- @return layer size
+--------------------------------------------------------------------------------
+function M:getBackgroundLayerSize()
+    return #backgroundLayers
+end
+
+--------------------------------------------------------------------------------
+-- Add the front Layer. <br>
+-- @params layer.
+--------------------------------------------------------------------------------
+function M:addFrontLayer(layer)
+    M:updateRender()
+    return table.insertElement(frontLayers, layer)
+end
+
+--------------------------------------------------------------------------------
+-- remove the front Layer. <br>
+-- @params layer.
+--------------------------------------------------------------------------------
+function M:removeFrontLayer(layer)
+    M:updateRender()
+    return table.removeElement(frontLayers, layer)
+end
+
+--------------------------------------------------------------------------------
+-- Returns the front Layer. <br>
+-- @params i Index.
+-- @return layer.
+--------------------------------------------------------------------------------
+function M:getFrontLayerAt(i)
+    return frontLayers[i]
+end
+
+--------------------------------------------------------------------------------
+-- Returns the front Layers. <br>
+-- @return layers.
+--------------------------------------------------------------------------------
+function M:getFrontLayers()
+    return frontLayers
+end
+
+--------------------------------------------------------------------------------
+-- Returns the size for front Layers. <br>
+-- @return layer size
+--------------------------------------------------------------------------------
+function M:getFrontLayerSize()
+    return #frontLayers
 end
 
 return M
