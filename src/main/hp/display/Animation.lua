@@ -529,6 +529,21 @@ function M:setVisible(value)
 end
 
 --------------------------------------------------------------------------------
+-- Call function.
+-- @param func function object.
+-- @return self
+--------------------------------------------------------------------------------
+function M:callFunc(func)
+    local playFunc = function(obj, callback)
+        func(obj)
+        callback(obj)
+    end
+    local command = self:newCommand(playFunc)
+    self:addCommand(command)
+    return self
+end
+
+--------------------------------------------------------------------------------
 -- The parallel execution of the animation of the argument.
 -- @param ... Animations
 -- @return self
