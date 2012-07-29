@@ -24,6 +24,7 @@ local sceneItems = {
 
     -- manager
     {text = "scenemanager", scene = "samples/manager/scenemanager_sample"},
+    {text = "scenemanager3", scene = "samples/manager/scenemanager3_sample"},
 
     -- widget
     {text = "joystick", scene = "samples/widget/stick_sample"},
