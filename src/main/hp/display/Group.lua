@@ -134,12 +134,25 @@ function M:getChildren()
 end
 
 ----------------------------------------------------------------
--- Returns the childr object.
+-- Returns the child object.
 -- @param i Index.
 -- @return child
 ----------------------------------------------------------------
 function M:getChildAt(i)
     return self.children[i]
+end
+
+----------------------------------------------------------------
+-- Returns the child object by name.
+-- @param name child.name.
+-- @return child
+----------------------------------------------------------------
+function M:getChildByName(name)
+    for i, child in ipairs(self.children) do
+        if child.name == name then
+            return child
+        end
+    end
 end
 
 ----------------------------------------------------------------
@@ -187,11 +200,24 @@ function M:removeChild(child)
     table.remove(children, index)
 end
 
+----------------------------------------------------------------
+-- Remove the child object. <br>
+-- If you have set the Layer to the group, layer of the child is removed.
+-- @param i Children index.
+----------------------------------------------------------------
+function M:removeChildAt(i)
+    local child = self.children[i]
+    if child then
+        self:removeChild(child)
+    end
+end
+
 --------------------------------------------------------------------------------
 -- Remove the children object.
 --------------------------------------------------------------------------------
 function M:removeChildren()
-    for i, child in ipairs(self:getChildren()) do
+    local children = table.copy(self:getChildren())
+    for i, child in ipairs(children) do
         self:removeChild(child)
     end
 end
