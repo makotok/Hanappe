@@ -8,9 +8,13 @@
 -- @name SceneAnimation
 --------------------------------------------------------------------------------
 
-local Animation = require("hp/display/Animation")
+local Animation = require "hp/display/Animation"
+local Graphics  = require "hp/display/Graphics"
+local Layer     = require "hp/display/Layer"
 
 local M = {}
+
+local POPUP_LAYER = "SceneAnimationPopUpLayer"
 
 local defaultSecond = 0.5
 
@@ -18,6 +22,13 @@ local function createShowAnimation(scene, sec)
     return Animation({scene}, sec)
         :setColor(1, 1, 1, 1):setVisible(true)
         :setLeft(0):setTop(0):setScl(1, 1, 1):setRot(0, 0, 0)
+end
+
+--------------------------------------------------------------------------------
+-- Sets the default animation second.
+--------------------------------------------------------------------------------
+function M.setDefaultSecond(sec)
+    defaultSecond = sec
 end
 
 --------------------------------------------------------------------------------
@@ -35,11 +46,21 @@ end
 --------------------------------------------------------------------------------
 function M.popIn(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
+    
+    local layer = Layer {scene = currentScene}
+    layer.name = POPUP_LAYER
+    layer:setColor(0, 0, 0, 0)
+    
+    local g = Graphics {layer = layer, width = layer:getViewWidth() + 1, height = layer:getViewHeight() + 1}
+    g:setPenColor(0, 0, 0, 1):fillRect()
+    
     return Animation():parallel(
-        Animation({currentScene}, sec)
+        Animation(layer, sec)
             :seekColor(0.5, 0.5, 0.5, 0.5),
-        createShowAnimation(nextScene, sec)
-            :setScl(0, 0, 1):seekScl(1, 1, 1)
+        createShowAnimation(nextScene, sec):parallel(
+            Animation(nextScene, sec):setColor(0, 0, 0, 0):seekColor(1, 1, 1, 1),
+            Animation(nextScene, sec):setScl(0.5, 0.5, 1):seekScl(1, 1, 1)
+        )
     )
 end
 
@@ -49,9 +70,14 @@ end
 --------------------------------------------------------------------------------
 function M.popOut(currentScene, nextScene, params)
     local sec = params.sec and params.sec or defaultSecond
+    local layer = nextScene:getChildByName(POPUP_LAYER)
+    
     return Animation():parallel(
-        Animation({currentScene}, sec):seekScl(0, 0, 1):setVisible(false),
-        Animation({nextScene}, sec):seekColor(1, 1, 1, 1)
+        Animation(currentScene, sec):parallel(
+            Animation(currentScene, sec):seekColor(0, 0, 0, 0):setVisible(false),
+            Animation(currentScene, sec):seekScl(0.5, 0.5, 1)
+        ),
+        Animation(layer, sec):seekColor(0, 0, 0, 0):callFunc(function() nextScene:removeChild(layer) end)
     )
 end
 
