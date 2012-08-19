@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<map version="1.0" orientation="orthogonal" width="50" height="50" tilewidth="32" tileheight="32">
+ <tileset firstgid="1" name="tile0" tilewidth="32" tileheight="32">
+  <image source="tile0.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="257" name="tile1" tilewidth="32" tileheight="32">
+  <image source="tile1.png" width="512" height="512"/>
+ </tileset>
+ <tileset firstgid="513" name="actor50" tilewidth="32" tileheight="32">
+  <image source="actor50.png" width="96" height="128"/>
+ </tileset>
+ <tileset firstgid="525" name="actor1" tilewidth="32" tileheight="32">
+  <image source="actor1.png" width="96" height="128"/>
+ </tileset>
+ <tileset firstgid="537" name="actor52" tilewidth="32" tileheight="32">
+  <image source="actor52.png" width="96" height="128"/>
+ </tileset>
+ <tileset firstgid="549" name="actor53" tilewidth="32" tileheight="32">
+  <image source="actor53.png" width="96" height="128"/>
+ </tileset>
+ <tileset firstgid="561" name="actor54" tilewidth="32" tileheight="32">
+  <image source="actor54.png" width="96" height="128"/>
+ </tileset>
+ <tileset firstgid="573" name="actor55" tilewidth="32" tileheight="32">
+  <image source="actor55.png" width="96" height="128"/>
+ </tileset>
+ <tileset firstgid="585" name="actor56" tilewidth="32" tileheight="32">
+  <image source="actor56.png" width="96" height="128"/>
+ </tileset>
+ <tileset firstgid="597" name="actor57" tilewidth="32" tileheight="32">
+  <image source="actor57.png" width="96" height="128"/>
+ </tileset>
+ <tileset firstgid="609" name="actor58" tilewidth="32" tileheight="32">
+  <image source="actor58.png" width="96" height="128"/>
+ </tileset>
+ <tileset firstgid="621" name="actor51" tilewidth="32" tileheight="32">
+  <image source="actor51.png" width="96" height="128"/>
+ </tileset>
+ <tileset firstgid="633" name="flag" tilewidth="32" tileheight="32">
+  <image source="flag.png" width="512" height="512"/>
+  <tile id="0">
+   <properties>
+    <property name="name" value="mapWarp"/>
+   </properties>
+  </tile>
+ </tileset>
+ <layer name="Layer1" width="50" height="50">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2Y3U3DMBCA/QaZoGSCNK95oX0EJgAmAKZigfIzQAUMAIipcIRPsk5O7i492zjNwyclzbn2V8f29TpjzIflq1DeLZ3jzfJTKHvk0RWKhseZ5VSROpNHY9kKWY08awb6ubBcIq6UPTZCxtoMeVxbbhC3BXrcWe4RD4k8VooeKdbH0JjWhl7XlYs9cff/0YO77v1YTQ9qL/X3xinrg1o70nEMeVB7aWPSeHDHMeYh6SumBydWw4Nay3gdU7SZPKTrmEMODw6PwvipHn0O/+21h3elQu3g3WiJ/rU8uOP4dA6Qx4feFb99aO6p8WMkHtxx4PFrc6iHRn8lMpf5eLI8u2vIBSp3j/f9WvC9qTx2zqG/hn3XzwVC+/6UPC72PITOD+2zY/FYPObkQeWv0pwkl4ckH43pIdmnU9VFY5/RKT1Sv1eLB98Dch+tmnYuD6oOMlbHDuVIOT2oM0pSWwl5UHNeC+NyeXBrX5JaXS4PTltJ/iL1OJ+Jx5Z4XooHl2PwwPkurs+2wriQxzoQPwXog5vvbtC9JC7kMfb/X4rkHOTmR0Nx0s+lHKNHLFJ6HMpc8/aYHq/mr7aoCdRawWMXoY+el8i/E8wxeOwj9/cLBHRSABAnAAA=
+  </data>
+ </layer>
+ <layer name="Layer2" width="50" height="50">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2YXQrCMAyAG8UTeCCfRBFU8EURNsU3jyD48+w59AZ6Az2GsKvYMguubLO22/qXD0IpdKRJk5GEEAQJgwEQMoRmdU6ovmmJzhFkhX/D2AorZ073i4btiKm+VYnOJWSFf8PYCaurnCG7ckzEVRk9xbuYiCtOAqm4zgtScR1f3qMO2P98ouGbA6TyzZHuTw37m/3P4xyd+8DenedsnoR4j1lg718nLcGX3T9924fyvSptfGMtNug/K5DJjzrrc7E3Y7D6YFyDvl/1uY6deb0Zqw8iA3Gu04eIvZkPJJ8aoKp6XDZOLvTM1WJ/ysbJjZ65W2yHLA9qw7PADttmEKqYnEEgCFIta2FWUjTTtp1ImJXYONNWmRcUzbRdwIf5ZNW1nUkSD/JcxMY8V8HlPLedDvrUC1zooWTu6EIP5cIdkfB4AxkZgsEQJwAA
+  </data>
+ </layer>
+ <layer name="Collision" width="50" height="50" visible="0">
+  <properties>
+   <property name="visible" value="false"/>
+  </properties>
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2WSw7DIAxEUe9/4q66qlQhf2aCDZgyEkoiMPYDY9Jaa+9X7fbV6jgiOaoqgiNrbft1PoXDGxvJwbL++pViYucY5RixsXhm74fVJ/V7NpatF0MmB3MeovZ3dA4kF2ZxoL57uwg9icPiYHxF6nQOaVw0B5v/UTmLcDC+Mjlm5ZWnkbyL3I/eTsvXDKFxIPuJzJslluMK010rTtqZ6b8z8jBiTqkG78aB+JTqbuTdEaFTOBCt4EBzk8nh0znQ/7hMWb6k/4/+fRcOSwhHRV2OvbSKAzmDaLscMRxIv1aXtKdki6zB0/rsjbPujd04LKG54XGwtmwsjC0yTwUOy/fuHKjvf+HwzjUzTouHqRdIzTmVo6Iqckh7vRuHl4/amIocmp30Xk09R0br/c3wk7lO0ne0PoQWnNMQJwAA
+  </data>
+ </layer>
+ <layer name="Event" width="50" height="50">
+  <properties>
+   <property name="visible" value="false"/>
+  </properties>
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3YMQoAIAwDQPHX6ufFwUFwFJF6txW6BDIlJQAA+E/N693y/g8iKwF6PzLI8Y4IGQAAAAAAOG/u4Dd25A7MJxd7ECcAAA==
+  </data>
+ </layer>
+ <objectgroup name="Object" width="50" height="50">
+  <object name="Player" type="Player" gid="525" x="768" y="1536">
+   <properties>
+    <property name="PlayAnim" value="WalkDown"/>
+   </properties>
+  </object>
+  <object name="WeaponShop" type="Actor" gid="538" x="192" y="448">
+   <properties>
+    <property name="playAnim" value="walkDown"/>
+   </properties>
+  </object>
+  <object name="ArmorShop" type="Actor" gid="538" x="320" y="448">
+   <properties>
+    <property name="playAnim" value="walkDown"/>
+   </properties>
+  </object>
+  <object name="Hotel" type="Actor" gid="622" x="960" y="1120"/>
+  <object name="ItemShop" type="Actor" gid="622" x="1344" y="448"/>
+  <object gid="562" x="576" y="224"/>
+  <object name="Elder" type="Actor" gid="577" x="896" y="384"/>
+  <object gid="520" x="1280" y="192"/>
+  <object name="Men1" type="Actor" gid="514" x="544" y="832">
+   <properties>
+    <property name="moveType" value="moveTypeRandom"/>
+   </properties>
+  </object>
+  <object name="Men1" type="Actor" gid="514" x="160" y="832">
+   <properties>
+    <property name="PlayAnim" value="WalkDown"/>
+   </properties>
+  </object>
+ </objectgroup>
+</map>

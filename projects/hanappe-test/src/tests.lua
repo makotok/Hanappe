@@ -1,0 +1,5 @@
+TestDisplayObject = require("display/TestDisplayObject")
+TestLayer = require("display/TestLayer")
+TestSprite = require("display/TestSprite")
+TestSpriteSheet = require("display/TestSpriteSheet")
+TestTMXMapLoader = require("tmx/TestTMXMapLoader")
