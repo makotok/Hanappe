@@ -5,7 +5,8 @@
 -- @name TMXObjectGroup
 --------------------------------------------------------------------------------
 
-local class = require("hp/lang/class")
+local table = require "hp/lang/table"
+local class = require "hp/lang/class"
 
 local M = class()
 
@@ -25,7 +26,14 @@ end
 -- Add the object.
 --------------------------------------------------------------------------------
 function M:addObject(object)
-    table.insert(self.objects, object)
+    return table.insertElement(self.objects, object)
+end
+
+--------------------------------------------------------------------------------
+-- Remove the object.
+--------------------------------------------------------------------------------
+function M:removeObject(object)
+    return table.removeElement(self.objects, object)
 end
 
 --------------------------------------------------------------------------------

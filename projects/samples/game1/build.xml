@@ -1,7 +1,7 @@
 <project name="example" default="build" basedir=".">
 
   <!-- Setting -->
-  <property name="hanappe.dir" value="../../hanappe"/>
+  <property name="hanappe.dir" value="../../frameworks/hanappe"/>
   <property name="dest.dir" value="dest"/>
   
   <!-- Targets -->

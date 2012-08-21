@@ -1,33 +1,30 @@
--------------------------------------------------------------------
--- Hanappe-Framework
+--------------------------------------------------------------------------------
+-- Hanappe Framework
 -- Copyright 2012 Makoto
--------------------------------------------------------------------
+-- https://github.com/makotok/Hanappe
+--------------------------------------------------------------------------------
 
---------------------
--- About
---------------------
+--------------------------------------------------------------------------------
+-- Description
+--------------------------------------------------------------------------------
 
 Hanappe is a very simple and powerful framework.
 Runs on MOAISDK.(http://getmoai.com/)
 
---------------------
--- Future
---------------------
-1. Application classes
-The abstraction of the initialization of Window, the logic of the size of View.
+--------------------------------------------------------------------------------
+-- About the directory
+--------------------------------------------------------------------------------
 
-2. Display classes
-To simplify the generation of the display object.
+1. projects/hanappe
 
-3. Manager classes
-To cache textures and fonts, memory efficiency is improved.
-Responsible for management of input and scenes.
+This is the source code of Hanappe framework.
 
-4. Tiled Map classes
-To support the TMX file to read and draw.
+2. projects/hanappe-test
 
-5. RPG Map Classes
-Reference implementation of RPGMap.
+This is a test code of Hanappe framework.
 
-6. Widget
-Widget class used in the game.
+3. projects/samples
+
+
+4. projects/templetes
+

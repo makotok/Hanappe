@@ -147,4 +147,16 @@ function M:hitTestWorld(worldX, worldY, worldZ)
     return self:inside(worldX, worldY, worldZ)
 end
 
+--------------------------------------------------------------------------------
+-- Dispose Display Object.<br>
+--------------------------------------------------------------------------------
+function M:dispose()
+    self:setLayer(nil)
+    
+    local parent = self:getParent()
+    if parent and parent.isGroup then
+        parent:removeChild(self)
+    end
+end
+
 return M

@@ -91,12 +91,14 @@ end
 function M:createDisplayLayer(layer)
     local tmxMap = self.tmxMap
     local displayTilesets = self:createDisplayTilesets(layer)
-    local displayLayer = Layer:new()
+    local displayLayer = Layer()
     displayLayer.mapLayer = layer
+    displayLayer.tilesetRenderers = {}
     
     for key, tileset in pairs(displayTilesets) do
         if tileset.texture then
             local mapSprite = self:createDisplayLayerRenderer(displayLayer, tileset)
+            table.insert(displayLayer.tilesetRenderers, mapSprite)
         end
     end
     return displayLayer
@@ -121,7 +123,7 @@ function M:createDisplayLayerRenderer(displayLayer, tileset)
     local tileSize = tileCol * tileRow
     
     -- make sprite
-    local mapSprite = MapSprite:new({texture = texture, layer = displayLayer})
+    local mapSprite = MapSprite({texture = texture, layer = displayLayer})
     mapSprite:setMapSize(mapWidth, mapHeight, tilewidth, tileheight)
     mapSprite:setMapSheets(tilewidth, tileheight, tileCol, tileRow, spacing, margin)
     
@@ -316,5 +318,7 @@ function M:getViewSize()
     local height = self.tmxMap.height * self.tmxMap.tileheight
     return width, height
 end
-    
+
+
+
 return M
