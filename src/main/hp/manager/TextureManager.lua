@@ -17,7 +17,7 @@ setmetatable(cache, {__mode = "v"})
 
 local function gcHandler(udata)
     Logger.debug("[TextureManager] destroyed => " .. udata.path)
-    udata:release()
+    udata:__oldgc()
 end
 
 ----------------------------------------------------------------
@@ -33,6 +33,7 @@ function M:request(path)
         local texture = MOAITexture.new()
         texture:load(path)
         texture.path = path
+        texture.__oldgc = texture.__gc
         texture.__gc = gcHandler
         cache[path] = texture
     end
