@@ -1,4 +1,4 @@
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- This is a class to grouping the DisplayObject. <br>
 -- Will be used as a dummy MOAIProp. <br>
 -- Base Classes => DisplayObject, Resizable <br>
@@ -6,7 +6,7 @@
 -- @auther Makoto
 -- @class table
 -- @name Group
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
@@ -28,26 +28,11 @@ function M:init(params)
     params = params or {}
 
     self.children = {}
-
-    self:setPrivate("width", 0)
-    self:setPrivate("height", 0)
+    
+    self.__internal.width = 0
+    self.__internal.height = 0
 
     self:copyParams(params)
-end
-
---------------------------------------------------------------------------------
--- Set the parameter setter function.
--- @param params Parameter is set to Object.<br>
---------------------------------------------------------------------------------
-function M:copyParams(params)
-    if params.width then
-        self:setWidth(params.width)
-    end
-    if params.height then
-        self:setHeight(params.height)
-    end
-
-    DisplayObject.copyParams(self, params)
 end
 
 ----------------------------------------------------------------
@@ -65,7 +50,7 @@ end
 -- @return width
 --------------------------------------------------------------------------------
 function M:getWidth()
-    return self:getPrivate("width")
+    return self.__internal.width
 end
 
 ----------------------------------------------------------------
@@ -73,7 +58,7 @@ end
 -- @return height
 ----------------------------------------------------------------
 function M:getHeight()
-    return self:getPrivate("height")
+    return self.__internal.height
 end
 
 --------------------------------------------------------------------------------
@@ -82,8 +67,8 @@ end
 -- @param height height
 --------------------------------------------------------------------------------
 function M:setSize(width, height)
-    self:setPrivate("width", width)
-    self:setPrivate("height", height)
+    self.__internal.width = width
+    self.__internal.height = height
 end
 
 ----------------------------------------------------------------
@@ -93,7 +78,7 @@ end
 function M:setVisible(visible)
     MOAIPropInterface.setVisible(self, visible)
     
-    for i, v in ipairs(self.children) do
+    for i, v in ipairs(self:getChildren()) do
         if v.setVisible then
             v:setVisible(visible)
         end
@@ -143,14 +128,29 @@ function M:getChildAt(i)
 end
 
 ----------------------------------------------------------------
+-- Sets the children.
+-- @param children.
+----------------------------------------------------------------
+function M:setChildren(children)
+    self:removeChildren()
+    self:addChildren(children)
+end
+
+----------------------------------------------------------------
 -- Returns the child object by name.
 -- @param name child.name.
 -- @return child
 ----------------------------------------------------------------
 function M:getChildByName(name)
-    for i, child in ipairs(self.children) do
+    for i, child in ipairs(self:getChildren()) do
         if child.name == name then
             return child
+        end
+        if child.getChildByName then
+            local nestedChild = child:getChildByName(name)
+            if nestedChild then
+                return nestedChild
+            end
         end
     end
 end
@@ -164,7 +164,7 @@ end
 function M:addChild(child)
     local index = table.indexOf(self.children, child)
     if index > 0 then
-        return
+        return false
     end
     
     table.insert(self.children, child)
@@ -174,6 +174,20 @@ function M:addChild(child)
         if child.setLayer then
             child:setLayer(self.layer)
         end
+    end
+    
+    return true
+end
+
+----------------------------------------------------------------
+-- Add a child object. <br>
+-- The child object to duplicate is not added. <br>
+-- If you have set the Layer to the group, the layer is set to the child.
+-- @param children to inherit the MOAIProp table.
+----------------------------------------------------------------
+function M:addChildren(children)
+    for i, child in ipairs(children) do
+        self:addChild(child)
     end
 end
 
@@ -228,11 +242,19 @@ end
 --------------------------------------------------------------------------------
 function M:setLayer(layer)
     self.layer = layer
-    for i, child in ipairs(self.children) do
+    for i, child in ipairs(self:getChildren()) do
         if child.setLayer then
             child:setLayer(layer)
         end
     end
+end
+
+--------------------------------------------------------------------------------
+-- Returns the layer.
+-- @return MOAILayer instance.
+--------------------------------------------------------------------------------
+function M:getLayer()
+    return self.layer
 end
 
 --------------------------------------------------------------------------------
@@ -254,7 +276,7 @@ function M:hitTestScreen(screenX, screenY, screenZ)
     assert(self.layer)
     screenZ = screenZ or 0
     
-    for i, child in ipairs(self.children) do
+    for i, child in ipairs(self:getChildren()) do
         if child.hitTestScreen then
             if child:hitTestScreen(screenX, screenY, screenZ) then
                 return true
@@ -279,7 +301,7 @@ end
 function M:hitTestWorld(worldX, worldY, worldZ)
     worldZ = worldZ or 0
     
-    for i, child in ipairs(self.children) do
+    for i, child in ipairs(self:getChildren()) do
         if child.hitTestWorld then
             if child:hitTestWorld(worldX, worldY, worldZ) then
                 return true

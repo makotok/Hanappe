@@ -17,6 +17,7 @@ local Interface = MOAIBox2DFixture.getInterfaceTable()
 --------------------------------------------------------------------------------
 function M:new(obj, ...)
     table.copy(self, assert(obj))
+    obj.__internal = {}
     
     if obj.init then
         obj:init(...)
@@ -80,7 +81,7 @@ end
 -- @param name
 --------------------------------------------------------------------------------
 function M:setName(name)
-    self:setPrivate("name", name)
+    self.__internal.name = name
 end
 
 --------------------------------------------------------------------------------
@@ -88,7 +89,7 @@ end
 -- @return name
 --------------------------------------------------------------------------------
 function M:getName()
-    return self:getPrivate("name")
+    return self.__internal.name
 end
 
 return M

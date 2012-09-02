@@ -42,24 +42,6 @@ function M:init(params)
 end
 
 --------------------------------------------------------------------------------
--- Set the parameter setter function.
--- @param params Parameter is set to Object.<br>
---------------------------------------------------------------------------------
-function M:copyParams(params)
-    if params.texture and self.setTexture then
-        self:setTexture(params.texture)
-    end
-    if params.sheets then
-        self:setSheets(params.sheets)
-    end
-    if params.sheetAnims then
-        self:setSheetAnims(params.sheetAnims)
-    end
-    
-    DisplayObject.copyParams(self, params)
-end
-
---------------------------------------------------------------------------------
 -- Set the sheet data in the form of tiles.
 -- @param tileWidth The width of the tile.
 -- @param tileHeight The height of the tile.

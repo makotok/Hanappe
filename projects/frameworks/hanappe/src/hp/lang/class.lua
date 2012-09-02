@@ -43,7 +43,7 @@ end
 -- @return Instance
 --------------------------------------------------------------------------------
 function M:new(...)
-    local obj = {__index = self}
+    local obj = {__index = self, __internal = {}}
     setmetatable(obj, obj)
     
     if obj.init then
@@ -54,44 +54,6 @@ function M:new(...)
     obj.init = nil
     
     return obj
-end
-
---------------------------------------------------------------------------------
--- Returns a list of variables that are private from metatable.<br>
--- Encapsulates the variables in a pseudo manner.<br>
--- Since this function intended to be used internally, please do not reference user.
--- @return mt.__privates
---------------------------------------------------------------------------------
-function M:getPrivates()
-    local mt = getmetatable(self)
-    mt.__privates = mt.__privates or {}
-    return mt.__privates
-end
-
---------------------------------------------------------------------------------
--- Returns the private variable.<br>
--- Encapsulates the variables in a pseudo manner.<br>
--- Since this function intended to be used internally, please do not reference user.
--- @param name Private variable name
--- @return Private variable
---------------------------------------------------------------------------------
-function M:getPrivate(name)
-    local mt = getmetatable(self)
-    mt.__privates = mt.__privates or {}
-    return mt.__privates[name]
-end
-
---------------------------------------------------------------------------------
--- Set the private variable.<br>
--- Encapsulates the variables in a pseudo manner.<br>
--- Since this function intended to be used internally, please do not reference user.
--- @param name Private variable name
--- @return value Private variable
---------------------------------------------------------------------------------
-function M:setPrivate(name, value)
-    local mt = getmetatable(self)
-    mt.__privates = mt.__privates or {}
-    mt.__privates[name] = value
 end
 
 return M

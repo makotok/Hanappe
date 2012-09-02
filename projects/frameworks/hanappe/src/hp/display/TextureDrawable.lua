@@ -21,10 +21,15 @@ function M:setTexture(texture)
     if type(texture) == "string" then
         texture = TextureManager:request(texture)
     end
+    if self.texture == texture then
+        return
+    end
     
+    local left, top = self:getPos()
     local resize = self.texture == nil and self.setSize ~= nil
     self.texture = texture
     self.deck:setTexture(texture)
+    self:setPos(left, top)
     
     if resize then
         local w, h = texture:getSize()

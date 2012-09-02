@@ -6,6 +6,26 @@
 local M = {}
 
 --------------------------------------------------------------------------------
+-- Run the specified function looping <br>
+-- @param func Target function.
+-- @param ... Argument.
+--------------------------------------------------------------------------------
+function M.callLoop(func, ...)
+    local thread = MOAICoroutine.new()
+    local args = {...}
+    thread:run(
+        function()
+            while true do
+                if func(unpack(args)) then
+                    break
+                end
+                coroutine.yield()
+            end
+        end
+    )
+end
+
+--------------------------------------------------------------------------------
 -- Run the specified function delay. <br>
 -- @param func Target function.
 -- @param ... Argument.

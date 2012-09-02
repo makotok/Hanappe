@@ -158,17 +158,6 @@ function M:init(params)
 end
 
 --------------------------------------------------------------------------------
--- Based on the parameters, and then call the function setter.
--- @param params Parameter is set to Object.<br>
---------------------------------------------------------------------------------
-function M:copyParams(params)
-    if params.width and params.height then
-        self:setSize(params.width, params.height)
-    end
-    DisplayObject.copyParams(self, params)
-end
-
---------------------------------------------------------------------------------
 -- Set the height and width.<br>
 -- @param width width
 -- @param height height
@@ -182,7 +171,6 @@ function M:setSize(width, height)
     self:setPiv(width / 2, height / 2, 0)
     self:setPos(left, top)
 end
-
 
 --------------------------------------------------------------------------------
 -- Draw a circle.<br>

@@ -13,14 +13,19 @@
 -- @name DisplayObject
 --------------------------------------------------------------------------------
 
-local class = require("hp/lang/class")
-local table = require("hp/lang/table")
-local MOAIPropUtil = require("hp/util/MOAIPropUtil")
-local EventDispatcher = require("hp/event/EventDispatcher")
+-- import
+local class             = require "hp/lang/class"
+local table             = require "hp/lang/table"
+local EventDispatcher   = require "hp/event/EventDispatcher"
+local MOAIPropUtil      = require "hp/util/MOAIPropUtil"
+local PropertyUtil      = require "hp/util/PropertyUtil"
 
+-- class
 local M = class(EventDispatcher, MOAIPropUtil)
-
 M.MOAI_CLASS = MOAIProp
+M.PRIORITY_PROPERTIES = {
+    "texture",
+}
 
 --------------------------------------------------------------------------------
 -- Instance generating functions.<br>
@@ -31,6 +36,8 @@ M.MOAI_CLASS = MOAIProp
 --------------------------------------------------------------------------------
 function M:new(...)
     local obj = self.MOAI_CLASS.new()
+    obj.__internal = {}
+    obj.__class = self
     table.copy(self, obj)
 
     EventDispatcher.init(obj)
@@ -52,22 +59,48 @@ function M:init(...)
 end
 
 --------------------------------------------------------------------------------
+-- Set the name.
+-- @param name Object name.<br>
+--------------------------------------------------------------------------------
+function M:setName(name)
+    self.name = name
+end
+
+--------------------------------------------------------------------------------
+-- Returns the name.
+-- @return Object name.<br>
+--------------------------------------------------------------------------------
+function M:getName()
+    return self.name
+end
+
+--------------------------------------------------------------------------------
 -- Set the parameter setter function.
 -- @param params Parameter is set to Object.<br>
---      (params:left, top, layer)
 --------------------------------------------------------------------------------
 function M:copyParams(params)
-    if params.left then
-        self:setLeft(params.left)
+    if not params then
+        return
     end
-    if params.top then
-        self:setTop(params.top)
+
+    -- copy priority properties
+    local priorityParams = {}
+    if self.PRIORITY_PROPERTIES then
+        for i, v in ipairs(self.PRIORITY_PROPERTIES) do
+            priorityParams[v] = params[v]
+            params[v] = nil
+        end
+        PropertyUtil.setProperties(self, priorityParams, true)
     end
-    if params.color and type(params.color) == "table" then
-        self:setColor(unpack(params.color))
-    end
-    if params.layer then
-        self:setLayer(params.layer)
+    
+    -- priority properties
+    PropertyUtil.setProperties(self, params, true)
+    
+    -- reset params
+    if self.PRIORITY_PROPERTIES then
+        for i, v in ipairs(self.PRIORITY_PROPERTIES) do
+            params[v] = priorityParams[v]
+        end
     end
 end
 
@@ -88,6 +121,13 @@ function M:setLayer(layer)
     if self.layer then
         layer:insertProp(self)
     end
+end
+
+--------------------------------------------------------------------------------
+-- Returns the MOAILayer.
+--------------------------------------------------------------------------------
+function M:getLayer()
+    return self.layer
 end
 
 --------------------------------------------------------------------------------
@@ -145,18 +185,6 @@ end
 function M:hitTestWorld(worldX, worldY, worldZ)
     worldZ = worldZ or 0
     return self:inside(worldX, worldY, worldZ)
-end
-
---------------------------------------------------------------------------------
--- Dispose Display Object.<br>
---------------------------------------------------------------------------------
-function M:dispose()
-    self:setLayer(nil)
-    
-    local parent = self:getParent()
-    if parent and parent.isGroup then
-        parent:removeChild(self)
-    end
 end
 
 return M

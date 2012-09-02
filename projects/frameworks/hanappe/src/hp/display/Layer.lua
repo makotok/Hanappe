@@ -7,13 +7,16 @@
 -- @name Layer
 --------------------------------------------------------------------------------
 
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local Application = require("hp/core/Application")
-local DisplayObject = require("hp/display/DisplayObject")
+-- import
+local table                 = require "hp/lang/table"
+local class                 = require "hp/lang/class"
+local Application           = require "hp/core/Application"
+local DisplayObject         = require "hp/display/DisplayObject"
 
-local M = class(DisplayObject)
-M.MOAI_CLASS = MOAILayer
+-- class define
+local M                     = class(DisplayObject)
+local MOAILayerInterface    = MOAILayer.getInterfaceTable()
+M.MOAI_CLASS                = MOAILayer
 
 ----------------------------------------------------------------
 -- The constructor.
@@ -42,27 +45,6 @@ function M:init(params)
 end
 
 --------------------------------------------------------------------------------
--- Set the parameter setter function.
--- @param params Parameter is set to Object.<br>
---------------------------------------------------------------------------------
-function M:copyParams(params)
-    if params.width and params.height then
-        self:setScreenSize(params.width, params.height)
-    end
-    if params.viewWidth and params.viewHeight then
-        self:setViewSize(params.viewWidth, params.viewHeight)
-    end
-    if params.offsetX and params.offsetY then
-        self:setOffset(params.offsetX, params.offsetY)
-    end
-    if params.scene then
-        params.scene:addChild(self)
-    end
-    
-    DisplayObject.copyParams(self, params)
-end
-
---------------------------------------------------------------------------------
 -- Returns the size of the layer on the screen.
 -- @return Width of screen.
 --------------------------------------------------------------------------------
@@ -71,11 +53,27 @@ function M:getScreenWidth()
 end
 
 --------------------------------------------------------------------------------
+-- Sets the size of the layer on the screen.
+-- @param Width of screen.
+--------------------------------------------------------------------------------
+function M:setScreenWidth(width)
+    self:setScreenSize(width, self:getScreenHeight())
+end
+
+--------------------------------------------------------------------------------
 -- Returns the size of the layer on the screen.
 -- @return Height of screen.
 --------------------------------------------------------------------------------
 function M:getScreenHeight()
     return self.screenHeight
+end
+
+--------------------------------------------------------------------------------
+-- Sets the size of the layer on the screen.
+-- @param Width of screen.
+--------------------------------------------------------------------------------
+function M:setScreenHeight(height)
+    self:setScreenSize(self:getScreenHeight(), height)
 end
 
 --------------------------------------------------------------------------------
@@ -94,7 +92,9 @@ end
 function M:setScreenSize(width, height)
     self.screenWidth = width
     self.screenHeight = height
-    self.viewport:setSize(width, height)
+    if self.screenWidth and self.screenHeight then
+        self.viewport:setSize(width, height)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -106,11 +106,27 @@ function M:getViewWidth()
 end
 
 --------------------------------------------------------------------------------
+-- Sets the viewport size of the layer.
+-- @param viewWidth.
+--------------------------------------------------------------------------------
+function M:setViewWidth(width)
+    self:setViewSize(width, self:getViewHeight())
+end
+
+--------------------------------------------------------------------------------
 -- Returns the viewport size of the layer.
 -- @return viewHeight.
 --------------------------------------------------------------------------------
 function M:getViewHeight()
     return self.viewHeight
+end
+
+--------------------------------------------------------------------------------
+-- Sets the viewport size of the layer.
+-- @param viewHeight
+--------------------------------------------------------------------------------
+function M:setViewHeight(height)
+    self:setViewSize(self:getViewWidth(), height)
 end
 
 --------------------------------------------------------------------------------
@@ -129,7 +145,9 @@ end
 function M:setViewSize(width, height)
     self.viewWidth = width
     self.viewHeight = height
-    self.viewport:setScale(width, -height)
+    if self.viewWidth and self.viewHeight then
+        self.viewport:setScale(width, -height)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -184,6 +202,28 @@ function M:setScene(scene)
     
     if self.scene then
         self.scene:addChild(self)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Returns the scene..
+--------------------------------------------------------------------------------
+function M:getScene()
+    return self.scene
+end
+
+--------------------------------------------------------------------------------
+-- Sets the props<br>
+-- @param props props
+--------------------------------------------------------------------------------
+function M:setProps(props)
+    self:clear()
+    for i, prop in ipairs(props) do
+        if prop.setLayer then
+            prop:setLayer(self)
+        else
+            self:insertProp(prop)
+        end
     end
 end
 

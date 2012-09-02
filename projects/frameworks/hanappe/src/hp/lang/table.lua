@@ -57,7 +57,7 @@ end
 -- If onlyExistingKeys is true, it *only* overrides the properties.<br>
 -- Author:Nenad Katic<br>
 --------------------------------------------------------------------------------
-function table.override( src, dest, onlyExistingKeys )
+function M.override( src, dest, onlyExistingKeys )
     for k,v in pairs( src ) do
         if not onlyExistingKeys then
             dest[k] = v

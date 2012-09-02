@@ -14,7 +14,7 @@ local M = class()
 ----------------------------------------------------------------
 function M:init(params)
     assert(params.target)
-    self:setPrivate("target", params.target)
+    self.__internal.target = params.target
 end
 
 ----------------------------------------------------------------
@@ -28,7 +28,7 @@ end
 -- 移動可能なオブジェクトを返します.<br>
 ----------------------------------------------------------------
 function M:getTarget()
-    return self:getPrivate("target")
+    return self.__internal.target
 end
 
 return M

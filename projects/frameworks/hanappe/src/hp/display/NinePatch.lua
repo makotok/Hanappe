@@ -50,29 +50,13 @@ function M:init(params)
     self.getOrignScl = assert(interface.getScl)
     self.seekOrignScl = assert(interface.seekScl)
     
-    self:setPrivate("width", 0)
-    self:setPrivate("height", 0)
-    self:setPrivate("sclX", 1)
-    self:setPrivate("sclY", 1)
-    self:setPrivate("sclZ", 1)
+    self.__internal.width = 0
+    self.__internal.height = 0
+    self.__internal.sclX = 1
+    self.__internal.sclY = 1
+    self.__internal.sclZ = 1
 
     self:copyParams(params)
-end
-
---------------------------------------------------------------------------------
--- Set the parameter setter function.
--- @param params Parameter is set to Object.<br>
---------------------------------------------------------------------------------
-function M:copyParams(params)
-    if params.texture and self.setTexture then
-        self:setTexture(params.texture)
-        self:setSize(self.texture:getSize())
-    end
-    if params.width and params.height then
-        self:setSize(params.width, params.height)
-    end
-
-    DisplayObject.copyParams(self, params)
 end
 
 --------------------------------------------------------------------------------
@@ -90,8 +74,8 @@ function M:setSize(width, height)
     local bSclX, bSclY, bSclZ = width / tw, height / th, 1 -- TODO:sclZ
     local oSclX, oSclY, oSclZ = sclX * bSclX, sclY * bSclY, sclZ * bSclZ
     
-    self:setPrivate("width", width)
-    self:setPrivate("height", height)
+    self.__internal.width = width
+    self.__internal.height = height
     
     self.deck:setRect(-tw / 2, -th / 2, tw / 2, th / 2)
     self:setOrignScl(oSclX, oSclY, oSclZ)
@@ -107,9 +91,10 @@ end
 -- @param z scaleZ.
 --------------------------------------------------------------------------------
 function M:setScl(x, y, z)
-    self:setPrivate("sclX", x)
-    self:setPrivate("sclX", y)
-    self:setPrivate("sclX", z)
+    local internal = self:getInternal()
+    internal.sclX = x
+    internal.sclY = y
+    internal.sclZ = z
     
     local sclX, sclY, sclZ = self:getOrignScl()
     sclX, sclY, sclZ = sclX * x, sclY * y, sclZ * z
@@ -122,7 +107,7 @@ end
 -- @return scaleX, scaleY, scaleZ.
 --------------------------------------------------------------------------------
 function M:getScl()
-    return self:getPrivate("sclX"), self:getPrivate("sclY"), self:getPrivate("sclZ")
+    return self.__internal.sclX, self.__internal.sclY, self.__internal.sclZ
 end
 
 --------------------------------------------------------------------------------
@@ -170,7 +155,7 @@ end
 -- @return xMin, yMin, zMin, xMax, yMax, zMax
 --------------------------------------------------------------------------------
 function M:getBounds()
-    local width, height = self:getPrivate("width"), self:getPrivate("height")
+    local width, height = self.__internal.width, self.__internal.height
     local xMin, yMin, zMin = -width / 2, -height / 2, 0
     local xMax, yMax, zMax = width / 2, height / 2, 0
     return xMin, yMin, zMin, xMax, yMax, zMax

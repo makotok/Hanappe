@@ -41,24 +41,6 @@ function M:init(params)
 end
 
 --------------------------------------------------------------------------------
--- Set the parameter setter function.
--- @param params Parameter is set to Object.<br>
---      (params:width, height, textSize, text)
---------------------------------------------------------------------------------
-function M:copyParams(params)
-    if params.width and params.height then
-        self:setSize(params.width, params.height)
-    end
-    if params.textSize then
-        self:setTextSize(params.textSize)
-    end
-    if params.text then
-        self:setText(params.text)
-    end
-    DisplayObject.copyParams(self, params)
-end
-
---------------------------------------------------------------------------------
 -- Set the text size.<br>
 -- @param width
 -- @param height
@@ -78,8 +60,8 @@ end
 -- @param dpi (deprecated)Resolution.
 --------------------------------------------------------------------------------
 function M:setTextSize(points, dpi)
-    self:setPrivate("textSizePoints", points)
-    self:setPrivate("textSizeDpi", dpi)
+    self.__internal.textSizePoints = points
+    self.__internal.textSizeDpi = dpi
     interface.setTextSize(self, points, dpi)
 end
 
@@ -88,7 +70,7 @@ end
 -- @return points, dpi
 --------------------------------------------------------------------------------
 function M:getTextSize()
-    return self:getPrivate("textSizePoints"), self:getPrivate("textSizeDpi")
+    return self.__internal.textSizePoints, self.__internal.textSizeDpi
 end
 
 --------------------------------------------------------------------------------
@@ -99,6 +81,16 @@ function M:setText(text)
     self:setString(text)
 end
 
+--------------------------------------------------------------------------------
+-- Set the font.<br>
+-- @param font font.
+--------------------------------------------------------------------------------
+function M:setFont(font)
+    if type(font) == "string" then
+        font = FontManager:request(font)
+    end
+    interface.setFont(self, font)
+end
 --------------------------------------------------------------------------------
 -- MOAITextBox does not work for the visible, and hide in a pseudo-alpha.<br>
 -- TODO:Will be removed in MOAI SDK V1.2.
