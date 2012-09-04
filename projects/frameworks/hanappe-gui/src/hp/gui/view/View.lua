@@ -18,9 +18,8 @@ local Executors             = require "hp/util/Executors"
 local Component             = require "hp/gui/component/Component"
 
 -- class define
-local M                     = class(Layer)
-local super                 = Layer
-local MOAILayerInterface    = MOAILayer.getInterfaceTable()
+local M                     = class(Component)
+local super                 = Component
 
 -- タッチ操作の内部処理です.
 local function internalEventHandler(obj, e)
@@ -42,28 +41,24 @@ local function internalEventHandler(obj, e)
 end
 
 --------------------------------------------------------------------------------
--- コンストラクタです.
---------------------------------------------------------------------------------
-function M:init(params)
-    super.init(self)
-    self:initInternal()
-    self:initView()
-    self:copyParams(params)
-end
-
---------------------------------------------------------------------------------
 -- 内部変数の初期化を行います.
 --------------------------------------------------------------------------------
 function M:initInternal()
-    self.__internal.children = {}
-    self.__internal.enabled = true
-    self.__internal.destroyed = false
+    super.initInternal(self)
+    self._destroyed = false
 end
 
 --------------------------------------------------------------------------------
 -- Viewの初期化処理を行います.
 --------------------------------------------------------------------------------
-function M:initView()
+function M:initComponent()
+    self._viewLayer = Layer()
+    self._viewLayer:setParent(self)
+    self:setLayer(self._viewLayer)
+    self:setSize(self._viewLayer:getScreenSize())
+    
+    super.initComponent(self)
+    
     Executors.callLoop(self.enterFrame, self)
 end
 
@@ -76,117 +71,54 @@ function M:setScene(scene)
     end
     
     if self.scene then
-        self.scene:removeEventListener("destroy", self.destroyHandler, self)
-        self.scene:removeEventListener("touchDown", self.touchDownHandler, self)
-        self.scene:removeEventListener("touchUp", self.touchUpHandler, self)
-        self.scene:removeEventListener("touchMove", self.touchMoveHandler, self)
-        self.scene:removeEventListener("touchCancel", self.touchCancelHandler, self)
-        self.scene:removeEventListener("keyDown", self.keyDownHandler, self)
-        self.scene:removeEventListener("keyUp", self.keyUpHandler, self)
+        self.scene:removeEventListener("destroy", self.sceneDestroyHandler, self)
+        self.scene:removeEventListener("touchDown", self.sceneTouchDownHandler, self)
+        self.scene:removeEventListener("touchUp", self.sceneTouchUpHandler, self)
+        self.scene:removeEventListener("touchMove", self.sceneTouchMoveHandler, self)
+        self.scene:removeEventListener("touchCancel", self.sceneTouchCancelHandler, self)
+        self.scene:removeEventListener("keyDown", self.sceneKeyDownHandler, self)
+        self.scene:removeEventListener("keyUp", self.sceneKeyUpHandler, self)
         self.scene:removeChild(self)
     end
     
     self.scene = scene
     
     if self.scene then
-        self.scene:addEventListener("touchDown", self.touchDownHandler, self)
-        self.scene:addEventListener("touchUp", self.touchUpHandler, self)
-        self.scene:addEventListener("touchMove", self.touchMoveHandler, self)
-        self.scene:addEventListener("touchCancel", self.touchCancelHandler, self)
-        self.scene:addEventListener("keyDown", self.keyDownHandler, self)
-        self.scene:addEventListener("keyUp", self.keyUpHandler, self)
+        self.scene:addEventListener("destroy", self.sceneDestroyHandler, self)
+        self.scene:addEventListener("touchDown", self.sceneTouchDownHandler, self)
+        self.scene:addEventListener("touchUp", self.sceneTouchUpHandler, self)
+        self.scene:addEventListener("touchMove", self.sceneTouchMoveHandler, self)
+        self.scene:addEventListener("touchCancel", self.sceneTouchCancelHandler, self)
+        self.scene:addEventListener("keyDown", self.sceneKeyDownHandler, self)
+        self.scene:addEventListener("keyUp", self.sceneKeyUpHandler, self)
         self.scene:addChild(self)
     end
-end
-
---------------------------------------------------------------------------------
--- 子オブジェクトをクリアします.
---------------------------------------------------------------------------------
-function M:clear()
-    for i, v in ipairs(self:getChildren()) do
-        v:setLayer(nil)
-    end
-    self.__internal.children = {}
-    
-    MOAILayerInterface.clear(self)
-end
-
---------------------------------------------------------------------------------
--- 子オブジェクト達を返します.
---------------------------------------------------------------------------------
-function M:getChildren()
-    return self.__internal.children
-end
-
---------------------------------------------------------------------------------
--- 子オブジェクト達を設定します.
---------------------------------------------------------------------------------
-function M:setChildren(children)
-    self:clear()
-    self:addChildren(children)
-end
-
---------------------------------------------------------------------------------
--- 子オブジェクトを追加します.
---------------------------------------------------------------------------------
-function M:addChildren(children)
-    for i, child in ipairs(children) do
-        self:addChild(child)
-    end
-end
-
---------------------------------------------------------------------------------
--- 子オブジェクトを追加します.
---------------------------------------------------------------------------------
-function M:addChild(child)
-    local children = self:getChildren()
-    
-    if table.insertElement(children, child) then
-        child:setLayer(self)
-    end
-    
-end
-
---------------------------------------------------------------------------------
--- 子オブジェクトを削除します.
---------------------------------------------------------------------------------
-function M:removeChild(child)
-    local children = self:getChildren()
-    
-    if table.removeElement(children, child) then
-        child:setLayer(nil)
-    end
-end
-
---------------------------------------------------------------------------------
--- Viewが有効かどうか設定します.
---------------------------------------------------------------------------------
-function M:setEnabled(value)
-    if self:isEnabled() ~= value then
-        self.__internal.enabled = value
-        self:dispatchEvent("enabledChanged")
-    end
-end
-
---------------------------------------------------------------------------------
--- Viewが有効かどうか返します.
---------------------------------------------------------------------------------
-function M:isEnabled()
-    return self.__internal.enabled
 end
 
 --------------------------------------------------------------------------------
 -- フレーム更新時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:enterFrame()
-    if self.__internal.destroyed then
+    if self._destroyed then
         return true
     end
-    for i, child in ipairs(self:getChildren()) do
-        if child.updateComponent then
-            child:updateComponent()
-        end
-    end
+    self:updateComponent()
+end
+
+--------------------------------------------------------------------------------
+-- サイズ変更時にレイヤーのサイズも変更します.
+--------------------------------------------------------------------------------
+function M:setSize(width, height)
+    super.setSize(self, width, height)
+    self._viewLayer:setScreenSize(width, height)
+    self._viewLayer:setViewSize(width, height)
+end
+
+--------------------------------------------------------------------------------
+-- 描画レイヤーテーブルを返します.
+--------------------------------------------------------------------------------
+function M:getRenderTable()
+    return {self:getLayer()}
 end
 
 --------------------------------------------------------------------------------
@@ -196,17 +128,17 @@ end
 --------------------------------------------------------------------------------
 -- Sceneをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
-function M:destroyHandler(e)
+function M:sceneDestroyHandler(e)
     local ce = table.copy(e, Event("destroy"))
     internalEventHandler(self, ce)
     
-    self.__internal.destroyed = true
+    self._destroyed = true
 end
 
 --------------------------------------------------------------------------------
 -- Sceneをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
-function M:touchDownHandler(e)
+function M:sceneTouchDownHandler(e)
     local ce = table.copy(e, Event(Event.TOUCH_DOWN))
     internalEventHandler(self, ce)
 end
@@ -214,7 +146,7 @@ end
 --------------------------------------------------------------------------------
 -- Sceneをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
-function M:touchUpHandler(e)
+function M:sceneTouchUpHandler(e)
     local ce = table.copy(e, Event(Event.TOUCH_UP))
     internalEventHandler(self, ce)
 end
@@ -222,7 +154,7 @@ end
 --------------------------------------------------------------------------------
 -- Sceneをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
-function M:touchMoveHandler(e)
+function M:sceneTouchMoveHandler(e)
     local ce = table.copy(e, Event(Event.TOUCH_MOVE))
     internalEventHandler(self, ce)
 end
@@ -230,7 +162,7 @@ end
 --------------------------------------------------------------------------------
 -- Sceneをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
-function M:touchCancelHandler(e)
+function M:sceneTouchCancelHandler(e)
     local ce = table.copy(e, Event(Event.TOUCH_CANCEL))
     internalEventHandler(self, ce)
 end
@@ -238,7 +170,7 @@ end
 --------------------------------------------------------------------------------
 -- キーを押下した時のイベントリスナです.
 --------------------------------------------------------------------------------
-function M:keyDownHandler(e)
+function M:sceneKeyDownHandler(e)
     local ce = table.copy(e, Event(Event.KEY_DOWN))
     internalEventHandler(self, ce)
 end
@@ -246,7 +178,7 @@ end
 --------------------------------------------------------------------------------
 -- キーを押下した時のイベントリスナです.
 --------------------------------------------------------------------------------
-function M:keyUpHandler(e)
+function M:sceneKeyUpHandler(e)
     local ce = table.copy(e, Event(Event.KEY_UP))
     internalEventHandler(self, ce)
 end

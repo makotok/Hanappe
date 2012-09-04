@@ -14,7 +14,7 @@ local M = class()
 ----------------------------------------------------------------
 function M:init(params)
     assert(params.target)
-    self.__internal.target = params.target
+    self._target = params.target
 end
 
 ----------------------------------------------------------------
@@ -28,7 +28,7 @@ end
 -- 移動可能なオブジェクトを返します.<br>
 ----------------------------------------------------------------
 function M:getTarget()
-    return self.__internal.target
+    return self._target
 end
 
 return M

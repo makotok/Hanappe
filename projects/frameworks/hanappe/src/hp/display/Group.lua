@@ -29,8 +29,8 @@ function M:init(params)
 
     self.children = {}
     
-    self.__internal.width = 0
-    self.__internal.height = 0
+    self._width = 0
+    self._height = 0
 
     self:copyParams(params)
 end
@@ -50,7 +50,7 @@ end
 -- @return width
 --------------------------------------------------------------------------------
 function M:getWidth()
-    return self.__internal.width
+    return self._width
 end
 
 ----------------------------------------------------------------
@@ -58,7 +58,7 @@ end
 -- @return height
 ----------------------------------------------------------------
 function M:getHeight()
-    return self.__internal.height
+    return self._height
 end
 
 --------------------------------------------------------------------------------
@@ -67,8 +67,8 @@ end
 -- @param height height
 --------------------------------------------------------------------------------
 function M:setSize(width, height)
-    self.__internal.width = width
-    self.__internal.height = height
+    self._width = width
+    self._height = height
 end
 
 ----------------------------------------------------------------

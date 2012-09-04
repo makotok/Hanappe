@@ -56,8 +56,8 @@ end
 
 function M:initInternal()
     super.initInternal(self)
-    self.__internal.touchDownFlag = false
-    self.__internal.stickMode = M.MODE_ANALOG
+    self._touchDownFlag = false
+    self._stickMode = M.MODE_ANALOG
 end
 
 function M:createChildren()
@@ -66,8 +66,8 @@ function M:createChildren()
     
     local baseSprite = Sprite {texture = baseSkin, left = 0, top = 0}
     local knobSprite = Sprite {texture = knobSkin, left = 0, top = 0}
-    self.__internal.baseSprite = baseSprite
-    self.__internal.knobSprite = knobSprite
+    self._baseSprite = baseSprite
+    self._knobSprite = knobSprite
     
     self:addChild(baseSprite)
     self:addChild(knobSprite)
@@ -199,14 +199,14 @@ end
 -- スティックの操作モードを返します.
 --------------------------------------------------------------------------------
 function M:getStickMode()
-    return self.__internal.stickMode
+    return self._stickMode
 end
 
 --------------------------------------------------------------------------------
 -- スティックの操作モードを設定します.
 --------------------------------------------------------------------------------
 function M:setStickMode(value)
-    self.__internal.stickMode = value
+    self._stickMode = value
 end
  
 --------------------------------------------------------------------------------

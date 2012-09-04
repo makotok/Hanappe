@@ -7,7 +7,7 @@
 -- You can select the class you want to use. <br>
 -- @auther Makoto
 -- @class table
--- @name classes
+-- @name Display
 --------------------------------------------------------------------------------
 
 local M = {}

@@ -36,8 +36,6 @@ M.PRIORITY_PROPERTIES = {
 --------------------------------------------------------------------------------
 function M:new(...)
     local obj = self.MOAI_CLASS.new()
-    obj.__internal = {}
-    obj.__class = self
     table.copy(self, obj)
 
     EventDispatcher.init(obj)

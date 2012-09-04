@@ -20,9 +20,9 @@ local super = Component
 -- 子コンポーネントを生成します.
 ----------------------------------------------------------------
 function M:createChildren()
-    self.__internal.background = NinePatch()
+    self._background = NinePatch()
     
-    self:addChild(self.__internal.background)
+    self:addChild(self._background)
 end
 
 --------------------------------------------------------------------------------
@@ -36,7 +36,7 @@ end
 -- サイズ変更時に子の大きさも変更します.
 --------------------------------------------------------------------------------
 function M:resizeHandler(e)
-    self.__internal.background:setSize(e.newWidth, e.newHeight)
+    self._background:setSize(e.newWidth, e.newHeight)
 end
 
 return M

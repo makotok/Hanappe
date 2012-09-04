@@ -4,7 +4,6 @@ local class = require("hp/lang/class")
 --------------------------------------------------------------------------------
 -- 表示オブジェクトの位置やサイズのレイアウトを更新する為のクラスです.
 -- このクラスでは、Box形式のオブジェクトを水平、垂直方向に配置する事が可能です.
--- TODO:いまのところMOAIPropには対応していないので、MOAIPropUtilを使用して対応できるようにするべし
 -- @class table
 -- @name BoxLayout
 --------------------------------------------------------------------------------
@@ -144,7 +143,7 @@ function M:getChildY(parentHeight, childHeight)
     elseif self.vAlign == M.V_MIDDLE then
         y = math.floor((diffHeight + self.pTop - self.pBottom) / 2)
     elseif self.vAlign == M.V_BOTTOM then
-        y = diffWidth - self.pBottom
+        y = diffHeight - self.pBottom
     end
 
     return y

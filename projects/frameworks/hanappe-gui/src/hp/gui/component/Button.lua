@@ -31,11 +31,11 @@ M.EVENT_DOWN            = "down"
 --------------------------------------------------------------------------------
 function M:initInternal()
     super.initInternal(self)
-    self.__internal.selected = false
-    self.__internal.touching = false
-    self.__internal.touchIndex = nil
-    self.__internal.toggle = false
-    self.__internal.themeName = "Button"
+    self._selected = false
+    self._touching = false
+    self._touchIndex = nil
+    self._toggle = false
+    self._themeName = "Button"
 end
 
 --------------------------------------------------------------------------------
@@ -43,17 +43,17 @@ end
 --------------------------------------------------------------------------------
 function M:createChildren()
     local skinClass = self:getStyle("skinClass")
-    self.__internal.skinClass = skinClass
-    self.__internal.background = skinClass(self:getStyle("skin"))
+    self._skinClass = skinClass
+    self._background = skinClass(self:getStyle("skin"))
     
-    self.__internal.label = TextLabel()
-    self.__internal.label:setAlignment(MOAITextBox.CENTER_JUSTIFY, MOAITextBox.CENTER_JUSTIFY)
-    self.__internal.label:setSize(self.__internal.background:getSize())
+    self._label = TextLabel()
+    self._label:setAlignment(MOAITextBox.CENTER_JUSTIFY, MOAITextBox.CENTER_JUSTIFY)
+    self._label:setSize(self._background:getSize())
 
-    self:addChild(self.__internal.background)
-    self:addChild(self.__internal.label)
+    self:addChild(self._background)
+    self:addChild(self._label)
 
-    self:setSize(self.__internal.background:getSize())
+    self:setSize(self._background:getSize())
 end
 
 --------------------------------------------------------------------------------
@@ -61,17 +61,17 @@ end
 --------------------------------------------------------------------------------
 function M:updateStyles()
     local skinClass = self:getStyle("skinClass")
-    if self.__internal.skinClass ~= skinClass then
-        self.__internal.skinClass = skinClass
-        self.__internal.background = skinClass()
-        self.__internal.background:setSize(self:getWidth(), self:getHeight())
+    if self._skinClass ~= skinClass then
+        self._skinClass = skinClass
+        self._background = skinClass()
+        self._background:setSize(self:getWidth(), self:getHeight())
     end
 
-    local background = self.__internal.background
+    local background = self._background
     background:setColor(unpack(self:getStyle("color")))
     background:setTexture(self:getStyle("skin"))
 
-    local label = self.__internal.label
+    local label = self._label
     label:setColor(unpack(self:getStyle("textColor")))
     label:setTextSize(self:getStyle("textSize"))
     label:setFont(self:getStyle("font"))
@@ -84,7 +84,7 @@ function M:doUpButton()
     if not self:isSelected() then
         return
     end
-    self.__internal.selected = false
+    self._selected = false
     
     self:setCurrentState(M.STATE_NORMAL)
     self:dispatchEvent(M.EVENT_UP)
@@ -97,7 +97,7 @@ function M:doDownButton()
     if self:isSelected() then
         return
     end
-    self.__internal.selected = true
+    self._selected = true
     
     self:setCurrentState(M.STATE_SELECTED)
     self:dispatchEvent(M.EVENT_DOWN)
@@ -107,53 +107,53 @@ end
 -- テキストを設定します.
 --------------------------------------------------------------------------------
 function M:setText(text)
-    self.__internal.text = text
-    self.__internal.label:setText(text)
+    self._text = text
+    self._label:setText(text)
 end
 
 --------------------------------------------------------------------------------
 -- テキストを返します.
 --------------------------------------------------------------------------------
 function M:getText()
-    return self.__internal.text
+    return self._text
 end
 
 --------------------------------------------------------------------------------
 -- トグルボタンかどうか設定します.
 --------------------------------------------------------------------------------
 function M:setToggle(value)
-    self.__internal.toggle = value
+    self._toggle = value
 end
 
 --------------------------------------------------------------------------------
 -- トグルボタンかどうか返します.
 --------------------------------------------------------------------------------
 function M:isToggle()
-    return self.__internal.toggle
+    return self._toggle
 end
 
 --------------------------------------------------------------------------------
 -- ボタンを押下しているか返します.
 --------------------------------------------------------------------------------
 function M:isSelected()
-    return self.__internal.selected
+    return self._selected
 end
 
 --------------------------------------------------------------------------------
 -- ボタンを押下したときのイベントリスナを設定します.
 --------------------------------------------------------------------------------
 function M:setOnClick(value)
-    if self.__internal.onClick == value then
+    if self._onClick == value then
         return
     end
-    if self.__internal.onClick then
-        self:removeEventListener(M.EVENT_CLICK, self.__internal.onClick)
+    if self._onClick then
+        self:removeEventListener(M.EVENT_CLICK, self._onClick)
     end
 
-    self.__internal.onClick = value
+    self._onClick = value
     
-    if self.__internal.onClick then
-        self:addEventListener(M.EVENT_CLICK, self.__internal.onClick)
+    if self._onClick then
+        self:addEventListener(M.EVENT_CLICK, self._onClick)
     end
 end
 
@@ -166,13 +166,13 @@ end
 --------------------------------------------------------------------------------
 function M:touchDownHandler(e)
     print("touch!")
-    if self.__internal.touching then
+    if self._touching then
         return
     end
     
     if self:hitTestScreen(e.x, e.y) then
-        self.__internal.touchIndex = e.idx
-        self.__internal.touching = true
+        self._touchIndex = e.idx
+        self._touching = true
         
         if self:isToggle() and self:isButtonDown() then
             self:doUpButton()
@@ -187,13 +187,13 @@ end
 -- タッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:touchUpHandler(e)
-    if e.idx ~= self.__internal.touchIndex then
+    if e.idx ~= self._touchIndex then
         return
     end
     
-    if self.__internal.touching and not self:isToggle() then
-        self.__internal.touching = false
-        self.__internal.touchIndex = nil
+    if self._touching and not self:isToggle() then
+        self._touching = false
+        self._touchIndex = nil
         
         self:doUpButton()
         self:dispatchEvent(M.EVENT_CLICK)
@@ -204,13 +204,13 @@ end
 -- タッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:touchMoveHandler(e)
-    if e.idx ~= self.__internal.touchIndex then
+    if e.idx ~= self._touchIndex then
         return
     end
 
-    if self.__internal.touching and not self:hitTestScreen(e.x, e.y) then
-        self.__internal.touching = false
-        self.__internal.touchIndex = nil
+    if self._touching and not self:hitTestScreen(e.x, e.y) then
+        self._touching = false
+        self._touchIndex = nil
         
         if not self:isToggle() then
             self:doUpButton()
@@ -224,11 +224,11 @@ end
 --------------------------------------------------------------------------------
 function M:touchCancelHandler(e)
     if not self:isToggle() then
-        self.__internal.touching = false
-        self.__internal.touchIndex = nil
+        self._touching = false
+        self._touchIndex = nil
         
         self:doUpButton()
-        self:dispatchEvent("cancel")
+        self:dispatchEvent(M.EVENT_CANCEL)
     end
 end
 
@@ -236,18 +236,11 @@ end
 -- リサイズ時のイベントハンドラです.
 --------------------------------------------------------------------------------
 function M:resizeHandler(e)
-    local background = self.__internal.background
+    local background = self._background
     background:setSize(self:getWidth(), self:getHeight())
 
-    local label = self.__internal.label
+    local label = self._label
     label:setSize(self:getWidth(), self:getHeight())
-end
-
---------------------------------------------------------------------------------
--- ステート変更時のイベントハンドラです.
---------------------------------------------------------------------------------
-function M:stateChangedHandler(e)
-    -- self:updaateStyles()
 end
 
 --------------------------------------------------------------------------------
@@ -255,8 +248,8 @@ end
 --------------------------------------------------------------------------------
 function M:enabledChangedHandler(e)
     if not self:isEnabled() then
-        self.__internal.touching = false
-        self.__internal.touchIndex = 0
+        self._touching = false
+        self._touchIndex = 0
     end
 end
 

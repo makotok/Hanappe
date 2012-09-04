@@ -50,11 +50,11 @@ function M:init(params)
     self.getOrignScl = assert(interface.getScl)
     self.seekOrignScl = assert(interface.seekScl)
     
-    self.__internal.width = 0
-    self.__internal.height = 0
-    self.__internal.sclX = 1
-    self.__internal.sclY = 1
-    self.__internal.sclZ = 1
+    self._width = 0
+    self._height = 0
+    self._sclX = 1
+    self._sclY = 1
+    self._sclZ = 1
 
     self:copyParams(params)
 end
@@ -74,8 +74,8 @@ function M:setSize(width, height)
     local bSclX, bSclY, bSclZ = width / tw, height / th, 1 -- TODO:sclZ
     local oSclX, oSclY, oSclZ = sclX * bSclX, sclY * bSclY, sclZ * bSclZ
     
-    self.__internal.width = width
-    self.__internal.height = height
+    self._width = width
+    self._height = height
     
     self.deck:setRect(-tw / 2, -th / 2, tw / 2, th / 2)
     self:setOrignScl(oSclX, oSclY, oSclZ)
@@ -107,7 +107,7 @@ end
 -- @return scaleX, scaleY, scaleZ.
 --------------------------------------------------------------------------------
 function M:getScl()
-    return self.__internal.sclX, self.__internal.sclY, self.__internal.sclZ
+    return self._sclX, self._sclY, self._sclZ
 end
 
 --------------------------------------------------------------------------------
@@ -155,7 +155,7 @@ end
 -- @return xMin, yMin, zMin, xMax, yMax, zMax
 --------------------------------------------------------------------------------
 function M:getBounds()
-    local width, height = self.__internal.width, self.__internal.height
+    local width, height = self._width, self._height
     local xMin, yMin, zMin = -width / 2, -height / 2, 0
     local xMax, yMax, zMax = width / 2, height / 2, 0
     return xMin, yMin, zMin, xMax, yMax, zMax

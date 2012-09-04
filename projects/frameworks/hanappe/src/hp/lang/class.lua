@@ -43,7 +43,7 @@ end
 -- @return Instance
 --------------------------------------------------------------------------------
 function M:new(...)
-    local obj = {__index = self, __internal = {}}
+    local obj = {__index = self}
     setmetatable(obj, obj)
     
     if obj.init then

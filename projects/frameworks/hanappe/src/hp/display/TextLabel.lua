@@ -60,8 +60,8 @@ end
 -- @param dpi (deprecated)Resolution.
 --------------------------------------------------------------------------------
 function M:setTextSize(points, dpi)
-    self.__internal.textSizePoints = points
-    self.__internal.textSizeDpi = dpi
+    self._textSizePoints = points
+    self._textSizeDpi = dpi
     interface.setTextSize(self, points, dpi)
 end
 
@@ -70,7 +70,7 @@ end
 -- @return points, dpi
 --------------------------------------------------------------------------------
 function M:getTextSize()
-    return self.__internal.textSizePoints, self.__internal.textSizeDpi
+    return self._textSizePoints, self._textSizeDpi
 end
 
 --------------------------------------------------------------------------------

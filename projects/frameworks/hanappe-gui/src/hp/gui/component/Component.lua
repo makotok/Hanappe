@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- 全てのComponentが継承すべきクラスです. <br>
+-- 全てのGUIコンポーネントが継承すべきベースクラスです. <br>
 -- GUIの基本となる機能を提供します. <br>
 -- @class table
 -- @name Component
@@ -12,6 +12,7 @@ local Group             = require "hp/display/Group"
 local Event             = require "hp/event/Event"
 local Executors         = require "hp/util/Executors"
 local ThemeManager      = require "hp/gui/manager/ThemeManager"
+local FocusManager      = require "hp/gui/manager/FocusManager"
 
 -- class define
 local M                 = class(Group)
@@ -57,16 +58,16 @@ end
 -- 内部変数の初期化処理です.
 --------------------------------------------------------------------------------
 function M:initInternal()
-    self.__internal.enabled = true
-    self.__internal.focusEnabled = false
-    self.__internal.sizeChanged = true
-    self.__internal.includeLayout = true
-    self.__internal.theme = nil
-    self.__internal.themeName = "Component"
-    self.__internal.currentState = M.STATE_NORMAL
-    self.__internal.styleChanged = true
-    self.__internal.layout = nil
-    self.__internal.layoutChanged = false
+    self._enabled = true
+    self._focusEnabled = false
+    self._sizeChanged = true
+    self._includeLayout = true
+    self._theme = nil
+    self._themeName = "Component"
+    self._currentState = M.STATE_NORMAL
+    self._styleChanged = true
+    self._layout = nil
+    self._layoutChanged = false
 end
 
 --------------------------------------------------------------------------------
@@ -149,9 +150,9 @@ end
 -- キャッシュしたプロパティがあればこのタイミングで更新します.
 --------------------------------------------------------------------------------
 function M:updateProperties()
-    if self.__internal.styleChanged then
+    if self._styleChanged then
         self:updateStyles()
-        self.__internal.styleChanged = false
+        self._styleChanged = false
     end
 end
 
@@ -177,12 +178,12 @@ end
 -- 子コンポーネントのレイアウトを更新します.
 --------------------------------------------------------------------------------
 function M:updateLayout()
-    if self.__internal.layoutChanged then
+    if self._layoutChanged then
         local layout = self:getLayout()
         if layout then
             layout:update(self)
         end
-        self:setLayoutChanged(self)
+        self:setLayoutChanged(false)
     end
 end
 
@@ -191,19 +192,20 @@ end
 -- サイズが変更されると親グループに伝播します.
 --------------------------------------------------------------------------------
 function M:updateSize()
-    if self.__internal.sizeChanged then
+    if self._sizeChanged then
         local e = Event(M.EVENT_RESIZE)
-        e.oldWidth, e.oldHeight = self.__internal.oldWidth, self.__internal.oldHeight
+        e.oldWidth, e.oldHeight = self._oldWidth, self._oldHeight
         e.newWidth, e.newHeight = width, height
         self:dispatchEvent(e)
         
-        self.__internal.oldWidth = nil
-        self.__internal.oldHeight = nil
-        self.__internal.sizeChanged = false
+        self._oldWidth = nil
+        self._oldHeight = nil
+        self._sizeChanged = false
         
         -- サイズが変更された場合、親にレイアウトが変更された事を通知
-        if self:getParent() then
-            self:getParent():setLayoutChanged(true)
+        local parent = self:getParent()
+        if parent and parent.isComponent then
+            parent:setLayoutChanged(true)
         end
     end
 end
@@ -220,8 +222,8 @@ end
 --------------------------------------------------------------------------------
 function M:setCurrentState(state)
     if self:getCurrentState() ~= state then
-        self.__internal.currentState = state
-        self.__internal.styleChanged = true
+        self._currentState = state
+        self._styleChanged = true
         
         local e = Event(M.EVENT_STATE_CHANGED)
         e.state = state
@@ -233,7 +235,7 @@ end
 -- コンポーネントの状態を返します.
 --------------------------------------------------------------------------------
 function M:getCurrentState()
-    return self.__internal.currentState
+    return self._currentState
 end
 
 --------------------------------------------------------------------------------
@@ -263,9 +265,6 @@ function M:setParent(parent)
     if parent == self:getParent() then
         return
     end
-    if parent and not parent.isComponent then
-        error("Not Component Excption!")
-    end
     
     -- remove
     if self:getParent() then
@@ -273,7 +272,7 @@ function M:setParent(parent)
     end
     
     -- set
-    self.__internal.parent = parent
+    self._parent = parent
     MOAIPropInterface.setParent(self, parent)
     
     -- add
@@ -286,7 +285,7 @@ end
 -- 親を返します.
 --------------------------------------------------------------------------------
 function M:getParent()
-    return self.__internal.parent
+    return self._parent
 end
 
 --------------------------------------------------------------------------------
@@ -294,7 +293,7 @@ end
 --------------------------------------------------------------------------------
 function M:setEnabled(value)
     if self:isEnabled() ~= value then
-        self.__internal.enabled = value
+        self._enabled = value
         self:dispatchEvent(M.EVENT_ENABLED_CHANGED)
         
         if value then
@@ -309,7 +308,7 @@ end
 -- 有効かどうか返します.
 --------------------------------------------------------------------------------
 function M:isEnabled()
-    return self.__internal.enabled
+    return self._enabled
 end
 
 --------------------------------------------------------------------------------
@@ -340,27 +339,21 @@ end
 -- 基本的にUILayerに紐付くマネージャを返されます.
 --------------------------------------------------------------------------------
 function M:getFocusManager()
-    if self.__internal.focusManager then
-        return self.__internal.focusManager
-    end
-    if self:getParent() then
-        return self:getParent():getFocusManager()
-    end
-    return nil
+    return FocusManager
 end
 
 --------------------------------------------------------------------------------
 -- フォーカスがセットできるか返します.
 --------------------------------------------------------------------------------
 function M:isFocusEnabled()
-    return self.__internal.focusEnabled
+    return self._focusEnabled
 end
 
 --------------------------------------------------------------------------------
 -- フォーカスがセットできるか設定します.
 --------------------------------------------------------------------------------
 function M:setFocusEnabled(value)
-    self.__internal.focusEnabled = value
+    self._focusEnabled = value
     
     if value == false and self:isFocus() then
         self:getFocusManager():setFocus(nil)
@@ -373,7 +366,7 @@ end
 -- 自動的にコンポーネントの座標を設定されるようになります.
 --------------------------------------------------------------------------------
 function M:setLayout(value)
-    self.__internal.layout = value
+    self._layout = value
     self:setLayoutChanged(true)
 end
 
@@ -381,7 +374,7 @@ end
 -- レイアウトを返します.
 --------------------------------------------------------------------------------
 function M:getLayout()
-    return self.__internal.layout
+    return self._layout
 end
 
 --------------------------------------------------------------------------------
@@ -389,9 +382,10 @@ end
 -- trueの場合、親コンポーネントにも伝播します.
 --------------------------------------------------------------------------------
 function M:setLayoutChanged(value)
-    self.__internal.layoutChanged = value
-    if value and self:getParent() then
-        self:getParent():setLayoutChanged(true)
+    self._layoutChanged = value
+    local parent = self:getParent()
+    if value and parent and parent.isComponent then
+        parent:setLayoutChanged(true)
     end
 end
 
@@ -399,16 +393,17 @@ end
 -- レイアウトが変更されたかどうか返します.
 --------------------------------------------------------------------------------
 function M:isLayoutChanged()
-    return self.__internal.layoutChanged
+    return self._layoutChanged
 end
 
 --------------------------------------------------------------------------------
 -- レイアウトクラスによってレイアウトがセットされるかどうか設定します.
 --------------------------------------------------------------------------------
 function M:setIncludeLayout(value)
-    self.__internal.includeLayout = value
-    if self:getParent() then
-        self:getParent():setLayoutChanged(true)
+    self._includeLayout = value
+    local parent = self:getParent()
+    if parent and parent.isComponent then
+        parent:setLayoutChanged(true)
     end
 end
 
@@ -416,7 +411,7 @@ end
 -- 自動的にレイアウトを設定するかどうか返します.
 --------------------------------------------------------------------------------
 function M:isIncludeLayout()
-    self.__internal.includeLayout = value
+    self._includeLayout = value
 end
 
 --------------------------------------------------------------------------------
@@ -429,10 +424,10 @@ function M:setSize(width, height)
     if oldWidth ~= width or oldHeight ~= height then
         super.setSize(self, width, height)
 
-        if not self.__internal.sizeChanged then
-            self.__internal.oldWidth = oldWidth
-            self.__internal.oldHeight = oldHeight
-            self.__internal.sizeChanged = true
+        if not self._sizeChanged then
+            self._oldWidth = oldWidth
+            self._oldHeight = oldHeight
+            self._sizeChanged = true
         end
     end
 end
@@ -441,7 +436,7 @@ end
 -- コンポーネントのテーマを返します.
 --------------------------------------------------------------------------------
 function M:getTheme()
-    return self.__internal.theme
+    return self._theme
 end
 
 --------------------------------------------------------------------------------
@@ -449,9 +444,9 @@ end
 -- ThemeManagerによってデフォルトのテーマが設定されています.
 --------------------------------------------------------------------------------
 function M:setTheme(value)
-    if self.__internal.theme ~= value then
-        self.__internal.theme = value
-        self.__internal.styleChanged = true
+    if self._theme ~= value then
+        self._theme = value
+        self._styleChanged = true
     end
 end
 
@@ -459,16 +454,16 @@ end
 -- コンポーネントのテーマ名を返します.
 --------------------------------------------------------------------------------
 function M:getThemeName()
-    return self.__internal.themeName
+    return self._themeName
 end
 
 --------------------------------------------------------------------------------
 -- コンポーネントのテーマ名を設定します.
 --------------------------------------------------------------------------------
 function M:setThemeName(value)
-    if self.__internal.themeName ~= value then
-        self.__internal.themeName = value
-        self.__internal.styleChanged = true
+    if self._themeName ~= value then
+        self._themeName = value
+        self._styleChanged = true
     end
 end
 

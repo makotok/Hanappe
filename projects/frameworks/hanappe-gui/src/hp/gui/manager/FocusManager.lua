@@ -19,7 +19,7 @@ function M:setFocus(component)
     if component == self.focusedComponent then
         return
     end
-    if not component:isFocusEnabled then
+    if not component:isFocusEnabled() then
         return
     end
     

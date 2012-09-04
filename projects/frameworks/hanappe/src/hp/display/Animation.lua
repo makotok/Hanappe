@@ -8,10 +8,23 @@
 -- @name Animation
 --------------------------------------------------------------------------------
 
-local class = require("hp/lang/class")
-local MOAIPropUtil = require("hp/util/MOAIPropUtil")
+local table             = require "hp/lang/table"
+local class             = require "hp/lang/class"
+local MOAIPropUtil      = require "hp/util/MOAIPropUtil"
+local Executors         = require "hp/util/Executors"
+local Event             = require "hp/event/Event"
+local EventDispatcher   = require "hp/event/EventDispatcher"
 
-local M = class()
+local M                 = class(EventDispatcher)
+local super             = EventDispatcher
+
+-- create animation context.
+local function createContext(self, params)
+    local context = params or {}
+    context.stopped = false
+    table.insert(self._contexts, context)
+    return context
+end
 
 --------------------------------------------------------------------------------
 -- The constructor.
@@ -20,19 +33,15 @@ local M = class()
 -- @param easeType MOAIEaseType.
 --------------------------------------------------------------------------------
 function M:init(targets, sec, easeType)
-    if type(targets) == "userdata" then
-        targets = {targets}
-    end
-    self.internal = {
-        commands = {},
-        targets = targets or {},
-        running = false,
-        second = sec and sec or 1,
-        easeType = easeType,
-        currentCommand = nil,
-        currentIndex = 0,
-        running = false,
-    }
+    super.init(self)
+
+    self._commands = {}
+    self._targets = type(targets) == "userdata" and {targets} or targets or {}
+    self._running = false
+    self._second = sec and sec or 1
+    self._easeType = easeType
+    self._contexts = {}
+    
 end
 
 --------------------------------------------------------------------------------
@@ -40,7 +49,7 @@ end
 -- @return True in the case of animation.
 --------------------------------------------------------------------------------
 function M:isRunning()
-    return self.internal.running
+    return self._running
 end
 
 --------------------------------------------------------------------------------
@@ -50,11 +59,10 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:setLeft(left)
-    local playFunc = function(obj, callback)
-        for i, v in ipairs(self.internal.targets) do
+    local playFunc = function(self, context)
+        for i, v in ipairs(self._targets) do
             MOAIPropUtil.setLeft(v, left)
         end
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -68,11 +76,10 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:setTop(top)
-    local playFunc = function(obj, callback)
-        for i, v in ipairs(self.internal.targets) do
+    local playFunc = function(self, context)
+        for i, v in ipairs(self._targets) do
             MOAIPropUtil.setTop(v, top)
         end
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -86,11 +93,10 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:setRight(right)
-    local playFunc = function(obj, callback)
-        for i, v in ipairs(self.internal.targets) do
+    local playFunc = function(self, context)
+        for i, v in ipairs(self._targets) do
             MOAIPropUtil.setRight(v, right)
         end
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -104,11 +110,10 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:setBottom(bottom)
-    local playFunc = function(obj, callback)
-        for i, v in ipairs(self.internal.targets) do
+    local playFunc = function(self, context)
+        for i, v in ipairs(self._targets) do
             MOAIPropUtil.setBottom(v, bottom)
         end
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -123,11 +128,10 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:setPos(left, top)
-    local playFunc = function(obj, callback)
-        for i, v in ipairs(self.internal.targets) do
+    local playFunc = function(self, context)
+        for i, v in ipairs(self._targets) do
             MOAIPropUtil.setPos(v, left, top)
         end
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -143,11 +147,10 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:setLoc(x, y, z)
-    local playFunc = function(obj, callback)
-        for i, v in ipairs(self.internal.targets) do
+    local playFunc = function(self, context)
+        for i, v in ipairs(self._targets) do
             v:setLoc(x, y, z)
         end
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -200,11 +203,10 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:setRot(x, y, z)
-    local playFunc = function(obj, callback)
-        for i, v in ipairs(self.internal.targets) do
+    local playFunc = function(self, context)
+        for i, v in ipairs(self._targets) do
             v:setRot(x, y, z)
         end
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -255,11 +257,10 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:setScl(x, y, z)
-    local playFunc = function(obj, callback)
-        for i, v in ipairs(self.internal.targets) do
+    local playFunc = function(self, context)
+        for i, v in ipairs(self._targets) do
             v:setScl(x, y, z)
         end
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -309,11 +310,10 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:setAttr(attrID, value)
-    local playFunc = function(obj, callback)
-        for i, v in ipairs(self.internal.targets) do
+    local playFunc = function(self, context)
+        for i, v in ipairs(self._targets) do
             v:setAttr(attrID, value)
         end
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -360,11 +360,10 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:setIndex(index)
-    local playFunc = function(obj, callback)
-        for i, v in ipairs(self.internal.targets) do
+    local playFunc = function(self, context)
+        for i, v in ipairs(self._targets) do
             v:setIndex(index)
         end
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -381,19 +380,13 @@ end
 function M:moveIndex(indexes, sec, mode)
 
     local curve = MOAIAnimCurve.new()
-    local anim = MOAIAnim:new()
-    local onStop = function(prop)
-        self:onCommandComplete()
-    end
-    anim:setListener(MOAIAction.EVENT_STOP, onStop)
-
-    local playFunc = function(obj, callback)
+    local anim = MOAIAnim.new()
+    
+    local playFunc = function(self, context)
         if anim and anim:isBusy() then
-            anim:setListener(MOAIAction.EVENT_STOP, nil)
             anim:stop()
-            anim:setListener(MOAIAction.EVENT_STOP, onStop)
         end
-        local tSec = sec or internal.second
+        local tSec = sec or self._second
         local tMode = mode or MOAITimer.LOOP
 
         curve:reserveKeys(#indexes)
@@ -401,8 +394,8 @@ function M:moveIndex(indexes, sec, mode)
             curve:setKey(i, tSec * (i - 1), indexes[i], MOAIEaseType.FLAT )
         end
     
-        anim:reserveLinks(#self.internal.targets)
-        for i, prop in ipairs(self.internal.targets) do
+        anim:reserveLinks(#self._targets)
+        for i, prop in ipairs(self._targets) do
             anim:setMode(tMode)
             anim:setLink(i, curve, prop, MOAIProp.ATTR_INDEX )
             anim:setCurve(curve)
@@ -410,12 +403,15 @@ function M:moveIndex(indexes, sec, mode)
         anim:start()
         
         if tMode == MOAITimer.LOOP then
-            callback(obj)
+            return
         end
+        
+        MOAICoroutine.blockOnAction(anim)
     end
-    local stopFunc = function(obj)
+    local stopFunc = function(self, context)
         anim:stop()
     end
+    
     local command = self:newCommand(playFunc, stopFunc)
     self:addCommand(command)
     return self
@@ -462,11 +458,10 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:setColor(red, green, blue, alpha)
-    local playFunc = function(obj, callback)
-        for i, v in ipairs(self.internal.targets) do
+    local playFunc = function(self)
+        for i, v in ipairs(self._targets) do
             v:setColor(red, green, blue, alpha)
         end
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -517,11 +512,10 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:setVisible(value)
-    local playFunc = function(obj, callback)
-        for i, v in ipairs(self.internal.targets) do
+    local playFunc = function(self)
+        for i, v in ipairs(self._targets) do
             v:setVisible(value)
         end
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -534,9 +528,8 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:callFunc(func)
-    local playFunc = function(obj, callback)
+    local playFunc = function(self)
         func(obj)
-        callback(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -549,25 +542,29 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:parallel(...)
-    local internal = self.internal
     local animations = {...}
     local command = self:newCommand(
         -- start
-        function(obj, callback)
+        function(self, context)
             local count = 0
             local max = #animations
+            
+            -- animation complete handler
             local completeHandler = function(e)
                 count = count + 1
-                if count >= max then
-                    callback(obj)
-                end
             end
+            
+            -- play animations
             for i, a in ipairs(animations) do
-                a:play({onComplete = completeHandler})
+                a:play {onComplete = completeHandler}
+            end
+            
+            -- wait animations
+            while count < max do
+                coroutine.yield()
             end
         end,
-        -- stop
-        function(obj)
+        function(self, context)
             for i, a in ipairs(animations) do
                 a:stop()
             end
@@ -583,35 +580,27 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:sequence(...)
-    local internal = self.internal
     local animations = {...}
     local currentAnimation = nil
     local command = self:newCommand(
         -- start
-        function(obj, callback)
+        function(self, context)
             local count = 0
             local max = #animations
-            local completeHandler = function(e)
-                count = count + 1
-                if count > max then
-                    currentAnimation = nil
-                    callback(obj)
-                else
-                    currentAnimation = animations[count]
-                    currentAnimation:play()
-                end
-            end
             
             for i, animation in ipairs(animations) do
-                animation.internal.onComplete = completeHandler
+                animation:play()
+                while animation:isRunning() do
+                    coroutine.yield()
+                end
+                if context.stopped then
+                    break
+                end
             end
-
-            completeHandler()
         end,
-        -- stop
-        function(obj)
-            if currentAnimation then
-                currentAnimation:stop()
+        function(self, context)
+            for i, v in ipairs(animations) do
+                v:stop()
             end
         end
     )
@@ -629,29 +618,28 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:loop(maxCount, animation)
-    local internal = self.internal
     local loopFunc = type(maxCount) == "function" and maxCount
     local command = self:newCommand(
         -- start
-        function(obj, callback)
+        function(self, context)
             local count = 0
-            local completeHandler = function(e)
+            while true do
+                animation:play()
+                
+                while animation:isRunning() do
+                    coroutine.yield()
+                end
+                if context.stopped then
+                    break
+                end
+                
                 count = count + 1
-                if loopFunc then
-                    if not loopFunc(self) then
-                        callback(obj)
-                    end
-                elseif maxCount > 0 and count > maxCount then
-                    callback(obj)
-                else 
-                    animation:play()
+                if maxCount > 0 and count > maxCount then
+                    break
                 end
             end
-            animation.internal.onComplete = completeHandler
-            completeHandler()
         end,
-        -- stop
-        function(obj)
+        function(self)
             animation:stop()
         end
     )
@@ -669,11 +657,11 @@ function M:wait(sec)
     timer:setSpan(sec)
     
     local command = self:newCommand(
-        function(obj, callback)
-            timer:setListener(MOAIAction.EVENT_STOP, function() callback(obj) end)
+        function(self, context)
             timer:start()
+            MOAICoroutine.blockOnAction(timer)
         end,
-        function(obj)
+        function(self)
             timer:stop()
         end
     )
@@ -690,26 +678,14 @@ end
 -- @return self
 --------------------------------------------------------------------------------
 function M:play(params)
-    params = params or {}
-    local internal = self.internal
+    if self:isRunning() then
+        return self
+    end
 
-    if internal.running then
-        return self
-    end
-    if params.onComplete then
-        internal.onComplete = params.onComplete
-    end
+    self._running = true
+    local context = createContext(self, params)
     
-    internal.running = true
-    internal.stoped = false
-    
-    if #internal.commands == 0 then
-        return self
-    end
-    
-    -- execute command
-    self:executeCommand(1)
-    
+    Executors.callLater(self.playInternal, self, context)
     return self
 end
 
@@ -717,50 +693,51 @@ end
 -- To execute the command.<br>
 -- You will not be accessible from the outside.
 --------------------------------------------------------------------------------
-function M:executeCommand(index)
-    local internal = self.internal
-    
-    if index <= #internal.commands then
-        internal.currentIndex = index
-        internal.currentCommand = internal.commands[internal.currentIndex]
-        internal.currentCommand.play(self, self.onCommandComplete)
-    end
-end
-
---------------------------------------------------------------------------------
--- The event handler when the command completes.<br>
--- You will not be accessible from the outside.
---------------------------------------------------------------------------------
-function M:onCommandComplete()
-    local internal = self.internal
-
-    if not internal.running then
+function M:playInternal(context)
+    if context.stopped then
         return
     end
-    -- next command
-    if internal.currentIndex < #internal.commands then
-        self:executeCommand(internal.currentIndex + 1)
-    -- complete!
-    else
-        internal.running = false
-        if internal.onComplete then
-            internal.onComplete(self)
+    
+    local commands = table.copy(self._commands)
+    for i, command in ipairs(commands) do
+        context.currentCommand = command
+        context.currentCommand.play(self, context)
+        
+        if context.stopped then
+            break
         end
     end
+    
+    self._running = false
+    
+    if context.onComplete then
+        context.onComplete(self, context)
+    end
+    
+    local e = Event(Event.COMPLETE)
+    e.context = context
+    self:dispatchEvent(e)
 end
 
 --------------------------------------------------------------------------------
 -- Stop the animation.
 --------------------------------------------------------------------------------
 function M:stop()
-    local internal = self.internal
-
-    if not internal.running then
+    if not self:isRunning() then
         return self
     end
     
-    internal.running = false
-    internal.currentCommand.stop(self)
+    self._running = false
+    
+    -- clear contexts
+    for i, context in ipairs(self._contexts) do
+        context.stopped = true
+        if context.currentCommand then
+            context.currentCommand.stop(self, context)
+        end
+    end
+    self._contexts = {}
+    
     return self
 end
 
@@ -768,10 +745,10 @@ end
 -- Clears the definition animation.
 --------------------------------------------------------------------------------
 function M:clear()
-    if self.isRunning() then
+    if self:isRunning() then
         return self
     end
-    self.internal.commands = {}
+    self._commands = {}
     return self
 end
 
@@ -782,7 +759,7 @@ end
 -- @param command play,stop,restart
 --------------------------------------------------------------------------------
 function M:addCommand(command)
-    table.insert(self.internal.commands, command)
+    table.insert(self._commands, command)
     return self
 end
 
@@ -809,38 +786,27 @@ end
 -- @return command
 --------------------------------------------------------------------------------
 function M:newActionCommand(actionFunc, sec, mode)
-    local internal = self.internal
-
     local actionGroup = MOAIAction.new()
-    local stoped = false
     local command = self:newCommand(
         -- play
-        function(obj, callback)
-            if #internal.targets == 0 then
-                callback(obj)
+        function(self)
+            if #self._targets == 0 then
+                return
             end
 
-            -- 対象オブジェクトの引数
-            local tSec = sec or internal.second
-            local tMode = mode or internal.easeType
+            local tSec = sec or self._second
+            local tMode = mode or self._easeType
             
-            -- 完了ハンドラ
-            local completeHandler = function()
-                if not stoped then
-                    callback(obj)
-                end
-            end
-            
-            for i, target in ipairs(internal.targets) do
+            for i, target in ipairs(self._targets) do
                 local action = actionFunc(target, tSec, tMode)
                 actionGroup:addChild(action)
             end
-            actionGroup:setListener(MOAIAction.EVENT_STOP, completeHandler)
+            
             actionGroup:start()
+            MOAICoroutine.blockOnAction(actionGroup)
         end,
         -- stop
-        function(obj)
-            stoped = true
+        function(self)
             actionGroup:stop()
         end
     )

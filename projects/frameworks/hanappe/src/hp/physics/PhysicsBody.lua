@@ -35,7 +35,6 @@ M.PHASE[MOAIBox2DArbiter.PRE_SOLVE] = "preSolve"
 --------------------------------------------------------------------------------
 function M:new(body)
     table.copy(self, assert(body))
-    body.__internal = {}
     
     if body.init then
         body:init()
@@ -52,7 +51,7 @@ end
 --------------------------------------------------------------------------------
 function M:init()
     EventDispatcher.init(self)
-    self.__internal.fixtures = {}
+    self._fixtures = {}
 end
 
 --------------------------------------------------------------------------------
@@ -152,7 +151,7 @@ end
 -- @return Fixtures
 --------------------------------------------------------------------------------
 function M:getFixtures()
-    return self.__internal.fixtures
+    return self._fixtures
 end
 
 --------------------------------------------------------------------------------

@@ -40,8 +40,6 @@ function M:init(params)
     self:setOffset(-1, 1)
     
     self:copyParams(params)
-    
-    MOAIRenderMgr.pushRenderPass(self)
 end
 
 --------------------------------------------------------------------------------
