@@ -5,16 +5,20 @@
 -- @name SceneManager
 ----------------------------------------------------------------
 
-local table = require("hp/lang/table")
-local SceneAnimation = require("hp/display/SceneAnimation")
-local SceneFactory = require("hp/factory/SceneFactory")
-local InputManager = require("hp/manager/InputManager")
-local Event = require("hp/event/Event")
-local EventDispatcher = require("hp/event/EventDispatcher")
-local Logger = require("hp/util/Logger")
+-- import
+local table                 = require "hp/lang/table"
+local SceneAnimation        = require "hp/display/SceneAnimation"
+local SceneFactory          = require "hp/factory/SceneFactory"
+local InputManager          = require "hp/manager/InputManager"
+local Event                 = require "hp/event/Event"
+local EventDispatcher       = require "hp/event/EventDispatcher"
+local Logger                = require "hp/util/Logger"
+local Executors             = require "hp/util/Executors"
 
-local M = EventDispatcher()
+-- singleton class
+local M                     = EventDispatcher()
 
+-- constranits
 local LOG_TAG = "SceneManager"
 
 -- private var
@@ -30,6 +34,28 @@ local renderTable = {}
 local updateRenderFlag = false
 local backgroundLayers = {}
 local frontLayers = {}
+
+local function updateRender()
+    renderTable = {}
+    -- background
+    for i, layer in ipairs(backgroundLayers) do
+        table.insert(renderTable, layer)
+    end
+    
+    -- scene
+    for i, scene in ipairs(scenes) do
+        if scene.visible then
+            table.insert(renderTable, scene:getRenderTable())
+        end
+    end
+    
+    -- front
+    for i, layer in ipairs(frontLayers) do
+        table.insert(renderTable, layer)
+    end
+    
+    MOAIRenderMgr.setRenderTable(renderTable)
+end
 
 local function onTouchDown(e)
     if currentScene and not transitioning then
@@ -68,32 +94,15 @@ local function onKeyUp(e)
 end
 
 local function onEnterFrame()
+    if updateRenderFlag then
+        updateRenderFlag = false
+        updateRender()
+    end
+
     local currentScene = currentScene
     if currentScene and not transitioning then
         currentScene:onEnterFrame()
     end
-end
-
-local function updateRender()
-    renderTable = {}
-    -- background
-    for i, layer in ipairs(backgroundLayers) do
-        table.insert(renderTable, layer)
-    end
-    
-    -- scene
-    for i, scene in ipairs(scenes) do
-        if scene.visible then
-            table.insert(renderTable, scene:getRenderTable())
-        end
-    end
-    
-    -- front
-    for i, layer in ipairs(frontLayers) do
-        table.insert(renderTable, layer)
-    end
-    
-    MOAIRenderMgr.setRenderTable(renderTable)
 end
 
 local function addScene(scene)
@@ -174,26 +183,17 @@ local function closeComplete()
     transitioning = false
 end
 
-InputManager:addEventListener(Event.TOUCH_DOWN, onTouchDown)
-InputManager:addEventListener(Event.TOUCH_UP, onTouchUp)
-InputManager:addEventListener(Event.TOUCH_MOVE, onTouchMove)
-InputManager:addEventListener(Event.TOUCH_CANCEL, onTouchCancel)
-InputManager:addEventListener(Event.KEY_DOWN, onKeyDown)
-InputManager:addEventListener(Event.KEY_UP, onKeyUp)
-
-local thread = MOAICoroutine.new()
-thread:run(
-    function()
-        while true do
-            if updateRenderFlag then
-                updateRenderFlag = false
-                updateRender()
-            end
-            onEnterFrame()
-            coroutine.yield()
-        end
-    end
-)
+local function initialize()
+    InputManager:addEventListener(Event.TOUCH_DOWN, onTouchDown)
+    InputManager:addEventListener(Event.TOUCH_UP, onTouchUp)
+    InputManager:addEventListener(Event.TOUCH_MOVE, onTouchMove)
+    InputManager:addEventListener(Event.TOUCH_CANCEL, onTouchCancel)
+    InputManager:addEventListener(Event.KEY_DOWN, onKeyDown)
+    InputManager:addEventListener(Event.KEY_UP, onKeyUp)
+    
+    Executors.callLoop(onEnterFrame)
+end
+initialize()
 
 --------------------------------------------------------------------------------
 -- Open a new scene. <br>

@@ -12,6 +12,7 @@ local table                 = require "hp/lang/table"
 local class                 = require "hp/lang/class"
 local Application           = require "hp/core/Application"
 local DisplayObject         = require "hp/display/DisplayObject"
+local Resizable             = require "hp/display/Resizable"
 
 -- class define
 local M                     = class(DisplayObject)
@@ -22,7 +23,7 @@ M.MOAI_CLASS                = MOAILayer
 -- The constructor.
 -- @param params (option)Parameter is set to Object.<br>
 ----------------------------------------------------------------
-function M:init(params)
+function M:init(params, Resizable)
     DisplayObject.init(self)
     
     params = params or {}
@@ -40,6 +41,16 @@ function M:init(params)
     self:setOffset(-1, 1)
     
     self:copyParams(params)
+end
+
+--------------------------------------------------------------------------------
+-- Sets the size of the layer.
+-- @param width width of layer.
+-- @param height height of layer.
+--------------------------------------------------------------------------------
+function M:setSize(width, height)
+    self:setScreenSize(width, height)
+    self:setViewSize(width, height)
 end
 
 --------------------------------------------------------------------------------
@@ -204,7 +215,7 @@ function M:setScene(scene)
 end
 
 --------------------------------------------------------------------------------
--- Returns the scene..
+-- Returns the scene.
 --------------------------------------------------------------------------------
 function M:getScene()
     return self.scene
@@ -223,6 +234,25 @@ function M:setProps(props)
             self:insertProp(prop)
         end
     end
+end
+
+--------------------------------------------------------------------------------
+-- Create and sets camera.
+-- @param ortho
+--------------------------------------------------------------------------------
+function M:createCamera(ortho, near, far)
+    ortho = ortho ~= nil and ortho or true
+    near = near or 1
+    far = far or -1
+
+    local camera = MOAICamera.new()
+    camera:setOrtho(ortho)
+    camera:setNearPlane(near)
+    camera:setFarPlane(far)
+    self:setCamera(camera)
+    self.camera = camera
+    
+    return camera
 end
 
 return M

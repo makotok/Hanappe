@@ -27,6 +27,8 @@ M.PRIORITY_PROPERTIES = {
     "texture",
 }
 
+local MOAIPropInterface = MOAIProp.getInterfaceTable()
+
 --------------------------------------------------------------------------------
 -- Instance generating functions.<br>
 -- Unlike an ordinary class, and based on the MOAI_CLASS.<br>
@@ -66,10 +68,43 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the name.
--- @return Object name.<br>
+-- @return Object name.
 --------------------------------------------------------------------------------
 function M:getName()
     return self.name
+end
+
+--------------------------------------------------------------------------------
+-- Sets the parent.
+-- @return parent object.
+--------------------------------------------------------------------------------
+function M:getParent()
+    return self._parent
+end
+
+--------------------------------------------------------------------------------
+-- Sets the parent.
+-- @params value parent
+--------------------------------------------------------------------------------
+function M:setParent(value)
+    MOAIPropInterface.setParent(self, value)
+    self._parent = value
+end
+
+--------------------------------------------------------------------------------
+-- Sets the userdata.
+-- @params value userdata
+--------------------------------------------------------------------------------
+function M:setUserdata(value)
+    self.userdata = value
+end
+
+--------------------------------------------------------------------------------
+-- Returns the userdata.
+-- @return userdata
+--------------------------------------------------------------------------------
+function M:getUserdata()
+    return self.userdata
 end
 
 --------------------------------------------------------------------------------

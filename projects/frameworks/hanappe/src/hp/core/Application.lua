@@ -98,4 +98,5 @@ function M:getViewScale()
     return self.screenWidth / self.viewWidth, self.screenHeight / self.viewHeight
 end
 
+
 return M

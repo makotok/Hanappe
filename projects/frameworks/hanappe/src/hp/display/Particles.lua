@@ -73,19 +73,6 @@ function M:init(params)
     self:copyParams(params)
 end
 
---------------------------------------------------------------------------------
--- Set the parameter setter function.
--- @param params Parameter is set to Object.
---      (params:texture, width, height)
---------------------------------------------------------------------------------
-function M:copyParams(params)
-    if params.texture and self.setTexture then
-        self:setTexture(params.texture)
-    end
-
-    DisplayObject.copyParams(self, params)
-end
-
 function M:startParticle()
     self.emitter:start()
     if self.plugin:getDuration() > -1 then
