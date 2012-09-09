@@ -19,8 +19,12 @@
     <copy todir="${dest.dir}" overwrite="true">
       <fileset dir="${hanappe.base.dir}/assets"/>
       <fileset dir="${hanappe.base.dir}/src"/>
+    </copy>
+    <copy todir="${dest.dir}" overwrite="true">
       <fileset dir="${hanappe.gui.dir}/assets"/>
       <fileset dir="${hanappe.gui.dir}/src"/>
+    </copy>
+    <copy todir="${dest.dir}" overwrite="true">
       <fileset dir="assets"/>
       <fileset dir="src"/>
     </copy>

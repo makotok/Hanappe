@@ -11,7 +11,7 @@ local config = {
     landscape = false,
     showWindow = true,
     useInputManager = true,
-    mainScene = "main_scene",
+    mainScene = "samples/sample_scene",
 }
 
 return config

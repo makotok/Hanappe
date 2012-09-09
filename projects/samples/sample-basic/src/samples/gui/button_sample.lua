@@ -5,18 +5,26 @@ local GUI = require "hp/modules/GUI"
 function onCreate(params)
     view = GUI.View {
         scene = scene,
-        size = {200, 200},
-        pos = {20, 20},
         layout = {GUI.VBoxLayout {hAlign = "right", vAlign = "bottom"} },
         children = {{
             GUI.Button {
-                name = "button1",
-                text = "Start",
+                name = "startButton",
+                text = "はじめ",
                 onClick = onStartClick,
             },
             GUI.Button {
-                name = "button2",
-                text = "Back",
+                name = "backButton",
+                text = "戻る",
+                onClick = onBackClick,
+            },
+            GUI.Button {
+                name = "testButton1",
+                text = "test1",
+                onClick = onBackClick,
+            },
+            GUI.Button {
+                name = "testButton2",
+                text = "test2",
                 onClick = onBackClick,
             },
         }},
@@ -25,7 +33,7 @@ function onCreate(params)
 end
 
 function onStartClick(e)
-    print("onButtonClick")
+    print("onStartClick")
 end
 
 function onBackClick(e)
