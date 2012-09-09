@@ -110,8 +110,10 @@ end
 --------------------------------------------------------------------------------
 function M:setSize(width, height)
     super.setSize(self, width, height)
-    self._viewLayer:setScreenSize(width, height)
-    self._viewLayer:setViewSize(width, height)
+    if self._viewLayer then
+        self._viewLayer:setScreenSize(width, height)
+        self._viewLayer:setViewSize(width, height)
+    end
 end
 
 --------------------------------------------------------------------------------

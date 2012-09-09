@@ -142,19 +142,8 @@ end
 --------------------------------------------------------------------------------
 -- ボタンを押下したときのイベントリスナを設定します.
 --------------------------------------------------------------------------------
-function M:setOnClick(value)
-    if self._onClick == value then
-        return
-    end
-    if self._onClick then
-        self:removeEventListener(M.EVENT_CLICK, self._onClick)
-    end
-
-    self._onClick = value
-    
-    if self._onClick then
-        self:addEventListener(M.EVENT_CLICK, self._onClick)
-    end
+function M:setOnClick(func)
+    self:setEventListener(M.EVENT_CLICK, func)
 end
 
 --------------------------------------------------------------------------------
@@ -165,7 +154,6 @@ end
 -- タッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:touchDownHandler(e)
-    print("touch!")
     if self._touching then
         return
     end

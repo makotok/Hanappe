@@ -34,7 +34,8 @@ M.Button = {
 M.RadioButton = {
     normal = {
         skin = "skins/radio-button.png",
-        index = 2,
+        onIndex = 5,
+        offIndex = 2,
         color = {1, 1, 1, 1},
         font = "fonts/ipag.ttf",
         textSize = 24,
@@ -42,19 +43,12 @@ M.RadioButton = {
         textPadding = {0, 0, 0, 0},
     },
     over = {
-        index = 3,
+        onIndex = 6,
+        offIndex = 3,
     },
     disabled = {
-        index = 1,
-    },
-    selected = {
-        index = 5,
-    },
-    selectedOver = {
-        index = 6,
-    },
-    selectedDisabled = {
-        index = 4,
+        onIndex = 4,
+        offIndex = 1,
     },
 }
 
@@ -63,7 +57,8 @@ M.CheckBox =
 {
     normal = {
         skin = "skins/checkbox.png",
-        index = 2,
+        onIndex = 5,
+        offIndex = 2,
         color = {1, 1, 1, 1},
         font = "fonts/ipag.ttf",
         textSize = 24,
@@ -71,19 +66,26 @@ M.CheckBox =
         textPadding = {0, 0, 0, 0},
     },
     over = {
-        index = 3,
+        onIndex = 6,
+        offIndex = 3,
     },
     disabled = {
-        index = 1,
+        onIndex = 4,
+        offIndex = 1,
     },
-    selected = {
-        index = 5,
+}
+
+--------------------------------------------------------------------------------
+M.Joystick = {
+    normal = {
+        baseSkin = "skins/joystick_base.png",
+        knobSkin = "skins/joystick_knob.png",
+        baseColor = {1, 1, 1, 1},
+        knobColor = {1, 1, 1, 1},
     },
-    selectedOver = {
-        index = 6,
-    },
-    selectedDisabled = {
-        index = 4,
+    disabled = {
+        baseColor = {0.5, 0.5, 0.5, 1},
+        knobColor = {0.5, 0.5, 0.5, 1},
     },
 }
 
@@ -91,9 +93,12 @@ M.CheckBox =
 M.Panel = {
     normal = {
         backgroundSkin = "skins/panel-background.png",
+        backgroundSkinClass = Display.Sprite,
+        backgroundColor = {1, 1, 1, 1},
         borderSkin = "skins/panel-border.png",
-        color = {1, 1, 1, 1},
-        padding = {10, 10, 10, 10},
+        borderSkinClass = Display.NinePatch,
+        borderColor = {1, 1, 1, 1},
+        color = {1, 1, 1, 1}
     },
     disabled = {
         color = {0.5, 0.5, 0.5, 1},

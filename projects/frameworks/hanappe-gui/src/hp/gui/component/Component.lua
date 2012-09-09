@@ -40,6 +40,10 @@ M.EVENT_CHILD_REMOVED   = "childRemoved"
 M.STATE_NORMAL          = "normal"
 M.STATE_DISABLED        = "disabled"
 
+-- Layout parameters
+M.LAYOUT_MATCH_PARENT = "match_parent"
+M.LAYOUT_WARP_CONTENT = "warp_content"
+
 --------------------------------------------------------------------------------
 -- コンストラクタです.
 -- コンストラクタは継承しないでください.
@@ -49,7 +53,7 @@ function M:init(params)
     super.init(self)
     self:initInternal()
     self:initEventListeners()
-    self:initTheme(params and params.theme)
+    self:initTheme(params)
     self:initComponent()
     self:copyParams(params)
 end
@@ -68,6 +72,12 @@ function M:initInternal()
     self._styleChanged = true
     self._layout = nil
     self._layoutChanged = false
+    self._layoutWidth = nil
+    self._layoutHeight = nil
+    self._minWidth = 0
+    self._minHeight = 0
+    self._maxWidth = nil
+    self._maxHeight = nil
 end
 
 --------------------------------------------------------------------------------
@@ -90,8 +100,11 @@ end
 --------------------------------------------------------------------------------
 -- テーマの初期化処理です.
 --------------------------------------------------------------------------------
-function M:initTheme(theme)
-    local theme = theme or ThemeManager:getComponentTheme(self:getThemeName()) or {}
+function M:initTheme(params)
+    if params and params.themeName then
+        self:setThemeName(params.themeName)
+    end
+    local theme = ThemeManager:getComponentTheme(self:getThemeName()) or {}
     self:setTheme(theme)
 end
 
@@ -140,8 +153,8 @@ end
 function M:updateComponent()
     self:updateProperties()
     self:updateChildren()
-    self:updateSize()
     self:updateLayout()
+    self:updateSize()
     self:updateDisplay()
 end
 
@@ -195,7 +208,7 @@ function M:updateSize()
     if self._sizeChanged then
         local e = Event(M.EVENT_RESIZE)
         e.oldWidth, e.oldHeight = self._oldWidth, self._oldHeight
-        e.newWidth, e.newHeight = width, height
+        e.newWidth, e.newHeight = self:getWidth(), self:getHeight()
         self:dispatchEvent(e)
         
         self._oldWidth = nil
@@ -272,20 +285,12 @@ function M:setParent(parent)
     end
     
     -- set
-    self._parent = parent
-    MOAIPropInterface.setParent(self, parent)
+    super.setParent(self, parent)
     
     -- add
     if parent then
         parent:addChild(self)
     end
-end
-
---------------------------------------------------------------------------------
--- 親を返します.
---------------------------------------------------------------------------------
-function M:getParent()
-    return self._parent
 end
 
 --------------------------------------------------------------------------------
@@ -416,9 +421,23 @@ end
 
 --------------------------------------------------------------------------------
 -- コンポーネントのサイズを変更します.
--- 変更した直後に反映されるわけではなく、updateSize関数で反映されます.
+-- 変更した直後に全てのオブジェクトに反映されるわけではなく、updateSize関数で反映されます.
+-- また、最小、最大サイズの範囲外を指定した場合は、その時点でサイズが調整されます.
 --------------------------------------------------------------------------------
 function M:setSize(width, height)
+    if self._minWidth and width < self._minWidth then
+        width = self._minWidth
+    end
+    if self._minHeight and height < self._minHeight then
+        height = self._minHeight
+    end
+    if self._maxWidth and width > self._maxWidth then
+        width = self._maxWidth
+    end
+    if self._maxHeight and height > self._maxHeight then
+        height = self._maxHeight
+    end
+
     local oldWidth, oldHeight =  self:getWidth(), self:getHeight()
     
     if oldWidth ~= width or oldHeight ~= height then
@@ -430,6 +449,144 @@ function M:setSize(width, height)
             self._sizeChanged = true
         end
     end
+end
+
+--------------------------------------------------------------------------------
+-- Layoutクラスによって考慮されるサイズを設定します.
+-- Layoutクラスを設定しない場合はこのプロパティは使用されません.
+--------------------------------------------------------------------------------
+function M:setLayoutSize(width, height)
+    self._layoutWidth = width
+    self._layoutHeight = height
+    self:setLayoutChanged(true)
+end
+
+--------------------------------------------------------------------------------
+-- Layoutクラスによって考慮されるサイズを返します.
+--------------------------------------------------------------------------------
+function M:getLayoutSize()
+    return self._layoutWidth, self._layoutHeight
+end
+
+--------------------------------------------------------------------------------
+-- Layoutクラスによって考慮されるサイズを設定します.
+-- Layoutクラスを設定しない場合はこのプロパティは使用されません.
+--------------------------------------------------------------------------------
+function M:setLayoutWidth(width)
+    self:setLayoutSize(width, self:getLayoutHeight())
+end
+
+--------------------------------------------------------------------------------
+-- Layoutクラスによって考慮されるサイズを返します.
+--------------------------------------------------------------------------------
+function M:getLayoutWidth()
+    return self._layoutWidth
+end
+
+--------------------------------------------------------------------------------
+-- Layoutクラスによって考慮されるサイズを設定します.
+-- Layoutクラスを設定しない場合はこのプロパティは使用されません.
+--------------------------------------------------------------------------------
+function M:setLayoutHeight(height)
+    self:setLayoutSize(self:getLayoutWidth(), height)
+end
+
+--------------------------------------------------------------------------------
+-- Layoutクラスによって考慮されるサイズを返します.
+--------------------------------------------------------------------------------
+function M:getLayoutHeight()
+    return self._layoutHeight
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの最小サイズを設定します.
+--------------------------------------------------------------------------------
+function M:setMinSize(width, height)
+    self._minWidth = width
+    self._minHeight = height
+    
+    self:setSize(self:getSize())
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの最小サイズを返します.
+--------------------------------------------------------------------------------
+function M:getMinSize()
+    return self._minWidth, self._minHeight
+end
+
+
+--------------------------------------------------------------------------------
+-- コンポーネントの最小サイズを設定します.
+--------------------------------------------------------------------------------
+function M:setMinWidth(width)
+    self:setMinSize(width, self:getMinHeight())
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの最小サイズを返します.
+--------------------------------------------------------------------------------
+function M:getMinWidth()
+    return self._minWidth
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの最小サイズを設定します.
+--------------------------------------------------------------------------------
+function M:setMinHeight(height)
+    self:setMinSize(self:getMinWidth(), height)
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの最小サイズを返します.
+--------------------------------------------------------------------------------
+function M:getMinHeight()
+    return self._minHeight
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの最大サイズを設定します.
+--------------------------------------------------------------------------------
+function M:setMaxSize(width, height)
+    self._maxWidth = width
+    self._maxHeight = height
+    
+    self:setSize(self:getSize())
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの最大サイズを返します.
+--------------------------------------------------------------------------------
+function M:getMaxSize()
+    return self._maxWidth, self._maxHeight
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの最大サイズを設定します.
+--------------------------------------------------------------------------------
+function M:setMaxWidth(width)
+    self:setMaxSize(width, self:getMaxHeight())
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの最大サイズを返します.
+--------------------------------------------------------------------------------
+function M:getMaxWidth()
+    return self._maxWidth
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの最大サイズを設定します.
+--------------------------------------------------------------------------------
+function M:setMaxHeight(height)
+    self:setMaxSize(self:getMaxWidth(), height)
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの最大サイズを返します.
+--------------------------------------------------------------------------------
+function M:getMaxHeight()
+    return self._maxHeight
 end
 
 --------------------------------------------------------------------------------
@@ -484,6 +641,27 @@ function M:getStyle(name, state)
         return normalStyles[name]
     end
     
+end
+
+--------------------------------------------------------------------------------
+-- ボタンを押下したときのイベントリスナを設定します.
+--------------------------------------------------------------------------------
+function M:setEventListener(eventName, func)
+    local propertyName = "_event_" .. eventName
+
+    if self[propertyName] == func then
+        return
+    end
+    
+    if self[propertyName] then
+        self:removeEventListener(eventName, self[propertyName])
+    end
+
+    self[propertyName] = func
+    
+    if self[propertyName] then
+        self:addEventListener(eventName, self[propertyName])
+    end
 end
 
 --------------------------------------------------------------------------------
