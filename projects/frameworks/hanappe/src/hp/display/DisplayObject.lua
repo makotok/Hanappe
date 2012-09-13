@@ -14,20 +14,21 @@
 --------------------------------------------------------------------------------
 
 -- import
-local class             = require "hp/lang/class"
-local table             = require "hp/lang/table"
-local EventDispatcher   = require "hp/event/EventDispatcher"
-local MOAIPropUtil      = require "hp/util/MOAIPropUtil"
-local PropertyUtil      = require "hp/util/PropertyUtil"
+local class                 = require "hp/lang/class"
+local table                 = require "hp/lang/table"
+local EventDispatcher       = require "hp/event/EventDispatcher"
+local MOAIPropUtil          = require "hp/util/MOAIPropUtil"
+local PropertyUtil          = require "hp/util/PropertyUtil"
 
 -- class
-local M = class(EventDispatcher, MOAIPropUtil)
-M.MOAI_CLASS = MOAIProp
-M.PRIORITY_PROPERTIES = {
+local M                     = class(EventDispatcher, MOAIPropUtil)
+local MOAIPropInterface     = MOAIProp.getInterfaceTable()
+
+-- constraints
+M.MOAI_CLASS                = MOAIProp
+M.PRIORITY_PROPERTIES       = {
     "texture",
 }
-
-local MOAIPropInterface = MOAIProp.getInterfaceTable()
 
 --------------------------------------------------------------------------------
 -- Instance generating functions.<br>

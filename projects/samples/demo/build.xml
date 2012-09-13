@@ -1,0 +1,27 @@
+<project name="example" default="build" basedir=".">
+
+  <!-- Setting -->
+  <property name="hanappe.base.dir" value="../../frameworks/hanappe"/>
+  <property name="dest.dir" value="dest"/>
+  
+  <!-- Targets -->
+  <!-- Clean -->
+  <target name="clean">
+    <mkdir dir="${dest.dir}"/>
+    <delete>
+      <fileset dir="${dest.dir}"/>
+    </delete>
+  </target>
+  
+  <!-- Build -->
+  <target name="build" depends="clean">
+    <copy todir="${dest.dir}" overwrite="true">
+      <fileset dir="${hanappe.base.dir}/assets"/>
+      <fileset dir="${hanappe.base.dir}/src"/>
+    </copy>
+    <copy todir="${dest.dir}" overwrite="true">
+      <fileset dir="assets"/>
+      <fileset dir="src"/>
+    </copy>
+  </target>
+</project>
