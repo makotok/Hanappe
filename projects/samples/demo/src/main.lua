@@ -4,13 +4,6 @@ local global        = require "global"
 local Application   = require "hp/core/Application"
 local SceneManager  = require "hp/manager/SceneManager"
 
-
-print("viewSize", MOAIGfxDevice.getViewSize())
-
-for k, v in pairs(getmetatable(MOAIEnvironment)) do
-    print(k .. " = " .. tostring(v))
-end
-
 -- Application start.
 Application:start(config)
 

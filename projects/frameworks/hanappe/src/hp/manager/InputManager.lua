@@ -37,6 +37,9 @@ local function onTouch(eventType, idx, x, y, tapCount)
         touchEventStack[idx] = nil
     elseif eventType == MOAITouchSensor.TOUCH_MOVE then
         local oldEvent = touchEventStack[idx]
+        if not oldEvent then
+            return
+        end
         event.moveX = event.x - oldEvent.x
         event.moveY = event.y - oldEvent.y
         touchEventStack[idx] = event
