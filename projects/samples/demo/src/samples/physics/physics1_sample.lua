@@ -200,7 +200,7 @@ function makeWalls()
 end
 
 function makeGuiView()
-    guiView = View()
+    guiView = Layer()
     guiView:setScene(scene)
     
     makeScoreLabel()

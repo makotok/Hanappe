@@ -12,6 +12,6 @@ function onCreate(params)
 end
 
 function onTouchMove(e)
-    local vScaleX, vScaleY = Application:getViewScale()
-    mapView.camera:addLoc(-e.moveX / vScaleX, -e.moveY / vScaleY, 0)
+    local viewScale = Application:getViewScale()
+    mapView.camera:addLoc(-e.moveX / viewScale, -e.moveY / viewScale, 0)
 end

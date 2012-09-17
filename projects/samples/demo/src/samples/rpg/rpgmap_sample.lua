@@ -97,15 +97,15 @@ function onButtonDown(e)
 end
 
 function onPlayerMoveStarted(e)
-    print("onPlayerMoveStarted")
+    --print("onPlayerMoveStarted")
 end
 
 function onPlayerMoveFinished(e)
-    print("onPlayerMoveFinished")
+    --print("onPlayerMoveFinished")
 end
 
 function onPlayerMoveCollision(e)
-    print("onPlayerMoveCollision", e.collisionMapX, e.collisionMapY)
+    --print("onPlayerMoveCollision", e.collisionMapX, e.collisionMapY)
 end
 
 function onStickChanged(e)

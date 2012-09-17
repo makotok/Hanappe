@@ -14,7 +14,7 @@ function M.setLeft(prop, left)
     local xMin, yMin, zMin, xMax, yMax, zMax = 0, 0, 0, 0, 0, 0
     if prop.getBounds then
         xMin, yMin, zMin, xMax, yMax, zMax = prop:getBounds()
-        xMin = math.min(xMin, xMax)
+        xMin = math.min(xMin or 0, xMax or 0)
     end
     
     local pivX, pivY, pivZ = prop:getPiv()
@@ -31,7 +31,7 @@ function M.getLeft(prop)
     local xMin, yMin, zMin, xMax, yMax, zMax = 0, 0, 0, 0, 0, 0
     if prop.getBounds then
         xMin, yMin, zMin, xMax, yMax, zMax = prop:getBounds()
-        xMin = math.min(xMin, xMax)
+        xMin = math.min(xMin or 0, xMax or 0)
     end
     
     local pivX, pivY, pivZ = prop:getPiv()
@@ -69,7 +69,7 @@ function M.setTop(prop, top)
     local xMin, yMin, zMin, xMax, yMax, zMax = 0, 0, 0, 0, 0, 0
     if prop.getBounds then
         xMin, yMin, zMin, xMax, yMax, zMax = prop:getBounds()
-        yMin = math.min(yMin, yMax)
+        yMin = math.min(yMin or 0, yMax or 0)
     end
     
     local pivX, pivY, pivZ = prop:getPiv()
@@ -86,7 +86,7 @@ function M.getTop(prop)
     local xMin, yMin, zMin, xMax, yMax, zMax = 0, 0, 0, 0, 0, 0
     if prop.getBounds then
         xMin, yMin, zMin, xMax, yMax, zMax = prop:getBounds()
-        yMin = math.min(yMin, yMax)
+        yMin = math.min(yMin or 0, yMax or 0)
     end
     
     local pivX, pivY, pivZ = prop:getPiv()

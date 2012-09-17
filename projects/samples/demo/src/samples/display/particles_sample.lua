@@ -22,7 +22,8 @@ function onTouchDown(e)
 end
 
 function onTouchMove(e)
-    --particle.emitter:addLoc(e.moveX, e.moveY, 0)
+    local viewScale = Application:getViewScale()
+    particle.emitter:addLoc(e.moveX / viewScale, e.moveY / viewScale, 0)
 end
 
 function onTouchUp(e)

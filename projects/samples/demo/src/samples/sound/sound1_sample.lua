@@ -1,18 +1,23 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    view = View()
-    view:setScene(scene)
-
-    button1 = Button {text = "play", width = 200, height = 50}
-    button1:setPos(10, 10)
-    button1:addEventListener("click", button1_onClick)
-    view:addChild(button1)
-
-    button2 = Button {text = "back", width = 200, height = 50}
-    button2:setPos(10, button1:getBottom() + 10)
-    button2:addEventListener("click", button2_onClick)
-    view:addChild(button2)
+    view = GUI.View {
+        scene = scene
+    }
+    button1 = GUI.Button {
+        parent = view,
+        text = "play", 
+        size = {200, 50},
+        pos = {10, 10},
+        onClick = button1_onClick,
+    }
+    button2 = GUI.Button {
+        parent = view,
+        text = "back",
+        size = {200, 50},
+        pos = {10, button1:getBottom() + 10},
+        onClick = button2_onClick,
+    }
     
     sound = SoundManager:getSound("mono16.wav")
 end
