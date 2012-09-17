@@ -5,143 +5,183 @@
 ----------------------------------------------------------------
 
 -- import
-local table         = require("hp/lang/table")
-local class         = require("hp/lang/class")
-local NinePatch     = require("hp/display/NinePatch")
-local TextLabel     = require("hp/display/TextLabel")
-local Animation     = require("hp/display/Animation")
-local Event         = require("hp/event/Event")
-local Widget        = require("hp/gui/UIComponent")
-local Panel         = require("hp/gui/Window")
+local table             = require "hp/lang/table"
+local class             = require "hp/lang/class"
+local NinePatch         = require "hp/display/NinePatch"
+local TextLabel         = require "hp/display/TextLabel"
+local Animation         = require "hp/display/Animation"
+local Event             = require "hp/event/Event"
+local Component         = require "hp/gui/Component"
+local Panel             = require "hp/gui/Panel"
 
 -- class
-local M = class(Panel)
-local super = Panel
+local M                 = class(Panel)
+local super             = Panel
+
+-- Events
+M.EVENT_MESSAGE_SHOW    = "messageShow"
+M.EVENT_MESSAGE_END     = "messageEnd"
+M.EVENT_MESSAGE_HIDE    = "messageHide"
 
 ----------------------------------------------------------------
 -- インスタンスを生成して返します.
 ----------------------------------------------------------------
-function M:init(params)
-    super.init(self, params)
-    local theme = self:getTheme()
+function M:initInternal()
+    super.initInternal(self)
     
-    self.textLabel = TextLabel {text = theme.text, textSize = theme.textSize}
-    self:updateTextLabel()
-    self:addChild(self.textLabel)
+    self._themeName = "MessageBox"
+    self._messageHideEnabled = true
     
-    self.popInAnimation = Animation():parallel(
+    self._popInAnimation = Animation():parallel(
         Animation(self, 0.5):setScl(0.8, 0.8, 1):seekScl(1, 1, 1),
         Animation(self, 0.5):setColor(0, 0, 0, 0):seekColor(1, 1, 1, 1)
     )
-    self.popOutAnimation = Animation():parallel(
+    self._popOutAnimation = Animation():parallel(
         Animation(self, 0.5):seekScl(0.8, 0.8, 1),
         Animation(self, 0.5):seekColor(0, 0, 0, 0)
     )
 end
 
---------------------------------------------------------------------------------
--- サイズ変更時に子の大きさも変更します.
---------------------------------------------------------------------------------
-function M:getThemeName()
-    return "MessageBox"
+----------------------------------------------------------------
+-- 子オブジェクトの生成処理を行います..
+----------------------------------------------------------------
+function M:createChildren()
+    super.createChildren(self)
+    
+    self._textLabel = TextLabel()
+    self._textLabel:setWordBreak(MOAITextBox.WORD_BREAK_CHAR)
+    self:addChild(self._textLabel)
+    
+    self:setColor(0, 0, 0, 0)
 end
 
 --------------------------------------------------------------------------------
 -- テキストラベルの状態を更新します.
 -- サイズを変更した場合に自動的に更新されます.
 --------------------------------------------------------------------------------
-function M:updateTextLabel()
-    local pLeft, pTop, pRight, pBottom = self:getPadding()
+function M:updateDisplay()
+    super.updateDisplay(self)
+
+    local pLeft, pTop, pRight, pBottom = unpack(self:getStyle("textPadding"))
     local tWidth = self:getWidth() - pLeft - pRight
     local tHeight = self:getHeight() - pTop - pBottom
     
-    self.textLabel:setSize(tWidth, tHeight)
-    self.textLabel:setPos(pLeft, pTop)
+    self._textLabel:setSize(tWidth, tHeight)
+    self._textLabel:setPos(pLeft, pTop)
+    self._textLabel:setColor(unpack(self:getStyle("textColor")))
+    self._textLabel:setTextSize(self:getStyle("textSize"))
+    self._textLabel:setFont(self:getStyle("font"))
+end
+
+--------------------------------------------------------------------------------
+-- ポップアップエフェクトでメッセージボックスを表示します.
+--------------------------------------------------------------------------------
+function M:show()
+    self:setVisible(true)
+    self:setCenterPiv()
+    self._textLabel:setReveal(0)
+    self._popInAnimation:play {onComplete =
+        function()
+            self:spool()
+            self:dispatchEvent(M.EVENT_MESSAGE_SHOW)
+        end
+    }
+end
+
+--------------------------------------------------------------------------------
+-- ポップアップエフェクトでメッセージボックスを非表示にします.
+--------------------------------------------------------------------------------
+function M:hide()
+    if self._popInAnimation:isRunning() then
+        return
+    end
+    
+    self._popOutAnimation:play {onComplete = 
+        function()
+            self:setVisible(false)
+            self:dispatchEvent(M.EVENT_MESSAGE_HIDE)
+        end
+    }
 end
 
 --------------------------------------------------------------------------------
 -- テキストをスプールします.
 --------------------------------------------------------------------------------
 function M:spool()
-    return self.textLabel:spool()
+    return self._textLabel:spool()
 end
 
 --------------------------------------------------------------------------------
 -- 次のページを表示します.
 --------------------------------------------------------------------------------
 function M:nextPage()
-    return self.textLabel:nextPage()
+    return self._textLabel:nextPage()
 end
 
 --------------------------------------------------------------------------------
 -- 次のページが存在するか返します.
 --------------------------------------------------------------------------------
 function M:more()
-    return self.textLabel:more()
+    return self._textLabel:more()
 end
 
 --------------------------------------------------------------------------------
 -- メッセージの表示処理中かどうか返します.
 --------------------------------------------------------------------------------
 function M:isBusy()
-    return self.textLabel:isBusy()
+    return self._textLabel:isBusy()
 end
 
 --------------------------------------------------------------------------------
 -- テキストを設定します.
 --------------------------------------------------------------------------------
 function M:setText(text)
-    self.textLabel:setString(text)
+    self._textLabel:setText(text)
 end
 
 --------------------------------------------------------------------------------
--- テキストの色を設定します.
+-- 通常時のテキストの色を設定します.
 --------------------------------------------------------------------------------
 function M:setTextColor(r, g, b, a)
-    self.textLabel:setColor(r, g, b, a)
+    self:setStyle(M.STATE_NORMAL, "textColor", {r, g, b, a})
 end
 
 --------------------------------------------------------------------------------
 -- テキストサイズを設定します.
 --------------------------------------------------------------------------------
-function M:setTextSize(points, dpi)
-    self.textLabel:setTextSize(points, dpi)
+function M:setTextSize(points)
+    self:setStyle(M.STATE_NORMAL, "textSize", points)
 end
 
 --------------------------------------------------------------------------------
--- テキストラベルの余白を設定します.
+-- メッセージボックスを表示した時のイベントリスナを設定します.
 --------------------------------------------------------------------------------
-function M:setPadding(left, top, right, bottom)
-    self:setStyle("paddingLeft", left)
-    self:setStyle("paddingTop", top)
-    self:setStyle("paddingRight", right)
-    self:setStyle("paddingBottom", bottom)
-    self:updateTextLabel()
+function M:setOnMessageShow(func)
+    self:setEventListener(M.EVENT_MESSAGE_SHOW, func)
 end
 
 --------------------------------------------------------------------------------
--- テキストラベルの余白を返します.
+-- メッセージボックスを非表示にした時のイベントリスナを設定します.
 --------------------------------------------------------------------------------
-function M:getPadding()
-    return
-        self:getStyle("paddingLeft"),
-        self:getStyle("paddingTop"),
-        self:getStyle("paddingRight"),
-        self:getStyle("paddingBottom")
+function M:setOnMessageHide(func)
+    self:setEventListener(M.EVENT_MESSAGE_HIDE, func)
 end
 
 --------------------------------------------------------------------------------
--- サイズ変更時に子の大きさも変更します.
+-- メッセージが終わった時のイベントリスナを設定します.
 --------------------------------------------------------------------------------
-function M:onResize(e)
-    super.onResize(self, e)
-    self:updateTextLabel()
+function M:setOnMessageEnd(func)
+    self:setEventListener(M.EVENT_MESSAGE_END, func)
 end
+
+--------------------------------------------------------------------------------
+-- Event Handler
+--------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
 -- 画面をタッチした時の処理を行います.
 --------------------------------------------------------------------------------
-function M:onTouchDown(e)
+function M:touchDownHandler(e)
     if not self:isEnabled() then
         return
     end
@@ -153,7 +193,7 @@ function M:onTouchDown(e)
             self:nextPage()
             self:spool()
         else
-            self:onMessageEnd()
+            self:enterMessageEnd()
         end
     end
 end
@@ -161,29 +201,12 @@ end
 --------------------------------------------------------------------------------
 -- メッセージが終了した場合に呼ばれます.
 --------------------------------------------------------------------------------
-function M:onMessageEnd()
-    self:hidePopup()
-end
+function M:enterMessageEnd()
+    self:dispatchEvent(M.EVENT_MESSAGE_END)
 
---------------------------------------------------------------------------------
--- ポップアップエフェクトでメッセージボックスを表示します.
---------------------------------------------------------------------------------
-function M:showPopup()
-    self:show()
-    self:setCenterPiv()
-    self.textLabel:setReveal(0)
-    self.popInAnimation:play {onComplete = function() self:spool() end}
-end
-
---------------------------------------------------------------------------------
--- ポップアップエフェクトでメッセージボックスを非表示にします.
---------------------------------------------------------------------------------
-function M:hidePopup()
-    if self.popInAnimation:isRunning() then
-        return
+    if self._messageHideEnabled then
+        self:hide()
     end
-    
-    self.popOutAnimation:play {onComplete = function() self:dispatchEvent("messageEnd") end}
 end
 
 return M

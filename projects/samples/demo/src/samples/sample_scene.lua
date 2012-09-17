@@ -11,7 +11,6 @@ local FpsMonitor = require "hp/util/FpsMonitor"
 --------------------------------------------------------------------------------
 
 local LIST_ROW_HEIGHT = 50
-local MENU_BAR_HEIGHT = 50
 
 --------------------------------------------------------------------------------
 -- Variables
@@ -58,7 +57,8 @@ local sceneItems = {
     -- gui
     {text = "button",           scene = "samples/gui/button_sample",            animation = "fade"},
     {text = "joystick",         scene = "samples/gui/joystick_sample",          animation = "fade"},
-    {text = "panel",            scene = "samples/gui/panel_sample",          animation = "fade"},
+    {text = "panel",            scene = "samples/gui/panel_sample",             animation = "fade"},
+    {text = "messagebox",       scene = "samples/gui/messagebox_sample",        animation = "fade"},
 }
 
 local selectedItem = nil
@@ -68,7 +68,6 @@ local selectedItem = nil
 --------------------------------------------------------------------------------
 function onCreate(params)
     createMainLayer()
-    createMenuLayer()
     
     FpsMonitor(10):play()
 end
@@ -78,16 +77,6 @@ end
 --------------------------------------------------------------------------------
 
 function onTouchDown(e)
-    -- Menu Bar touch
-    if helpMenuItem:hitTestScreen(e.x, e.y) then
-        onHelpMenuClick(helpMenuItem)
-        return
-    end
-    if exitMenuItem:hitTestScreen(e.x, e.y) then
-        onExitMenuClick(exitMenu)
-        return
-    end
-    
     -- List Menu touch
     local worldX, worldY, worldZ = mainLayer:wndToWorld(e.x, e.y, 0)
     local touchProp = mainLayer:getPartition():propForPoint ( worldX, worldY )
@@ -110,7 +99,7 @@ function onTouchMove(e)
     if e.tapCount > 1 then
         return
     end
-    scrollToPositionFromCamera(-e.moveY)
+    scrollToPositionFromCamera(-e.moveY / Application:getViewScale())
     
     if selectedItem and selectedItem.background then
         drawItemDefaultColor(selectedItem.background)
@@ -118,23 +107,12 @@ function onTouchMove(e)
     end
 end
 
-function onHelpMenuClick(item)
-    SceneManager:openScene("samples/help_scene")
-end
-
-function onExitMenuClick(item)
-    os.exit()
-end
-
 --------------------------------------------------------------------------------
 -- Create Main Layer
 --------------------------------------------------------------------------------
 
 function createMainLayer()
-    mainLayer = Layer {
-        scene = scene,
-        size = {Application.screenWidth, Application.screenHeight - MENU_BAR_HEIGHT}
-    }
+    mainLayer = Layer {scene = scene}
     mainLayer:createCamera(true, 1, -1)
     mainLayer.listTotalHeight = 0
     for i, item in ipairs(sceneItems) do
@@ -169,53 +147,6 @@ function createListRow(item)
     label.userdata = item
     
     return group
-end
-
---------------------------------------------------------------------------------
--- Create Menu Layer
---------------------------------------------------------------------------------
-
-function createMenuLayer()
-    menuLayer = Layer {
-        scene = scene,
-        size = {Application.screenWidth, MENU_BAR_HEIGHT},
-        pos = {0, mainLayer:getBottom()}
-    }
-    createMenuBar()
-end
-
-function createMenuBar()
-    menuBar = Group { layer = menuLayer, size = {menuLayer:getViewSize()}}
-    
-    helpMenuItem = createMenuItem(menuBar, "Help", 1)
-    exitMenuItem = createMenuItem(menuBar, "Exit", 2)
-end
-
-function createMenuItem(menuBar, text, index)
-    local menuItemWidth = menuLayer:getViewWidth() / 2
-    local menuItemHeight = menuLayer:getViewHeight()
-    
-    local menuItem = Group {
-        size = {menuItemWidth, menuItemHeight},
-        pos = {menuItemWidth * (index - 1), 0},
-        children = {{
-            Graphics ({
-                name = text,
-                pos = {0, 0},
-                size = {menuItemWidth, menuItemHeight},
-            }):setPenColor(0.8, 0.8, 0.9, 1):fillRect():setPenColor(0.5, 0.5, 0.5, 1):drawRect(1, 1, menuItemWidth, menuItemHeight),
-
-            TextLabel {
-                text = text,
-                pos = {0, 0},
-                size = {menuItemWidth, menuItemHeight},
-                color = {0, 0, 0, 1},
-                alignment = {MOAITextBox.CENTER_JUSTIFY, MOAITextBox.CENTER_JUSTIFY},
-            }
-        }},
-    }
-    menuBar:addChild(menuItem)
-    return menuItem
 end
 
 --------------------------------------------------------------------------------

@@ -110,14 +110,19 @@ M.Panel = {
 M.MessageBox = {
     normal = {
         backgroundSkin = "skins/panel-background.png",
+        backgroundSkinClass = Display.Sprite,
+        backgroundColor = {1, 1, 1, 1},
         borderSkin = "skins/panel-border.png",
-        color = {1, 1, 1, 1},
-        padding = {10, 10, 10, 10},
-        textSize = 16,
+        borderSkinClass = Display.NinePatch,
+        borderColor = {1, 1, 1, 1},
+        font = "fonts/ipag.ttf",
+        textPadding = {10, 10, 10, 10},
+        textSize = 20,
         textColor = {1, 1, 1, 1},
     },
     disabled = {
-        color = {0.5, 0.5, 0.5, 1},
+        backgroundColor = {0.5, 0.5, 0.5, 1},
+        textColor = {1, 1, 1, 1},
     },
 }
 

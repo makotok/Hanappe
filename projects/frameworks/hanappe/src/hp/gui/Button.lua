@@ -23,8 +23,8 @@ M.STATE_DISABLED        = "disabled"
 -- Events
 M.EVENT_CLICK           = "click"
 M.EVENT_CANCEL          = "cancel"
-M.EVENT_UP              = "up"
-M.EVENT_DOWN            = "down"
+M.EVENT_BUTTON_UP       = "buttonUp"
+M.EVENT_BUTTON_DOWN     = "buttonDown"
 
 --------------------------------------------------------------------------------
 -- 内部変数の初期化処理を行います.
@@ -36,6 +36,7 @@ function M:initInternal()
     self._touchIndex = nil
     self._toggle = false
     self._themeName = "Button"
+    self._skinResizable = true
 end
 
 --------------------------------------------------------------------------------
@@ -68,6 +69,11 @@ function M:updateDisplay()
     label:setColor(unpack(self:getStyle("textColor")))
     label:setTextSize(self:getStyle("textSize"))
     label:setFont(self:getStyle("font"))
+    
+    if not self._skinResizable then
+        local tw, th = background.texture:getSize()
+        self:setSize(tw, th)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -80,7 +86,7 @@ function M:doUpButton()
     self._selected = false
 
     self:setCurrentState(M.STATE_NORMAL)
-    self:dispatchEvent(M.EVENT_UP)
+    self:dispatchEvent(M.EVENT_BUTTON_UP)
 end
 
 --------------------------------------------------------------------------------
@@ -93,7 +99,7 @@ function M:doDownButton()
     self._selected = true
     
     self:setCurrentState(M.STATE_SELECTED)
-    self:dispatchEvent(M.EVENT_DOWN)
+    self:dispatchEvent(M.EVENT_BUTTON_DOWN)
 end
 
 --------------------------------------------------------------------------------
@@ -133,10 +139,35 @@ function M:isSelected()
 end
 
 --------------------------------------------------------------------------------
+-- スキンがリサイズ可能かどうか設定します.
+-- falseに設定した場合、ボタンのサイズとスキンのサイズが一致します.
+--------------------------------------------------------------------------------
+function M:setSkinResizable(value)
+    self._skinResizable = value
+    if not self._skinResizable then
+        self:invalidateDisplay()
+    end
+end
+
+--------------------------------------------------------------------------------
 -- ボタンを押下したときのイベントリスナを設定します.
 --------------------------------------------------------------------------------
 function M:setOnClick(func)
     self:setEventListener(M.EVENT_CLICK, func)
+end
+
+--------------------------------------------------------------------------------
+-- ボタンを押下した直後のイベントリスナを設定します.
+--------------------------------------------------------------------------------
+function M:setOnButtonDown(func)
+    self:setEventListener(M.EVENT_BUTTON_DOWN, func)
+end
+
+--------------------------------------------------------------------------------
+-- ボタンを押下した直後のイベントリスナを設定します.
+--------------------------------------------------------------------------------
+function M:setOnButtonUp(func)
+    self:setEventListener(M.EVENT_BUTTON_UP, func)
 end
 
 --------------------------------------------------------------------------------

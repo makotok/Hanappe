@@ -17,22 +17,34 @@ local defaultConfig = {
     useInputManager = true,
 }
 
-local function getScreenSize(self, config)
-    local w, h = config.screenWidth, config.screenHeight
-    if self:isMobile() then
-        local w, h = assert(MOAIEnvironment.horizontalResolution), assert(MOAIEnvironment.verticalResolution)
-    end
-    if config.landscape then
+local function getDeviceSize()
+    local w, h = MOAIEnvironment.horizontalResolution or 0, MOAIEnvironment.verticalResolution or 0
+    
+    if w > h then
+        return w, h
+    else
         return h, w
     end
+end
+
+local function getScreenSize(self, config)
+    local w, h = getDeviceSize()
+    w = w > 0 and w or config.screenWidth
+    h = h > 0 and h or config.screenHeight
     return w, h
 end
 
 local function getViewSize(self, config)
-    local w, h = config.viewWidth, config.viewHeight
-    if config.landscape then
-        return h, w
-    end
+    local w, h = getDeviceSize()
+    w = w > 0 and w or config.viewWidth
+    h = h > 0 and h or config.viewHeight
+    
+    local scaleX, scaleY = math.floor(w / config.viewWidth), math.floor(h / config.viewHeight)
+    local scale = math.min(scaleX, scaleY)
+    w, h  = math.floor(w / scale + 0.5), math.floor(h / scale + 0.5)
+    
+    self.viewScale = scale
+    
     return w, h
 end
 
@@ -84,6 +96,15 @@ function M:isDesktop()
 end
 
 --------------------------------------------------------------------------------
+-- Returns true if the Landscape mode.
+-- @return true if the Landscape mode.
+--------------------------------------------------------------------------------
+function M:isLandscape()
+    local w, h = MOAIGfxDevice.getViewSize()
+    return w > h
+end
+
+--------------------------------------------------------------------------------
 -- Sets the background color.
 --------------------------------------------------------------------------------
 function M:setClearColor(r, g, b, a)
@@ -95,7 +116,7 @@ end
 -- @return scale of the x-direction, scale of the y-direction, 
 --------------------------------------------------------------------------------
 function M:getViewScale()
-    return self.screenWidth / self.viewWidth, self.screenHeight / self.viewHeight
+    return self.viewScale
 end
 
 

@@ -3,12 +3,12 @@
 --------------------------------------------------------------------------------
 local config = {
     title = "Hanappe samples",
-    screenWidth = 320,
-    screenHeight = 480,
-    viewWidth = 320,
-    viewHeight = 480,
+    screenWidth = 480,
+    screenHeight = 320,
+    viewWidth = 480,
+    viewHeight = 320,
     scaleMode = "none",
-    landscape = false,
+    landscape = true,
     showWindow = true,
     useInputManager = true,
     mainScene = "samples/sample_scene",

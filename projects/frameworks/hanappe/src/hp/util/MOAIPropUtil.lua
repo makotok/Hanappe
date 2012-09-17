@@ -288,20 +288,4 @@ function M.setRGBA(prop, r, g, b, a)
     prop:setColor(r / 255, g / 255, b / 255, a)
 end
 
---------------------------------------------------------------------------------
--- Sets to true visible.
--- @param prop.
---------------------------------------------------------------------------------
-function M.show(prop)
-    prop:setVisible(true)
-end
-
---------------------------------------------------------------------------------
--- Sets to false visible.
--- @param prop.
---------------------------------------------------------------------------------
-function M.hide(prop)
-    prop:setVisible(false)
-end
-
 return M

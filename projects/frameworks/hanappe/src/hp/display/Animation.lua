@@ -8,6 +8,7 @@
 -- @name Animation
 --------------------------------------------------------------------------------
 
+-- import
 local table             = require "hp/lang/table"
 local class             = require "hp/lang/class"
 local MOAIPropUtil      = require "hp/util/MOAIPropUtil"
@@ -15,6 +16,7 @@ local Executors         = require "hp/util/Executors"
 local Event             = require "hp/event/Event"
 local EventDispatcher   = require "hp/event/EventDispatcher"
 
+-- class
 local M                 = class(EventDispatcher)
 local super             = EventDispatcher
 

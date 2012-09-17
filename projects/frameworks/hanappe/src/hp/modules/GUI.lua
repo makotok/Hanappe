@@ -23,7 +23,7 @@ M.Button            = require "hp/gui/Button"
 --M.RadioGroup        = require "hp/gui/RadioGroup"
 M.Joystick          = require "hp/gui/Joystick"
 M.Panel             = require "hp/gui/Panel"
---M.MessageBox        = require "hp/gui/MessageBox"
+M.MessageBox        = require "hp/gui/MessageBox"
 
 M.Theme             = require "hp/gui/Theme"
 

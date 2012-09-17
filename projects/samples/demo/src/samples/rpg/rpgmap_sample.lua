@@ -1,14 +1,38 @@
 module(..., package.seeall)
 
 --------------------------------------------------------------------------------
+-- requires
+--------------------------------------------------------------------------------
+local RPGMapView    = require "hp/rpg/RPGMapView"
+local RPGSprite     = require "hp/rpg/RPGSprite"
+
+--------------------------------------------------------------------------------
 -- constraints
 --------------------------------------------------------------------------------
-local STICK_TO_DIR_MAP = {}
-STICK_TO_DIR_MAP["center"] = 0
-STICK_TO_DIR_MAP["left"] = RPGSprite.DIR_LEFT
-STICK_TO_DIR_MAP["top"] = RPGSprite.DIR_UP
-STICK_TO_DIR_MAP["right"] = RPGSprite.DIR_RIGHT
-STICK_TO_DIR_MAP["bottom"] = RPGSprite.DIR_DOWN
+local STICK_TO_DIR_MAP          = {}
+STICK_TO_DIR_MAP["center"]      = 0
+STICK_TO_DIR_MAP["left"]        = RPGSprite.DIR_LEFT
+STICK_TO_DIR_MAP["top"]         = RPGSprite.DIR_UP
+STICK_TO_DIR_MAP["right"]       = RPGSprite.DIR_RIGHT
+STICK_TO_DIR_MAP["bottom"]      = RPGSprite.DIR_DOWN
+
+local A_BUTTON_STYLES = {
+    normal = {
+        skin = "button_a.png",
+        color = {1, 1, 1, 0.8},
+    },
+    selected = {
+        skin = "button_a.png",
+        color = {0.5, 0.5, 0.5, 0.8},
+    },
+    over = {
+        skin = "button_a.png",
+        color = {0.5, 0.5, 0.5, 0.8},
+    },
+    disabled = {
+        skin = "button_a.png",
+    },
+}
 
 --------------------------------------------------------------------------------
 -- variables
@@ -18,9 +42,9 @@ STICK_TO_DIR_MAP["bottom"] = RPGSprite.DIR_DOWN
 local player
 local playerMoveDir = 0
 
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
 -- functions
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 function onCreate(params)
     -- map view load
@@ -38,32 +62,29 @@ function onCreate(params)
     player:addEventListener("moveFinished", onPlayerMoveFinished)
     player:addEventListener("moveCollision", onPlayerMoveCollision)
     
-    -- widget
-    view = View()
-    view:setScene(scene)
-    joystick = Joystick({
-        baseTexture = "control_base.png",
-        knobTexture = "control_knob.png",
-        stickMode = Joystick.MODE_DIGITAL,
-    })
-    joystick:setLeft(0)
-    joystick:setTop(view.viewHeight - joystick:getHeight())
-    joystick:setColor(0.8, 0.8, 0.8, 0.8)
-    joystick:addEventListener("stickChanged", onStickChanged)
-    view:addChild(joystick)
+    -- view
+    view = GUI.View {scene = scene}
     
-    buttonA = Button({
-        upSkin = "button_a.png",
-        downSkin = "button_a.png",
-        upColor = {red = 1, green = 1, blue = 1, alpha = 1},
-        downColor = {red = 0.5, green = 0.5, blue = 0.5, alpha = 1},
-    })
-    buttonA:setLeft(view.viewWidth - buttonA:getWidth() - 10)
-    buttonA:setTop(view.viewHeight - buttonA:getHeight() - 10)
-    buttonA:setColor(0.8, 0.8, 0.8, 0.8)
-    buttonA:addEventListener("buttonDown", onButtonATouchDown)
-    view:addChild(buttonA)
+    -- joystick
+    joystick = GUI.Joystick {
+        parent = view,
+        stickMode = "digital",
+        left = 0, bottom = view:getHeight(),
+        color = {0.8, 0.8, 0.8, 0.8},
+        onStickChanged = onStickChanged,
+    }
 
+    -- A button
+    abutton = GUI.Button {
+        parent = view,
+        styles = {A_BUTTON_STYLES},
+        skinResizable = false,
+        onButtonDown = onButtonDown,
+    }
+    abutton:updateComponent()
+    abutton:setRight(view:getWidth() - 10)
+    abutton:setBottom(view:getHeight() - 10)
+    
 end
 
 function onEnterFrame()
@@ -71,7 +92,7 @@ function onEnterFrame()
     player:moveMap(playerMoveDir)
 end
 
-function onButtonATouchDown(e)
+function onButtonDown(e)
     
 end
 

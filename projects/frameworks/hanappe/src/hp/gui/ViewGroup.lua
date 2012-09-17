@@ -10,7 +10,7 @@ local class                 = require "hp/lang/class"
 local Layer                 = require "hp/display/Layer"
 local Event                 = require "hp/event/Event"
 local Executors             = require "hp/util/Executors"
-local View                  = require "hp/gui/view/View"
+local View                  = require "hp/gui/View"
 
 -- class define
 local M                     = class(View)

@@ -222,11 +222,17 @@ end
 -- タッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:touchDownHandler(e)
-    local wx, wy = e.x, e.y
+    if self._touchDownFlag then
+        return
+    end
+
+    local wx, wy = e.worldX, e.worldY
     local mx, my = self:worldToModel(wx, wy, 0)
     
-    if 0 <= mx and mx <= self:getWidth() and 0 <= my and my <= self:getHeight() then
+    --if 0 <= mx and mx <= self:getWidth() and 0 <= my and my <= self:getHeight() then
+    if self:hitTestWorld(wx, wy) then
         self._touchDownFlag = true
+        self._touchIndex = e.idx
         self:updateKnob(mx, my)
     end
 end
@@ -236,6 +242,9 @@ end
 --------------------------------------------------------------------------------
 function M:touchUpHandler(e)
     if not self._touchDownFlag then
+        return
+    end
+    if e.idx ~= self._touchIndex then
         return
     end
 
@@ -251,9 +260,11 @@ function M:touchMoveHandler(e)
     if not self._touchDownFlag then
         return
     end
+    if e.idx ~= self._touchIndex then
+        return
+    end
     
-    local layer = self:getLayer()
-    local wx, wy = layer:wndToWorld(e.x, e.y, 0)
+    local wx, wy = e.worldX, e.worldY
     local mx, my = self:worldToModel(wx, wy, 0)
     self:updateKnob(mx, my)
 end

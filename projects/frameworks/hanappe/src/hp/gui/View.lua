@@ -77,10 +77,9 @@ end
 --------------------------------------------------------------------------------
 function M:initViewLayer()
     self._viewLayer = Layer()
-    self._viewLayer:setParent(self)
     self._viewLayer:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
     self:setLayer(self._viewLayer)
-    self:setSize(self._viewLayer:getScreenSize())
+    self:setSize(self._viewLayer:getViewSize())
 end
 
 --------------------------------------------------------------------------------
@@ -131,17 +130,6 @@ function M:updateLayout()
 end
 
 --------------------------------------------------------------------------------
--- サイズ変更時にレイヤーのサイズも変更します.
---------------------------------------------------------------------------------
-function M:setSize(width, height)
-    super.setSize(self, width, height)
-    if self._viewLayer then
-        self._viewLayer:setScreenSize(width, height)
-        self._viewLayer:setViewSize(width, height)
-    end
-end
-
---------------------------------------------------------------------------------
 -- 描画レイヤーテーブルを返します.
 --------------------------------------------------------------------------------
 function M:getRenderTable()
@@ -167,6 +155,7 @@ end
 --------------------------------------------------------------------------------
 function M:sceneTouchDownHandler(e)
     local ce = table.copy(e, Event(Event.TOUCH_DOWN))
+    ce.worldX, ce.worldY = self:getLayer():wndToWorld(e.x, e.y, e.z)
     internalEventHandler(self, ce)
 end
 
@@ -175,6 +164,7 @@ end
 --------------------------------------------------------------------------------
 function M:sceneTouchUpHandler(e)
     local ce = table.copy(e, Event(Event.TOUCH_UP))
+    ce.worldX, ce.worldY = self:getLayer():wndToWorld(e.x, e.y, e.z)
     internalEventHandler(self, ce)
 end
 
@@ -183,6 +173,7 @@ end
 --------------------------------------------------------------------------------
 function M:sceneTouchMoveHandler(e)
     local ce = table.copy(e, Event(Event.TOUCH_MOVE))
+    ce.worldX, ce.worldY = self:getLayer():wndToWorld(e.x, e.y, e.z)
     internalEventHandler(self, ce)
 end
 
@@ -191,6 +182,7 @@ end
 --------------------------------------------------------------------------------
 function M:sceneTouchCancelHandler(e)
     local ce = table.copy(e, Event(Event.TOUCH_CANCEL))
+    ce.worldX, ce.worldY = self:getLayer():wndToWorld(e.x, e.y, e.z)
     internalEventHandler(self, ce)
 end
 
