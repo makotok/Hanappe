@@ -9,15 +9,16 @@
 -- @name NinePatch
 --------------------------------------------------------------------------------
 
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local DisplayObject = require("hp/display/DisplayObject")
-local Resizable = require("hp/display/Resizable")
-local TextureDrawable = require("hp/display/TextureDrawable")
+-- import
+local table                     = require("hp/lang/table")
+local class                     = require("hp/lang/class")
+local DisplayObject             = require("hp/display/DisplayObject")
+local Resizable                 = require("hp/display/Resizable")
+local TextureDrawable           = require("hp/display/TextureDrawable")
 
-local M = class(DisplayObject, TextureDrawable, Resizable)
-
-local interface = MOAIProp.getInterfaceTable()
+-- class
+local M                         = class(DisplayObject, TextureDrawable, Resizable)
+local MOAIPropInterface         = MOAIProp.getInterfaceTable()
 
 --------------------------------------------------------------------------------
 -- The constructor.
@@ -46,9 +47,9 @@ function M:init(params)
     deck:setColumn(2, 1 / 3, true)
     deck:setColumn(3, 1 / 3, false)
     
-    self.setOrignScl = assert(interface.setScl)
-    self.getOrignScl = assert(interface.getScl)
-    self.seekOrignScl = assert(interface.seekScl)
+    self.setOrignScl = assert(MOAIPropInterface.setScl)
+    self.getOrignScl = assert(MOAIPropInterface.getScl)
+    self.seekOrignScl = assert(MOAIPropInterface.seekScl)
     
     self._width = 0
     self._height = 0

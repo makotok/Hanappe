@@ -9,12 +9,14 @@
 -- @name SpriteSheet
 --------------------------------------------------------------------------------
 
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local DisplayObject = require("hp/display/DisplayObject")
-local TextureDrawable = require("hp/display/TextureDrawable")
+-- import
+local table                     = require "hp/lang/table"
+local class                     = require "hp/lang/class"
+local DisplayObject             = require "hp/display/DisplayObject"
+local TextureDrawable           = require "hp/display/TextureDrawable"
 
-local M = class(DisplayObject, TextureDrawable)
+-- class
+local M                         = class(DisplayObject, TextureDrawable)
 
 --------------------------------------------------------------------------------
 -- The constructor.<br>

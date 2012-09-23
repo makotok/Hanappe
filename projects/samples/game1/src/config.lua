@@ -1,28 +1,14 @@
 --------------------------------------------------------------------------------
--- Hanappe config
+-- Hanappe Application config
 --------------------------------------------------------------------------------
 local config = {
-    title = "Fall Cat",
-    screenWidth = 320,
-    screenHeight = 480,
+    title = "Fall game",
+    screenWidth = 480,
+    screenHeight = 320,
     viewWidth = 320,
-    viewHeight = 480,
-    landscape = false,
-    showWindow = true,
-    useInputManager = true,
+    viewMaxScale = 2,
+    landscape = true,
+    mainScene = "game/splash_scene",
 }
-
---------------------------------------------------------------------------------
--- Hanappe Application customize
---------------------------------------------------------------------------------
-
-local WidgetManager     = require("hp/manager/WidgetManager")
-local FontManager       = require("hp/manager/FontManager")
-
--- Widget themes setting.
-WidgetManager:setDefaultThemes("themes/basic/Themes")
-
--- Font setting
-FontManager.DEFAULT_FONT = "fonts/ipag.ttf"
 
 return config

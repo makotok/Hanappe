@@ -28,25 +28,28 @@
 -- @name Scene
 ----------------------------------------------------------------
 
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local Group = require("hp/display/Group")
-local Event = require("hp/event/Event")
-local EventDispatcher = require("hp/event/EventDispatcher")
-local Application = require("hp/core/Application")
-local Logger = require("hp/util/Logger")
+-- import
+local table                 = require "hp/lang/table"
+local class                 = require "hp/lang/class"
+local Group                 = require "hp/display/Group"
+local Event                 = require "hp/event/Event"
+local EventDispatcher       = require "hp/event/EventDispatcher"
+local Application           = require "hp/core/Application"
+local Logger                = require "hp/util/Logger"
 
-local M = class(Group)
+-- class
+local M                     = class(Group)
 
 -- event caches
-local EVENT_ENTER_FRAME = Event("enterFrame")
-local EVENT_CREATE = Event("create")
-local EVENT_START = Event("start")
-local EVENT_RESUME = Event("resume")
-local EVENT_PAUSE = Event("pause")
-local EVENT_STOP = Event("stop")
-local EVENT_DESTROY = Event("destroy")
+local EVENT_ENTER_FRAME     = Event("enterFrame")
+local EVENT_CREATE          = Event("create")
+local EVENT_START           = Event("start")
+local EVENT_RESUME          = Event("resume")
+local EVENT_PAUSE           = Event("pause")
+local EVENT_STOP            = Event("stop")
+local EVENT_DESTROY         = Event("destroy")
 
+-- local functions
 local function destroyModule(m)
     if m and m._M and m._NAME then
         package.loaded[m._NAME] = nil

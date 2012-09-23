@@ -79,6 +79,7 @@ end
 function M:show()
     self:setVisible(true)
     self:setCenterPiv()
+    self:setText(self:getText())
     self._textLabel:setReveal(0)
     self._popInAnimation:play {onComplete =
         function()
@@ -136,7 +137,15 @@ end
 -- テキストを設定します.
 --------------------------------------------------------------------------------
 function M:setText(text)
+    self._text = text
     self._textLabel:setText(text)
+end
+
+--------------------------------------------------------------------------------
+-- テキストを返します.
+--------------------------------------------------------------------------------
+function M:getText()
+    return self._text
 end
 
 --------------------------------------------------------------------------------

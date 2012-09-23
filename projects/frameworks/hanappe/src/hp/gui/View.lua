@@ -62,6 +62,7 @@ function M:initInternal()
     super.initInternal(self)
     self._viewLayer = nil
     self._rootView = false
+    self._priorityUpdateEnabled = true
 end
 
 --------------------------------------------------------------------------------
@@ -126,7 +127,9 @@ end
 --------------------------------------------------------------------------------
 function M:updateLayout()
     super.updateLayout(self)
-    internalUpdateRenderPriority(self, 1)
+    if self._priorityUpdateEnabled then
+        internalUpdateRenderPriority(self, 1)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -134,6 +137,15 @@ end
 --------------------------------------------------------------------------------
 function M:getRenderTable()
     return {self:getLayer()}
+end
+
+--------------------------------------------------------------------------------
+-- 描画順序のプライオリティを自動的に更新するかどうか設定します.
+-- パフォーマンスが問題になる場合に、手動でプライオリティを設定する事で、
+-- パフォーマンスを向上させる事ができます.
+--------------------------------------------------------------------------------
+function M:setPriorityUpdateEnabled(value)
+    self._priorityUpdateEnabled = value
 end
 
 --------------------------------------------------------------------------------

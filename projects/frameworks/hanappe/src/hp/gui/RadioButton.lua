@@ -1,14 +1,14 @@
+--------------------------------------------------------------------------------
+-- ラジオボタンウィジットクラスです.<br>
+-- @class table
+-- @name RadioButton
+--------------------------------------------------------------------------------
 local table = require("hp/lang/table")
 local class = require("hp/lang/class")
 local Event = require("hp/event/Event")
 local Button = require("hp/widget/Button")
 local Widget = require("hp/widget/Widget")
 
-----------------------------------------------------------------
--- ラジオボタンウィジットクラスです.<br>
--- @class table
--- @name RadioButton
-----------------------------------------------------------------
 local super = Button
 local M = class(super)
 
@@ -74,27 +74,27 @@ end
 ----------------------------------------------------------------
 -- ラジオボタンのグループを設定します.
 ----------------------------------------------------------------
-function M:setRadioGroup(radioGroup)
-    if self:getRadioGroup() == radioGroup then
+function M:setRadioButtonGroup(radioButtonGroup)
+    if self._radioButtonGroup == radioButtonGroup then
         return
     end
 
-    if self:getRadioGroup() then
-        local group = self:getRadioGroup()
-        group:removeChild(self)
+    if self._radioButtonGroup then
+        self._radioButtonGroup:removeChild(self)
     end
-    self:setPrivate("radioGroup", radioGroup)
-    if self:getRadioGroup() then
-        local group = self:getRadioGroup()
-        group:addChild(self)
+    
+    self._radioButtonGroup = radioButtonGroup
+    
+    if self._radioButtonGroup then
+        self._radioButtonGroup:addChild(self)
     end
 end
 
 ----------------------------------------------------------------
 -- ラジオボタンのグループを返します.
 ----------------------------------------------------------------
-function M:getRadioGroup()
-    return self:getPrivate("radioGroup")
+function M:getRadioButtonGroup()
+    return self._radioButtonGroup
 end
 
 return M

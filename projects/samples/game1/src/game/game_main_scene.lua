@@ -208,10 +208,14 @@ function makeGuiView()
 end
 
 function makeScoreLabel()
-    scoreLabel = TextLabel {text = "SCORE:0", layer = guiView}
-    scoreLabel:setSize(150, 30)
-    scoreLabel:setPos(5, 5)
-    scoreLabel:setColor(1, 1, 1, 1)
+    scoreLabel = TextLabel {
+        text = "SCORE:0",
+        size = {150, 30},
+        pos = {5, 5},
+        color = {1, 1, 1, 1},
+        parent = guiView,
+    }
+
     scoreLabel.scorePoint = 0
 
     function scoreLabel:setScore(i)
@@ -225,10 +229,14 @@ function makeScoreLabel()
 end
 
 function makeLevelLabel()
-    levelLabel = TextLabel {text = "LEVEL:1", layer = guiView}
-    levelLabel:setSize(150, 30)
-    levelLabel:setPos(5, scoreLabel:getBottom())
-    levelLabel:setColor(1, 1, 1, 1)
+    levelLabel = TextLabel {
+        text = "LEVEL:1",
+        size = {150, 30},
+        pos = {5, scoreLabel:getBottom()},
+        color = {1, 1, 1, 1},
+        parent = guiView,
+    }
+
     levelLabel.nextScorePoint = SCORE_NEXT
     levelLabel.level = 1
     
@@ -252,11 +260,10 @@ function makeLevelLabel()
 end
 
 function makeHitpointBar()
-    hitpointBar = Group({left = guiView:getViewWidth() - 105, top = 5, width = 100, height = 30})
+    hitpointBar = Group({left = guiView:getWidth() - 105, top = 5, width = 100, height = 30, parent = guiView})
     hitpointBar:addChild(TextLabel {text = "HP:", width = 40, height = 30, color = {1, 1, 1, 1}})
     hitpointBar:addChild(Mesh.newRect(40, 0, 60, 30, {"#009900", "#003300", 90}))
     hitpointBar:addChild(Graphics({left = 40, top = 0, width = 60, height = 30}):setPenWidth(1):drawRect())
-    hitpointBar:setLayer(guiView)
     hitpointBar.bar = hitpointBar.children[2]
     
     function hitpointBar:getHitpoint()
@@ -290,7 +297,7 @@ function updatePlayer()
     if player:getSheetAnim(direction) and not player:isCurrentAnim(direction) then
         player:playAnim(direction)
     end
-    if player.body:getY() > gameLayer:getViewHeight() + 32 then
+    if player.body:getY() > gameLayer:getHeight() + 32 then
         damageHitpoint(-2)
     end
 end

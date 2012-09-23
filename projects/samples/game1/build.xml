@@ -1,7 +1,7 @@
 <project name="example" default="build" basedir=".">
 
   <!-- Setting -->
-  <property name="hanappe.dir" value="../../frameworks/hanappe"/>
+  <property name="hanappe.base.dir" value="../../frameworks/hanappe"/>
   <property name="dest.dir" value="dest"/>
   
   <!-- Targets -->
@@ -16,8 +16,10 @@
   <!-- Build -->
   <target name="build" depends="clean">
     <copy todir="${dest.dir}" overwrite="true">
-      <fileset dir="${hanappe.dir}/assets"/>
-      <fileset dir="${hanappe.dir}/src"/>
+      <fileset dir="${hanappe.base.dir}/assets"/>
+      <fileset dir="${hanappe.base.dir}/src"/>
+    </copy>
+    <copy todir="${dest.dir}" overwrite="true">
       <fileset dir="assets"/>
       <fileset dir="src"/>
     </copy>

@@ -3,17 +3,18 @@
 --------------------------------------------------------------------------------
 
 -- import
-local Display       = require "hp/modules/Display"
+local Sprite            = require "hp/display/Sprite"
+local NinePatch         = require "hp/display/NinePatch"
 
 -- module define
-local M             = {}
+local M                 = {}
 
 --------------------------------------------------------------------------------
 M.Button = {
     normal = {
         skin = "skins/button-normal.png",
-        skinClass = Display.Sprite,
-        color = {1, 1, 1, 1},
+        skinClass = Sprite,
+        skinColor = {1, 1, 1, 1},
         font = "fonts/ipag.ttf",
         textSize = 24,
         textColor = {0.8, 0.8, 0.8, 1},
@@ -94,10 +95,10 @@ M.Joystick = {
 M.Panel = {
     normal = {
         backgroundSkin = "skins/panel-background.png",
-        backgroundSkinClass = Display.Sprite,
+        backgroundSkinClass = Sprite,
         backgroundColor = {1, 1, 1, 1},
         borderSkin = "skins/panel-border.png",
-        borderSkinClass = Display.NinePatch,
+        borderSkinClass = NinePatch,
         borderColor = {1, 1, 1, 1},
         color = {1, 1, 1, 1}
     },
@@ -110,10 +111,10 @@ M.Panel = {
 M.MessageBox = {
     normal = {
         backgroundSkin = "skins/panel-background.png",
-        backgroundSkinClass = Display.Sprite,
+        backgroundSkinClass = Sprite,
         backgroundColor = {1, 1, 1, 1},
         borderSkin = "skins/panel-border.png",
-        borderSkinClass = Display.NinePatch,
+        borderSkinClass = NinePatch,
         borderColor = {1, 1, 1, 1},
         font = "fonts/ipag.ttf",
         textPadding = {10, 10, 10, 10},

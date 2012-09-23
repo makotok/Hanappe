@@ -8,15 +8,16 @@
 -- @name Group
 --------------------------------------------------------------------------------
 
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local delegate = require("hp/lang/delegate")
-local DisplayObject = require("hp/display/DisplayObject")
-local Resizable = require("hp/display/Resizable")
+-- import
+local table                     = require "hp/lang/table"
+local class                     = require "hp/lang/class"
+local delegate                  = require "hp/lang/delegate"
+local DisplayObject             = require "hp/display/DisplayObject"
+local Resizable                 = require "hp/display/Resizable"
 
-local M = class(DisplayObject, Resizable)
-
-local MOAIPropInterface = MOAIProp.getInterfaceTable()
+-- class
+local M                         = class(DisplayObject, Resizable)
+local MOAIPropInterface         = MOAIProp.getInterfaceTable()
 
 ----------------------------------------------------------------
 -- The constructor.
@@ -203,6 +204,7 @@ function M:removeChild(child)
         return
     end
     
+    table.remove(children, index)
     child:setParent(nil)
     
     if self.layer then
@@ -210,8 +212,6 @@ function M:removeChild(child)
             child:setLayer(nil)
         end
     end
-    
-    table.remove(children, index)
 end
 
 ----------------------------------------------------------------

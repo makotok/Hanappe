@@ -172,26 +172,10 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the scale of the screen and viewport.
--- @return scaleX, scaleY.
+-- @return scale
 --------------------------------------------------------------------------------
 function M:getViewScale()
-    return self.screenWidth / self.viewWidth, self.screenHeight / self.viewHeight
-end
-
---------------------------------------------------------------------------------
--- Returns the scale of the screen and viewport.
--- @return scaleX
---------------------------------------------------------------------------------
-function M:getViewScaleX()
-    return self.screenWidth / self.viewWidth
-end
-
---------------------------------------------------------------------------------
--- Returns the scale of the screen and viewport.
--- @return scaleY.
---------------------------------------------------------------------------------
-function M:getViewScaleY()
-    return self.screenHeight / self.viewHeight
+    return math.floor(self.screenWidth / self.viewWidth)
 end
 
 --------------------------------------------------------------------------------

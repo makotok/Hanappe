@@ -1,23 +1,21 @@
 module(..., package.seeall)
 
-local GUI = require "hp/modules/GUI"
-
 function onCreate(params)
-    view = GUI.View {
+    view = View {
         scene = scene,
-        layout = {GUI.VBoxLayout {hAlign = "right", vAlign = "bottom"} },
+        layout = {VBoxLayout {hAlign = "right", vAlign = "bottom"} },
         children = {{
-            GUI.Button {
+            Button {
                 name = "startButton",
                 text = "はじめ",
                 onClick = onStartClick,
             },
-            GUI.Button {
+            Button {
                 name = "backButton",
                 text = "戻る",
                 onClick = onBackClick,
             },
-            GUI.Button {
+            Button {
                 name = "testButton1",
                 text = "disabled",
                 enabled = false,

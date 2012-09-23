@@ -7,13 +7,15 @@
 -- @name Sprite
 --------------------------------------------------------------------------------
 
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local DisplayObject = require("hp/display/DisplayObject")
-local TextureDrawable = require("hp/display/TextureDrawable")
-local Resizable = require("hp/display/Resizable")
+-- import
+local table                     = require "hp/lang/table"
+local class                     = require "hp/lang/class"
+local DisplayObject             = require "hp/display/DisplayObject"
+local TextureDrawable           = require "hp/display/TextureDrawable"
+local Resizable                 = require "hp/display/Resizable"
 
-local M = class(DisplayObject, TextureDrawable, Resizable)
+-- class
+local M                         = class(DisplayObject, TextureDrawable, Resizable)
 
 --------------------------------------------------------------------------------
 -- The constructor.

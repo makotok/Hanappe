@@ -87,9 +87,24 @@ end
 -- Sets the parent.
 -- @params value parent
 --------------------------------------------------------------------------------
-function M:setParent(value)
-    MOAIPropInterface.setParent(self, value)
-    self._parent = value
+function M:setParent(parent)
+    if parent == self:getParent() then
+        return
+    end
+    
+    -- remove
+    if self._parent and self._parent.isGroup then
+        self._parent:removeChild(self)
+    end
+    
+    -- set
+    MOAIPropInterface.setParent(self, parent)
+    self._parent = parent
+    
+    -- add
+    if parent and parent.isGroup then
+        parent:addChild(self)
+    end
 end
 
 --------------------------------------------------------------------------------

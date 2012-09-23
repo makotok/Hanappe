@@ -49,7 +49,6 @@ function M:init(params)
     super.init(self)
     self:initInternal()
     self:initEventListeners()
-    self:initTheme(params)
     self:initComponent(params)
     self:updateComponent()
 end
@@ -86,24 +85,43 @@ function M:initEventListeners()
 end
 
 --------------------------------------------------------------------------------
+-- コンポーネントの初期化処理を行います.
+--------------------------------------------------------------------------------
+function M:initComponent(params)
+    self:initTheme(params)
+    self:initStyles(params)
+    self:createChildren()
+    self:copyParams(params)
+
+    self._initialized = true
+end
+
+--------------------------------------------------------------------------------
 -- テーマの初期化処理です.
 --------------------------------------------------------------------------------
 function M:initTheme(params)
     if params and params.themeName then
-        self:setThemeName(params.themeName)
+        if type(params.themeName) == "table" then
+            self:setThemeName(unpack(params.themeName))
+        else
+            self:setThemeName(params.themeName)
+        end
     end
     local theme = ThemeManager:getComponentTheme(self:getThemeName()) or {}
     self:setTheme(theme)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントの初期化処理を行います.
+-- コンポーネント固有のスタイル初期化処理です.
 --------------------------------------------------------------------------------
-function M:initComponent(params)
-    self:createChildren()
-    self:copyParams(params)
-
-    self._initialized = true
+function M:initStyles(params)
+    if params and params.styles then
+        if type(params.styles) == "table" then
+            self:setStyles(unpack(params.styles))
+        else
+            self:setStyles(params.styles)
+        end
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -123,9 +141,15 @@ function M:enterFrame()
             child:enterFrame()
         end
     end
-    
-    self:validateDisplay()
-    self:validateLayout()
+    self:validateAll()
+end
+
+--------------------------------------------------------------------------------
+-- 表示、レイアウトの更新処理をスケジューリングします.
+--------------------------------------------------------------------------------
+function M:invalidateAll()
+    self:invalidateDisplay()
+    self:invalidateLayout()
 end
 
 --------------------------------------------------------------------------------
@@ -147,6 +171,14 @@ function M:invalidateLayout()
     if parent and parent.invalidateLayout then
         parent:invalidateLayout()
     end
+end
+
+--------------------------------------------------------------------------------
+-- 無効化された表示、レイアウトの状態を有効にします.
+--------------------------------------------------------------------------------
+function M:validateAll()
+    self:validateDisplay()
+    self:validateLayout()
 end
 
 --------------------------------------------------------------------------------
@@ -253,29 +285,6 @@ end
 --------------------------------------------------------------------------------
 -- Properties
 --------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
--- 親コンポーネントを設定します.
--- 親コンポーネントは、Componentを継承したクラスでなければなりません.
---------------------------------------------------------------------------------
-function M:setParent(parent)
-    if parent == self:getParent() then
-        return
-    end
-    
-    -- remove
-    if self:getParent() then
-        self:getParent():removeChild(self)
-    end
-    
-    -- set
-    super.setParent(self, parent)
-    
-    -- add
-    if parent then
-        parent:addChild(self)
-    end
-end
 
 --------------------------------------------------------------------------------
 -- 有効かどうか設定します.
@@ -445,8 +454,10 @@ end
 -- コンポーネントが持つ全スタイルを設定します.
 --------------------------------------------------------------------------------
 function M:setStyles(styles)
-    self._styles = assert(styles)
-    self:invalidateDisplay()
+    if self._styles ~= styles then
+        self._styles = assert(styles)
+        self:invalidateDisplay()
+    end
 end
 
 --------------------------------------------------------------------------------

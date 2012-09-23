@@ -37,6 +37,7 @@ function M:initInternal()
     self._toggle = false
     self._themeName = "Button"
     self._skinResizable = true
+    self._firstUpdated = false
 end
 
 --------------------------------------------------------------------------------
@@ -58,11 +59,11 @@ function M:createChildren()
 end
 
 --------------------------------------------------------------------------------
--- スタイルの更新を行います.
+-- 表示の更新を行います.
 --------------------------------------------------------------------------------
 function M:updateDisplay()
     local background = self._background
-    background:setColor(unpack(self:getStyle("color")))
+    background:setColor(unpack(self:getStyle("skinColor")))
     background:setTexture(self:getStyle("skin"))
 
     local label = self._label
@@ -140,7 +141,7 @@ end
 
 --------------------------------------------------------------------------------
 -- スキンがリサイズ可能かどうか設定します.
--- falseに設定した場合、ボタンのサイズとスキンのサイズが一致します.
+-- falseに設定した場合、スキンテクスチャのサイズがそのままボタンのサイズに設定されます.
 --------------------------------------------------------------------------------
 function M:setSkinResizable(value)
     self._skinResizable = value

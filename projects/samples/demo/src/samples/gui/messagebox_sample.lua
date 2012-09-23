@@ -1,32 +1,32 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    view = GUI.View {
+    view = View {
         scene = scene,
-        layout = {GUI.VBoxLayout {hAlign = "right", vAlign = "bottom"} },
+        layout = {VBoxLayout {hAlign = "right", vAlign = "bottom"} },
         children = {{
-            GUI.Button {
+            Button {
                 name = "showButton",
                 text = "Show",
                 height = 50,
                 onClick = onShowClick,
             },
-            GUI.Button {
+            Button {
                 name = "showButton",
                 text = "Hide",
                 height = 50,
                 onClick = onHideClick,
             },
-            GUI.Button {
+            Button {
                 name = "backButton",
                 text = "Back",
                 height = 50,
                 onClick = onBackClick,
             },
-            GUI.MessageBox {
+            MessageBox {
                 name = "messageBox",
                 size = {300, 100},
-                text = "Hello MessageBox!",
+                text = "Hello MessageBox!\nmessage1\nmessage2\nmessage3\nmessage4\nmessage5\nmessage6",
             },
         }},
     }

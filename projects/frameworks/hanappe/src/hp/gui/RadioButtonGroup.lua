@@ -1,36 +1,40 @@
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-
 ----------------------------------------------------------------
 -- ラジオボタンウィジットクラスです.<br>
 -- @class table
 -- @name RadioButton
 ----------------------------------------------------------------
-local M = class()
+local table                 = require "hp/lang/table"
+local class                 = require "hp/lang/class"
+local EventDispatcher       = require "hp/event/EventDispatcher"
+
+-- class
+local M                     = class(EventDispatcher)
+
+-- event
+M.EVENT_SELECTED_CHANGED    = "selectedChanged"
 
 ----------------------------------------------------------------
 -- インスタンスを生成して返します.
 ----------------------------------------------------------------
 function M:init()
-    self:setPrivate("selectedItem", nil)
-    self:setPrivate("children", {})
+    self._selectedItem = nil
+    self._children = {}
 end
 
 ----------------------------------------------------------------
 -- ラジオボタンリストを返します.
 ----------------------------------------------------------------
 function M:getChildren()
-    return self:getPrivate("children")
+    return self._children
 end
 
 ----------------------------------------------------------------
 -- ラジオボタンを追加します.
 ----------------------------------------------------------------
 function M:addChild(child)
-    local children = self:getChildren()
-    local added = table.insertElement(children, child)
+    local added = table.insertElement(self._children, child)
     if added then
-        child:setRadioGroup(self)
+        child:setRadioButtonGroup(self)
     end
 end
 
@@ -38,10 +42,9 @@ end
 -- ラジオボタンを削除します.
 ----------------------------------------------------------------
 function M:removeChild(child)
-    local children = self:getChildren()
-    local removed = table.removeElement(children, child)
+    local removed = table.removeElement(self._children, child)
     if removed then
-        child:setRadioGroup(nil)
+        child:setRadioButtonGroup(nil)
     end
 end
 
@@ -50,7 +53,7 @@ end
 -- 選択済のラジオボタンを返します.
 ----------------------------------------------------------------
 function M:getSelectedItem()
-    return self:getPrivate("selectedItem")
+    return self._selectedItem
 end
 
 ----------------------------------------------------------------
@@ -61,13 +64,18 @@ function M:setSelectedItem(item)
         return
     end
     
-    self:setPrivate("selectedItem", item)
-    item:setSelected(true)
+    self._selectedItem = item
+    self._selectedItem:setSelected(true)
+    
     for i, child in ipairs(self:getChildren()) do
         if child ~= item then
             child:setSelected(false)
         end
     end
+    
+    local e = Event(M.EVENT_SELECTED_CHANGED)
+    e.selectedItem = item
+    self:dispatchEvent(e)
 end
 
 return M

@@ -8,20 +8,21 @@
 -- @name TextLabel
 --------------------------------------------------------------------------------
 
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local DisplayObject = require("hp/display/DisplayObject")
-local Resizable = require("hp/display/Resizable")
-local FontManager = require("hp/manager/FontManager")
+-- import
+local table                     = require("hp/lang/table")
+local class                     = require("hp/lang/class")
+local DisplayObject             = require("hp/display/DisplayObject")
+local Resizable                 = require("hp/display/Resizable")
+local FontManager               = require("hp/manager/FontManager")
 
-local M = class(DisplayObject, Resizable)
+-- class
+local M                         = class(DisplayObject, Resizable)
+local MOAITextBoxInterface      = MOAITextBox.getInterfaceTable()
+M.MOAI_CLASS                    = MOAITextBox
 
-M.MOAI_CLASS = MOAITextBox
-
-M.DEFAULT_TEXT_SIZE = 24
-M.DEFAULT_COLOR = {1, 1, 1, 1}
-
-local interface = MOAITextBox.getInterfaceTable()
+-- constraints
+M.DEFAULT_TEXT_SIZE             = 24
+M.DEFAULT_COLOR                 = {1, 1, 1, 1}
 
 --------------------------------------------------------------------------------
 -- The constructor.
@@ -62,7 +63,7 @@ end
 function M:setTextSize(points, dpi)
     self._textSizePoints = points
     self._textSizeDpi = dpi
-    interface.setTextSize(self, points, dpi)
+    MOAITextBoxInterface.setTextSize(self, points, dpi)
 end
 
 --------------------------------------------------------------------------------
@@ -89,7 +90,7 @@ function M:setFont(font)
     if type(font) == "string" then
         font = FontManager:request(font)
     end
-    interface.setFont(self, font)
+    MOAITextBoxInterface.setFont(self, font)
 end
 --------------------------------------------------------------------------------
 -- MOAITextBox does not work for the visible, and hide in a pseudo-alpha.<br>
@@ -99,7 +100,7 @@ function M:setVisible(value)
     local r, g, b, a = self:getColor()
     a = value and 1 or 0
     self:setColor(r, g, b, a)
-    interface.setVisible(self, value)
+    MOAITextBoxInterface.setVisible(self, value)
 end
 
 return M

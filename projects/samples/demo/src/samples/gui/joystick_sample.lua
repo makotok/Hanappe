@@ -1,27 +1,24 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    view = GUI.View {
+    view = View {
         scene = scene,
-        children = {{
-            GUI.Joystick {
-                name = "analogStick",
-                onStickChanged = onStickChanged,
-                stickMode = "analog",
-                bottom = Application.viewHeight,
-            },
-            GUI.Joystick {
-                name = "digitalStick",
-                onStickChanged = onStickChanged,
-                stickMode = "digital",
-                right = Application.viewWidth,
-                bottom = Application.viewHeight,
-            },
-        }},
+    }
+
+    analogStick = Joystick {
+        onStickChanged = onStickChanged,
+        stickMode = "analog",
+        bottom = view:getHeight(),
+        parent = view,
     }
     
-    analogStick = view:getChildByName("analogStick")
-    digitalStick = view:getChildByName("digitalStick")
+    digitalStick = Joystick {
+        onStickChanged = onStickChanged,
+        stickMode = "digital",
+        right = view:getWidth(),
+        bottom = view:getHeight(),
+        parent = view,
+    }
 end
 
 function onStickChanged(e)

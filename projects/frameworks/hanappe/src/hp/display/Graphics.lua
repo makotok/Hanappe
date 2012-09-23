@@ -17,17 +17,18 @@
 -- @name Graphics
 --------------------------------------------------------------------------------
 
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local DisplayObject = require("hp/display/DisplayObject")
-local Resizable = require("hp/display/Resizable")
+-- import
+local table                 = require "hp/lang/table"
+local class                 = require "hp/lang/class"
+local DisplayObject         = require "hp/display/DisplayObject"
+local Resizable             = require "hp/display/Resizable"
 
-local M = class(DisplayObject, Resizable)
+-- class
+local M                     = class(DisplayObject, Resizable)
 
--- Offset value to use in case the drawing is shifted.
-M.ADJUST_OFFSET = 0.01
-
-M.DEFAULT_STEPS = 32
+-- constraints
+M.ADJUST_OFFSET             = 0.01
+M.DEFAULT_STEPS             = 32
 
 --------------------------------------------------------------------------------
 -- private. <br>

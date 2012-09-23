@@ -1,17 +1,17 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    view = GUI.View {
+    view = View {
         scene = scene
     }
-    button1 = GUI.Button {
+    button1 = Button {
         parent = view,
         text = "play", 
         size = {200, 50},
         pos = {10, 10},
         onClick = button1_onClick,
     }
-    button2 = GUI.Button {
+    button2 = Button {
         parent = view,
         text = "back",
         size = {200, 50},

@@ -56,16 +56,17 @@ function makeGuiView()
 end
 
 function makeGameOverLabel()
-    gameOverLabel = TextLabel {text = "GAME OVER!", textSize = 40, layer = guiView}
+    gameOverLabel = TextLabel {text = "GAME OVER!", textSize = 40}
     gameOverLabel:setSize(guiView:getWidth(), 60)
     gameOverLabel:setAlignment(MOAITextBox.CENTER_JUSTIFY)
-    gameOverLabel:setLeft((guiView:getViewWidth() - gameOverLabel:getWidth()) / 2)
-    gameOverLabel:setTop((guiView:getViewHeight() - gameOverLabel:getHeight()) / 2 - 40)
+    gameOverLabel:setLeft((guiView:getWidth() - gameOverLabel:getWidth()) / 2)
+    gameOverLabel:setTop((guiView:getHeight() - gameOverLabel:getHeight()) / 2 - 40)
+    guiView:addChild(gameOverLabel)
 end
 
 function makeRestartButton()
     restartButton = Button {text = "RESTART!", width = 200, height = 50}
-    restartButton:setPos((guiView:getViewWidth() - restartButton:getWidth()) / 2, gameOverLabel:getBottom() + 10)
+    restartButton:setPos((guiView:getWidth() - restartButton:getWidth()) / 2, gameOverLabel:getBottom() + 10)
     restartButton:addEventListener("click", onRestartButtonClick)
     guiView:addChild(restartButton)
 end

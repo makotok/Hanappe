@@ -19,18 +19,18 @@ STICK_TO_DIR_MAP["bottom"]      = RPGSprite.DIR_DOWN
 local A_BUTTON_STYLES = {
     normal = {
         skin = "button_a.png",
-        color = {1, 1, 1, 0.8},
+        skinColor = {1, 1, 1, 0.8},
     },
     selected = {
         skin = "button_a.png",
-        color = {0.5, 0.5, 0.5, 0.8},
+        skinColor = {0.5, 0.5, 0.5, 0.8},
     },
     over = {
         skin = "button_a.png",
-        color = {0.5, 0.5, 0.5, 0.8},
+        skinColor = {0.5, 0.5, 0.5, 0.8},
     },
     disabled = {
-        skin = "button_a.png",
+        skinColor = "button_a.png",
     },
 }
 
@@ -63,28 +63,24 @@ function onCreate(params)
     player:addEventListener("moveCollision", onPlayerMoveCollision)
     
     -- view
-    view = GUI.View {scene = scene}
-    
-    -- joystick
-    joystick = GUI.Joystick {
+    view = View {
+        scene = scene
+    }
+    joystick = Joystick {
         parent = view,
         stickMode = "digital",
         left = 0, bottom = view:getHeight(),
         color = {0.8, 0.8, 0.8, 0.8},
         onStickChanged = onStickChanged,
     }
-
-    -- A button
-    abutton = GUI.Button {
+    abutton = Button {
         parent = view,
         styles = {A_BUTTON_STYLES},
         skinResizable = false,
         onButtonDown = onButtonDown,
+        right = view:getWidth() - 10,
+        bottom = view:getHeight() - 10,
     }
-    abutton:updateComponent()
-    abutton:setRight(view:getWidth() - 10)
-    abutton:setBottom(view:getHeight() - 10)
-    
 end
 
 function onEnterFrame()

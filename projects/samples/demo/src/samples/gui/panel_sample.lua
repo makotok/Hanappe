@@ -1,10 +1,10 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    guiView = GUI.View {
+    guiView = View {
         scene = scene,
         children = {{
-            GUI.Panel {
+            Panel {
                 name = "panel",
                 size = {300, 460},
                 pos = {10, 10},
