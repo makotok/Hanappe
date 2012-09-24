@@ -1,0 +1,210 @@
+-------------------------------------------------------------------
+-- Hanappe Framework Version:2.0.0
+-- Moai SDK Version 1.2 Build 56
+-- Update: 2012/09/01
+-------------------------------------------------------------------
+
+Plan a number of improvements.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.5.1
+-- Moai SDK Version 1.2 Build 56
+-- Update: 2012/07/17
+-------------------------------------------------------------------
+There is no significant modification.
+Has a minor bug fixes.
+
+1. Some refactoring in the file.
+2. Add functions to the ResourceManager.
+3. Modify the pop-up effect of MessageBox.
+4. Add useful functions to delay execution of Executors.
+5. Scene add an event to be sent.
+6. Add functions to the Group.
+
+Others, such as bug fixes.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.5.0
+-- Moai SDK Version 1.2 Build 56
+-- Update: 2012/07/01
+-------------------------------------------------------------------
+In this version, we have a lot of improvements and refactoring.
+Some care must be taken, so compatibility has been lost.
+
+1.Change the path of the Application.
+Before: require("hp/Application")
+After : require("hp/core/Application")
+
+2.Renaming a Method of Application.
+Before: Application:appStart()
+After : Application:start()
+
+3.Change on how to import the class.
+Available classes has increased in Hanappe.
+Was changed to the class how to be aware that use the framework to be imported.
+
+Before: Application:import(t, prefix)
+After : classes.import(t)
+
+4.Added ResourceManager.
+Description has become easier by using the ResourceManager.
+Makes it easy to switch over the resource.
+In addition, the conventional method is also possible.
+
+Before: Sprite(filePath)
+After : Sprite(fileName)
+
+5.Added SoundManager.
+
+6.Added Particles.
+Add a class for easy use of the Particle.
+However, still many problems.
+In addition, there is a bug in the MOAI SDK.
+pex file can not be interpreted correctly.
+
+7.Has re-written in English of the source document.
+
+8.Others, such as improvement bug.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.4.2
+-- Moai SDK Version 1.1 Revision 1
+-------------------------------------------------------------------
+Modify:If the string params of the DisplayObject.
+Refactoring:sample.
+Fixed:Bug fixes of Physics
+Fixed:table.removeElement bug fixes
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.4.1
+-- Moai SDK Version 1.1 Revision 1
+-------------------------------------------------------------------
+Added:Mesh etc.
+Added:Add a function to resize Group.
+Added:PhysicsWorld, PhysicsBody, PhysicsFixture.(Prototype)
+Fixed:Fixed a bug in function wait (Animation).
+Fixed:Fixed a bug in Graphics.
+Fixed:Fixed a problem when the scale of the View is different.
+Modify:Change the order of class inheritance.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.4.0
+-- Moai SDK Version 1.1 Revision 1
+-------------------------------------------------------------------
+Refactoring:sample.
+Fixed:setVisible work around a bug in the MOAITextBox.
+Modify:Group setting when setCenterPiv, change so as not to move the upper left coordinates
+Modify:Change the method of generating an instance of the DisplayObject.
+Modify:TextureDrawable When you first set the texture, change it to resize.
+Modify:Change to MOAIProp from MOAITransform, an instance of the Group.
+Modify:Has inherited the DisplayObject EventDispatcher.
+Modify:Change the order of succession to the constructor of the class.
+Added:In touch with events, changes can be detected moving distance.
+Added:Add useful functions to MOAIPropUtil.
+Added:Add a pop-up display function in a MessageBox.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.3.0
+-- Moai SDK Version 1.1 Revision 1
+-------------------------------------------------------------------
+Added:CompareUtil
+Fixed:work around a bug and it is not working windows MOAIXmlParser.parseFile.
+Modify:RPGSprite move logic.
+Modify:Inheritable change the theme of the widget.
+Modify:Change the style of the button.
+Modify:Change the name of the function of WidgetManager.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.2.2
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+Added:ScrollView,Panel,MessageBox,BoxLayout,HBoxLayout,VBoxLayout
+Modify:how to generate an instance of the class (__cal)
+Fixed:bug
+
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.2.1
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+Fixed:samples
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.2.0
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+Modify:Modify the name of the function of DisplayObjects. (setRectSize -> setSize)
+Added:NinePatch
+Added:Widget classes(Button,RadioButton)
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.1.5
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+Added:TMXMapLoader supported format.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.1.4
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+Added:RPGMapView sample.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.1.3
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+Modify:Joystick.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.1.2
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+Fixed:Joystick.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.1.1
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+
+Added:Joystick widget.
+Modify:RPGMapView.
+Fixed:Overall bug fixes.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.1.0
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+
+Added:Animation clear function.
+Added:class base system.
+Added:RPGMapView.
+Fixed:TMXDisplay Fixed a bug in the Y coordinate of the SpriteSheet.
+Modify:internal logic.
+Modify:Change the structure of the directory of the package.
+Deleted:TMXMapFactory
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:1.0.0
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+
+Fixed:TMXDisplay tileNo bug fix.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:0.9.8
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+
+Updated:TextureManager and FontManager of weak references table.
+Added:Logger.
+Fixed:Refactoring.
+
+-------------------------------------------------------------------
+-- Hanappe Framework Version:0.9.7
+-- Moai SDK Version 1.0 Revision 3
+-------------------------------------------------------------------
+
+Added:luadoc.
+Added:Add the "useInputManager" option in the config
+Fixed:Refactoring(Scene, Samples).
+
