@@ -29,16 +29,9 @@ end
 ----------------------------------------------------------------
 function M:createChildren()
     local backgroundSkinClass = self:getStyle("backgroundSkinClass")
-    local borderSkinClass = self:getStyle("borderSkinClass")
-
     self._background = backgroundSkinClass()
     self._background:setTexture(self:getStyle("backgroundSkin"))
-    
-    self._border = borderSkinClass()
-    self._border:setTexture(self:getStyle("borderSkin"))
-    
     self:addChild(self._background)
-    self:addChild(self._border)
 end
 
 --------------------------------------------------------------------------------
@@ -48,10 +41,6 @@ function M:updateDisplay()
     local background = self._background
     background:setColor(unpack(self:getStyle("backgroundColor")))
     background:setTexture(self:getStyle("backgroundSkin"))
-
-    local border = self._border
-    border:setColor(unpack(self:getStyle("borderColor")))
-    border:setTexture(self:getStyle("borderSkin"))
 end
 
 --------------------------------------------------------------------------------
@@ -59,7 +48,6 @@ end
 --------------------------------------------------------------------------------
 function M:resizeHandler(e)
     self._background:setSize(e.newWidth, e.newHeight)
-    self._border:setSize(e.newWidth, e.newHeight)
 end
 
 return M

@@ -3,7 +3,12 @@ module(..., package.seeall)
 function onCreate(params)
     view = View {
         scene = scene,
-        layout = {VBoxLayout {hAlign = "right", vAlign = "bottom"} },
+        layout = {
+            VBoxLayout {
+                align = {"center", "center"},
+                padding = {10, 10, 10, 10},
+            }
+        },
         children = {{
             Button {
                 name = "startButton",

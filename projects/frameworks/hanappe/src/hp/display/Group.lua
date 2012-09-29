@@ -11,7 +11,6 @@
 -- import
 local table                     = require "hp/lang/table"
 local class                     = require "hp/lang/class"
-local delegate                  = require "hp/lang/delegate"
 local DisplayObject             = require "hp/display/DisplayObject"
 local Resizable                 = require "hp/display/Resizable"
 

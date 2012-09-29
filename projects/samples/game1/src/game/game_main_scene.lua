@@ -39,6 +39,12 @@ local SCREEN_TOUCH_RIGHT = 2
 
 local UNITS_MATER = 0.06
 
+local CODE_CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-'
+
+local FONT_SCORE = MOAIFont.new()
+FONT_SCORE:load("fonts/ipag.ttf")
+FONT_SCORE:preloadGlyphs(CODE_CHARS, 24)
+
 --------------------------------------------------------------------------------
 -- Variables
 --------------------------------------------------------------------------------
@@ -124,10 +130,11 @@ function makeGameLayer()
 end
 
 function makeBackground()
-    local w, h = gameLayer:getViewSize()
-    --background = Sprite {texture = BACK_TEXTURE, left = 0, top = 0}
-    background = Mesh.newRect(0, 0, w, h, {"#222222", "#CCCCCC", 90})
-    background:setLayer(gameLayer)
+    background = Sprite {
+        texture = BACK_TEXTURE,
+        pos = {0, 0},
+        layer = gameLayer,
+    }
 end
 
 function makePlayer()
@@ -214,6 +221,8 @@ function makeScoreLabel()
         pos = {5, 5},
         color = {1, 1, 1, 1},
         parent = guiView,
+        font = FONT_SCORE,
+        textSize = 24,
     }
 
     scoreLabel.scorePoint = 0

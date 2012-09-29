@@ -28,10 +28,17 @@ function onCreate(params)
     }
     
     gameButton = Button {
-        size = {200, 50},
         text = "GAME START",
+        size = {200, 50},
         pos = {view:getWidth() / 2 - 200 / 2, view:getHeight() / 3 * 2},
         onClick = onGameButtonClick,
+        parent = view,
+    }
+    
+    scoreButton = Button {
+        text = "SCORE",
+        size = {200, 50},
+        pos = {gameButton:getLeft(), gameButton:getBottom() + 20},
         parent = view,
     }
     

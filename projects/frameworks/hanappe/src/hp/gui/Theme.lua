@@ -13,11 +13,11 @@ local M                 = {}
 M.Button = {
     normal = {
         skin = "skins/button-normal.png",
-        skinClass = Sprite,
+        skinClass = NinePatch,
         skinColor = {1, 1, 1, 1},
         font = "fonts/ipag.ttf",
         textSize = 24,
-        textColor = {0.8, 0.8, 0.8, 1},
+        textColor = {0.0, 0.0, 0.0, 1},
         textPadding = {10, 5, 10, 8},
     },
     selected = {
@@ -29,51 +29,6 @@ M.Button = {
     disabled = {
         skin = "skins/button-disabled.png",
         textColor = {0.5, 0.5, 0.5, 1},
-    },
-}
-
---------------------------------------------------------------------------------
-M.RadioButton = {
-    normal = {
-        skin = "skins/radio-button.png",
-        onIndex = 5,
-        offIndex = 2,
-        color = {1, 1, 1, 1},
-        font = "fonts/ipag.ttf",
-        textSize = 24,
-        textColor = {1, 1, 1, 1},
-        textPadding = {0, 0, 0, 0},
-    },
-    over = {
-        onIndex = 6,
-        offIndex = 3,
-    },
-    disabled = {
-        onIndex = 4,
-        offIndex = 1,
-    },
-}
-
---------------------------------------------------------------------------------
-M.CheckBox = 
-{
-    normal = {
-        skin = "skins/checkbox.png",
-        onIndex = 5,
-        offIndex = 2,
-        color = {1, 1, 1, 1},
-        font = "fonts/ipag.ttf",
-        textSize = 24,
-        textColor = {1, 1, 1, 1},
-        textPadding = {0, 0, 0, 0},
-    },
-    over = {
-        onIndex = 6,
-        offIndex = 3,
-    },
-    disabled = {
-        onIndex = 4,
-        offIndex = 1,
     },
 }
 
@@ -94,36 +49,29 @@ M.Joystick = {
 --------------------------------------------------------------------------------
 M.Panel = {
     normal = {
-        backgroundSkin = "skins/panel-background.png",
-        backgroundSkinClass = Sprite,
+        backgroundSkin = "skins/panel.png",
+        backgroundSkinClass = NinePatch,
         backgroundColor = {1, 1, 1, 1},
-        borderSkin = "skins/panel-border.png",
-        borderSkinClass = NinePatch,
-        borderColor = {1, 1, 1, 1},
-        color = {1, 1, 1, 1}
     },
     disabled = {
-        color = {0.5, 0.5, 0.5, 1},
+        backgroundColor = {0.5, 0.5, 0.5, 1},
     },
 }
 
 --------------------------------------------------------------------------------
 M.MessageBox = {
     normal = {
-        backgroundSkin = "skins/panel-background.png",
-        backgroundSkinClass = Sprite,
+        backgroundSkin = "skins/panel.png",
+        backgroundSkinClass = NinePatch,
         backgroundColor = {1, 1, 1, 1},
-        borderSkin = "skins/panel-border.png",
-        borderSkinClass = NinePatch,
-        borderColor = {1, 1, 1, 1},
         font = "fonts/ipag.ttf",
-        textPadding = {10, 10, 10, 10},
-        textSize = 20,
-        textColor = {1, 1, 1, 1},
+        textPadding = {20, 20, 15, 15},
+        textSize = 24,
+        textColor = {0, 0, 0, 1},
     },
     disabled = {
         backgroundColor = {0.5, 0.5, 0.5, 1},
-        textColor = {1, 1, 1, 1},
+        textColor = {0.2, 0.2, 0.2, 1},
     },
 }
 

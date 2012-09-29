@@ -21,6 +21,7 @@ local MOAITextBoxInterface      = MOAITextBox.getInterfaceTable()
 M.MOAI_CLASS                    = MOAITextBox
 
 -- constraints
+M.DEFAULT_FONT                  = "fonts/ipag.ttf"
 M.DEFAULT_TEXT_SIZE             = 24
 M.DEFAULT_COLOR                 = {1, 1, 1, 1}
 
@@ -34,8 +35,7 @@ function M:init(params)
     params = params or {}
     params = type(params) == "string" and {text = params} or params
 
-    local font = FontManager:request(params.font)
-    self:setFont(font)
+    self:setFont(M.DEFAULT_FONT)
     self:setTextSize(M.DEFAULT_TEXT_SIZE)
     self:setColor(unpack(M.DEFAULT_COLOR))
     self:copyParams(params)

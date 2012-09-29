@@ -22,7 +22,7 @@ end
 function onStart()
     group:moveLoc(50, 50, 0, 3)
     group:moveRot(0, 0, 180, 3)
-    group:moveColor(-1, -1, -1, 0, 3)
+    group:moveColor(-1, -1, -1, -1, 3)
 end
 
 function onTouchDown()

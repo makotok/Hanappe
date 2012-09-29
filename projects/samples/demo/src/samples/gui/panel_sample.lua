@@ -6,7 +6,7 @@ function onCreate(params)
         children = {{
             Panel {
                 name = "panel",
-                size = {300, 460},
+                size = {460, 300},
                 pos = {10, 10},
             },
         }},

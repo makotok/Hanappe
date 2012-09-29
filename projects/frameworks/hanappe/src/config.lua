@@ -9,8 +9,6 @@ local config = {
     viewHeight = 480,
     scaleMode = "none",
     landscape = false,
-    showWindow = true,
-    useInputManager = true,
     mainScene = "main_scene",
 }
 

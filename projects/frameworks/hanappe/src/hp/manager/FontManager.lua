@@ -12,8 +12,6 @@ local Logger = require("hp/util/Logger")
 local M = {}
 local cache = {}
 
-M.DEFAULT_FONT = "fonts/ipag.ttf"
-
 ----------------------------------------------------------------
 -- Requests the texture. <br>
 -- The textures are cached internally.
@@ -21,7 +19,7 @@ M.DEFAULT_FONT = "fonts/ipag.ttf"
 -- @return MOAITexture instance.
 ----------------------------------------------------------------
 function M:request(path)
-    path = path or self.DEFAULT_FONT
+    path = path
     path = ResourceManager:getFilePath(path)
     
     for i, font in ipairs(cache) do
