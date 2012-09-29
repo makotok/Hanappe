@@ -21,7 +21,7 @@ local MOAITextBoxInterface      = MOAITextBox.getInterfaceTable()
 M.MOAI_CLASS                    = MOAITextBox
 
 -- constraints
-M.DEFAULT_FONT                  = "fonts/ipag.ttf"
+M.DEFAULT_FONT                  = "fonts/VL-PGothic.ttf"
 M.DEFAULT_TEXT_SIZE             = 24
 M.DEFAULT_COLOR                 = {1, 1, 1, 1}
 
