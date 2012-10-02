@@ -9,6 +9,7 @@
 local table             = require "hp/lang/table"
 local class             = require "hp/lang/class"
 local Group             = require "hp/display/Group"
+local Graphics          = require "hp/display/Graphics"
 local Event             = require "hp/event/Event"
 local Executors         = require "hp/util/Executors"
 local ThemeManager      = require "hp/manager/ThemeManager"
@@ -64,6 +65,8 @@ function M:initInternal()
     self._initialized = false
     self._invalidFlag = true
     self._currentState = M.STATE_NORMAL
+    self._graphics = Graphics {parent = self}
+    self._graphics.isIncludeLayout = function() return false end
 end
 
 --------------------------------------------------------------------------------
@@ -198,11 +201,17 @@ end
 -- Componentだけが追加できるようにします.
 --------------------------------------------------------------------------------
 function M:removeChild(child)
+    if child == self._graphics then
+        return false
+    end
+
     if super.removeChild(self, child) then
         child:dispatchEvent(M.EVENT_REMOVED)
         self:dispatchEvent(M.EVENT_CHILD_REMOVED)
         self:invalidate()
+        return true
     end
+    return false
 end
 
 --------------------------------------------------------------------------------
@@ -365,7 +374,7 @@ function M:setSize(width, height)
         self:dispatchEvent(e)
         
         self:invalidate()
-        self:invalidate()
+        self._graphics:setSize(width, height)
     end
 end
 
@@ -482,25 +491,25 @@ end
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Sceneをタッチした時のイベントリスナです.
+-- コンポーネントをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:touchDownHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- Sceneをタッチした時のイベントリスナです.
+-- コンポーネントをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:touchUpHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- Sceneをタッチした時のイベントリスナです.
+-- コンポーネントをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:touchMoveHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- Sceneをタッチした時のイベントリスナです.
+-- コンポーネントをタッチした時のイベントリスナです.
 --------------------------------------------------------------------------------
 function M:touchCancelHandler(e)
 end

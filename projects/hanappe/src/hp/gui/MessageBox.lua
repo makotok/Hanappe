@@ -191,19 +191,13 @@ end
 -- 画面をタッチした時の処理を行います.
 --------------------------------------------------------------------------------
 function M:touchDownHandler(e)
-    if not self:isEnabled() then
-        return
-    end
-    
-    if self:hitTestScreen(e.x, e.y) then
-        if self:isBusy() then
-            -- TODO:スプール中のメッセージを全て
-        elseif self:more() then
-            self:nextPage()
-            self:spool()
-        else
-            self:enterMessageEnd()
-        end
+    if self:isBusy() then
+        -- TODO:スプール中のメッセージを全て
+    elseif self:more() then
+        self:nextPage()
+        self:spool()
+    else
+        self:enterMessageEnd()
     end
 end
 

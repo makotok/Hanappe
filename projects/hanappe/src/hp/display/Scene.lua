@@ -234,6 +234,7 @@ function M:onDestroy()
         self:dispatchEvent(EC_DESTROY)
     end
     
+    self:dispose()
     destroyModule(self.sceneHandler)
 end
 

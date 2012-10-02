@@ -1,17 +1,17 @@
 module(..., package.seeall)
 
 function onCreate(params)
-    guiView = View {
+    view = View {
         scene = scene,
-        children = {{
-            Panel {
-                name = "panel",
-                size = {460, 300},
-                pos = {10, 10},
-            },
-        }},
-    
     }
+
+    panel = Panel {
+        name = "panel",
+        size = {460, 300},
+        pos = {10, 10},
+        parent = view,
+    }
+
 end
 
 function onStart()

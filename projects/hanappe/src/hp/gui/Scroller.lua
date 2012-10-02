@@ -287,7 +287,7 @@ function M:touchMoveHandler(e)
     end
     
     local scale = self:getLayer():getViewScale()
-    local moveX, moveY = e.moveX / scale, e.moveY / scale
+    local moveX, moveY = e.moveX, e.moveY
     self:setScrollingForce(moveX, moveY)
     
     moveX, moveY = self:getScrollingForce()

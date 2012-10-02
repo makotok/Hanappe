@@ -226,15 +226,10 @@ function M:touchDownHandler(e)
         return
     end
 
-    local wx, wy = e.worldX, e.worldY
-    local mx, my = self:worldToModel(wx, wy, 0)
-    
-    --if 0 <= mx and mx <= self:getWidth() and 0 <= my and my <= self:getHeight() then
-    if self:hitTestWorld(wx, wy) then
-        self._touchDownFlag = true
-        self._touchIndex = e.idx
-        self:updateKnob(mx, my)
-    end
+    local mx, my = self:worldToModel(e.x, e.y, 0)
+    self._touchDownFlag = true
+    self._touchIndex = e.idx
+    self:updateKnob(mx, my)
 end
 
 --------------------------------------------------------------------------------
@@ -264,7 +259,7 @@ function M:touchMoveHandler(e)
         return
     end
     
-    local wx, wy = e.worldX, e.worldY
+    local wx, wy = e.x, e.y
     local mx, my = self:worldToModel(wx, wy, 0)
     self:updateKnob(mx, my)
 end

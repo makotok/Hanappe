@@ -3,11 +3,9 @@ module(..., package.seeall)
 function onCreate(params)
     view = View {
         scene = scene,
-        layout = {
-            VBoxLayout {
-                align = {"center", "center"},
-                padding = {10, 10, 10, 10},
-            },
+        layout = VBoxLayout {
+            align = {"center", "center"},
+            padding = {10, 10, 10, 10},
         },
     }
     
@@ -24,7 +22,6 @@ function onCreate(params)
         onClick = onHideClick,
     }
     backButton = Button {
-        name = "backButton",
         text = "Back",
         size = {200, 50},
         parent = view,
@@ -35,7 +32,6 @@ function onCreate(params)
         text = "メッセージボックスのさんぷるです。\n内部的にはTextLabelが表示されています。\nHello MessageBox!\n改行とか？",
         parent = view,
     }
-
 end
 
 function onShowClick(e)

@@ -183,17 +183,14 @@ function M:touchDownHandler(e)
         return
     end
     
-    if self:hitTestScreen(e.x, e.y) then
-        self._touchIndex = e.idx
-        self._touching = true
-        
-        if self:isToggle() and self:isButtonDown() then
-            self:doUpButton()
-        else
-            self:doDownButton()
-        end
-    end
+    self._touchIndex = e.idx
+    self._touching = true
     
+    if self:isToggle() and self:isButtonDown() then
+        self:doUpButton()
+    else
+        self:doDownButton()
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -221,7 +218,7 @@ function M:touchMoveHandler(e)
         return
     end
 
-    if self._touching and not self:hitTestScreen(e.x, e.y) then
+    if self._touching and not self:hitTestWorld(e.x, e.y) then
         self._touching = false
         self._touchIndex = nil
         

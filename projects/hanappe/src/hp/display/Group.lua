@@ -120,6 +120,14 @@ function M:getChildren()
 end
 
 ----------------------------------------------------------------
+-- Returns the children size.
+-- @return children size.
+----------------------------------------------------------------
+function M:getNumChildren()
+    return #self.children
+end
+
+----------------------------------------------------------------
 -- Returns the child object.
 -- @param i Index.
 -- @return child

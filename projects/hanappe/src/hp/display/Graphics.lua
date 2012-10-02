@@ -146,6 +146,10 @@ function M:init(params)
 
     deck:setDrawCallback(
         function(index, xOff, yOff, xFlip, yFlip)
+            if #self.commands == 0 then
+                return
+            end
+            
             MOAIGfxDevice.setPenColor(self:getRed(), self:getGreen(), self:getBlue(), self:getAlpha())
             MOAIGfxDevice.setPenWidth(1)
             MOAIGfxDevice.setPointSize(1)

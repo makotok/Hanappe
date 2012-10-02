@@ -27,10 +27,10 @@ function M.setProperty(obj, name, value, unpackFlag)
     local setterName = M.getSetterName(name)
     local setter = obj[setterName]
     if setter then
-        if unpackFlag and type(value) == "table" then
-            return setter(obj, unpack(value))
-        else
+        if not unpackFlag or type(value) ~= "table" or getmetatable(value) ~= nil then
             return setter(obj, value)
+        else
+            return setter(obj, unpack(value))
         end
     end
 end

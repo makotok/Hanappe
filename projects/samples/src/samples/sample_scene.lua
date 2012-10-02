@@ -104,7 +104,7 @@ function createGuiView()
     local HALF_WIDTH = guiView:getWidth() / 2
     for i, item in ipairs(SCENE_ITEMS) do
         local button = createButton(item, scroller)
-        button:setPos(20 + ((i - 1) % 2 * HALF_WIDTH), 70 + math.floor((i - 1) / 2) * 60)
+        button:setPos((HALF_WIDTH - button:getWidth()) / 2 + ((i - 1) % 2 * HALF_WIDTH), 70 + math.floor((i - 1) / 2) * 60)
     end
 end
 

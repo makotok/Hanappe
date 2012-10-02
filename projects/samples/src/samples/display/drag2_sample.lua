@@ -3,37 +3,52 @@ module(..., package.seeall)
 local touchingProp
 
 function onCreate(params)
-    layer = Layer {scene = scene}
-
-    sprite1 = Sprite {texture = "cathead.png", layer = layer, pos = {0, 0}, size = {64, 64}}
-    sprite2 = Sprite {texture = "cathead.png", layer = layer, pos = {64, 0}, size = {64, 64}}
-    sprite3 = Sprite {texture = "cathead.png", layer = layer, pos = {0, 64}, size = {64, 64}}
-end
-
-function onTouchDown(e)
-    local wx, wy = layer:wndToWorld(e.x, e.y, 0)
-    touchingProp = layer:getPartition():propForPoint(wx, wy, 0)
+    layer = Layer {
+        scene = scene,
+        touchEnabled = true,
+    }
     
-    if touchingProp then
-        if touchingProp.action then
-            touchingProp.action:stop()
+    for i = 1, 4 do
+        local sprite = Sprite {texture = "cathead.png", layer = layer, pos = {(i - 1) * 64, 0}, size = {64, 64}}
+        sprite:addEventListener("touchDown",     onSpriteTouchDown)
+        sprite:addEventListener("touchUp",       onSpriteTouchUp)
+        sprite:addEventListener("touchMove",     onSpriteTouchMove)
+        sprite:addEventListener("touchCancel",   onSpriteTouchCancel)
+    end
+end
+
+function onSpriteTouchDown(e)
+    local prop = e.touchingProp
+    if prop and not prop.touchDownFlag then
+        if prop.action then
+            prop.action:stop()
         end
-        touchingProp.action = touchingProp:seekScl(2, 2, 1, 0.5)
+        prop.touchDownFlag = true
+        prop.action = prop:seekScl(2, 2, 1, 0.5)
     end
 end
 
-function onTouchMove(e)
-    if touchingProp then
-        local scale = layer:getViewScale()
-        local moveX, moveY = e.moveX / scale, e.moveY / scale
-        touchingProp:addLoc(moveX, moveY, 0)
+function onSpriteTouchUp(e)
+    local prop = e.touchingProp
+    if prop and prop.touchDownFlag then
+        prop.touchDownFlag = false
+        prop.action:stop()
+        prop.action = prop:seekScl(1, 1, 1, 0.5)
     end
 end
 
-function onTouchUp(e)
-    if touchingProp then
-        touchingProp.action:stop()
-        touchingProp:seekScl(1, 1, 1, 0.5)
-        touchingProp = nil
+function onSpriteTouchMove(e)
+    if e.touchingProp then
+        e.touchingProp:addLoc(e.moveX, e.moveY, 0)
     end
 end
+
+function onSpriteTouchCancel(e)
+    local prop = e.touchingProp
+    if prop and prop.touchDownFlag then
+        prop.touchDownFlag = false
+        prop.action:stop()
+        prop.action = prop:seekScl(1, 1, 1, 0.5)
+    end
+end
+

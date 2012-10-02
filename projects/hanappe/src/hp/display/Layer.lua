@@ -13,6 +13,7 @@ local class                 = require "hp/lang/class"
 local Application           = require "hp/core/Application"
 local DisplayObject         = require "hp/display/DisplayObject"
 local Resizable             = require "hp/display/Resizable"
+local TouchProcessor        = require "hp/display/TouchProcessor"
 
 -- class define
 local M                     = class(DisplayObject)
@@ -25,6 +26,7 @@ M.MOAI_CLASS                = MOAILayer
 ----------------------------------------------------------------
 function M:init(params, Resizable)
     DisplayObject.init(self)
+    self._touchEnabled = false
     
     params = params or {}
 
@@ -204,6 +206,10 @@ function M:setScene(scene)
     if self.scene then
         self.scene:addChild(self)
     end
+    
+    if self._touchProcessor then
+        self._touchProcessor:setScene(scene)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -226,6 +232,29 @@ function M:setProps(props)
             self:insertProp(prop)
         end
     end
+end
+
+--------------------------------------------------------------------------------
+-- Sets the touch enabled.
+-- @param value touch enabled.
+--------------------------------------------------------------------------------
+function M:setTouchEnabled(value)
+    if self._touchEnabled == value then
+        return
+    end
+    
+    self._touchEnabled = value
+    
+    if self._touchProcessor then
+        self._touchProcessor:setScene(nil)
+    end
+    if value then
+        self._touchProcessor = TouchProcessor(self)
+    end
+end
+
+function M:isTouchEnabled()
+    return self._touchEnabled
 end
 
 --------------------------------------------------------------------------------

@@ -23,31 +23,6 @@ local Executors             = require "hp/util/Executors"
 local super                 = Component
 local M                     = class(super)
 
--- event cache
-local EC_TOUCH_DOWN         = Event(Event.TOUCH_DOWN)
-local EC_TOUCH_UP           = Event(Event.TOUCH_UP)
-local EC_TOUCH_MOVE         = Event(Event.TOUCH_MOVE)
-local EC_TOUCH_CANCEL       = Event(Event.TOUCH_CANCEL)
-
--- タッチ操作の内部処理です.
-local function internalEventHandler(obj, e)
-    
-    local children = obj:getChildren()
-    for i = #children, 1, -1 do
-        local child = children[i]
-        if child.isComponent and child:isEnabled() then
-            if internalEventHandler(child, e) then
-                return true
-            end
-        end
-    end
-    
-    if obj.isComponent and obj:isEnabled() then
-        obj:dispatchEvent(e)
-    end
-    return e.stoped
-end
-
 local function internalUpdateRenderPriority(obj, priority)
     obj:setPriority(priority)
     priority = priority + 1
@@ -86,6 +61,8 @@ end
 function M:initLayer()
     local layer = Layer()
     layer:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
+    layer:setTouchEnabled(true)
+
     self:setLayer(layer)
     self:setSize(layer:getViewSize())
 end
@@ -94,29 +71,7 @@ end
 -- シーンを設定します.
 --------------------------------------------------------------------------------
 function M:setScene(scene)
-    if self.scene == scene then
-        return
-    end
-    
-    if self.scene then
-        self.scene:removeEventListener("destroy", self.sceneDestroyHandler, self)
-        self.scene:removeEventListener("touchDown", self.sceneTouchDownHandler, self)
-        self.scene:removeEventListener("touchUp", self.sceneTouchUpHandler, self)
-        self.scene:removeEventListener("touchMove", self.sceneTouchMoveHandler, self)
-        self.scene:removeEventListener("touchCancel", self.sceneTouchCancelHandler, self)
-        self.scene:removeChild(self:getLayer())
-    end
-    
-    self.scene = scene
-    
-    if self.scene then
-        self.scene:addEventListener("destroy", self.sceneDestroyHandler, self)
-        self.scene:addEventListener("touchDown", self.sceneTouchDownHandler, self)
-        self.scene:addEventListener("touchUp", self.sceneTouchUpHandler, self)
-        self.scene:addEventListener("touchMove", self.sceneTouchMoveHandler, self)
-        self.scene:addEventListener("touchCancel", self.sceneTouchCancelHandler, self)
-        self.scene:addChild(self:getLayer())
-    end
+    self:getLayer():setScene(scene)
 end
 
 --------------------------------------------------------------------------------
@@ -139,66 +94,12 @@ function M:updateLayout()
 end
 
 --------------------------------------------------------------------------------
--- 描画レイヤーテーブルを返します.
---------------------------------------------------------------------------------
-function M:getRenderTable()
-    return {self:getLayer()}
-end
-
---------------------------------------------------------------------------------
 -- 描画順序のプライオリティを自動的に更新するかどうか設定します.
 -- パフォーマンスが問題になる場合に、手動でプライオリティを設定する事で、
 -- パフォーマンスを向上させる事ができます.
 --------------------------------------------------------------------------------
 function M:setPriorityUpdateEnabled(value)
     self._priorityUpdateEnabled = value
-end
-
---------------------------------------------------------------------------------
--- Event Handler
---------------------------------------------------------------------------------
-
---------------------------------------------------------------------------------
--- Sceneをタッチした時のイベントリスナです.
---------------------------------------------------------------------------------
-function M:sceneDestroyHandler(e)
-    self:dispose()
-end
-
---------------------------------------------------------------------------------
--- Sceneをタッチした時のイベントリスナです.
---------------------------------------------------------------------------------
-function M:sceneTouchDownHandler(e)
-    local ce = table.copy(e, EC_TOUCH_DOWN)
-    ce.worldX, ce.worldY = self:getLayer():wndToWorld(e.x, e.y, e.z)
-    internalEventHandler(self, ce)
-end
-
---------------------------------------------------------------------------------
--- Sceneをタッチした時のイベントリスナです.
---------------------------------------------------------------------------------
-function M:sceneTouchUpHandler(e)
-    local ce = table.copy(e, EC_TOUCH_UP)
-    ce.worldX, ce.worldY = self:getLayer():wndToWorld(e.x, e.y, e.z)
-    internalEventHandler(self, ce)
-end
-
---------------------------------------------------------------------------------
--- Sceneをタッチした時のイベントリスナです.
---------------------------------------------------------------------------------
-function M:sceneTouchMoveHandler(e)
-    local ce = table.copy(e, EC_TOUCH_MOVE)
-    ce.worldX, ce.worldY = self:getLayer():wndToWorld(e.x, e.y, e.z)
-    internalEventHandler(self, ce)
-end
-
---------------------------------------------------------------------------------
--- Sceneをタッチした時のイベントリスナです.
---------------------------------------------------------------------------------
-function M:sceneTouchCancelHandler(e)
-    local ce = table.copy(e, EC_TOUCH_CANCEL)
-    ce.worldX, ce.worldY = self:getLayer():wndToWorld(e.x, e.y, e.z)
-    internalEventHandler(self, ce)
 end
 
 return M

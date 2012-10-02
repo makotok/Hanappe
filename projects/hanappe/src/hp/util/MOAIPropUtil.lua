@@ -301,4 +301,13 @@ function M.setRGBA(prop, r, g, b, a)
     prop:setColor(r / 255, g / 255, b / 255, a)
 end
 
+--------------------------------------------------------------------------------
+-- Returns the visible.
+-- @param MOAIProp instance.
+-- @return visible
+--------------------------------------------------------------------------------
+function M.getVisible(prop)
+    return prop:getAttr(MOAIProp.ATTR_VISIBLE)
+end
+
 return M

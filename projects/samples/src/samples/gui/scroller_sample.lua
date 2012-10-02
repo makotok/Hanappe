@@ -9,7 +9,7 @@ function onCreate(params)
         size = {view:getSize()},
         layout = {
             VBoxLayout {
-                align = {"center", "top"},
+                align = {"center", "center"},
                 padding = {10, 10, 10, 10},
                 gap = {10, 10},
             }
