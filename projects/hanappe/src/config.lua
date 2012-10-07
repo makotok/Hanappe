@@ -2,13 +2,11 @@
 -- Hanappe Application config
 --------------------------------------------------------------------------------
 local config = {
-    title = "Title",
-    screenWidth = 320,
-    screenHeight = 480,
+    title = "Hanappe",
+    screenWidth = 480,
+    screenHeight = 320,
     viewWidth = 320,
-    viewHeight = 480,
-    scaleMode = "none",
-    landscape = false,
+    landscape = true,
     mainScene = "main_scene",
 }
 

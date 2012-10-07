@@ -251,12 +251,28 @@ function makeLevelLabel()
 end
 
 function makeHitpointBar()
-    hitpointBar = Group({left = guiView:getViewWidth() - 105, top = 5, width = 100, height = 30})
-    hitpointBar:addChild(TextLabel {text = "HP:", width = 40, height = 30})
-    hitpointBar:addChild(Mesh.newRect(40, 0, 60, 30, {"#009900", "#003300", 90}))
-    hitpointBar:addChild(Graphics({left = 40, top = 0, width = 60, height = 30}):setPenWidth(1):drawRect())
-    hitpointBar:setLayer(guiView)
-    hitpointBar.bar = hitpointBar.children[2]
+    hitpointBar = Group {
+        pos = {5, levelLabel:getBottom()},
+        size = {100, 30},
+        layer = guiView,
+    }
+    
+    local label = TextLabel {
+        text = "HP:",
+        size = {40, 30},
+        parent = hitpointBar,
+    }
+    
+    local bar = Mesh.newRect(40, 5, 60, 20, {"#009900", "#003300", 90})
+    bar:setParent(hitpointBar)
+    hitpointBar.bar = bar
+
+    local border = Graphics {
+        pos = {40, 5},
+        size = {60, 20},
+        parent = hitpointBar
+    }
+    border:setPenWidth(1):drawRect()
     
     function hitpointBar:getHitpoint()
         local x, y, z = self:getScl()
