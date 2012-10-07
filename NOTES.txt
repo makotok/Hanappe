@@ -1,10 +1,16 @@
 -------------------------------------------------------------------
 -- Hanappe Framework Version:2.0.0
--- Moai SDK Version 1.2 Build 56
--- Update: 2012/09/01
+-- Moai SDK Version 1.3 Build 98
+-- Update: 2012/10/07
 -------------------------------------------------------------------
 
-Plan a number of improvements.
+I made ​​a big fix for the portion GUI.
+Compatible part is impaired.
+
+1. I have changed the configuration directory of the project.
+2. I had to rebuild the implementation of the GUI.
+3. I've added a method to detect touch events DisplayObject.
+4. Improvement how to set the initial properties of the DisplayObject.
 
 -------------------------------------------------------------------
 -- Hanappe Framework Version:1.5.1
