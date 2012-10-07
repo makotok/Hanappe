@@ -25,7 +25,3 @@ function onCreate(params)
     graphics:fillRect()
     
 end
-
-function onTouchDown()
-    SceneManager:closeScene({animation = "slideToBottom"})
-end

@@ -40,7 +40,7 @@ local Logger                = require "hp/util/Logger"
 -- class
 local M                     = class(Group)
 
--- event caches
+-- events
 M.EVENT_ENTER_FRAME         = "enterFrame"
 M.EVENT_CREATE              = "create"
 M.EVENT_START               = "start"
@@ -55,26 +55,11 @@ M.EVENT_TOUCH_CANCEL        = "touchCancel"
 M.EVENT_KEY_DOWN            = "keyDown"
 M.EVENT_KEY_UP              = "keyUp"
 
--- event caches
-local EC_ENTER_FRAME        = Event(M.EVENT_ENTER_FRAME)
-local EC_CREATE             = Event(M.EVENT_CREATE)
-local EC_START              = Event(M.EVENT_START)
-local EC_RESUME             = Event(M.EVENT_RESUME)
-local EC_STOP               = Event(M.EVENT_STOP)
-local EC_DESTROY            = Event(M.EVENT_DESTROY)
-local EC_TOUCH_DOWN         = Event(M.EVENT_TOUCH_DOWN)
-local EC_TOUCH_UP           = Event(M.EVENT_TOUCH_UP)
-local EC_TOUCH_MOVE         = Event(M.EVENT_TOUCH_MOVE)
-local EC_TOUCH_CANCEL       = Event(M.EVENT_TOUCH_CANCEL)
-local EC_KEY_DOWN           = Event(M.EVENT_KEY_DOWN)
-local EC_KEY_UP             = Event(M.EVENT_KEY_UP)
-
 -- local functions
 local function destroyModule(m)
     if m and m._M and m._NAME then
         package.loaded[m._NAME] = nil
         _G[m._NAME] = nil
-        Logger.debug("Scene module destroyed:", m._NAME)
     end
 end
 
@@ -169,10 +154,7 @@ function M:onCreate(params)
     if self.sceneHandler.onCreate then
         self.sceneHandler.onCreate(params)
     end
-    if self:hasEventListener(M.EVENT_CREATE) then
-        EC_CREATE.params = params
-        self:dispatchEvent(EC_CREATE)
-    end
+    self:dispatchEvent(M.EVENT_CREATE, params)
 end
 
 ---------------------------------------
@@ -182,9 +164,7 @@ function M:onStart()
     if self.sceneHandler.onStart then
         self.sceneHandler.onStart()
     end
-    if self:hasEventListener(M.EVENT_START) then
-        self:dispatchEvent(EC_START)
-    end
+    self:dispatchEvent(M.EVENT_START)
 end
 
 ---------------------------------------
@@ -194,9 +174,7 @@ function M:onResume()
     if self.sceneHandler.onResume then
         self.sceneHandler.onResume()
     end
-    if self:hasEventListener(M.EVENT_RESUME) then
-        self:dispatchEvent(EC_RESUME)
-    end
+    self:dispatchEvent(M.EVENT_RESUME)
 end
 
 ---------------------------------------
@@ -206,9 +184,7 @@ function M:onPause()
     if self.sceneHandler.onPause then
         self.sceneHandler.onPause()
     end
-    if self:hasEventListener(M.EVENT_PAUSE) then
-        self:dispatchEvent(EC_PAUSE)
-    end
+    self:dispatchEvent(M.EVENT_PAUSE)
 end
 
 ---------------------------------------
@@ -218,9 +194,7 @@ function M:onStop()
     if self.sceneHandler.onStop then
         self.sceneHandler.onStop()
     end
-    if self:hasEventListener(M.EVENT_STOP) then
-        self:dispatchEvent(EC_STOP)
-    end
+    self:dispatchEvent(M.EVENT_STOP)
 end
 
 ---------------------------------------
@@ -230,9 +204,7 @@ function M:onDestroy()
     if self.sceneHandler.onDestroy then
         self.sceneHandler.onDestroy()
     end
-    if self:hasEventListener(M.EVENT_DESTROY) then
-        self:dispatchEvent(EC_DESTROY)
-    end
+    self:dispatchEvent(M.EVENT_DESTROY)
     
     self:dispose()
     destroyModule(self.sceneHandler)
@@ -245,9 +217,7 @@ function M:onEnterFrame()
     if self.sceneHandler.onEnterFrame then
         self.sceneHandler.onEnterFrame()
     end
-    if self:hasEventListener(M.EVENT_ENTER_FRAME) then
-        self:dispatchEvent(EC_ENTER_FRAME)
-    end
+    self:dispatchEvent(M.EVENT_ENTER_FRAME)
 end
 
 ---------------------------------------
@@ -255,11 +225,12 @@ end
 -- @param event Keybord event.
 ---------------------------------------
 function M:onKeyDown(event)
-    if self.sceneHandler.onKeyDown then
+    local target = event.target
+    self:dispatchEvent(event)
+    event.target = target
+
+    if not event.stoped and self.sceneHandler.onKeyDown then
         self.sceneHandler.onKeyDown(event)
-    end
-    if self:hasEventListener(M.EVENT_KEY_DOWN) then
-        self:dispatchEvent(table.copy(event, EC_KEY_DOWN))
     end
 end
 
@@ -268,11 +239,12 @@ end
 -- @param event Keybord event.
 ---------------------------------------
 function M:onKeyUp(event)
-    if self.sceneHandler.onKeyUp then
+    local target = event.target
+    self:dispatchEvent(event)
+    event.target = target
+
+    if not event.stoped and self.sceneHandler.onKeyUp then
         self.sceneHandler.onKeyUp(event)
-    end
-    if self:hasEventListener(M.EVENT_KEY_UP) then
-        self:dispatchEvent(table.copy(event, EC_KEY_UP))
     end
 end
 
@@ -281,13 +253,14 @@ end
 -- @param event Event.
 ---------------------------------------
 function M:onTouchDown(event)
-    self.touchDownFlag = true
-    if self.sceneHandler.onTouchDown then
+    local target = event.target
+    self:dispatchEvent(event)
+    event.target = target
+
+    if not event.stoped and self.sceneHandler.onTouchDown then
         self.sceneHandler.onTouchDown(event)
     end
-    if self:hasEventListener(M.EVENT_TOUCH_DOWN) then
-        self:dispatchEvent(table.copy(event, EC_TOUCH_DOWN))
-    end
+    
 end
 
 ---------------------------------------
@@ -295,12 +268,12 @@ end
 -- @param event Event.
 ---------------------------------------
 function M:onTouchUp(event)
-    if self.sceneHandler.onTouchUp and self.touchDownFlag then
-        self.touchDownFlag = false
+    local target = event.target
+    self:dispatchEvent(event)
+    event.target = target
+
+    if not event.stoped and self.sceneHandler.onTouchUp then
         self.sceneHandler.onTouchUp(event)
-    end
-    if self:hasEventListener(M.EVENT_TOUCH_UP) then
-        self:dispatchEvent(table.copy(event, EC_TOUCH_DOWN))
     end
 end
 
@@ -309,11 +282,12 @@ end
 -- @param event Event.
 ---------------------------------------
 function M:onTouchMove(event)
-    if self.sceneHandler.onTouchMove and self.touchDownFlag then
+    local target = event.target
+    self:dispatchEvent(event)
+    event.target = target
+
+    if not event.stoped and self.sceneHandler.onTouchMove then
         self.sceneHandler.onTouchMove(event)
-    end
-    if self:hasEventListener(M.EVENT_TOUCH_MOVE) then
-        self:dispatchEvent(table.copy(event, EC_TOUCH_DOWN))
     end
 end
 
@@ -322,11 +296,12 @@ end
 -- @param event Event.
 ---------------------------------------
 function M:onTouchCancel(event)
-    if self.sceneHandler.onTouchCancel then
+    local target = event.target
+    self:dispatchEvent(event)
+    event.target = target
+
+    if not event.stoped and self.sceneHandler.onTouchCancel then
         self.sceneHandler.onTouchCancel(event)
-    end
-    if self:hasEventListener(M.EVENT_TOUCH_CANCEL) then
-        self:dispatchEvent(table.copy(event, EC_TOUCH_DOWN))
     end
 end
 

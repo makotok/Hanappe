@@ -73,8 +73,3 @@ function onStart()
     sprite5:playAnim("walkUp")
     sprite5:stopAnim()
 end
-
-function onTouchDown()
-    SceneManager:closeScene({animation = "slideToTop"})
-end
-

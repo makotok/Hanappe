@@ -146,7 +146,7 @@ end
 function M:setSkinResizable(value)
     self._skinResizable = value
     if not self._skinResizable then
-        self:invalidate()
+        self:invalidateDisplay()
     end
 end
 
@@ -182,6 +182,7 @@ function M:touchDownHandler(e)
     if self._touching then
         return
     end
+    e:stop()
     
     self._touchIndex = e.idx
     self._touching = true
@@ -200,6 +201,7 @@ function M:touchUpHandler(e)
     if e.idx ~= self._touchIndex then
         return
     end
+    e:stop()
     
     if self._touching and not self:isToggle() then
         self._touching = false
@@ -217,7 +219,8 @@ function M:touchMoveHandler(e)
     if e.idx ~= self._touchIndex then
         return
     end
-
+    e:stop()
+    
     if self._touching and not self:hitTestWorld(e.x, e.y) then
         self._touching = false
         self._touchIndex = nil

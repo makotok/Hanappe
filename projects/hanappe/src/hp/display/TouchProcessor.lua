@@ -56,6 +56,9 @@ end
 local function eventHandle(self, e, o)
     local layer = self._touchLayer
     while o do
+        if o.isTouchEnabled and not o:isTouchEnabled() then
+            break
+        end
         if o.dispatchEvent then
             o:dispatchEvent(e)
         end
@@ -74,40 +77,61 @@ end
 function M:init(layer)
     self._touchLayer        = assert(layer)
     self._touchPoints       = {}
-    self._scene             = nil
-    self:setScene(self._touchLayer:getScene())
+    self._eventSource       = nil
+    self._enabled           = true
 end
 
 --------------------------------------------------------------------------------
--- イベントリスナの待ち受けを開始します.
+-- イベント発生元を設定します.
+-- 典型的には、Sceneインスタンスが設定されます.
 --------------------------------------------------------------------------------
-function M:setScene(scene)
-    if self._scene == scene then
-        return
+function M:setEventSource(eventSource)
+    if self._eventSource then
+        self._eventSource:removeEventListener(Event.TOUCH_DOWN, self.touchDownHandler, self)
+        self._eventSource:removeEventListener(Event.TOUCH_UP, self.touchUpHandler, self)
+        self._eventSource:removeEventListener(Event.TOUCH_MOVE, self.touchMoveHandler, self)
+        self._eventSource:removeEventListener(Event.TOUCH_CANCEL, self.touchCancelHandler, self)
     end
     
-    if self._scene then
-        self._scene:removeEventListener(Event.TOUCH_DOWN, self.touchDownHandler, self)
-        self._scene:removeEventListener(Event.TOUCH_UP, self.touchUpHandler, self)
-        self._scene:removeEventListener(Event.TOUCH_MOVE, self.touchMoveHandler, self)
-        self._scene:removeEventListener(Event.TOUCH_CANCEL, self.touchCancelHandler, self)
-    end
+    self._eventSource = eventSource
     
-    self._scene = scene
-    
-    if self._scene then
-        self._scene:addEventListener(Event.TOUCH_DOWN, self.touchDownHandler, self)
-        self._scene:addEventListener(Event.TOUCH_UP, self.touchUpHandler, self)
-        self._scene:addEventListener(Event.TOUCH_MOVE, self.touchMoveHandler, self)
-        self._scene:addEventListener(Event.TOUCH_CANCEL, self.touchCancelHandler, self)
+    if self._eventSource then
+        self._eventSource:addEventListener(Event.TOUCH_DOWN, self.touchDownHandler, self)
+        self._eventSource:addEventListener(Event.TOUCH_UP, self.touchUpHandler, self)
+        self._eventSource:addEventListener(Event.TOUCH_MOVE, self.touchMoveHandler, self)
+        self._eventSource:addEventListener(Event.TOUCH_CANCEL, self.touchCancelHandler, self)
     end
+end
 
+--------------------------------------------------------------------------------
+-- イベントソースに対する参照を削除します.
+--------------------------------------------------------------------------------
+function M:dispose()
+    self:setEventSource(nil)
+end
+
+--------------------------------------------------------------------------------
+-- プロセッサーが有効かどうか設定します.
+--------------------------------------------------------------------------------
+function M:setEnabled(value)
+    self._enabled = value
+end
+
+--------------------------------------------------------------------------------
+-- プロセッサーが有効かどうか返します.
+--------------------------------------------------------------------------------
+function M:isEnabled()
+    return self._enabled
 end
 
 --------------------------------------------------------------------------------
 -- タッチした時のイベント処理を行います.
 --------------------------------------------------------------------------------
 function M:touchDownHandler(e)
+    if not self:isEnabled() then
+        return
+    end
+    
     local layer = self._touchLayer
 
     local p = getPointByEvent(self, e)
@@ -120,12 +144,19 @@ function M:touchDownHandler(e)
     if p.touchingProp then
         eventHandle(self, te, p.touchingProp)
     end
+    if not te.stoped then
+        layer:dispatchEvent(te)
+    end
 end
 
 ----------------------------------------------------------------
 -- タッチした時のイベント処理を行います.
 ----------------------------------------------------------------
 function M:touchUpHandler(e)
+    if not self:isEnabled() then
+        return
+    end
+
     local layer = self._touchLayer
 
     local p = getPointByEvent(self, e)
@@ -140,6 +171,10 @@ function M:touchUpHandler(e)
         eventHandle(self, te, o)
     end
     
+    if not te.stoped then
+        layer:dispatchEvent(te)
+    end
+    
     table.removeElement(self._touchPoints, p)
 end
 
@@ -147,6 +182,10 @@ end
 -- タッチした時のイベント処理を行います.
 ----------------------------------------------------------------
 function M:touchMoveHandler(e)
+    if not self:isEnabled() then
+        return
+    end
+
     local layer = self._touchLayer
 
     local p = getPointByEvent(self, e)
@@ -160,12 +199,20 @@ function M:touchMoveHandler(e)
     if o and o ~= p.touchingProp then
         eventHandle(self, te, o)
     end
+    
+    if not te.stoped then
+        layer:dispatchEvent(te)
+    end
 end
 
 ----------------------------------------------------------------
 -- タッチした時のイベント処理を行います.
 ----------------------------------------------------------------
 function M:touchCancelHandler(e)
+    if not self:isEnabled() then
+        return
+    end
+
     local layer = self._touchLayer
 
     local p = getPointByEvent(self, e)
@@ -178,6 +225,9 @@ function M:touchCancelHandler(e)
     local o = layer:propForPoint(p.x, p.y, 0)
     if o and o ~= p.touchingProp then
         eventHandle(self, te, o)
+    end
+    if not te.stoped then
+        layer:dispatchEvent(te)
     end
     
     table.removeElement(self._touchPoints, p)

@@ -12,6 +12,8 @@ local EventListener = require("hp/event/EventListener")
 
 local M = class()
 
+local EVENT_CACHE = {}
+
 --------------------------------------------------------------------------------
 -- The constructor.
 -- @param eventType (option)The type of event.
@@ -89,12 +91,19 @@ end
 --------------------------------------------------------------------------------
 -- Dispatches the event.
 --------------------------------------------------------------------------------
-function M:dispatchEvent(event)
-    event = type(event) == "string" and Event(event) or event
+function M:dispatchEvent(event, data)
+    local eventName = type(event) == "string" and event
+    if eventName then
+        event = EVENT_CACHE[eventName] or Event(eventName)
+        EVENT_CACHE[eventName] = nil
+    end
+    
+    assert(event.type)
+
+    event.data = data or event.data
     event.stoped = false
     event.target = self.eventTarget or self
-
-    assert(event.type)
+    
     for key, obj in ipairs(self.eventlisteners) do
         if obj.type == event.type then
             event:setListener(obj.callback, obj.source)
@@ -103,6 +112,10 @@ function M:dispatchEvent(event)
                 break
             end
         end
+    end
+    
+    if eventName then
+        EVENT_CACHE[eventName] = event
     end
 end
 

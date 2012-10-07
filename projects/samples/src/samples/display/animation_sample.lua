@@ -5,17 +5,17 @@ local completeHandler = function(self)
 end    
 
 function onCreate(params)
-    layer = Layer({scene = scene})
+    layer = Layer {scene = scene}
     
-    sprite1 = Sprite({texture = "cathead.png", layer = layer, left = 0, top = 0})
-    sprite2 = Sprite({texture = "cathead.png", layer = layer, left = 0, top = sprite1:getBottom()})
+    sprite1 = Sprite {texture = "cathead.png", layer = layer, left = 0, top = 0}
+    sprite2 = Sprite {texture = "cathead.png", layer = layer, left = 0, top = sprite1:getBottom()}
 
-    sprite3 = SpriteSheet({texture = "actor.png", layer = layer})
+    sprite3 = SpriteSheet {texture = "actor.png", layer = layer}
     sprite3:setTiledSheets(32, 32, 3, 4)
     sprite3:setIndex(2)
     sprite3:setLoc(Application.viewWidth / 2, Application.viewHeight / 2, 0)
 
-    sprite4 = SpriteSheet({texture = "actor.png", layer = layer})
+    sprite4 = SpriteSheet {texture = "actor.png", layer = layer}
     sprite4:setTiledSheets(32, 32, 3, 4)
     sprite4:setIndex(2)
     sprite4:setLeft(sprite3:getRight() + sprite3:getWidth())
@@ -49,8 +49,4 @@ end
 function onStart()
     anim1:play({onComplete = completeHandler})
     anim2:play()
-end
-
-function onTouchDown()
-    SceneManager:closeScene({animation = "fade"})
 end

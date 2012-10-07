@@ -13,10 +13,3 @@ function onCreate(params)
     }
 
 end
-
-function onStart()
-end
-
-function onTouchDown(e)
-    SceneManager:closeScene()
-end

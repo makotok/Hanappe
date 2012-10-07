@@ -42,6 +42,7 @@ function M:initInternal(params)
     self._paddingLeft = 0
     self._paddingRight = 0
     self._direction = M.DIRECTION_VERTICAL
+    self._parentResizable = true
 end
 
 --------------------------------------------------------------------------------
@@ -63,9 +64,10 @@ function M:updateVertical(parent)
     local childrenWidth, childrenHeight = self:getVerticalLayoutSize(children)
     
     local parentWidth, parentHeight = parent:getSize()
-    if parentWidth < childrenWidth or parentHeight < childrenHeight then
-        parentWidth = childrenWidth
-        parentHeight = childrenHeight
+    local parentWidth = parentWidth > childrenWidth and parentWidth or childrenWidth
+    local parentHeight = parentHeight > childrenHeight and parentHeight or childrenHeight
+    
+    if self._parentResizable then
         parent:setSize(parentWidth, parentHeight)
     end
     
@@ -88,12 +90,13 @@ function M:updateHorizotal(parent)
     local childrenWidth, childrenHeight = self:getHorizotalLayoutSize(children)
 
     local parentWidth, parentHeight = parent:getSize()
-    if parentWidth < childrenWidth or parentHeight < childrenHeight then
-        parentWidth = childrenWidth
-        parentHeight = childrenHeight
+    local parentWidth = parentWidth > childrenWidth and parentWidth or childrenWidth
+    local parentHeight = parentHeight > childrenHeight and parentHeight or childrenHeight
+    
+    if self._parentResizable then
         parent:setSize(parentWidth, parentHeight)
     end
-    
+
     local childX = self:getChildX(parentWidth, childrenWidth)
 
     for i, child in ipairs(children) do

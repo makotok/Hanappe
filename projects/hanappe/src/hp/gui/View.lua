@@ -51,8 +51,6 @@ end
 function M:initComponent(params)
     self:initLayer()
     super.initComponent(self, params)
-    
-    Executors.callLoop(self.enterFrame, self)
 end
 
 --------------------------------------------------------------------------------
@@ -72,15 +70,6 @@ end
 --------------------------------------------------------------------------------
 function M:setScene(scene)
     self:getLayer():setScene(scene)
-end
-
---------------------------------------------------------------------------------
--- フレーム単位の処理を行います.
---------------------------------------------------------------------------------
-function M:enterFrame()
-    if self._invalidFlag then
-        self:updateComponent()
-    end
 end
 
 --------------------------------------------------------------------------------

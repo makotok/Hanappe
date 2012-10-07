@@ -16,7 +16,7 @@ local Resizable             = require "hp/display/Resizable"
 local TouchProcessor        = require "hp/display/TouchProcessor"
 
 -- class define
-local M                     = class(DisplayObject)
+local M                     = class(DisplayObject, Resizable)
 local MOAILayerInterface    = MOAILayer.getInterfaceTable()
 M.MOAI_CLASS                = MOAILayer
 
@@ -24,9 +24,9 @@ M.MOAI_CLASS                = MOAILayer
 -- The constructor.
 -- @param params (option)Parameter is set to Object.<br>
 ----------------------------------------------------------------
-function M:init(params, Resizable)
+function M:init(params)
     DisplayObject.init(self)
-    self._touchEnabled = false
+    self:setTouchEnabled(false)
     
     params = params or {}
 
@@ -208,7 +208,7 @@ function M:setScene(scene)
     end
     
     if self._touchProcessor then
-        self._touchProcessor:setScene(scene)
+        self._touchProcessor:setEventSource(scene)
     end
 end
 
@@ -245,16 +245,24 @@ function M:setTouchEnabled(value)
     
     self._touchEnabled = value
     
-    if self._touchProcessor then
-        self._touchProcessor:setScene(nil)
-    end
-    if value then
+    if value and not self._touchProcessor then
         self._touchProcessor = TouchProcessor(self)
+        self._touchProcessor:setEventSource(self:getScene())
+    end
+    if self._touchProcessor then
+        self._touchProcessor:setEnabled(value)
     end
 end
 
-function M:isTouchEnabled()
-    return self._touchEnabled
+--------------------------------------------------------------------------------
+-- Sets the TouchProcessor object.
+--------------------------------------------------------------------------------
+function M:setTouchProcessor(value)
+    if self._touchProcessor then
+        self._touchProcessor:dispose(nil)
+        self._touchProcessor = nil
+    end
+    self._touchProcessor = value
 end
 
 --------------------------------------------------------------------------------
@@ -263,6 +271,9 @@ end
 function M:dispose()
     self:setScene(nil)
     self:clear()
+    if self._touchProcessor then
+        self._touchProcessor:dispose()
+    end
 end
 
 --------------------------------------------------------------------------------

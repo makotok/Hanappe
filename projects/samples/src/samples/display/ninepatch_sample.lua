@@ -20,7 +20,3 @@ function onCreate(params)
     ninePatch:setLayer(layer)
 
 end
-
-function onTouchDown()
-    SceneManager:closeScene({animation = "slideToBottom"})
-end

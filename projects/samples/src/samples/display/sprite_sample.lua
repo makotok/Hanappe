@@ -32,33 +32,4 @@ function onCreate(params)
     sprite6 = Sprite("cathead.png")
     sprite6:setPos(sprite1:getRight() + 10, sprite5:getBottom() + 10)
     sprite6:setLayer(layer)
-
-    printProperties(sprite1)
-    printProperties(sprite2)
-    printProperties(sprite3)
-    printProperties(sprite4)
-    printProperties(sprite5)
-
-end
-
-function onTouchDown()
-    SceneManager:closeScene({animation = "slideToBottom"})
-end
-
-function printProperties(obj)
-    -- DisplayObject base properties
-    print("----- DisplayObject properties -----")
-    print("width", obj:getWidth())
-    print("height", obj:getHeight())
-    print("size", obj:getSize())
-    print("left", obj:getLeft())
-    print("right", obj:getRight())
-    print("top", obj:getTop())
-    print("bottom", obj:getBottom())
-    print("color", obj:getColor())
-    print("red", obj:getRed())
-    print("green", obj:getGreen())
-    print("blue", obj:getBlue())
-    print("alpha", obj:getAlpha())
-
 end

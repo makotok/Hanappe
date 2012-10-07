@@ -36,7 +36,3 @@ function onStart()
     g6:moveScl(4, 4, 0, 3)
     g7:moveLoc(100, 100, 0, 3)
 end
-
-function onTouchDown()
-    SceneManager:closeScene({animation = "fade"})
-end

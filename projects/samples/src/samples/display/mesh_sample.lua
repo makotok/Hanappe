@@ -76,8 +76,3 @@ function onStart()
         Animation(letterI, 1):wait(0.4):seekColor(0, 0, 0, 1):seekColor(1, 1, 1, 1)
     ):play()
 end
-
-function onTouchDown()
-    SceneManager:closeScene({animation = "slideToLeft"})
-end
-

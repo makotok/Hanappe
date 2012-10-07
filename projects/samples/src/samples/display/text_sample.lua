@@ -27,8 +27,3 @@ function onCreate(params)
     textbox3:setRGBA(100, 100, 100, 1)
     textbox3:setFont("VL-PGothic")
 end
-
-function onTouchDown(e)
-    SceneManager:closeScene({animation = "slideToLeft"})
-end
-

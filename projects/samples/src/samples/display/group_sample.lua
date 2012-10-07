@@ -24,7 +24,3 @@ function onStart()
     group:moveRot(0, 0, 180, 3)
     group:moveColor(-1, -1, -1, -1, 3)
 end
-
-function onTouchDown()
-    SceneManager:closeScene({animation = "fade"})
-end

@@ -57,6 +57,7 @@ end
 -- The constructor.
 --------------------------------------------------------------------------------
 function M:init(...)
+    self._touchEnabled = true
 end
 
 --------------------------------------------------------------------------------
@@ -161,6 +162,34 @@ end
 --------------------------------------------------------------------------------
 function M:getLayer()
     return self.layer
+end
+
+--------------------------------------------------------------------------------
+-- Event Handler
+--------------------------------------------------------------------------------
+function M:getNestLevel()
+    local parent = self:getParent()
+    if parent and parent.getNestLevel then
+        return parent:getNestLevel() + 1
+    end
+    return 1
+end
+
+
+--------------------------------------------------------------------------------
+-- Sets the touch enabled.
+-- @param value touch enabled.
+--------------------------------------------------------------------------------
+function M:setTouchEnabled(value)
+    self._touchEnabled = value
+end
+
+--------------------------------------------------------------------------------
+-- Sets the touch enabled.
+-- @param value touch enabled.
+--------------------------------------------------------------------------------
+function M:isTouchEnabled()
+    return self._touchEnabled
 end
 
 --------------------------------------------------------------------------------

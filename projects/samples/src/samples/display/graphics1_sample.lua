@@ -42,7 +42,3 @@ function onStart()
     g1:moveRot(0, 0, 45, 3)
     g2:moveRot(0, 0, 45, 3)    
 end
-
-function onTouchDown()
-    SceneManager:closeScene({animation = "changeNow"})
-end

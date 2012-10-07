@@ -14,10 +14,11 @@ local Event             = require "hp/event/Event"
 local Executors         = require "hp/util/Executors"
 local ThemeManager      = require "hp/manager/ThemeManager"
 local FocusManager      = require "hp/manager/FocusManager"
+local LayoutManager     = require "hp/manager/LayoutManager"
 
 -- class define
-local M                 = class(Group)
 local super             = Group
+local M                 = class(super)
 local MOAIPropInterface = MOAIProp.getInterfaceTable()
 
 -- Events
@@ -39,6 +40,8 @@ M.EVENT_CHILD_REMOVED   = "childRemoved"
 M.STATE_NORMAL          = "normal"
 M.STATE_DISABLED        = "disabled"
 
+local function dummeyIsIncludeLayout() return false end
+
 --------------------------------------------------------------------------------
 -- コンストラクタです.
 -- コンストラクタは継承しないでください.
@@ -49,7 +52,6 @@ function M:init(params)
     self:initInternal()
     self:initEventListeners()
     self:initComponent(params)
-    self:updateComponent()
 end
 
 --------------------------------------------------------------------------------
@@ -63,10 +65,11 @@ function M:initInternal()
     self._layout = nil
     self._includeLayout = true
     self._initialized = false
-    self._invalidFlag = true
+    self._invalidDisplayFlag = false
+    self._invalidLayoutFlag = false
     self._currentState = M.STATE_NORMAL
     self._graphics = Graphics {parent = self}
-    self._graphics.isIncludeLayout = function() return false end
+    self._graphics.isIncludeLayout = dummeyIsIncludeLayout
 end
 
 --------------------------------------------------------------------------------
@@ -86,11 +89,16 @@ end
 -- コンポーネントの初期化処理を行います.
 --------------------------------------------------------------------------------
 function M:initComponent(params)
+    if self._initialized then
+        return
+    end
+    
     self:initTheme(params)
     self:initStyles(params)
     self:createChildren()
     self:copyParams(params)
 
+    self:invalidateAll()
     self._initialized = true
 end
 
@@ -130,17 +138,75 @@ function M:createChildren()
 end
 
 --------------------------------------------------------------------------------
+-- レイアウトの更新処理をスケジューリングします.
+--------------------------------------------------------------------------------
+function M:invalidateAll()
+    self:invalidateDisplay()
+    self:invalidateLayout()
+end
+
+--------------------------------------------------------------------------------
+-- 表示の更新処理をスケジューリングします.
+--------------------------------------------------------------------------------
+function M:invalidateDisplay()
+    self._invalidDisplayFlag = true
+    LayoutManager:invalidateDisplay(self)
+end
+
+--------------------------------------------------------------------------------
 -- 表示、レイアウトの更新処理をスケジューリングします.
 --------------------------------------------------------------------------------
-function M:invalidate()
-    if not self._invalidFlag then
-        local parent = self:getParent()
-        
-        if parent and parent.isComponent then
-            parent:invalidate()
+function M:invalidateLayout()
+    local parent = self:getParent()
+    
+    if parent and parent.isComponent then
+        parent:invalidateLayout()
+    end
+    
+    LayoutManager:invalidateLayout(self)
+    self._invalidLayoutFlag = true
+end
+
+--------------------------------------------------------------------------------
+-- 表示、レイアウトの検証を行います.
+--------------------------------------------------------------------------------
+function M:validateAll()
+    self:validateDisplay()
+    self:validateLayout()
+end
+
+--------------------------------------------------------------------------------
+-- 表示の検証を行います.
+--------------------------------------------------------------------------------
+function M:validateDisplay(updateChildrenFlag)
+    if updateChildrenFlag then
+        for i, child in ipairs(self:getChildren()) do
+            if child.validateDisplay then
+                child:validateDisplay()
+            end
         end
-        
-        self._invalidFlag = true
+    end
+
+    if self._invalidDisplayFlag then
+        self:updateDisplay()
+        self._invalidDisplayFlag = false
+    end
+end
+
+--------------------------------------------------------------------------------
+-- レイアウトの検証を行います.
+--------------------------------------------------------------------------------
+function M:validateLayout(updateChildrenFlag)
+    if updateChildrenFlag then
+        for i, child in ipairs(self:getChildren()) do
+            if child.validateLayout then
+                child:validateLayout()
+            end
+        end
+    end
+    if self._invalidLayoutFlag then
+        self:updateLayout()
+        self._invalidLayoutFlag = false
     end
 end
 
@@ -149,21 +215,8 @@ end
 -- この処理はコストが高い場合が多いので、できるだけ呼ばないようにしてください.
 --------------------------------------------------------------------------------
 function M:updateComponent()
-    self:updateChildren()
     self:updateDisplay()
     self:updateLayout()
-    self._invalidFlag = false
-end
-
---------------------------------------------------------------------------------
--- 子コンポーネントの更新処理を行います.
---------------------------------------------------------------------------------
-function M:updateChildren()
-    for i, child in ipairs(self:getChildren()) do
-        if child.isComponent then
-            child:updateComponent()
-        end
-    end
 end
 
 --------------------------------------------------------------------------------
@@ -190,7 +243,7 @@ function M:addChild(child)
     if super.addChild(self, child) then
         child:dispatchEvent(M.EVENT_ADDED)
         self:dispatchEvent(M.EVENT_CHILD_ADDED)
-        self:invalidate()
+        self:invalidateLayout()
         return true
     end
     return false
@@ -208,7 +261,7 @@ function M:removeChild(child)
     if super.removeChild(self, child) then
         child:dispatchEvent(M.EVENT_REMOVED)
         self:dispatchEvent(M.EVENT_CHILD_REMOVED)
-        self:invalidate()
+        self:invalidateLayout()
         return true
     end
     return false
@@ -225,7 +278,7 @@ function M:setCurrentState(state)
         e.state = state
         self:dispatchEvent(e)
         
-        self:invalidate()
+        self:invalidateDisplay()
     end
 end
 
@@ -262,7 +315,7 @@ function M:setEnabled(value)
             self:setCurrentState(M.STATE_DISABLED)
         end
         
-        self:invalidate()
+        self:invalidateDisplay()
     end
 end
 
@@ -271,6 +324,13 @@ end
 --------------------------------------------------------------------------------
 function M:isEnabled()
     return self._enabled
+end
+
+--------------------------------------------------------------------------------
+-- タッチ処理が有効かどうか返します.
+--------------------------------------------------------------------------------
+function M:isTouchEnabled()
+    return self._touchEnabled and self._enabled
 end
 
 --------------------------------------------------------------------------------
@@ -329,7 +389,7 @@ end
 --------------------------------------------------------------------------------
 function M:setLayout(value)
     self._layout = value
-    self:invalidate()
+    self:invalidateLayout()
 end
 
 --------------------------------------------------------------------------------
@@ -344,7 +404,7 @@ end
 --------------------------------------------------------------------------------
 function M:setIncludeLayout(value)
     self._includeLayout = value
-    self:invalidate()
+    self:invalidateLayout()
 end
 
 --------------------------------------------------------------------------------
@@ -373,7 +433,8 @@ function M:setSize(width, height)
         e.newWidth, e.newHeight = width, height
         self:dispatchEvent(e)
         
-        self:invalidate()
+        self:invalidateDisplay()
+        self:invalidateLayout()
         self._graphics:setSize(width, height)
     end
 end
@@ -392,7 +453,7 @@ end
 function M:setTheme(value)
     if self._theme ~= value then
         self._theme = value
-        self:invalidate()
+        self:invalidateDisplay()
     end
 end
 
@@ -418,7 +479,7 @@ end
 function M:setStyles(styles)
     if self._styles ~= styles then
         self._styles = assert(styles)
-        self:invalidate()
+        self:invalidateDisplay()
     end
 end
 
@@ -454,7 +515,7 @@ function M:setStyle(state, name, value)
     local stateStyles = self._styles[state]
     stateStyles[name] = value
     
-    self:invalidate()
+    self:invalidateDisplay()
 end
 
 --------------------------------------------------------------------------------

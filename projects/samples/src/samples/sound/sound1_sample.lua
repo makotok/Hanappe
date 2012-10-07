@@ -11,13 +11,6 @@ function onCreate(params)
         pos = {10, 10},
         onClick = button1_onClick,
     }
-    button2 = Button {
-        parent = view,
-        text = "back",
-        size = {200, 50},
-        pos = {10, button1:getBottom() + 10},
-        onClick = button2_onClick,
-    }
     
     sound = SoundManager:getSound("mono16.wav")
 end
@@ -30,9 +23,4 @@ function button1_onClick(e)
         sound:play()
         button1:setText("stop")
     end
-end
-
-function button2_onClick(e)
-    sound:stop()
-    SceneManager:closeScene()
 end

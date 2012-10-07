@@ -13,8 +13,8 @@ local Component         = require "hp/gui/Component"
 local Executors         = require "hp/util/Executors"
 
 -- class
-local M                 = class(Component)
 local super             = Component
+local M                 = class(Component)
 
 ----------------------------------------------------------------
 -- コンストラクタです.
@@ -33,6 +33,7 @@ function M:initInternal(params)
     self._minScrollingForceY = 0.1
     self._touchDownFlag = false
     self._touchDownIndex = nil
+    self._themeName = "Scroller"
     
     Executors.callLoop(self.enterFrame, self)
 end
@@ -251,6 +252,14 @@ function M:ajustScrollSize()
     height = height >= minHeight and height or minHeight
     
     self:setSize(width, height)
+end
+
+--------------------------------------------------------------------------------
+-- 親を設定した際、スクロールサイズも変更するようにします.
+--------------------------------------------------------------------------------
+function M:setParent(value)
+    super.setParent(self, value)
+    self:ajustScrollSize()
 end
 
 --------------------------------------------------------------------------------

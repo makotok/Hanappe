@@ -39,6 +39,7 @@ local SCENE_ITEMS = {
     {text = "panel",            scene = "samples/gui/panel_sample",             animation = "fade"},
     {text = "messagebox",       scene = "samples/gui/messagebox_sample",        animation = "fade"},
     {text = "scroller",         scene = "samples/gui/scroller_sample",          animation = "fade"},
+    {text = "game1",            scene = "samples/game/game1_sample",            animation = "fade"},
 }
 
 --------------------------------------------------------------------------------
@@ -48,24 +49,30 @@ local SCENE_ITEMS = {
 local fpsMonitor = FpsMonitor(10)
 
 --------------------------------------------------------------------------------
--- Create Scene
+-- Event Handler
 --------------------------------------------------------------------------------
+
 function onCreate(params)
     createBackgroundLayer()
     createGuiView()
     fpsMonitor:play()
 end
 
---------------------------------------------------------------------------------
--- Event Handler
---------------------------------------------------------------------------------
-
 function onButtonClick(e)
     local target = e.target
     local item = target and target.item or nil
     if item then
-        SceneManager:openScene(item.scene, {animation = item.animation})
+        local childScene = SceneManager:openScene(item.scene, {animation = item.animation})
+        createBackButton(childScene)
     end
+end
+
+function onBackButtonClick(e)
+    SceneManager:closeScene({animation = "slideToRight"})
+end
+
+function onExitButtonClick(e)
+    os.exit(0)
 end
 
 --------------------------------------------------------------------------------
@@ -103,18 +110,41 @@ function createGuiView()
     
     local HALF_WIDTH = guiView:getWidth() / 2
     for i, item in ipairs(SCENE_ITEMS) do
-        local button = createButton(item, scroller)
+        local button = createButton(item.text, scroller)
+        button.item = item
         button:setPos((HALF_WIDTH - button:getWidth()) / 2 + ((i - 1) % 2 * HALF_WIDTH), 70 + math.floor((i - 1) / 2) * 60)
     end
+    
+    exitButton = Button {
+        text = "Exit",
+        size = {100, 50},
+        pos = {0, 0},
+        parent = scroller,
+        onClick = onExitButtonClick,
+    }
 end
 
-function createButton(item, parent)
+function createButton(text, parent)
     local button = Button {
-        text = item.text,
+        text = text,
         size = {200, 50},
-        parent = scroller,
+        parent = parent,
         onClick = onButtonClick,
     }
-    button.item = item
+    return button
+end
+
+function createBackButton(parentScene)
+    local view = View {
+        scene = parentScene,
+    }
+    local button = Button {
+        text = "Back",
+        alpha = 0.8,
+        size = {100, 50},
+        parent = view,
+        onClick = onBackButtonClick,
+    }
+    button:setRight(view:getWidth())
     return button
 end
