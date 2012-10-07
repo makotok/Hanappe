@@ -13,4 +13,3 @@ call ant build
 :: run
 cd %DEST_DIR%
 %MOAI_BIN% %CONFIG_LUA% %MAIN_LAU%
-pause
