@@ -147,6 +147,9 @@ function M:touchDownHandler(e)
     if not te.stoped then
         layer:dispatchEvent(te)
     end
+    if te.stoped then
+        e:stop()
+    end
 end
 
 ----------------------------------------------------------------
@@ -173,6 +176,9 @@ function M:touchUpHandler(e)
     
     if not te.stoped then
         layer:dispatchEvent(te)
+    end
+    if te.stoped then
+        e:stop()
     end
     
     table.removeElement(self._touchPoints, p)
@@ -203,6 +209,9 @@ function M:touchMoveHandler(e)
     if not te.stoped then
         layer:dispatchEvent(te)
     end
+    if te.stoped then
+        e:stop()
+    end
 end
 
 ----------------------------------------------------------------
@@ -228,6 +237,9 @@ function M:touchCancelHandler(e)
     end
     if not te.stoped then
         layer:dispatchEvent(te)
+    end
+    if te.stoped then
+        e:stop()
     end
     
     table.removeElement(self._touchPoints, p)

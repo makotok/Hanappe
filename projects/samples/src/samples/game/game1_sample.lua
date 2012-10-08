@@ -16,6 +16,8 @@ local PLAYER_MOVE_VALUES = {
     right = 6
 }
 
+local PRELOAD_FONT = FontManager:newPreloadFont("VL-PGothic", 24)
+
 local GAME_WIDTH = Application.viewWidth
 local GAME_HEIGHT = Application.viewHeight
 
@@ -120,9 +122,13 @@ function makeGameLayer()
 end
 
 function makePlayer()
-    player = SpriteSheet {texture = "actor.png", layer = gameLayer}
-    player:setTiledSheets(32, 32)
-    player:setSheetAnims(PLAYER_ANIMS)
+    player = SpriteSheet {
+        texture = "actor.png",
+        tiledSheets = {32, 32},
+        sheetAnims = {PLAYER_ANIMS},
+        layer = gameLayer,
+    }
+    
     player.body = physicsWorld:createBodyFromProp(player, nil, {xMin = -12, xMax = 12, friction = 0})
     player.body:setPos(gameLayer:getViewWidth() / 2, 32)
     player.body:setFixedRotation(true)
@@ -209,9 +215,13 @@ function makeGuiView()
 end
 
 function makeScoreLabel()
-    scoreLabel = TextLabel {text = "SCORE:0", layer = guiView}
-    scoreLabel:setSize(150, 30)
-    scoreLabel:setPos(5, 5)
+    scoreLabel = TextLabel {
+        text = "SCORE:0",
+        size = {150, 30},
+        pos = {5, 5},
+        font = PRELOAD_FONT,
+        layer = guiView,
+    }
     scoreLabel.scorePoint = 0
 
     function scoreLabel:setScore(i)
@@ -225,9 +235,13 @@ function makeScoreLabel()
 end
 
 function makeLevelLabel()
-    levelLabel = TextLabel {text = "LEVEL:1", layer = guiView}
-    levelLabel:setSize(150, 30)
-    levelLabel:setPos(5, scoreLabel:getBottom())
+    levelLabel = TextLabel {
+        text = "LEVEL:1",
+        size = {150, 30},
+        pos = {5, scoreLabel:getBottom()},
+        font = PRELOAD_FONT,
+        layer = guiView,
+    }
     levelLabel.nextScorePoint = SCORE_NEXT
     levelLabel.level = 1
     
@@ -240,7 +254,7 @@ function makeLevelLabel()
         self:setColor(1, 0.5, 0.5, 1)
         
         self:seekScl(1, 1, 1, 1)
-        self:seekColor(1, 1, 1, 1, 1)
+        self:seekColor(0, 0, 0, 1, 1)
         
         floorSpeed = floorSpeed - 0.5
     end
@@ -260,6 +274,7 @@ function makeHitpointBar()
     local label = TextLabel {
         text = "HP:",
         size = {40, 30},
+        font = PRELOAD_FONT,
         parent = hitpointBar,
     }
     

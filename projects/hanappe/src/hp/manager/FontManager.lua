@@ -19,6 +19,7 @@ M.fontPaths                     = {
     ["VL-PGothic"] = "fonts/VL-PGothic.ttf",
     ["arial-rounded"] = "fonts/arial-rounded.ttf",
 }
+M.charcodes = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-'
 
 --------------------------------------------------------------------------------
 -- Requests the texture. <br>
@@ -54,6 +55,21 @@ function M:newFont(fontName)
     local font = MOAIFont.new()
     font:load(path)
     font.path = path
+    return font
+end
+
+--------------------------------------------------------------------------------
+-- Return you have generated the font. <br>
+-- @return MOAIFont instance.
+--------------------------------------------------------------------------------
+function M:newPreloadFont(fontName, points, charcodes, dpi)
+    local path = ResourceManager:getFilePath(M.fontPaths[fontName] or fontName)
+    charcodes = charcodes or M.charcodes
+
+    local font = MOAIFont.new()
+    font:load(path)
+    font:preloadGlyphs(charcodes, points, dpi)
+    
     return font
 end
 

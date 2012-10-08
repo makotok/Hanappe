@@ -21,6 +21,7 @@ local SCENE_ITEMS = {
     {text = "graphics1",        scene = "samples/display/graphics1_sample",     animation = "changeNow"},
     {text = "graphics2",        scene = "samples/display/graphics2_sample",     animation = "fade"},
     {text = "input",            scene = "samples/display/input_sample",         animation = "crossFade"},
+    {text = "touch",            scene = "samples/display/touch_sample",         animation = "fade"},
     {text = "animation",        scene = "samples/display/animation_sample",     animation = "fade"},
     {text = "scene",            scene = "samples/display/scene_sample",         animation = "popIn"},
     {text = "moai",             scene = "samples/display/moai_sample",          animation = nil},
