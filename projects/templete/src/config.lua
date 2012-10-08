@@ -7,7 +7,7 @@ local config = {
     screenHeight = 320,
     viewWidth = 320,
     landscape = true,
-    mainScene = "scenes/title_scene",
+    mainScene = "scenes/main_scene",
 }
 
 return config
