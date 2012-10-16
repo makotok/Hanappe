@@ -97,8 +97,6 @@ function M:setSelectedItem(value)
     
     if value and table.indexOf(self._container:getChildren(), value) > 0 then
         self._selectedItem
-    else
-        
     end
 end
 
@@ -119,10 +117,6 @@ function M:setRowCount(value)
         self._rowCountChanged = true
         self:invalidateAll()
     end
-end
-
-function M:calcRowCount()
-    self:
 end
 
 --------------------------------------------------------------------------------
