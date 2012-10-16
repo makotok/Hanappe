@@ -1,2 +1,2 @@
-Hanappe is large, so I have to re-implement small library.
-Please use your liking.
+This library is a library that implements a small re-based on Hanappe.
+The basic usage is similar.
