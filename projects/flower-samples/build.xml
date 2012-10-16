@@ -1,0 +1,27 @@
+<project name="example" default="build" basedir=".">
+
+  <!-- Setting -->
+  <property name="flower.base.dir" value="../flower"/>
+  <property name="dest.dir" value="dest"/>
+  
+  <!-- Targets -->
+  <!-- Clean -->
+  <target name="clean">
+    <mkdir dir="${dest.dir}"/>
+    <delete>
+      <fileset dir="${dest.dir}"/>
+    </delete>
+  </target>
+  
+  <!-- Build -->
+  <target name="build" depends="clean">
+    <copy todir="${dest.dir}" overwrite="true">
+      <fileset dir="${flower.base.dir}/assets"/>
+      <fileset dir="${flower.base.dir}/src"/>
+    </copy>
+    <copy todir="${dest.dir}" overwrite="true">
+      <fileset dir="assets"/>
+      <fileset dir="src"/>
+    </copy>
+  </target>
+</project>
