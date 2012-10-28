@@ -22,6 +22,7 @@ M.MOAI_CLASS                    = MOAITextBox
 
 -- constraints
 M.DEFAULT_FONT                  = "fonts/VL-PGothic.ttf"
+M.DEFAULT_CHARCODES             = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-"
 M.DEFAULT_TEXT_SIZE             = 24
 M.DEFAULT_COLOR                 = {1, 1, 1, 1}
 
@@ -100,7 +101,7 @@ end
 --------------------------------------------------------------------------------
 function M:setFont(font)
     if type(font) == "string" then
-        font = FontManager:request(font)
+        font = FontManager:request(font, self._textSizePoints or M.DEFAULT_TEXT_SIZE, M.DEFAULT_CHARCODES, self._textSizeDpi)
     end
     MOAITextBoxInterface.setFont(self, font)
 end

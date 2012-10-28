@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- 表示オブジェクトに関するラッパーモジュールです.
+-- Moai SDK のコーディングを楽にするフレームワークです.
 -- 
 --
 --
@@ -15,10 +15,16 @@ local class
 local Event
 local EventListener
 local EventDispatcher
-local Input
+local Executors
+local Resources
+local Runtime
+local InputMgr
+local RenderMgr
+local SceneMgr
 local DisplayObject
 local Group
 local Scene
+local SceneAnimations
 local Layer
 local Camera
 local Image
@@ -26,28 +32,15 @@ local SheetImage
 local MapImage
 local MovieClip
 local Label
+local Rect
 local Font
 local Texture
-local Rect
+local Mesh
+local TouchHandler
 
---------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 -- Variables
---------------------------------------------------------------------------------
-
--- Texture cache
-local textureCache = setmetatable({}, {__mode = "v"})
-
--- Font cache
-local fontCache = {}
-
--- Event cache
-local eventCache = {}
-
--- Screen Size
-local screenWidth, screenHeight
-
--- Viewport Size
-local viewWidth, viewHeight
+----------------------------------------------------------------------------------------------------
 
 -- Sensors
 local pointerSensor     = MOAIInputMgr.device.pointer
@@ -55,21 +48,75 @@ local mouseLeftSensor   = MOAIInputMgr.device.mouseLeft
 local touchSensor       = MOAIInputMgr.device.touch
 local keyboardSensor    = MOAIInputMgr.device.keyboard
 
--- Input data
-local pointer           = {x = 0, y = 0, down = false}
-
 ----------------------------------------------------------------------------------------------------
--- Constraints
+-- Public functions
 ----------------------------------------------------------------------------------------------------
 
---- Default font
-M.DEFAULT_FONT = "VL-PGothic.ttf"
+--------------------------------------------------------------------------------
+-- Windowを起動します.
+--------------------------------------------------------------------------------
+function M.openWindow(title, width, height, scale)
+    scale = scale or 1    
+    MOAISim.openWindow(title, width, height)
+    M.screenWidth, M.screenHeight = width, height
+    M.viewWidth, M.viewHeight = math.floor(width / scale), math.floor(height / scale)
+    M.viewScale = scale
+    
+    InputMgr:initialize()
+    RenderMgr:initialize()
+    SceneMgr:initialize()
+end
 
---- Default font charcodes
-M.DEFAULT_FONT_CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-"
+--------------------------------------------------------------------------------
+-- テクスチャを返します.
+-- テクスチャが引数に指定された場合はそのまま返します.
+--------------------------------------------------------------------------------
+function M.getTexture(path)
+    return Resources.getTexture(path)
+end
 
---- Default font points
-M.DEFAULT_FONT_POINTS = 24
+--------------------------------------------------------------------------------
+-- MoaiのTexturePacker形式のデータを読み込んで返します.
+--------------------------------------------------------------------------------
+function M.getTextureAtlas(luaFilePath, texture)
+    return Resources.getTextureAtles(luaFilePath, texture)
+end
+
+--------------------------------------------------------------------------------
+-- 生成済フォントを返します.
+-- 存在しない場合はフォントを生成して返します.
+--------------------------------------------------------------------------------
+function M.getFont(path, charcodes, points, dpi)
+    return Resources.getFont(path, charcodes, points, dpi)
+end
+
+--------------------------------------------------------------------------------
+-- シーンをロードします.
+--------------------------------------------------------------------------------
+function M.loadScene(sceneName, params)
+    return SceneMgr:loadScene(sceneName, params)
+end
+
+--------------------------------------------------------------------------------
+-- シーンを起動します.
+--------------------------------------------------------------------------------
+function M.openScene(sceneName, params)
+    return SceneMgr:openScene(sceneName, params)
+end
+
+--------------------------------------------------------------------------------
+-- 指定したシーンに遷移します.
+--------------------------------------------------------------------------------
+function M.gotoScene(sceneName, params)
+    return SceneMgr:gotoScene(sceneName, params)
+end
+
+--------------------------------------------------------------------------------
+-- 現在のシーンをクローズします.
+--------------------------------------------------------------------------------
+function M.closeScene(params)
+    return SceneMgr:closeScene(params)
+end
 
 ----------------------------------------------------------------------------------------------------
 -- class
@@ -233,7 +280,7 @@ end
 function table.removeElement(t, o)
     local i = table.indexOf(t, o)
     if i > 0 then
-        M.remove(t, i)
+        table.remove(t, i)
     end
     return i
 end
@@ -352,6 +399,167 @@ function math.clamp( v, min, max )
 end
 
 ----------------------------------------------------------------------------------------------------
+-- This is a utility class to execute.<br>
+-- @class table
+-- @name Executors
+----------------------------------------------------------------------------------------------------
+Executors = {}
+M.Executors = Executors
+
+--------------------------------------------------------------------------------
+-- Run the specified function looping <br>
+-- @param func Target function.
+-- @param ... Argument.
+--------------------------------------------------------------------------------
+function Executors.callLoop(func, ...)
+    local thread = MOAICoroutine.new()
+    local args = {...}
+    thread:run(
+        function()
+            while true do
+                if func(unpack(args)) then
+                    break
+                end
+                coroutine.yield()
+            end
+        end
+    )
+end
+
+--------------------------------------------------------------------------------
+-- Run the specified function delay. <br>
+-- @param func Target function.
+-- @param ... Argument.
+--------------------------------------------------------------------------------
+function Executors.callLater(func, ...)
+    Executors.callLaterFrame(0, func, ...)
+end
+
+--------------------------------------------------------------------------------
+-- Run the specified function delay. <br>
+-- @param frame Delay frame count.
+-- @param func Target function.
+-- @param ... Argument.
+--------------------------------------------------------------------------------
+function Executors.callLaterFrame(frame, func, ...)
+    local thread = MOAICoroutine.new()
+    local args = {...}
+    local count = 0
+    thread:run(
+        function()
+            while count < frame do
+                count = count + 1
+                coroutine.yield()
+            end
+            func(unpack(args))
+        end
+    )
+end
+
+--------------------------------------------------------------------------------
+-- Run the specified function delay. <br>
+-- @param time Delay seconds.
+-- @param func Target function.
+-- @param ... Argument.
+--------------------------------------------------------------------------------
+function Executors.callLaterTime(time, func, ...)
+    local args = {...}
+    local timer = MOAITimer.new()
+    timer:setSpan(time)
+    timer:setListener(MOAITimer.EVENT_STOP, function() func(unpack(args)) end)
+    timer:start()
+end
+
+----------------------------------------------------------------------------------------------------
+-- This is a utility class to execute.<br>
+-- @class table
+-- @name Resources
+----------------------------------------------------------------------------------------------------
+Resources = {}
+M.Resources = Resources
+
+-- variables
+Resources.textureCache = setmetatable({}, {__mode = "v"})
+Resources.fontCache = {}
+Resources.atlasCache = {}
+
+--------------------------------------------------------------------------------
+-- テクスチャを返します.
+-- テクスチャが引数に指定された場合はそのまま返します.
+--------------------------------------------------------------------------------
+function Resources.getTexture(path)
+    local cache = Resources.textureCache
+    if type(path) ~= "string" then
+        return path
+    end
+    if cache[path] == nil then
+        local texture = Texture(path)
+        cache[path] = texture
+    end
+    return cache[path]
+end
+
+--------------------------------------------------------------------------------
+-- 生成済フォントを返します.
+-- 存在しない場合はフォントを生成して返します.
+--------------------------------------------------------------------------------
+function Resources.getFont(path, charcodes, points, dpi)
+    local cache = Resources.fontCache
+    if type(path) == "userdata" then
+        return path
+    end
+    
+    path = path or Font.DEFAULT_FONT
+    charcodes = charcodes or Font.DEFAULT_CHARCODES
+    points = points or Font.DEFAULT_POINTS
+
+    local uid = path .. "$" .. (charcodes or "") .. "$" .. (points or "") .. "$" .. (dpi or "")
+    if cache[uid] == nil then
+        local font = Font(path, charcodes, points, dpi)
+        font.uid = uid
+        cache[uid] = font
+    end
+    return cache[uid]
+end
+
+--------------------------------------------------------------------------------
+-- MoaiのTexturePacker形式のデータを読み込みます.
+--------------------------------------------------------------------------------
+function Resources.getTextureAtlas(luaFilePath, texture)
+    local cache = Resources.atlasCache
+    if cache[luaFilePath] then
+        return cache[luaFilePath]
+    end
+
+    local frames = dofile(luaFilePath).frames
+    local data = {}
+    data.frames = {}
+    data.names = {}
+    data.texture = texture and Resources.getTexture(texture)
+
+    for i, frame in ipairs(frames) do
+        data.names[frame.name] = i
+        data.frames[i] = {}
+
+        local uv = frame.uvRect
+        local r = frame.spriteColorRect
+        local dataFrame = data.frames[i]
+        if frame.textureRotated then
+            --dataFrame.quad = {uv.u1, uv.v0, uv.u1, uv.v1, uv.u0, uv.v1, uv.u0, uv.v0}
+            dataFrame.quad = {uv.u0, uv.v0, uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0}
+            dataFrame.rect = {0, 0, r.width, r.height}
+        else
+            --dataFrame.quad = {uv.u0, uv.v0, uv.u1, uv.v0, uv.u1, uv.v1, uv.u0, uv.v1}
+            dataFrame.quad = {uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0, uv.u0, uv.v0}
+            --dataFrame.quad = {uv.u1, uv.v1, uv.u0, uv.v1, uv.u0, uv.v0, uv.u1, uv.v0}
+            dataFrame.rect = {0, 0, r.width, r.height}
+        end
+    end
+    cache[luaFilePath] = data
+    return data
+end
+
+----------------------------------------------------------------------------------------------------
 -- The base class Event. <br>
 -- Holds the data of the Event. <br>
 --
@@ -365,18 +573,19 @@ M.Event = Event
 -- Constraints
 Event.OPEN              = "open"
 Event.CLOSE             = "close"
+Event.START             = "start"
+Event.STOP              = "stop"
+Event.LOAD              = "load"
+Event.UNLOAD            = "unload"
 Event.DOWN              = "down"
 Event.UP                = "up"
 Event.MOVE              = "move"
 Event.CLICK             = "click"
 Event.CANCEL            = "cancel"
-Event.KEY_DOWN          = "keyDown"
-Event.KEY_UP            = "keyUp"
+Event.KEYBOARD          = "keyboard"
 Event.COMPLETE          = "complete"
-Event.TOUCH_DOWN        = "touchDown"
-Event.TOUCH_UP          = "touchUp"
-Event.TOUCH_MOVE        = "touchMove"
-Event.TOUCH_CANCEL      = "touchCancel"
+Event.TOUCH             = "touch"
+Event.ENTER_FRAME       = "enterFrame"
 Event.BUTTON_DOWN       = "buttonDown"
 Event.BUTTON_UP         = "buttonUp"
 
@@ -440,6 +649,8 @@ end
 ----------------------------------------------------------------------------------------------------
 EventDispatcher = class()
 M.EventDispatcher = EventDispatcher
+
+EventDispatcher.eventCache = {}
 
 --------------------------------------------------------------------------------
 -- The constructor.
@@ -526,8 +737,8 @@ end
 function EventDispatcher:dispatchEvent(event, data)
     local eventName = type(event) == "string" and event
     if eventName then
-        event = eventCache[eventName] or Event(eventName)
-        eventCache[eventName] = nil
+        event = self.eventCache[eventName] or Event(eventName)
+        self.eventCache[eventName] = nil
     end
     
     assert(event.type)
@@ -547,7 +758,7 @@ function EventDispatcher:dispatchEvent(event, data)
     end
     
     if eventName then
-        eventCache[eventName] = event
+        self.eventCache[eventName] = event
     end
 end
 
@@ -559,35 +770,56 @@ function EventDispatcher:clearEventListeners()
 end
 
 ----------------------------------------------------------------------------------------------------
+-- This is a utility class to execute.<br>
+-- @class table
+-- @name RenderMgr
+----------------------------------------------------------------------------------------------------
+Runtime = EventDispatcher()
+M.Runtime = Runtime
+
+-- enter frame
+Executors.callLoop(
+    function()
+        Runtime:dispatchEvent(Event.ENTER_FRAME)
+    end
+)
+
+----------------------------------------------------------------------------------------------------
 -- This class is has a function of event notification. <br>
 --
 -- @auther Makoto
 -- @class table
--- @name Input
+-- @name InputMgr
 ----------------------------------------------------------------------------------------------------
-Input = EventDispatcher()
-M.Input = Input
+InputMgr = EventDispatcher()
+M.InputMgr = InputMgr
 
 -- Touch Events
-Input.TOUCH_EVENTS = {
-    [MOAITouchSensor.TOUCH_DOWN]    = Event(Event.TOUCH_DOWN),
-    [MOAITouchSensor.TOUCH_UP]      = Event(Event.TOUCH_UP),
-    [MOAITouchSensor.TOUCH_MOVE]    = Event(Event.TOUCH_MOVE),
-    [MOAITouchSensor.TOUCH_CANCEL]  = Event(Event.TOUCH_CANCEL),
+InputMgr.TOUCH_EVENT = Event(Event.TOUCH)
+
+-- Keyboard
+InputMgr.KEYBOARD_EVENT = Event(Event.KEYBOARD)
+
+-- Touch Event Kinds
+InputMgr.TOUCH_EVENT_KINDS = {
+    [MOAITouchSensor.TOUCH_DOWN]    = "down",
+    [MOAITouchSensor.TOUCH_UP]      = "up",
+    [MOAITouchSensor.TOUCH_MOVE]    = "move",
+    [MOAITouchSensor.TOUCH_CANCEL]  = "cancel",
 }
 
--- Key Events
-Input.KEY_DOWN_EVENT    = Event(Event.KEY_DOWN)
-Input.KEY_UP_EVENT      = Event(Event.KEY_UP)
+-- pointer data
+InputMgr.pointer = {x = 0, y = 0, down = false}
 
 --------------------------------------------------------------------------------
 -- Initialize.
 --------------------------------------------------------------------------------
-function Input:initCallbacks()
+function InputMgr:initialize()
 
     -- Touch Handler
     local onTouch = function(eventType, idx, x, y, tapCount)
-        local event = Input.TOUCH_EVENTS[eventType]
+        local event = InputMgr.TOUCH_EVENT
+        event.kind = InputMgr.TOUCH_EVENT_KINDS[eventType]
         event.idx = idx
         event.x = x
         event.y = y
@@ -598,27 +830,27 @@ function Input:initCallbacks()
     
     -- Pointer Handler
     local onPointer = function(x, y)
-        pointer.x = x
-        pointer.y = y
+        self.pointer.x = x
+        self.pointer.y = y
     
-        if pointer.down then
+        if self.pointer.down then
             onTouch(MOAITouchSensor.TOUCH_MOVE, 1, x, y, 1)
         end
     end
     
     -- Click Handler
     local onClick = function(down)
-        pointer.down = down
+        self.pointer.down = down
         local eventType = down and MOAITouchSensor.TOUCH_DOWN or MOAITouchSensor.TOUCH_UP
         
-        onTouch(eventType, 1, pointer.x, pointer.y, 1)
+        onTouch(eventType, 1, self.pointer.x, self.pointer.y, 1)
     end
     
     -- Keyboard Handler
     local onKeyboard = function(key, down)
-        local event = down and Input.KEY_DOWN_EVENT or Input.KEY_UP_EVENT
-        event.down = down
+        local event = InputMgr.KEYBOARD_EVENT
         event.key = key
+        event.down = down
     
         self:dispatchEvent(event)
     end
@@ -640,9 +872,221 @@ end
 --------------------------------------------------------------------------------
 -- キーを押下しているか返します.
 --------------------------------------------------------------------------------
-function Input:keyIsDown(key)
+function InputMgr:keyIsDown(key)
     if keyboardSensor then
         return keyboardSensor:keyIsDown(key)
+    end
+end
+
+----------------------------------------------------------------------------------------------------
+-- This is a utility class to execute.<br>
+-- @class table
+-- @name RenderMgr
+----------------------------------------------------------------------------------------------------
+RenderMgr = EventDispatcher()
+M.RenderMgr = RenderMgr
+
+-- variables
+RenderMgr.renders = {}
+
+--------------------------------------------------------------------------------
+-- Initialize the RenderMgr.
+--------------------------------------------------------------------------------
+function RenderMgr:initialize()
+    Runtime:addEventListener(Event.ENTER_FRAME, self.onEnterFrame, self)
+end
+
+--------------------------------------------------------------------------------
+-- Add a Render object.
+--------------------------------------------------------------------------------
+function RenderMgr:addChild(render)
+    table.insertElement(self.renders, render)
+    self:invalidate()
+end
+
+--------------------------------------------------------------------------------
+-- Remove a rendereble object.
+--------------------------------------------------------------------------------
+function RenderMgr:removeChild(render)
+    table.removeElement(self.renders, render)
+    self:invalidate()
+end
+
+--------------------------------------------------------------------------------
+-- Reflected on the screen to generate a rendering table.
+--------------------------------------------------------------------------------
+function RenderMgr:updateRenderTable()
+    local renderTable = {}
+    for i, v in ipairs(self.renders) do
+        local render = v.getRenderTable and v:getRenderTable() or v
+        table.insertElement(renderTable, render)
+    end
+    MOAIRenderMgr.setRenderTable(renderTable)
+end
+
+--------------------------------------------------------------------------------
+-- レンダリングの更新処理をスケジューリングします.
+--------------------------------------------------------------------------------
+function RenderMgr:invalidate()
+    self.invalidFlag = true
+end
+
+--------------------------------------------------------------------------------
+-- フレーム毎の処理を行います.
+-- レンダリングテーブルを更新する必要がある場合、更新処理を行います.
+--------------------------------------------------------------------------------
+function RenderMgr:onEnterFrame()
+    if self.invalidFlag then
+        self:updateRenderTable()
+        self.invalidFlag = false
+    end
+end
+
+----------------------------------------------------------------------------------------------------
+-- This is a utility class to execute.<br>
+-- @class table
+-- @name SceneMgr
+----------------------------------------------------------------------------------------------------
+SceneMgr = EventDispatcher()
+M.SceneMgr = SceneMgr
+
+-- variables
+SceneMgr.scenes = {}
+SceneMgr.currentScene = nil
+SceneMgr.nextScene = nil
+SceneMgr.transitioning = false
+
+function SceneMgr:initialize()
+    InputMgr:addEventListener(Event.TOUCH, self.onTouch, self)
+    RenderMgr:addChild(self)
+end
+
+function SceneMgr:loadScene(sceneName, params)
+    local scene = self:getSceneByName(sceneName) or Scene(sceneName)
+    scene:load(params)
+    
+    table.removeElement(self.scenes, scene)
+    table.insertElement(self.scenes, scene)
+    
+    return scene
+end
+
+function SceneMgr:gotoScene(sceneName, params)
+    if self.transitioning then
+        return
+    end
+
+    params = params or {}
+    params.closing = true
+    return self:openScene(sceneName, params)
+end
+
+function SceneMgr:openScene(sceneName, params)
+    if self.transitioning then
+        return
+    end
+    
+    params = params or {}
+    local currentScene = self.currentScene
+    local nextScene = self:loadScene(sceneName, params)
+    
+    if not nextScene or nextScene.opened then
+        return
+    end
+    
+    self.nextScene = nextScene
+    self.transitioning = true
+
+    nextScene:open(params)
+    RenderMgr:invalidate()
+            
+    Executors.callLater(
+        function()
+            if nextScene and currentScene then
+                local animation = self:getSceneAnimationByName(params.animation)
+                animation(currentScene, nextScene, params) 
+            end
+            
+            if params.closing and self.currentScene then
+                self.currentScene:close()
+                table.removeElement(self.scenes, self.currentScene)
+            end
+            
+            self.currentScene = self.nextScene
+            self.nextScene = nil
+            self.transitioning = false
+            self.currentScene:start(params)
+        end
+    )
+    
+    return nextScene
+end
+
+function SceneMgr:closeScene(params)
+    if self.transitioning or not self.currentScene then
+        return
+    end
+    
+    params = params or {}
+    local currentScene = self.currentScene
+    local nextScene = self.scenes[#self.scenes - 1]
+    
+    self.nextScene = nextScene
+    self.transitioning = true
+    
+    currentScene:stop(params)
+    RenderMgr:invalidate()
+
+    Executors.callLater(
+        function()
+            local animation = self:getSceneAnimationByName(params.animation)
+            animation(currentScene, nextScene, params) 
+            
+            currentScene:close(params)
+            table.removeElement(self.scenes, self.currentScene)
+            
+            self.currentScene = self.nextScene
+            self.nextScene = nil
+            self.transitioning = false
+            if self.currentScene then
+                self.currentScene:start(params)
+            end
+            
+            RenderMgr:invalidate()
+        end
+    )
+    
+    return true    
+end
+
+function SceneMgr:getSceneAnimationByName(name)
+    local animation = name or "none"
+    animation = type(animation) == "string" and SceneAnimations[animation] or animation
+    return animation
+end
+
+function SceneMgr:getSceneByName(sceneName)
+    for i, scene in ipairs(self.scenes) do
+        if scene.name == sceneName then
+            return scene
+        end
+    end
+end
+
+function SceneMgr:getRenderTable()
+    local t = {}
+    for i, scene in ipairs(self.scenes) do
+        if scene.opened then
+            table.insertElement(t, scene:getRenderTable())
+        end
+    end
+    return t
+end
+
+function SceneMgr:onTouch(e)
+    local scene = self.currentScene
+    if scene then
+        scene:dispatchEvent(e)
     end
 end
 
@@ -733,7 +1177,7 @@ end
 -- オブジェクトのvisibleを返します.
 --------------------------------------------------------------------------------
 function DisplayObject:getVisible()
-    return self:getAttr(MOAIProp.ATTR_VISIBLE)
+    return self:getAttr(MOAIProp.ATTR_VISIBLE) > 0
 end
 
 --------------------------------------------------------------------------------
@@ -746,6 +1190,25 @@ function DisplayObject:setParent(value)
     self.parent = value
 end
 
+--------------------------------------------------------------------------------
+-- Set the MOAILayer instance.
+--------------------------------------------------------------------------------
+function DisplayObject:setLayer(layer)
+    if self.layer == layer then
+        return
+    end
+
+    if self.layer then
+        self.layer:removeProp(self)
+    end
+
+    self.layer = layer
+
+    if self.layer then
+        layer:insertProp(self)
+    end
+end
+
 ----------------------------------------------------------------------------------------------------
 -- Layer
 ----------------------------------------------------------------------------------------------------
@@ -754,13 +1217,26 @@ Layer.__factory = MOAILayer
 M.Layer = Layer
 
 function Layer:init()
+    DisplayObject.init(self)
     local viewport = MOAIViewport.new()
-    viewport:setSize(screenWidth, screenHeight)
-    viewport:setScale(viewWidth, -viewHeight)
+    viewport:setSize(M.screenWidth, M.screenHeight)
+    viewport:setScale(M.viewWidth, -M.viewHeight)
     viewport:setOffset(-1, 1)
     
     self:setViewport(viewport)
     self.viewport = viewport
+    self.touchEnabled = false
+    self.touchHandler = nil
+end
+
+function Layer:setTouchEnabled(value)
+    if self.touchEnabled == value then
+        return
+    end
+    self.touchEnabled = value
+    if value  then
+        self.touchHandler = self.touchHandler or TouchHandler(self)
+    end
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -797,9 +1273,11 @@ end
 -- 子オブジェクトを追加します.
 --------------------------------------------------------------------------------
 function Group:addChild(child)
-    if table.insertElement(child) then
+    if table.insertElement(self.children, child) then
         child:setParent(self)
-        self.layer:insertProp(child)
+        if self.layer then
+            self.layer:insertProp(child)
+        end
     end
 end
 
@@ -807,9 +1285,11 @@ end
 -- 子オブジェクトを削除します.
 --------------------------------------------------------------------------------
 function Group:removeChild(child)
-    if table.removeElement(child) then
+    if table.removeElement(self.children, child) then
         child:setParent(nil)
-        self.layer:removeProp(child)
+        if self.layer then
+            self.layer:removeProp(child)
+        end
     end
 end
 
@@ -838,51 +1318,169 @@ end
 Scene = class(Group)
 M.Scene = Scene
 
-function Scene:init()
+Scene.TOUCH_EVENT = Event(Event.TOUCH)
+
+--------------------------------------------------------------------------------
+-- コンストラクタ
+--------------------------------------------------------------------------------
+function Scene:init(sceneName)
     Group.init(self)
+    self.loaded = false
+    self.opened = false
+    self.started = false
+    self.name = sceneName
+    self.isScene = true
+    self.controller = require(sceneName)
+    self.controller.scene = self
+    self:initListeners()
+end
+
+function Scene:initListeners()
+    local addEventListener = function(type, func, obj)
+        if func then
+            self:addEventListener(type, func, obj)
+        end
+    end
+    addEventListener(Event.LOAD, self.controller.onLoad)
+    addEventListener(Event.UNLOAD, self.controller.onUnload)
+    addEventListener(Event.OPEN, self.controller.onOpen)
+    addEventListener(Event.CLOSE, self.controller.onClose)
+    addEventListener(Event.START, self.controller.onStart)
+    addEventListener(Event.STOP, self.controller.onStop)
+    addEventListener(Event.TOUCH, self.onTouch, self)
+end
+
+function Scene:load(params)
+    if self.loaded then
+        return
+    end
+    
+    self:dispatchEvent(Event.LOAD, params)
+    self.loaded = true
+end
+
+function Scene:dispose(params)
+    if not self.loaded then
+        return
+    end
+
+    self:dispatchEvent(Event.UNLOAD, params)
     self.loaded = false
 end
 
-function Scene:loadScene(params)
-    if not self.loaded then
-        self:onLoad(params)
-        self.loaded = true
+function Scene:open(params)
+    if self.opened then
+        return
+    end
+    
+    self:load(params)
+    self:dispatchEvent(Event.OPEN, params)
+    self.opened = true
+end
+
+function Scene:close(params)
+    if self.opened then
+        return
+    end
+    self:stop()
+    self:dispatchEvent(Event.CLOSE, params)
+    self.opened = false
+end
+
+function Scene:start(params)
+    if self.started then
+        return
+    end
+    self:open(params)
+    self:dispatchEvent(Event.START, params)
+    self.started = true
+end
+
+function Scene:stop(params)
+    if not self.started then
+        return
+    end
+    self:dispatchEvent(Event.STOP, params)
+    self.started = false
+end
+
+function Scene:onTouch(e)
+    local e2 = table.copy(e, Scene.TOUCH_EVENT)
+    for i = #self.children, 1, -1 do
+        local layer = self.children[i]
+        if layer.touchEnabled and layer:getVisible() then
+            e2.wx, e2.wy = layer:wndToWorld(e.x, e.y, 0)
+            layer:dispatchEvent(e2)
+        end
+        if e2.stopFlag then
+            e:stop()
+            break
+        end
     end
 end
 
-function Scene:openScene(params)
-    self:loadScene()
+--------------------------------------------------------------------------------
+-- 描画テーブルを返します.
+--------------------------------------------------------------------------------
+function Scene:getRenderTable()
+    return self.children
 end
 
-function Scene:closeScene()
-    if self.loaded then
-        self:onLoad()
-        self.loaded = false
-    end
+----------------------------------------------------------------------------------------------------
+-- This is a utility class to execute.<br>
+-- @class table
+-- @name SceneAnimations
+----------------------------------------------------------------------------------------------------
+SceneAnimations = {}
+
+function SceneAnimations.none(currentScene, nextScene, params)
+    nextScene:setScl(1, 1, 1)
+    nextScene:setColor(1, 1, 1, 1)
+    nextScene:setVisible(true)
 end
 
-function Scene:showOverlay()
-
+function SceneAnimations.fade(currentScene, nextScene, params)
+    local sec = params.second or 0.5
+    nextScene:setColor(0, 0, 0, 0)
+    
+    MOAICoroutine.blockOnAction(currentScene:seekColor(0, 0, 0, 0, sec))
+    MOAICoroutine.blockOnAction(nextScene:seekColor(1, 1, 1, 1, sec))
 end
 
-function Scene:onLoad(params)
-
+function SceneAnimations.crossFade(currentScene, nextScene, params)
+    local sec = params.second or 0.5
+    nextScene:setColor(0, 0, 0, 0)
+    
+    local action1 = currentScene:seekColor(0, 0, 0, 0, sec)
+    local action2 = nextScene:seekColor(1, 1, 1, 1, sec)
+    
+    MOAICoroutine.blockOnAction(action1)
+    MOAICoroutine.blockOnAction(action2)
 end
 
-function Scene:onStart()
+function SceneAnimations.popIn(currentScene, nextScene, params)
+    local sec = params.second or 0.5
+    nextScene:setScl(0.5, 0.5, 0.5)
+    nextScene:setColor(0, 0, 0, 0)
 
+    local action1 = nextScene:seekColor(1, 1, 1, 1, sec)
+    local action2 = nextScene:seekScl(1, 1, 1, sec)
+    MOAICoroutine.blockOnAction(action1)
+    MOAICoroutine.blockOnAction(action2)
 end
 
-function Scene:onStop()
+function SceneAnimations.popOut(currentScene, nextScene, params)
+    local sec = params.second or 0.5
 
+    local action1 = nextScene:seekColor(0, 0, 0, 0, sec)
+    local action2 = nextScene:seekScl(0.5, 0.5, 0.5, sec)
+    MOAICoroutine.blockOnAction(action1)
+    MOAICoroutine.blockOnAction(action2)
 end
 
-function Scene:onUnload()
-
-end
-
-function Scene:onEnterFrame()
-
+function SceneAnimations.slideLeft(currentScene, nextScene, params)
+    local sec = params.second or 0.5
+    MOAICoroutine.blockOnAction(nextScene:seekLoc(-display.screenWidth, 0))
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -894,7 +1492,7 @@ M.Image = Image
 function Image:init(texture, width, height)
     DisplayObject.init(self)
     
-    texture = M.getTexture(texture)
+    texture = Resources.getTexture(texture)
     local tw, th = texture:getSize()
 
     width = width or tw
@@ -919,7 +1517,7 @@ M.SheetImage = SheetImage
 function SheetImage:init(texture, sizeX, sizeY)
     DisplayObject.init(self)
     
-    texture = M.getTexture(texture)
+    texture = Resources.getTexture(texture)
 
     local deck = MOAIGfxQuadDeck2D.new()
     deck:setTexture(texture)
@@ -938,43 +1536,35 @@ end
 --------------------------------------------------------------------------------
 -- TexturePacker形式のデータを元にフレームデータを設定します.
 --------------------------------------------------------------------------------
-function SheetImage:setSheetFrames(frames)
+function SheetImage:setTextureAtlas(atlas, texture)
+    if type(atlas) == "string" then
+        atlas = Resources.getTextureAtlas(atlas, texture)
+    end
+    self.sheetSize = #atlas.frames
+    self.sheetNames = atlas.names
+    
     local deck = self.deck
-    deck:reserve(#frames)
+    deck:reserve(self.sheetSize)
+    if atlas.texture then
+        deck:setTexture(atlas.texture)
+        self.texture = atlas.texture
+    end
     
-    self.sheetSize = #frames
-    self.sheetNames = {}
-    
-    for i, frame in ipairs ( frames ) do
-        local uv = frame.uvRect
-        local q = {}
-        if not frame.textureRotated then
-            q.x0, q.y0 = uv.u0, uv.v0
-            q.x1, q.y1 = uv.u1, uv.v0
-            q.x2, q.y2 = uv.u1, uv.v1
-            q.x3, q.y3 = uv.u0, uv.v1
-        else
-            q.x3, q.y3 = uv.u0, uv.v0
-            q.x0, q.y0 = uv.u1, uv.v0
-            q.x1, q.y1 = uv.u1, uv.v1
-            q.x2, q.y2 = uv.u0, uv.v1
-        end
-
+    for i, frame in ipairs ( atlas.frames ) do
         if not self.grid then
-            deck:setUVQuad(i, q.x0, q.y0, q.x1, q.y1, q.x2, q.y2, q.x3, q.y3)
+            deck:setRect(i, unpack(frame.rect))
         end
-        deck:setRect(i, r.x, r.y, r.x + r.width, r.y + r.height)
-        self.names[frame.name] = i
+        deck:setUVQuad(i, unpack(frame.quad))
     end
 end
 
 --------------------------------------------------------------------------------
 -- フレームデータをテクスチャのカラム数から設定します.
 --------------------------------------------------------------------------------
-function SheetImage:setSheetSize(sizeX, sizeY)
+function SheetImage:setSheetSize(sizeX, sizeY, spacing, margin)
     local tw, th = self.texture:getSize()
     local cw, ch = tw / sizeX, th / sizeY
-    self:setTileSize(cw, ch, 0, 0)
+    self:setTileSize(cw, ch, spacing, margin)
 end
 
 --------------------------------------------------------------------------------
@@ -1109,13 +1699,42 @@ function MovieClip:setAnim(name, anim)
     self.animTable[name] = anim
 end
 
-function MovieClip:setAnims(anims)
-    for i, anim in ipairs(anims) do
-        local name = anim.name or i
-        self:setAnim(name, anim)
+--------------------------------------------------------------------------------
+-- フレームアニメーションを設定します.
+--------------------------------------------------------------------------------
+function MovieClip:setAnimData(name, data)
+    local curve = MOAIAnimCurve.new()
+    local anim = MOAIAnim.new()
+
+    local frames = data.frames
+    local size = #frames
+    curve:reserveKeys(size)
+    for i = 1, size do
+        curve:setKey(i, (i - 1) * data.sec, frames[i], MOAIEaseType.FLAT )
+    end
+
+    local mode = data.mode or MOAITimer.LOOP
+    anim:reserveLinks(1)
+    anim:setMode(mode)
+    anim:setLink(1, curve, self, MOAIProp.ATTR_INDEX )
+    anim:setCurve(curve)
+    
+    self.animTable[name] = anim
+end
+
+--------------------------------------------------------------------------------
+-- 複数のフレームフレームアニメーションを設定します.
+--------------------------------------------------------------------------------
+function MovieClip:setAnimDatas(datas)
+    for i, data in ipairs(datas) do
+        local name = data.name or i
+        self:setAnimData(name, data)
     end
 end
 
+--------------------------------------------------------------------------------
+-- Start the animation.
+--------------------------------------------------------------------------------
 function MovieClip:playAnim(name)
     local currentAnim = self.currentAnim
     local animTable = self.animTable
@@ -1132,44 +1751,22 @@ function MovieClip:playAnim(name)
     end
 end
 
+--------------------------------------------------------------------------------
+-- Stop the animation.
+--------------------------------------------------------------------------------
 function MovieClip:stopAnim()
     if self.currentAnim then
         self.currentAnim:stop()
     end
 end
 
+--------------------------------------------------------------------------------
+-- Check the current animation with the specified name.<br>
+-- @param name Animation name.
+-- @return If the current animation is true.
+--------------------------------------------------------------------------------
 function MovieClip:isCurrentAnim(name)
     return self.currentAnim == self.animTable[name]
-end
-
-----------------------------------------------------------------------------------------------------
--- Texture
-----------------------------------------------------------------------------------------------------
-Texture = class()
-Texture.__factory = MOAITexture
-M.Texture = Texture
-
-function Texture:init(path)
-    self:load(path)
-    self.path = path
-end
-
-----------------------------------------------------------------------------------------------------
--- Font
-----------------------------------------------------------------------------------------------------
-Font = class()
-Font.__factory = MOAIFont
-
-function Font:init(path, charcodes, points, dpi)
-    self:load(path)
-    self.path = path
-    self.charcodes = charcodes
-    self.points = points
-    self.dpi = dpi
-    
-    if charcodes and points then
-        self:preloadGlyphs(charcodes, points, dpi)
-    end
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1182,11 +1779,11 @@ M.Label = Label
 function Label:init(text, width, height, font, textSize)
     DisplayObject.init(self)
     
-    font = M.getFont(font, nil, textSize)
+    font = Resources.getFont(font, nil, textSize)
 
     self:setFont(font)
     self:setRect(0, 0, width, height)
-    self:setTextSize(textSize or M.DEFAULT_FONT_POINTS)
+    self:setTextSize(textSize or Font.DEFAULT_POINTS)
     self:setString(text)
 end
 
@@ -1216,155 +1813,137 @@ function Rect:init(width, height)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Public functions
+-- Mesh
 ----------------------------------------------------------------------------------------------------
+Mesh = class()
+Mesh.__factory = MOAIMesh
+M.Mesh = Mesh
 
---------------------------------------------------------------------------------
--- Windowを起動します.
--- TODO:適切なスケールの計算
---------------------------------------------------------------------------------
-function M.openWindow(title, width, height)
-    MOAISim.openWindow(title, width, height)
-    screenWidth, screenHeight = width, height
-    viewWidth, viewHeight = width, height
+function Mesh:init(vcoords, colors, primType)
+    primType = primType or MOAIMesh.GL_TRIANGLE_FAN
     
-    Input:initCallbacks()
-end
+    local vertexFormat = MOAIVertexFormat.new ()
+    vertexFormat:declareCoord ( 1, MOAIVertexFormat.GL_FLOAT, 2 )
+    vertexFormat:declareColor ( 2, MOAIVertexFormat.GL_UNSIGNED_BYTE )
 
---------------------------------------------------------------------------------
--- スクリーンのサイズを返します.
--- @return screenWidth, screenHeight
---------------------------------------------------------------------------------
-function M.getScreenSize()
-    return screenWidth, screenHeight
-end
-
---------------------------------------------------------------------------------
--- スクリーンのサイズを設定します.
--- @return screenWidth, screenHeight
---------------------------------------------------------------------------------
-function M.setScreenSize(width, height)
-    screenWidth = width
-    screenHeight = height
-end
-
---------------------------------------------------------------------------------
--- ビューポートに設定するスケールサイズを返します.
--- @return viewWidth, viewHeight
---------------------------------------------------------------------------------
-function M.getViewSize()
-    return viewWidth, viewHeight
-end
-
---------------------------------------------------------------------------------
--- ビューポートに設定するスケールサイズを設定します.
--- @param width Width of Viewport.
--- @param height Height of Viewport.
---------------------------------------------------------------------------------
-function M.setViewSize(width, height)
-    viewWidth = width
-    viewHeight = height
-end
-
---------------------------------------------------------------------------------
--- テクスチャを返します.
--- テクスチャが引数に指定された場合はそのまま返します.
---------------------------------------------------------------------------------
-function M.getTexture(path)
-    if type(path) ~= "string" then
-        return path
+    local vbo = MOAIVertexBuffer.new ()
+    vbo:setFormat(vertexFormat)
+    vbo:reserveVerts (#vcoords)
+    for i=1, #vcoords do
+        vbo:writeFloat(vcoords[i][1], vcoords[i][2])
+        vbo:writeColor32(colors[i][1], colors[i][2], colors[i][3])
     end
-    if textureCache[path] == nil then
-        local texture = Texture(path)
-        textureCache[path] = texture
+    vbo:bless ()
+
+    self:setVertexBuffer(vbo)
+    self:setPrimType(primType)
+end
+
+----------------------------------------------------------------------------------------------------
+-- Texture
+----------------------------------------------------------------------------------------------------
+Texture = class()
+Texture.__factory = MOAITexture
+M.Texture = Texture
+
+function Texture:init(path)
+    self:load(path)
+    self.path = path
+end
+
+----------------------------------------------------------------------------------------------------
+-- Font
+----------------------------------------------------------------------------------------------------
+Font = class()
+Font.__factory = MOAIFont
+
+--- Default font
+Font.DEFAULT_FONT = "VL-PGothic.ttf"
+
+--- Default font charcodes
+Font.DEFAULT_CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-"
+
+--- Default font points
+Font.DEFAULT_POINTS = 24
+
+function Font:init(path, charcodes, points, dpi)
+    self:load(path)
+    self.path = path
+    self.charcodes = charcodes
+    self.points = points
+    self.dpi = dpi
+    
+    if charcodes and points then
+        self:preloadGlyphs(charcodes, points, dpi)
     end
-    return textureCache[path]
+end
+
+----------------------------------------------------------------------------------------------------
+-- TouchHandler
+----------------------------------------------------------------------------------------------------
+TouchHandler = class()
+M.TouchHandler = TouchHandler
+TouchHandler.TOUCH_EVENT = Event(Event.TOUCH)
+
+--------------------------------------------------------------------------------
+-- The constructor.
+-- @param params (option)Parameter is set to Object.<br>
+--------------------------------------------------------------------------------
+function TouchHandler:init(layer)
+    self.touchLayer = assert(layer)
+    self.touchProps = {}
+    
+    layer:addEventListener(Event.TOUCH, self.onTouch, self)
 end
 
 --------------------------------------------------------------------------------
--- 生成済フォントを返します.
--- 存在しない場合はフォントを生成して返します.
+-- タッチした時のイベント処理を行います.
 --------------------------------------------------------------------------------
-function M.getFont(path, charcodes, points, dpi)
-    if type(path) == "userdata" then
-        return path
+function TouchHandler:onTouch(e)
+    if not self.touchLayer.touchEnabled then
+        return
     end
     
-    path = path or M.DEFAULT_FONT
-    charcodes = charcodes or M.DEFAULT_FONT_CHARCODES
-    points = points or M.DEFAULT_FONT_POINTS
-
-    local uid = path .. "$" .. (charcodes or "") .. "$" .. (points or "") .. "$" .. (dpi or "")
-    if fontCache[uid] == nil then
-        local font = Font(path, charcodes, points, dpi)
-        font.uid = uid
-        fontCache[uid] = font
+    -- screen to world location.
+    local layer = self.touchLayer
+    local partition = layer:getPartition()
+    local prop = partition:propForPoint(e.wx, e.wy, 0)
+    local prop2 = self.touchProps[e.idx]
+    
+    -- touch down prop
+    if e.kind == "down" then
+        self.touchProps[e.idx] = prop
+    elseif e.kind == "up" then
+        self.touchProps[e.idx] = nil
     end
-    return fontCache[uid]
+    
+    -- touch event
+    local e2 = table.copy(e, self.TOUCH_EVENT)
+    e2.prop = prop
+
+    -- dispatch event
+    if prop then
+        self:dispatchTouchEvent(e2, prop)
+    end
+    if prop2 and prop2 ~= prop then
+        self:dispatchTouchEvent(e2, prop2)
+    end
+    if prop or prop2 then
+        e:stop()
+    end
 end
 
 --------------------------------------------------------------------------------
--- Run the specified function looping <br>
--- @param func Target function.
--- @param ... Argument.
+-- タッチイベントを発出します.
 --------------------------------------------------------------------------------
-function M.callLoop(func, ...)
-    local thread = MOAICoroutine.new()
-    local args = {...}
-    thread:run(
-        function()
-            while true do
-                if func(unpack(args)) then
-                    break
-                end
-                coroutine.yield()
-            end
+function TouchHandler:dispatchTouchEvent(e, o)
+    local layer = self.touchLayer
+    while o do
+        if o.dispatchEvent then
+            o:dispatchEvent(e)
         end
-    )
-end
-
---------------------------------------------------------------------------------
--- Run the specified function delay. <br>
--- @param func Target function.
--- @param ... Argument.
---------------------------------------------------------------------------------
-function M.callLater(func, ...)
-    M.callLaterFrame(0, func, ...)
-end
-
---------------------------------------------------------------------------------
--- Run the specified function delay. <br>
--- @param frame Delay frame count.
--- @param func Target function.
--- @param ... Argument.
---------------------------------------------------------------------------------
-function M.callLaterFrame(frame, func, ...)
-    local thread = MOAICoroutine.new()
-    local args = {...}
-    local count = 0
-    thread:run(
-        function()
-            while count < frame do
-                count = count + 1
-                coroutine.yield()
-            end
-            func(unpack(args))
-        end
-    )
-end
-
---------------------------------------------------------------------------------
--- Run the specified function delay. <br>
--- @param time Delay seconds.
--- @param func Target function.
--- @param ... Argument.
---------------------------------------------------------------------------------
-function M.callLaterTime(time, func, ...)
-    local args = {...}
-    local timer = MOAITimer.new()
-    timer:setSpan(time)
-    timer:setListener(MOAITimer.EVENT_STOP, function() func(unpack(args)) end)
-    timer:start()
+        o = o.parent
+    end
 end
 
 return M

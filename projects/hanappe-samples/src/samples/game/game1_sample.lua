@@ -16,8 +16,6 @@ local PLAYER_MOVE_VALUES = {
     right = 6
 }
 
-local PRELOAD_FONT = FontManager:newPreloadFont("VL-PGothic", 24)
-
 local GAME_WIDTH = Application.viewWidth
 local GAME_HEIGHT = Application.viewHeight
 
@@ -219,7 +217,6 @@ function makeScoreLabel()
         text = "SCORE:0",
         size = {150, 30},
         pos = {5, 5},
-        font = PRELOAD_FONT,
         layer = guiView,
     }
     scoreLabel.scorePoint = 0
@@ -239,7 +236,6 @@ function makeLevelLabel()
         text = "LEVEL:1",
         size = {150, 30},
         pos = {5, scoreLabel:getBottom()},
-        font = PRELOAD_FONT,
         layer = guiView,
     }
     levelLabel.nextScorePoint = SCORE_NEXT
@@ -274,7 +270,6 @@ function makeHitpointBar()
     local label = TextLabel {
         text = "HP:",
         size = {40, 30},
-        font = PRELOAD_FONT,
         parent = hitpointBar,
     }
     
