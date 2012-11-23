@@ -1,8 +1,6 @@
 ----------------------------------------------------------------------------------------------------
--- Moai SDK のコーディングを楽にするフレームワークです.
--- 
---
---
+-- It is a lightweight library MoaiSDK.
+-- @author Makoto
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -53,7 +51,12 @@ local keyboardSensor    = MOAIInputMgr.device.keyboard
 ----------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Windowを起動します.
+-- Open the window.
+-- Initialize the library.
+-- @param title Title of the window
+-- @param width Width of the window
+-- @param height Height of the window
+-- @param scale cale of the Viewport to the Screen
 --------------------------------------------------------------------------------
 function M.openWindow(title, width, height, scale)
     scale = scale or 1    
@@ -68,15 +71,26 @@ function M.openWindow(title, width, height, scale)
 end
 
 --------------------------------------------------------------------------------
--- スクリーンのサイズを返します.
+-- Returns the size of the screen.
+-- @return width, height
 --------------------------------------------------------------------------------
 function M.getScreenSize()
     return M.screenWidth, M.screenHeight
 end
 
 --------------------------------------------------------------------------------
--- テクスチャを返します.
--- テクスチャが引数に指定された場合はそのまま返します.
+-- Returns the size of the viewport.
+-- @return width, height
+--------------------------------------------------------------------------------
+function M.getViewSize()
+    return M.viewWidth, M.viewHeight
+end
+
+--------------------------------------------------------------------------------
+-- Returns the texture.
+-- Textures are cached.
+-- @param path The path of the texture.
+-- @return Texture instance.
 --------------------------------------------------------------------------------
 function M.getTexture(path)
     return Resources.getTexture(path)
