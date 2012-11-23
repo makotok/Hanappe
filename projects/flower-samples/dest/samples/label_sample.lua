@@ -4,7 +4,7 @@ module(..., package.seeall)
 -- Event Handler
 --------------------------------------------------------------------------------
 
-function onLoad(e)
+function onCreate(e)
     layer = flower.Layer()
     scene:addChild(layer)
     

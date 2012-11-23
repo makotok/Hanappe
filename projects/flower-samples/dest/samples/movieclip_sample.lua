@@ -11,15 +11,22 @@ local ANIM_DATAS = {
 -- Event Handler
 --------------------------------------------------------------------------------
 
-function onLoad(e)
+function onCreate(e)
     layer = flower.Layer()
+    layer:setTouchEnabled(true)
     scene:addChild(layer)
+    
+    -- background
+    background = flower.Rect(flower.viewWidth, flower.viewHeight)
+    background:setColor(0, 0, 0, 1)
+    background:setLayer(layer)
 
     -- image1
     movie1 = flower.MovieClip("actor.png", 3, 4)
     movie1:setAnimDatas(ANIM_DATAS)
     movie1:setIndex(2)
     movie1:setLayer(layer)
+    movie1:addEventListener("touch", objectOnTouch)
     
     -- image2
     movie2 = flower.MovieClip("actor.png", 3, 4)
@@ -27,6 +34,7 @@ function onLoad(e)
     movie2:setIndex(5)
     movie2:setPos(movie1:getRight(), 0)
     movie2:setLayer(layer)
+    movie2:addEventListener("touch", objectOnTouch)
     
     -- image3
     movie3 = flower.MovieClip("actor.png", 3, 4)
@@ -34,6 +42,7 @@ function onLoad(e)
     movie3:setIndex(8)
     movie3:setPos(movie2:getRight(), 0)
     movie3:setLayer(layer)
+    movie3:addEventListener("touch", objectOnTouch)
 
     -- image4
     movie4 = flower.MovieClip("actor.png", 3, 4)
@@ -41,6 +50,7 @@ function onLoad(e)
     movie4:setIndex(11)
     movie4:setPos(movie3:getRight(), 0)
     movie4:setLayer(layer)
+    movie4:addEventListener("touch", objectOnTouch)
 end
 
 function onStart(e)
@@ -48,4 +58,15 @@ function onStart(e)
     movie2:playAnim("walkLeft")
     movie3:playAnim("walkRight")
     movie4:playAnim("walkUp")
+end
+
+function objectOnTouch(e)
+    if e.kind == "down" then
+        local prop = e.prop
+        if prop:isBusy() then
+            prop:stopAnim()
+        else
+            prop:playAnim()
+        end
+    end
 end

@@ -29,13 +29,13 @@ local Layer
 local Camera
 local Image
 local SheetImage
+local ScaleImage
 local MapImage
 local MovieClip
 local Label
 local Rect
 local Font
 local Texture
-local Mesh
 local TouchHandler
 
 ----------------------------------------------------------------------------------------------------
@@ -68,6 +68,13 @@ function M.openWindow(title, width, height, scale)
 end
 
 --------------------------------------------------------------------------------
+-- スクリーンのサイズを返します.
+--------------------------------------------------------------------------------
+function M.getScreenSize()
+    return M.screenWidth, M.screenHeight
+end
+
+--------------------------------------------------------------------------------
 -- テクスチャを返します.
 -- テクスチャが引数に指定された場合はそのまま返します.
 --------------------------------------------------------------------------------
@@ -91,13 +98,6 @@ function M.getFont(path, charcodes, points, dpi)
 end
 
 --------------------------------------------------------------------------------
--- シーンをロードします.
---------------------------------------------------------------------------------
-function M.loadScene(sceneName, params)
-    return SceneMgr:loadScene(sceneName, params)
-end
-
---------------------------------------------------------------------------------
 -- シーンを起動します.
 --------------------------------------------------------------------------------
 function M.openScene(sceneName, params)
@@ -116,6 +116,13 @@ end
 --------------------------------------------------------------------------------
 function M.closeScene(params)
     return SceneMgr:closeScene(params)
+end
+
+--------------------------------------------------------------------------------
+-- コールチンを経由して関数を遅延実行します.
+--------------------------------------------------------------------------------
+function M.callLater(func, ...)
+    Executors.callLater(func, ...)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -232,21 +239,6 @@ function table.deepCopy(src, dest)
         if type(v) == "table" then
             dest[k] = table.deepCopy(v)
         else
-            dest[k] = v
-        end
-    end
-    return dest
-end
-
---------------------------------------------------------------------------------
--- The shallow copy of the table.
--- @param src src object.
--- @param dest dest object.
--- @return dest
---------------------------------------------------------------------------------
-function table.decorate(src, dest)
-    for k, v in pairs(src) do
-        if dest[k] == nil then
             dest[k] = v
         end
     end
@@ -571,23 +563,24 @@ Event = class()
 M.Event = Event
 
 -- Constraints
+Event.CREATE            = "create"
 Event.OPEN              = "open"
 Event.CLOSE             = "close"
 Event.START             = "start"
 Event.STOP              = "stop"
-Event.LOAD              = "load"
-Event.UNLOAD            = "unload"
 Event.DOWN              = "down"
 Event.UP                = "up"
 Event.MOVE              = "move"
 Event.CLICK             = "click"
 Event.CANCEL            = "cancel"
-Event.KEYBOARD          = "keyboard"
+Event.KEY_DOWN          = "keyDown"
+Event.KEY_UP            = "keyUp"
 Event.COMPLETE          = "complete"
-Event.TOUCH             = "touch"
+Event.TOUCH_DOWN        = "touchDown"
+Event.TOUCH_UP          = "touchUp"
+Event.TOUCH_MOVE        = "touchMove"
+Event.TOUCH_CANCEL      = "touchCancel"
 Event.ENTER_FRAME       = "enterFrame"
-Event.BUTTON_DOWN       = "buttonDown"
-Event.BUTTON_UP         = "buttonUp"
 
 --------------------------------------------------------------------------------
 -- The constructor.
@@ -795,17 +788,17 @@ InputMgr = EventDispatcher()
 M.InputMgr = InputMgr
 
 -- Touch Events
-InputMgr.TOUCH_EVENT = Event(Event.TOUCH)
+InputMgr.TOUCH_EVENT = Event()
 
 -- Keyboard
-InputMgr.KEYBOARD_EVENT = Event(Event.KEYBOARD)
+InputMgr.KEYBOARD_EVENT = Event()
 
 -- Touch Event Kinds
 InputMgr.TOUCH_EVENT_KINDS = {
-    [MOAITouchSensor.TOUCH_DOWN]    = "down",
-    [MOAITouchSensor.TOUCH_UP]      = "up",
-    [MOAITouchSensor.TOUCH_MOVE]    = "move",
-    [MOAITouchSensor.TOUCH_CANCEL]  = "cancel",
+    [MOAITouchSensor.TOUCH_DOWN]    = Event.TOUCH_DOWN,
+    [MOAITouchSensor.TOUCH_UP]      = Event.TOUCH_UP,
+    [MOAITouchSensor.TOUCH_MOVE]    = Event.TOUCH_MOVE,
+    [MOAITouchSensor.TOUCH_CANCEL]  = Event.TOUCH_CANCEL,
 }
 
 -- pointer data
@@ -819,7 +812,7 @@ function InputMgr:initialize()
     -- Touch Handler
     local onTouch = function(eventType, idx, x, y, tapCount)
         local event = InputMgr.TOUCH_EVENT
-        event.kind = InputMgr.TOUCH_EVENT_KINDS[eventType]
+        event.type = InputMgr.TOUCH_EVENT_KINDS[eventType]
         event.idx = idx
         event.x = x
         event.y = y
@@ -849,6 +842,7 @@ function InputMgr:initialize()
     -- Keyboard Handler
     local onKeyboard = function(key, down)
         local event = InputMgr.KEYBOARD_EVENT
+        event.type = down and Event.KEY_DOWN or Event.KEY_UP
         event.key = key
         event.down = down
     
@@ -955,61 +949,71 @@ SceneMgr.scenes = {}
 SceneMgr.currentScene = nil
 SceneMgr.nextScene = nil
 SceneMgr.transitioning = false
+SceneMgr.createScene = function(sceneName, params)
+    return Scene(sceneName, params)
+end
 
+--------------------------------------------------------------------------------
+-- このクラスの初期化処理です.
+--------------------------------------------------------------------------------
 function SceneMgr:initialize()
-    InputMgr:addEventListener(Event.TOUCH, self.onTouch, self)
+    InputMgr:addEventListener(Event.TOUCH_DOWN, self.onTouch, self)
+    InputMgr:addEventListener(Event.TOUCH_UP, self.onTouch, self)
+    InputMgr:addEventListener(Event.TOUCH_MOVE, self.onTouch, self)
+    InputMgr:addEventListener(Event.TOUCH_CANCEL, self.onTouch, self)
     RenderMgr:addChild(self)
 end
 
-function SceneMgr:loadScene(sceneName, params)
-    local scene = self:getSceneByName(sceneName) or Scene(sceneName)
-    scene:load(params)
-    
-    table.removeElement(self.scenes, scene)
-    table.insertElement(self.scenes, scene)
-    
-    return scene
-end
-
+--------------------------------------------------------------------------------
+-- 指定したシーンに遷移します.
+-- 現在起動中のシーンは閉じられます.
+--------------------------------------------------------------------------------
 function SceneMgr:gotoScene(sceneName, params)
-    if self.transitioning then
-        return
-    end
-
-    params = params or {}
-    params.closing = true
-    return self:openScene(sceneName, params)
+    return self:internalOpenScene(sceneName, params, true)
 end
 
+--------------------------------------------------------------------------------
+-- シーンをオープンします.
+--------------------------------------------------------------------------------
 function SceneMgr:openScene(sceneName, params)
+    return self:internalOpenScene(sceneName, params, false)
+end
+
+--------------------------------------------------------------------------------
+-- シーンをオープンします.
+--------------------------------------------------------------------------------
+function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
+    params = params or {}
+
+    -- state check
     if self.transitioning then
         return
     end
-    
-    params = params or {}
-    local currentScene = self.currentScene
-    local nextScene = self:loadScene(sceneName, params)
-    
-    if not nextScene or nextScene.opened then
+    if self:getSceneByName(sceneName) then
         return
     end
-    
-    self.nextScene = nextScene
     self.transitioning = true
-
-    nextScene:open(params)
+    
+    -- stop
+    if self.currentScene then
+        self.currentScene:stop(params)
+    end
+    
+    -- create next scene
+    self.nextScene = self.createScene(sceneName, params)
+    self.nextScene:open(params)
+    
+    -- refresh render
     RenderMgr:invalidate()
-            
+    
+    -- scene animation
     Executors.callLater(
         function()
-            if nextScene and currentScene then
-                local animation = self:getSceneAnimationByName(params.animation)
-                animation(currentScene, nextScene, params) 
-            end
+            local animation = self:getSceneAnimationByName(params.animation)
+            animation(self.currentScene or Scene(), self.nextScene, params)
             
-            if params.closing and self.currentScene then
-                self.currentScene:close()
-                table.removeElement(self.scenes, self.currentScene)
+            if self.currentScene and currentCloseFlag then
+                self.currentScene:close(params)
             end
             
             self.currentScene = self.nextScene
@@ -1019,35 +1023,36 @@ function SceneMgr:openScene(sceneName, params)
         end
     )
     
-    return nextScene
+    return self.nextScene
 end
 
+--------------------------------------------------------------------------------
+-- 現在のシーンをクローズします.
+--------------------------------------------------------------------------------
 function SceneMgr:closeScene(params)
+    params = params or {}
+
+    -- state check
     if self.transitioning or not self.currentScene then
         return
     end
-    
-    params = params or {}
-    local currentScene = self.currentScene
-    local nextScene = self.scenes[#self.scenes - 1]
-    
-    self.nextScene = nextScene
     self.transitioning = true
     
-    currentScene:stop(params)
+    -- set next scene
+    self.nextScene = self.scenes[#self.scenes - 1]
+    self.currentScene:stop(params)
     RenderMgr:invalidate()
 
     Executors.callLater(
         function()
             local animation = self:getSceneAnimationByName(params.animation)
-            animation(currentScene, nextScene, params) 
+            animation(self.currentScene, self.nextScene or Scene(), params) 
             
-            currentScene:close(params)
-            table.removeElement(self.scenes, self.currentScene)
-            
+            self.currentScene:close(params)
             self.currentScene = self.nextScene
             self.nextScene = nil
             self.transitioning = false
+
             if self.currentScene then
                 self.currentScene:start(params)
             end
@@ -1059,12 +1064,19 @@ function SceneMgr:closeScene(params)
     return true    
 end
 
+--------------------------------------------------------------------------------
+-- 指定した名前のシーンアニメーションを返します.
+-- 名前を設定しない場合は、デフォルトの"change"アニメーションを返します.
+--------------------------------------------------------------------------------
 function SceneMgr:getSceneAnimationByName(name)
-    local animation = name or "none"
+    local animation = name or "change"
     animation = type(animation) == "string" and SceneAnimations[animation] or animation
     return animation
 end
 
+--------------------------------------------------------------------------------
+-- 指定した名前のシーンを返します.
+--------------------------------------------------------------------------------
 function SceneMgr:getSceneByName(sceneName)
     for i, scene in ipairs(self.scenes) do
         if scene.name == sceneName then
@@ -1073,6 +1085,23 @@ function SceneMgr:getSceneByName(sceneName)
     end
 end
 
+--------------------------------------------------------------------------------
+-- シーンを追加します.
+--------------------------------------------------------------------------------
+function SceneMgr:addScene(scene)
+    return table.insertElement(self.scenes, scene)
+end
+
+--------------------------------------------------------------------------------
+-- シーンを削除します.
+--------------------------------------------------------------------------------
+function SceneMgr:removeScene(scene)
+    return table.removeElement(self.scenes, scene)
+end
+
+--------------------------------------------------------------------------------
+-- 描画テーブルを返します.
+--------------------------------------------------------------------------------
 function SceneMgr:getRenderTable()
     local t = {}
     for i, scene in ipairs(self.scenes) do
@@ -1083,6 +1112,10 @@ function SceneMgr:getRenderTable()
     return t
 end
 
+--------------------------------------------------------------------------------
+-- 画面をタッチしたときのイベントハンドラです.
+-- SceneにTouchイベントを発出させます.
+--------------------------------------------------------------------------------
 function SceneMgr:onTouch(e)
     local scene = self.currentScene
     if scene then
@@ -1126,6 +1159,22 @@ function DisplayObject:getPos()
     local pivX, pivY, pivZ = self:getPiv()
     local locX, locY, locZ = self:getLoc()
     return locX - pivX + xMin, locY - pivY + yMin
+end
+
+--------------------------------------------------------------------------------
+-- widthを返します.
+--------------------------------------------------------------------------------
+function DisplayObject:getWidth()
+    local w, h, d = self:getDims()
+    return w
+end
+
+--------------------------------------------------------------------------------
+-- heightを返します.
+--------------------------------------------------------------------------------
+function DisplayObject:getHeight()
+    local w, h, d = self:getDims()
+    return h
 end
 
 --------------------------------------------------------------------------------
@@ -1174,6 +1223,16 @@ function DisplayObject:getColor()
 end
 
 --------------------------------------------------------------------------------
+-- オブジェクトの回転軸を中心に設定します..
+--------------------------------------------------------------------------------
+function DisplayObject:setPivToCenter()
+    local w, h, d = self:getDims()
+    local left, top = self:getPos()
+    self:setPiv(w / 2, h / 2, 0)
+    self:setPos(left, top)
+end
+
+--------------------------------------------------------------------------------
 -- オブジェクトのvisibleを返します.
 --------------------------------------------------------------------------------
 function DisplayObject:getVisible()
@@ -1184,10 +1243,15 @@ end
 -- 親オブジェクトを設定します.
 -- 親オブジェクトが取得できるように横取りします.
 --------------------------------------------------------------------------------
-function DisplayObject:setParent(value)
-    local interface = MOAIProp.getInterfaceTable()
-    interface.setParent(self, value)
-    self.parent = value
+function DisplayObject:setParent(parent)
+    self.parent = parent
+ 
+    self:clearAttrLink(MOAIColor.INHERIT_COLOR)
+    self:clearAttrLink(MOAITransform.INHERIT_TRANSFORM)
+    if parent then
+        self:setAttrLink(MOAIColor.INHERIT_COLOR, parent, MOAIColor.COLOR_TRAIT)
+        self:setAttrLink(MOAITransform.INHERIT_TRANSFORM, parent, MOAITransform.TRANSFORM_TRAIT)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1218,11 +1282,16 @@ M.Layer = Layer
 
 function Layer:init()
     DisplayObject.init(self)
+
+    local partition = MOAIPartition.new()
+    self:setPartition(partition)
+    self.partition = partition
+    
     local viewport = MOAIViewport.new()
     viewport:setSize(M.screenWidth, M.screenHeight)
     viewport:setScale(M.viewWidth, -M.viewHeight)
     viewport:setOffset(-1, 1)
-    
+
     self:setViewport(viewport)
     self.viewport = viewport
     self.touchEnabled = false
@@ -1236,6 +1305,22 @@ function Layer:setTouchEnabled(value)
     self.touchEnabled = value
     if value  then
         self.touchHandler = self.touchHandler or TouchHandler(self)
+    end
+end
+
+function Layer:setScene(scene)
+    if self.scene == scene then
+        return
+    end
+
+    if self.scene then
+        self.scene:removeChild(self)
+    end
+    
+    self.scene = scene
+
+    if self.scene then
+        self.scene:addChild(self)
     end
 end
 
@@ -1262,11 +1347,37 @@ end
 Group = class(DisplayObject)
 M.Group = Group
 
-function Group:init(layer)
+function Group:init(layer, width, height)
     DisplayObject.init(self)
     self.children = {}
     self.isGroup = true
     self.layer = layer
+    self.width = width or 0
+    self.height = height or 0
+    
+    self:setPivToCenter()
+end
+
+--------------------------------------------------------------------------------
+-- サイズを設定します.
+--------------------------------------------------------------------------------
+function Group:setSize(width, height)
+    self.width = width
+    self.height = height
+end
+
+--------------------------------------------------------------------------------
+-- サイズを返します.
+--------------------------------------------------------------------------------
+function Group:getDims()
+    return self.width, self.height, 0
+end
+
+--------------------------------------------------------------------------------
+-- Boundsを返します.
+--------------------------------------------------------------------------------
+function Group:getBounds()
+    return 0, 0, 0, self.width, self.height, 0
 end
 
 --------------------------------------------------------------------------------
@@ -1312,90 +1423,103 @@ function Group:setLayer(layer)
     end
 end
 
+--------------------------------------------------------------------------------
+-- 子オブジェクトのvisibleを設定します.
+--------------------------------------------------------------------------------
+function Group:setVisible(value)
+    local I = MOAIProp.getInterfaceTable()
+    I.setVisible(self, value)
+    
+    for i, v in ipairs(self.children) do
+        v:setVisible(value)
+    end
+end
+
 ----------------------------------------------------------------------------------------------------
 -- Scene
 ----------------------------------------------------------------------------------------------------
 Scene = class(Group)
 M.Scene = Scene
 
-Scene.TOUCH_EVENT = Event(Event.TOUCH)
+Scene.TOUCH_EVENT = Event()
 
 --------------------------------------------------------------------------------
 -- コンストラクタ
 --------------------------------------------------------------------------------
-function Scene:init(sceneName)
-    Group.init(self)
-    self.loaded = false
-    self.opened = false
-    self.started = false
+function Scene:init(sceneName, params)
+    Group.init(self, nil, M.screenWidth, M.screenHeight)
     self.name = sceneName
     self.isScene = true
-    self.controller = require(sceneName)
+    self.opened = false
+    self.started = false
+    self.controller = sceneName and require(sceneName) or {}
     self.controller.scene = self
     self:initListeners()
+    
+    self:dispatchEvent(Event.CREATE, params)
 end
 
+--------------------------------------------------------------------------------
+-- イベントリスナをセットします.
+--------------------------------------------------------------------------------
 function Scene:initListeners()
     local addEventListener = function(type, func, obj)
         if func then
             self:addEventListener(type, func, obj)
         end
     end
-    addEventListener(Event.LOAD, self.controller.onLoad)
-    addEventListener(Event.UNLOAD, self.controller.onUnload)
+    addEventListener(Event.CREATE, self.controller.onCreate)
     addEventListener(Event.OPEN, self.controller.onOpen)
     addEventListener(Event.CLOSE, self.controller.onClose)
     addEventListener(Event.START, self.controller.onStart)
     addEventListener(Event.STOP, self.controller.onStop)
-    addEventListener(Event.TOUCH, self.onTouch, self)
+    addEventListener(Event.TOUCH_DOWN, self.onTouch, self)
+    addEventListener(Event.TOUCH_UP, self.onTouch, self)
+    addEventListener(Event.TOUCH_MOVE, self.onTouch, self)
+    addEventListener(Event.TOUCH_CANCEL, self.onTouch, self)
 end
 
-function Scene:load(params)
-    if self.loaded then
-        return
-    end
-    
-    self:dispatchEvent(Event.LOAD, params)
-    self.loaded = true
-end
-
-function Scene:dispose(params)
-    if not self.loaded then
-        return
-    end
-
-    self:dispatchEvent(Event.UNLOAD, params)
-    self.loaded = false
-end
-
+--------------------------------------------------------------------------------
+-- シーンをオープンします.
+-- シーンをオープンすると、シーンマネージャに自身を追加します.
+--------------------------------------------------------------------------------
 function Scene:open(params)
     if self.opened then
         return
     end
     
-    self:load(params)
     self:dispatchEvent(Event.OPEN, params)
     self.opened = true
+    SceneMgr:addScene(self)
 end
 
+--------------------------------------------------------------------------------
+-- シーンをクローズします.
+--------------------------------------------------------------------------------
 function Scene:close(params)
-    if self.opened then
+    if not self.opened then
         return
     end
     self:stop()
     self:dispatchEvent(Event.CLOSE, params)
-    self.opened = false
+    SceneMgr:removeScene(self)
 end
 
+--------------------------------------------------------------------------------
+-- シーンを開始します.
+--------------------------------------------------------------------------------
 function Scene:start(params)
-    if self.started then
+    if self.started or not self.opened then
         return
     end
-    self:open(params)
     self:dispatchEvent(Event.START, params)
     self.started = true
+    self.paused = false
 end
 
+--------------------------------------------------------------------------------
+-- シーンを停止します.
+--------------------------------------------------------------------------------
 function Scene:stop(params)
     if not self.started then
         return
@@ -1404,6 +1528,10 @@ function Scene:stop(params)
     self.started = false
 end
 
+--------------------------------------------------------------------------------
+-- シーンをタッチした時のイベントハンドラです.
+-- シーンマネージャによってイベントが発出されます.
+--------------------------------------------------------------------------------
 function Scene:onTouch(e)
     local e2 = table.copy(e, Scene.TOUCH_EVENT)
     for i = #self.children, 1, -1 do
@@ -1433,54 +1561,144 @@ end
 ----------------------------------------------------------------------------------------------------
 SceneAnimations = {}
 
-function SceneAnimations.none(currentScene, nextScene, params)
+function SceneAnimations.change(currentScene, nextScene, params)
+    currentScene:setVisible(false)
+
     nextScene:setScl(1, 1, 1)
     nextScene:setColor(1, 1, 1, 1)
+    nextScene:setPos(0, 0)
+    nextScene:setVisible(true)
+end
+
+function SceneAnimations.overlay(currentScene, nextScene, params)
+    nextScene:setScl(1, 1, 1)
+    nextScene:setColor(1, 1, 1, 1)
+    nextScene:setPos(0, 0)
     nextScene:setVisible(true)
 end
 
 function SceneAnimations.fade(currentScene, nextScene, params)
     local sec = params.second or 0.5
+
+    nextScene:setVisible(true)
     nextScene:setColor(0, 0, 0, 0)
-    
+
     MOAICoroutine.blockOnAction(currentScene:seekColor(0, 0, 0, 0, sec))
     MOAICoroutine.blockOnAction(nextScene:seekColor(1, 1, 1, 1, sec))
+    
+    currentScene:setVisible(false)
 end
 
 function SceneAnimations.crossFade(currentScene, nextScene, params)
     local sec = params.second or 0.5
+
+    nextScene:setVisible(true)
     nextScene:setColor(0, 0, 0, 0)
     
     local action1 = currentScene:seekColor(0, 0, 0, 0, sec)
     local action2 = nextScene:seekColor(1, 1, 1, 1, sec)
-    
     MOAICoroutine.blockOnAction(action1)
-    MOAICoroutine.blockOnAction(action2)
+    
+    currentScene:setVisible(false)
 end
 
+--------------------------------------------------------------------------------
+-- ポップインアニメーションです.
+--------------------------------------------------------------------------------
 function SceneAnimations.popIn(currentScene, nextScene, params)
     local sec = params.second or 0.5
+    
+    nextScene:setVisible(true)
     nextScene:setScl(0.5, 0.5, 0.5)
     nextScene:setColor(0, 0, 0, 0)
 
     local action1 = nextScene:seekColor(1, 1, 1, 1, sec)
     local action2 = nextScene:seekScl(1, 1, 1, sec)
     MOAICoroutine.blockOnAction(action1)
-    MOAICoroutine.blockOnAction(action2)
 end
 
+--------------------------------------------------------------------------------
+-- ポップアウトアニメーションです.
+-- ポップインとセットで使用する必要があります.
+--------------------------------------------------------------------------------
 function SceneAnimations.popOut(currentScene, nextScene, params)
     local sec = params.second or 0.5
 
-    local action1 = nextScene:seekColor(0, 0, 0, 0, sec)
-    local action2 = nextScene:seekScl(0.5, 0.5, 0.5, sec)
+    local action1 = currentScene:seekColor(0, 0, 0, 0, sec)
+    local action2 = currentScene:seekScl(0.5, 0.5, 0.5, sec)
     MOAICoroutine.blockOnAction(action1)
-    MOAICoroutine.blockOnAction(action2)
 end
 
+--------------------------------------------------------------------------------
+-- スライドアニメーションです.
+--------------------------------------------------------------------------------
 function SceneAnimations.slideLeft(currentScene, nextScene, params)
     local sec = params.second or 0.5
-    MOAICoroutine.blockOnAction(nextScene:seekLoc(-display.screenWidth, 0))
+    local sw, sh = M.getScreenSize()
+
+    nextScene:setVisible(true)
+    nextScene:setPos(sw, 0)
+    
+    local action1 = currentScene:moveLoc(-sw, 0, 0, sec)
+    local action2 = nextScene:moveLoc(-sw, 0, 0, sec)
+    MOAICoroutine.blockOnAction(action1)
+
+    currentScene:setVisible(false)
+    nextScene:setPos(0, 0)
+end
+
+--------------------------------------------------------------------------------
+-- スライドアニメーションです.
+--------------------------------------------------------------------------------
+function SceneAnimations.slideRight(currentScene, nextScene, params)
+    local sec = params.second or 0.5
+    local sw, sh = M.getScreenSize()
+
+    nextScene:setVisible(true)
+    nextScene:setPos(-sw, 0)
+    
+    local action1 = currentScene:moveLoc(sw, 0, 0, sec)
+    local action2 = nextScene:moveLoc(sw, 0, 0, sec)
+    MOAICoroutine.blockOnAction(action1)
+    
+    currentScene:setVisible(false)
+    nextScene:setPos(0, 0)
+end
+
+--------------------------------------------------------------------------------
+-- スライドアニメーションです.
+--------------------------------------------------------------------------------
+function SceneAnimations.slideTop(currentScene, nextScene, params)
+    local sec = params.second or 0.5
+    local sw, sh = M.getScreenSize()
+
+    nextScene:setVisible(true)
+    nextScene:setPos(0, sh)
+    
+    local action1 = currentScene:moveLoc(0, -sh, 0, sec)
+    local action2 = nextScene:moveLoc(0, -sh, 0, sec)
+    MOAICoroutine.blockOnAction(action1)
+    
+    currentScene:setVisible(false)
+    nextScene:setPos(0, 0)
+end
+
+--------------------------------------------------------------------------------
+-- スライドアニメーションです.
+--------------------------------------------------------------------------------
+function SceneAnimations.slideBottom(currentScene, nextScene, params)
+    local sec = params.second or 0.5
+    local sw, sh = M.getScreenSize()
+
+    nextScene:setVisible(true)
+    nextScene:setPos(0, -sh)
+    
+    local action1 = currentScene:moveLoc(0, sh, 0, sec)
+    local action2 = nextScene:moveLoc(0, sh, 0, sec)
+    MOAICoroutine.blockOnAction(action1)
+
+    currentScene:setVisible(false)
+    nextScene:setPos(0, 0)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1489,6 +1707,9 @@ end
 Image = class(DisplayObject)
 M.Image = Image
 
+--------------------------------------------------------------------------------
+-- コンストラクタです.
+--------------------------------------------------------------------------------
 function Image:init(texture, width, height)
     DisplayObject.init(self)
     
@@ -1506,6 +1727,26 @@ function Image:init(texture, width, height)
     self:setDeck(deck)
     self.deck = deck
     self.texture = texture
+    
+    self:setPivToCenter()
+end
+
+--------------------------------------------------------------------------------
+-- サイズを設定します.
+--------------------------------------------------------------------------------
+function Image:setSize(width, height)
+    deck:setRect(0, 0, width, height)
+    self:setPivToCenter()
+end
+
+--------------------------------------------------------------------------------
+-- テクスチャを設定します.
+--------------------------------------------------------------------------------
+function Image:setTexture(texture)
+    self.texture = Resources.getTexture(texture)
+    self.deck:setTexture(texture)
+    local tw, th = self.texture:getSize()
+    self:setSize(tw, th)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1617,6 +1858,9 @@ end
 MapImage = class(SheetImage)
 M.MapImage = MapImage
 
+--------------------------------------------------------------------------------
+-- コンストラクタです.
+--------------------------------------------------------------------------------
 function MapImage:init(texture, gridWidth, gridHeight, tileWidth, tileHeight, spacing, margin)
     SheetImage.init(self, texture)
     
@@ -1742,7 +1986,7 @@ function MovieClip:playAnim(name)
     if currentAnim and currentAnim:isBusy() then
         currentAnim:stop()
     end
-    if animTable[name] then
+    if name and animTable[name] then
         currentAnim = animTable[name]
         self.currentAnim = currentAnim
     end
@@ -1767,6 +2011,10 @@ end
 --------------------------------------------------------------------------------
 function MovieClip:isCurrentAnim(name)
     return self.currentAnim == self.animTable[name]
+end
+
+function MovieClip:isBusy()
+    return self.currentAnim and self.currentAnim:isBusy() or false
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1812,31 +2060,8 @@ function Rect:init(width, height)
     )
 end
 
-----------------------------------------------------------------------------------------------------
--- Mesh
-----------------------------------------------------------------------------------------------------
-Mesh = class()
-Mesh.__factory = MOAIMesh
-M.Mesh = Mesh
-
-function Mesh:init(vcoords, colors, primType)
-    primType = primType or MOAIMesh.GL_TRIANGLE_FAN
-    
-    local vertexFormat = MOAIVertexFormat.new ()
-    vertexFormat:declareCoord ( 1, MOAIVertexFormat.GL_FLOAT, 2 )
-    vertexFormat:declareColor ( 2, MOAIVertexFormat.GL_UNSIGNED_BYTE )
-
-    local vbo = MOAIVertexBuffer.new ()
-    vbo:setFormat(vertexFormat)
-    vbo:reserveVerts (#vcoords)
-    for i=1, #vcoords do
-        vbo:writeFloat(vcoords[i][1], vcoords[i][2])
-        vbo:writeColor32(colors[i][1], colors[i][2], colors[i][3])
-    end
-    vbo:bless ()
-
-    self:setVertexBuffer(vbo)
-    self:setPrimType(primType)
+function Rect:setSize(width, height)
+    self.deck:setRect(0, 0, width, height)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1883,7 +2108,9 @@ end
 ----------------------------------------------------------------------------------------------------
 TouchHandler = class()
 M.TouchHandler = TouchHandler
-TouchHandler.TOUCH_EVENT = Event(Event.TOUCH)
+
+-- Constraints
+TouchHandler.TOUCH_EVENT = Event()
 
 --------------------------------------------------------------------------------
 -- The constructor.
@@ -1893,7 +2120,10 @@ function TouchHandler:init(layer)
     self.touchLayer = assert(layer)
     self.touchProps = {}
     
-    layer:addEventListener(Event.TOUCH, self.onTouch, self)
+    layer:addEventListener(Event.TOUCH_DOWN, self.onTouch, self)
+    layer:addEventListener(Event.TOUCH_UP, self.onTouch, self)
+    layer:addEventListener(Event.TOUCH_MOVE, self.onTouch, self)
+    layer:addEventListener(Event.TOUCH_CANCEL, self.onTouch, self)
 end
 
 --------------------------------------------------------------------------------
@@ -1905,31 +2135,45 @@ function TouchHandler:onTouch(e)
     end
     
     -- screen to world location.
-    local layer = self.touchLayer
-    local partition = layer:getPartition()
-    local prop = partition:propForPoint(e.wx, e.wy, 0)
+    local prop = self:getTouchableProp(e)
     local prop2 = self.touchProps[e.idx]
     
     -- touch down prop
-    if e.kind == "down" then
+    if e.type == Event.TOUCH_DOWN then
         self.touchProps[e.idx] = prop
-    elseif e.kind == "up" then
+    elseif e.type == Event.TOUCH_UP then
+        self.touchProps[e.idx] = nil
+    elseif e.type == Event.TOUCH_CANCEL then
         self.touchProps[e.idx] = nil
     end
     
     -- touch event
     local e2 = table.copy(e, self.TOUCH_EVENT)
-    e2.prop = prop
 
     -- dispatch event
     if prop then
+        e2.prop = prop
         self:dispatchTouchEvent(e2, prop)
     end
     if prop2 and prop2 ~= prop then
+        e2.prop = prop2
         self:dispatchTouchEvent(e2, prop2)
     end
     if prop or prop2 then
         e:stop()
+    end
+end
+
+function TouchHandler:getTouchableProp(e)
+    local layer = self.touchLayer
+    local partition = layer:getPartition()
+    local sortMode = layer:getSortMode()
+    local props = {partition:propListForPoint(e.wx, e.wy, 0, sortMode)}
+    for i = #props, 1, -1 do
+        local prop = props[i]
+        if prop:getAttr(MOAIProp.ATTR_VISIBLE) > 0 then
+            return prop
+        end
     end
 end
 
