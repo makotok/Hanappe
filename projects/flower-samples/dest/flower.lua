@@ -1,8 +1,6 @@
 ----------------------------------------------------------------------------------------------------
--- Moai SDK のコーディングを楽にするフレームワークです.
--- 
---
---
+-- Flower library is a lightweight library for Moai SDK.
+-- @author Makoto
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -53,7 +51,12 @@ local keyboardSensor    = MOAIInputMgr.device.keyboard
 ----------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- Windowを起動します.
+-- Open the window.
+-- Initialize the library.
+-- @param title Title of the window
+-- @param width Width of the window
+-- @param height Height of the window
+-- @param scale cale of the Viewport to the Screen
 --------------------------------------------------------------------------------
 function M.openWindow(title, width, height, scale)
     scale = scale or 1    
@@ -68,65 +71,96 @@ function M.openWindow(title, width, height, scale)
 end
 
 --------------------------------------------------------------------------------
--- スクリーンのサイズを返します.
+-- Returns the size of the screen.
+-- @return width, height
 --------------------------------------------------------------------------------
 function M.getScreenSize()
     return M.screenWidth, M.screenHeight
 end
 
 --------------------------------------------------------------------------------
--- テクスチャを返します.
--- テクスチャが引数に指定された場合はそのまま返します.
+-- Returns the size of the viewport.
+-- @return width, height
+--------------------------------------------------------------------------------
+function M.getViewSize()
+    return M.viewWidth, M.viewHeight
+end
+
+--------------------------------------------------------------------------------
+-- Returns the texture.
+-- Textures are cached.
+-- @param path The path of the texture
+-- @return Texture instance
 --------------------------------------------------------------------------------
 function M.getTexture(path)
     return Resources.getTexture(path)
 end
 
 --------------------------------------------------------------------------------
--- MoaiのTexturePacker形式のデータを読み込んで返します.
+-- Reads the file of TexturePacker, Returns the atlas.
+-- @param luaFilePath TexturePacker lua file path
+-- @param texture (option)Path of the texture or Texture instance
+-- @return Texture atlas
 --------------------------------------------------------------------------------
 function M.getTextureAtlas(luaFilePath, texture)
     return Resources.getTextureAtles(luaFilePath, texture)
 end
 
 --------------------------------------------------------------------------------
--- 生成済フォントを返します.
--- 存在しない場合はフォントを生成して返します.
+-- Returns the font.
+-- Fonts are cached.
+-- @param path The path of the font.
+-- @param charcodes (option)Charcodes of the font
+-- @param points (option)Points of the font
+-- @param dpi (option)Dpi of the font
+-- @return Font instance
 --------------------------------------------------------------------------------
 function M.getFont(path, charcodes, points, dpi)
     return Resources.getFont(path, charcodes, points, dpi)
 end
 
 --------------------------------------------------------------------------------
--- シーンを起動します.
+-- Open the Scene.
+-- Delegate to SceneMgr.
+-- @param sceneName module name of the Scene
+-- @param params (option)Parameters of the Scene
 --------------------------------------------------------------------------------
 function M.openScene(sceneName, params)
     return SceneMgr:openScene(sceneName, params)
 end
 
 --------------------------------------------------------------------------------
--- 指定したシーンに遷移します.
+-- Goto the Scene.
+-- Delegate to SceneMgr.
+-- @param sceneName module name of the Scene
+-- @param params (option)Parameters of the Scene
 --------------------------------------------------------------------------------
 function M.gotoScene(sceneName, params)
     return SceneMgr:gotoScene(sceneName, params)
 end
 
 --------------------------------------------------------------------------------
--- 現在のシーンをクローズします.
+-- Close the Scene.
+-- Delegate to SceneMgr.
+-- @param params (option)Parameters of the Scene
 --------------------------------------------------------------------------------
 function M.closeScene(params)
     return SceneMgr:closeScene(params)
 end
 
 --------------------------------------------------------------------------------
--- コールチンを経由して関数を遅延実行します.
+-- Delay a function call.
+-- Called by MOAICoroutine.
+-- @param func function object
+-- @param ... (option)function arguments
 --------------------------------------------------------------------------------
 function M.callLater(func, ...)
-    Executors.callLater(func, ...)
+    return Executors.callLater(func, ...)
 end
 
 ----------------------------------------------------------------------------------------------------
--- class
+-- It is a class that provides an object-oriented.
+-- By using this class, you will be able to a class definition.
 -- @class table
 -- @name class
 ----------------------------------------------------------------------------------------------------
@@ -152,9 +186,9 @@ function class:__call(...)
 end
 
 --------------------------------------------------------------------------------
--- Instance generating functions.<br>
--- The user can use this function.<br>
--- Calling this function, init function will be called internally.<br>
+-- Instance generating functions.
+-- The user can use this function.
+-- Calling this function, init function will be called internally.
 -- @return Instance
 --------------------------------------------------------------------------------
 function class:new(...)
@@ -202,7 +236,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Same as indexOf, only for key values (slower)
--- Author:Nenad Katic<br>
+-- Author:Nenad Katic
 --------------------------------------------------------------------------------
 function table.keyOf( src, val )
     for k, v in pairs( src ) do
@@ -391,7 +425,7 @@ function math.clamp( v, min, max )
 end
 
 ----------------------------------------------------------------------------------------------------
--- This is a utility class to execute.<br>
+-- This is a utility class to execute.
 -- @class table
 -- @name Executors
 ----------------------------------------------------------------------------------------------------
@@ -399,7 +433,7 @@ Executors = {}
 M.Executors = Executors
 
 --------------------------------------------------------------------------------
--- Run the specified function looping <br>
+-- Run the specified function looping 
 -- @param func Target function.
 -- @param ... Argument.
 --------------------------------------------------------------------------------
@@ -419,19 +453,19 @@ function Executors.callLoop(func, ...)
 end
 
 --------------------------------------------------------------------------------
--- Run the specified function delay. <br>
+-- Run the specified function delay.
 -- @param func Target function.
--- @param ... Argument.
+-- @param ... Arguments.
 --------------------------------------------------------------------------------
 function Executors.callLater(func, ...)
     Executors.callLaterFrame(0, func, ...)
 end
 
 --------------------------------------------------------------------------------
--- Run the specified function delay. <br>
+-- Run the specified function delay.
 -- @param frame Delay frame count.
 -- @param func Target function.
--- @param ... Argument.
+-- @param ... Arguments.
 --------------------------------------------------------------------------------
 function Executors.callLaterFrame(frame, func, ...)
     local thread = MOAICoroutine.new()
@@ -449,10 +483,10 @@ function Executors.callLaterFrame(frame, func, ...)
 end
 
 --------------------------------------------------------------------------------
--- Run the specified function delay. <br>
+-- Run the specified function delay.
 -- @param time Delay seconds.
 -- @param func Target function.
--- @param ... Argument.
+-- @param ... Arguments.
 --------------------------------------------------------------------------------
 function Executors.callLaterTime(time, func, ...)
     local args = {...}
@@ -463,7 +497,8 @@ function Executors.callLaterTime(time, func, ...)
 end
 
 ----------------------------------------------------------------------------------------------------
--- This is a utility class to execute.<br>
+-- It is a class that manages the resource.
+-- Caches the resources, I improve the performance.
 -- @class table
 -- @name Resources
 ----------------------------------------------------------------------------------------------------
@@ -476,8 +511,10 @@ Resources.fontCache = {}
 Resources.atlasCache = {}
 
 --------------------------------------------------------------------------------
--- テクスチャを返します.
--- テクスチャが引数に指定された場合はそのまま返します.
+-- Returns the texture.
+-- Textures are cached.
+-- @param path The path of the texture
+-- @return Texture instance
 --------------------------------------------------------------------------------
 function Resources.getTexture(path)
     local cache = Resources.textureCache
@@ -492,8 +529,13 @@ function Resources.getTexture(path)
 end
 
 --------------------------------------------------------------------------------
--- 生成済フォントを返します.
--- 存在しない場合はフォントを生成して返します.
+-- Returns the font.
+-- Fonts are cached.
+-- @param path The path of the font.
+-- @param charcodes (option)Charcodes of the font
+-- @param points (option)Points of the font
+-- @param dpi (option)Dpi of the font
+-- @return Font instance
 --------------------------------------------------------------------------------
 function Resources.getFont(path, charcodes, points, dpi)
     local cache = Resources.fontCache
@@ -515,7 +557,10 @@ function Resources.getFont(path, charcodes, points, dpi)
 end
 
 --------------------------------------------------------------------------------
--- MoaiのTexturePacker形式のデータを読み込みます.
+-- Reads the file of TexturePacker, Returns the atlas.
+-- @param luaFilePath TexturePacker lua file path
+-- @param texture (option)Path of the texture or Texture instance
+-- @return Texture atlas
 --------------------------------------------------------------------------------
 function Resources.getTextureAtlas(luaFilePath, texture)
     local cache = Resources.atlasCache
@@ -537,13 +582,10 @@ function Resources.getTextureAtlas(luaFilePath, texture)
         local r = frame.spriteColorRect
         local dataFrame = data.frames[i]
         if frame.textureRotated then
-            --dataFrame.quad = {uv.u1, uv.v0, uv.u1, uv.v1, uv.u0, uv.v1, uv.u0, uv.v0}
             dataFrame.quad = {uv.u0, uv.v0, uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0}
             dataFrame.rect = {0, 0, r.width, r.height}
         else
-            --dataFrame.quad = {uv.u0, uv.v0, uv.u1, uv.v0, uv.u1, uv.v1, uv.u0, uv.v1}
             dataFrame.quad = {uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0, uv.u0, uv.v0}
-            --dataFrame.quad = {uv.u1, uv.v1, uv.u0, uv.v1, uv.u0, uv.v0, uv.u1, uv.v0}
             dataFrame.rect = {0, 0, r.width, r.height}
         end
     end
@@ -552,8 +594,8 @@ function Resources.getTextureAtlas(luaFilePath, texture)
 end
 
 ----------------------------------------------------------------------------------------------------
--- The base class Event. <br>
--- Holds the data of the Event. <br>
+-- The base class Event. 
+-- Holds the data of the Event. 
 --
 -- @auther Makoto
 -- @class table
@@ -592,7 +634,7 @@ function Event:init(eventType)
 end
 
 --------------------------------------------------------------------------------
--- Sets the event listener by EventDispatcher. <br>
+-- Sets the event listener by EventDispatcher. 
 -- Please do not accessible from the outside.
 --------------------------------------------------------------------------------
 function Event:setListener(callback, source)
@@ -608,8 +650,8 @@ function Event:stop()
 end
 
 ----------------------------------------------------------------------------------------------------
--- This class is an event listener. <br>
--- Framework will be used internally. <br>
+-- This class is an event listener. 
+-- Framework will be used internally. 
 --
 -- @auther Makoto
 -- @class table
@@ -634,7 +676,7 @@ function EventListener:call(event)
 end
 
 ----------------------------------------------------------------------------------------------------
--- This class is has a function of event notification. <br>
+-- This class is has a function of event notification. 
 --
 -- @auther Makoto
 -- @class table
@@ -654,8 +696,8 @@ function EventDispatcher:init()
 end
 
 --------------------------------------------------------------------------------
--- Adds an event listener. <br>
--- will now catch the events that are sent in the dispatchEvent. <br>
+-- Adds an event listener. 
+-- will now catch the events that are sent in the dispatchEvent. 
 -- @param evenType Target event type.
 -- @param callback The callback function.
 -- @param source (option)The first argument passed to the callback function.
@@ -684,6 +726,10 @@ end
 
 --------------------------------------------------------------------------------
 -- Removes an event listener.
+-- @param eventType Type of event to be deleted
+-- @param callback Callback function of event to be deleted
+-- @param source (option)Source of event to be deleted
+-- @return True if it can be removed
 --------------------------------------------------------------------------------
 function EventDispatcher:removeEventListener(eventType, callback, source)
     assert(eventType)
@@ -724,8 +770,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Dispatches the event.
--- @param event 
--- @param data
+-- @param event Event object or Event type name.
+-- @param data Data that is set in the event.
 --------------------------------------------------------------------------------
 function EventDispatcher:dispatchEvent(event, data)
     local eventName = type(event) == "string" and event
@@ -763,7 +809,7 @@ function EventDispatcher:clearEventListeners()
 end
 
 ----------------------------------------------------------------------------------------------------
--- This is a utility class to execute.<br>
+-- This is a utility class to execute.
 -- @class table
 -- @name RenderMgr
 ----------------------------------------------------------------------------------------------------
@@ -778,7 +824,8 @@ Executors.callLoop(
 )
 
 ----------------------------------------------------------------------------------------------------
--- This class is has a function of event notification. <br>
+-- This singleton class manages the input event.
+-- Easy to deal with MOAIInputMgr. 
 --
 -- @auther Makoto
 -- @class table
@@ -806,6 +853,7 @@ InputMgr.pointer = {x = 0, y = 0, down = false}
 
 --------------------------------------------------------------------------------
 -- Initialize.
+-- Called by openWindow function.
 --------------------------------------------------------------------------------
 function InputMgr:initialize()
 
@@ -864,7 +912,9 @@ function InputMgr:initialize()
 end
 
 --------------------------------------------------------------------------------
--- キーを押下しているか返します.
+-- If the user has pressed a key returns true.
+-- @param key Key code
+-- @return If the user has pressed a key true
 --------------------------------------------------------------------------------
 function InputMgr:keyIsDown(key)
     if keyboardSensor then
@@ -873,7 +923,9 @@ function InputMgr:keyIsDown(key)
 end
 
 ----------------------------------------------------------------------------------------------------
--- This is a utility class to execute.<br>
+-- This is a singleton class that manages the rendering object.
+-- 
+--
 -- @class table
 -- @name RenderMgr
 ----------------------------------------------------------------------------------------------------
@@ -892,6 +944,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Add a Render object.
+-- @param render Render object
 --------------------------------------------------------------------------------
 function RenderMgr:addChild(render)
     table.insertElement(self.renders, render)
@@ -899,7 +952,8 @@ function RenderMgr:addChild(render)
 end
 
 --------------------------------------------------------------------------------
--- Remove a rendereble object.
+-- Remove a Render object.
+-- @param render Render object
 --------------------------------------------------------------------------------
 function RenderMgr:removeChild(render)
     table.removeElement(self.renders, render)
@@ -919,15 +973,14 @@ function RenderMgr:updateRenderTable()
 end
 
 --------------------------------------------------------------------------------
--- レンダリングの更新処理をスケジューリングします.
+-- Invalidate the renderTable.
 --------------------------------------------------------------------------------
 function RenderMgr:invalidate()
     self.invalidFlag = true
 end
 
 --------------------------------------------------------------------------------
--- フレーム毎の処理を行います.
--- レンダリングテーブルを更新する必要がある場合、更新処理を行います.
+-- Event handler for the enter frame.
 --------------------------------------------------------------------------------
 function RenderMgr:onEnterFrame()
     if self.invalidFlag then
@@ -937,7 +990,8 @@ function RenderMgr:onEnterFrame()
 end
 
 ----------------------------------------------------------------------------------------------------
--- This is a utility class to execute.<br>
+-- This is a singleton class to manage the scene object.
+--
 -- @class table
 -- @name SceneMgr
 ----------------------------------------------------------------------------------------------------
@@ -954,7 +1008,8 @@ SceneMgr.createScene = function(sceneName, params)
 end
 
 --------------------------------------------------------------------------------
--- このクラスの初期化処理です.
+-- Initialize.
+-- Called by openWindow function.
 --------------------------------------------------------------------------------
 function SceneMgr:initialize()
     InputMgr:addEventListener(Event.TOUCH_DOWN, self.onTouch, self)
@@ -965,22 +1020,27 @@ function SceneMgr:initialize()
 end
 
 --------------------------------------------------------------------------------
--- 指定したシーンに遷移します.
--- 現在起動中のシーンは閉じられます.
+-- Goto the Scene.
+-- Will close the current scene.
+-- @param sceneName module name of the Scene
+-- @param params (option)Parameters of the Scene
 --------------------------------------------------------------------------------
 function SceneMgr:gotoScene(sceneName, params)
     return self:internalOpenScene(sceneName, params, true)
 end
 
 --------------------------------------------------------------------------------
--- シーンをオープンします.
+-- Open the Scene.
+-- @param sceneName module name of the Scene
+-- @param params (option)Parameters of the Scene
 --------------------------------------------------------------------------------
 function SceneMgr:openScene(sceneName, params)
     return self:internalOpenScene(sceneName, params, false)
 end
 
 --------------------------------------------------------------------------------
--- シーンをオープンします.
+-- Open the scene for the internal implementation.
+-- Please do not be accessed from outside.
 --------------------------------------------------------------------------------
 function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     params = params or {}
@@ -1027,7 +1087,9 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
 end
 
 --------------------------------------------------------------------------------
--- 現在のシーンをクローズします.
+-- Close the Scene.
+-- Delegate to SceneMgr.
+-- @param params (option)Parameters of the Scene
 --------------------------------------------------------------------------------
 function SceneMgr:closeScene(params)
     params = params or {}
@@ -1065,8 +1127,10 @@ function SceneMgr:closeScene(params)
 end
 
 --------------------------------------------------------------------------------
--- 指定した名前のシーンアニメーションを返します.
--- 名前を設定しない場合は、デフォルトの"change"アニメーションを返します.
+-- Return the animation scene with the specified name.
+-- If you do not specify a name, will return to "change" the default animation.
+-- @param name Animation name of the SceneAnimations
+-- @return animation function
 --------------------------------------------------------------------------------
 function SceneMgr:getSceneAnimationByName(name)
     local animation = name or "change"
@@ -1075,7 +1139,10 @@ function SceneMgr:getSceneAnimationByName(name)
 end
 
 --------------------------------------------------------------------------------
--- 指定した名前のシーンを返します.
+-- Returned to the scene with the specified name.
+-- Find that open from the scene.
+-- @param sceneName name of the Scene.
+-- @return Scene object
 --------------------------------------------------------------------------------
 function SceneMgr:getSceneByName(sceneName)
     for i, scene in ipairs(self.scenes) do
@@ -1452,11 +1519,23 @@ function Scene:init(sceneName, params)
     self.isScene = true
     self.opened = false
     self.started = false
-    self.controller = sceneName and require(sceneName) or {}
+    self.controller = self:createController(params)
     self.controller.scene = self
     self:initListeners()
     
     self:dispatchEvent(Event.CREATE, params)
+end
+
+function Scene:createController(params)
+    params = params or {}
+    
+    local sceneController = params.sceneController
+    if sceneController then
+        return type(sceneController) == "string" and require(sceneController) or sceneController
+    end
+    
+    local sceneName = self.name
+    return sceneName and require(sceneName) or {}
 end
 
 --------------------------------------------------------------------------------
@@ -1555,7 +1634,7 @@ function Scene:getRenderTable()
 end
 
 ----------------------------------------------------------------------------------------------------
--- This is a utility class to execute.<br>
+-- This is a utility class to execute.
 -- @class table
 -- @name SceneAnimations
 ----------------------------------------------------------------------------------------------------
@@ -2005,7 +2084,7 @@ function MovieClip:stopAnim()
 end
 
 --------------------------------------------------------------------------------
--- Check the current animation with the specified name.<br>
+-- Check the current animation with the specified name.
 -- @param name Animation name.
 -- @return If the current animation is true.
 --------------------------------------------------------------------------------
@@ -2114,7 +2193,7 @@ TouchHandler.TOUCH_EVENT = Event()
 
 --------------------------------------------------------------------------------
 -- The constructor.
--- @param params (option)Parameter is set to Object.<br>
+-- @param params (option)Parameter is set to Object.
 --------------------------------------------------------------------------------
 function TouchHandler:init(layer)
     self.touchLayer = assert(layer)
