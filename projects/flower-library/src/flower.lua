@@ -295,7 +295,7 @@ function table.insertElement(t, o)
     if table.indexOf(t, o) > 0 then
         return false
     end
-    table.insert(t, o)
+    t[#t + 1] = o
     return true
 end
 
@@ -380,53 +380,6 @@ function math.normalize( x, y )
     return x/d, y/d
 end
 
---------------------------------------------------------------------------------
--- Calculate the Angle.
--- @param a
--- @param b
--- @param c
--- @return angle
---------------------------------------------------------------------------------
-function math.getAngle( a, b, c )
-    local result
-    if c then
-        local ab, bc = { }, { }
-        
-        ab.x = b.x - a.x;
-        ab.y = b.y - a.y;
-
-        bc.x = b.x - c.x;
-        bc.y = b.y - c.y;
-        
-        local angleAB   = math.atan2( ab.y, ab.x )
-        local angleBC   = math.atan2( bc.y, bc.x )
-        result = angleAB - angleBC
-    else
-        local ab = { }
-
-        ab.x = b.x - a.x;
-        ab.y = b.y - a.y;
-        result = math.deg( math.atan2( ab.y, ab.x ) )
-
-    end
-    return  result
-end
-
---------------------------------------------------------------------------------
--- If the value is out of range, return a value in the range.
--- @param v
--- @param min
--- @param max
--- @return v (min <= v <= max)
---------------------------------------------------------------------------------
-function math.clamp( v, min, max )
-    if v < min then
-        v = min
-    elseif v > max then
-        v = max
-    end
-    return v
-end
 
 ----------------------------------------------------------------------------------------------------
 -- This is a utility class to execute.

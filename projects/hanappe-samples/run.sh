@@ -1,10 +1,13 @@
 #!/bin/bash
 cd `dirname $0`
 
-# setting
+# moai setting
 MOAI_HOME=~/moai-sdk
-DEST_DIR=./dest
-CONFIG_LUA="${MOAI_HOME}/samples/config/config.lua"
+MOAI_BIN=$MOAI_HOME/bin/osx/moai
+
+# local setting
+BIN_DIR=./bin
+CONFIG_LUA="$MOAI_HOME/samples/config/config.lua"
 MAIN_LAU="main.lua"
 
 # build
@@ -13,6 +16,6 @@ STATUS=$?
 
 # run
 if [ $STATUS == "0" ]; then
-    cd ${DEST_DIR}
-    ${MOAI_HOME}/bin/osx/moai $CONFIG_LUA $MAIN_LAU
+    cd $BIN_DIR
+    $MOAI_BIN $CONFIG_LUA $MAIN_LAU
 fi

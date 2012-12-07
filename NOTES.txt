@@ -1,4 +1,17 @@
 -------------------------------------------------------------------
+-- Hanappe Version:2.0.1
+-- Moai SDK Version 1.3 Build 98
+-- Update: 2012/12/08
+-------------------------------------------------------------------
+
+1. Flower library
+I've created a lightweight library.
+Flower is a library that can be used by itself.
+
+2. Minor modifications of Hanappe
+I have fixed some small bugs.
+
+-------------------------------------------------------------------
 -- Hanappe Framework Version:2.0.0
 -- Moai SDK Version 1.3 Build 98
 -- Update: 2012/10/07
