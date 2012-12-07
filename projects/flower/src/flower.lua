@@ -1,5 +1,9 @@
 ----------------------------------------------------------------------------------------------------
 -- Flower library is a lightweight library for Moai SDK.
+--
+-- MEMO:
+-- English document is automatically translated.
+-- I want to point out mistakes.
 -- @author Makoto
 ----------------------------------------------------------------------------------------------------
 
@@ -1063,9 +1067,6 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     self.nextScene = self.createScene(sceneName, params)
     self.nextScene:open(params)
     
-    -- refresh render
-    RenderMgr:invalidate()
-    
     -- scene animation
     Executors.callLater(
         function()
@@ -1103,7 +1104,6 @@ function SceneMgr:closeScene(params)
     -- set next scene
     self.nextScene = self.scenes[#self.scenes - 1]
     self.currentScene:stop(params)
-    RenderMgr:invalidate()
 
     Executors.callLater(
         function()
@@ -1118,8 +1118,6 @@ function SceneMgr:closeScene(params)
             if self.currentScene then
                 self.currentScene:start(params)
             end
-            
-            RenderMgr:invalidate()
         end
     )
     
@@ -1153,21 +1151,29 @@ function SceneMgr:getSceneByName(sceneName)
 end
 
 --------------------------------------------------------------------------------
--- シーンを追加します.
+-- Add a scene.
+-- @param scene scene
+-- @return True if you add
 --------------------------------------------------------------------------------
 function SceneMgr:addScene(scene)
+    RenderMgr:invalidate()
     return table.insertElement(self.scenes, scene)
 end
 
 --------------------------------------------------------------------------------
--- シーンを削除します.
+-- Remove a scene.
+-- @param scene scene
+-- @return True if you remove
 --------------------------------------------------------------------------------
 function SceneMgr:removeScene(scene)
+    RenderMgr:invalidate()
     return table.removeElement(self.scenes, scene)
 end
 
 --------------------------------------------------------------------------------
--- 描画テーブルを返します.
+-- Returns the render table.
+-- Used in RenderMgr.
+-- @return Render table
 --------------------------------------------------------------------------------
 function SceneMgr:getRenderTable()
     local t = {}
@@ -1180,8 +1186,9 @@ function SceneMgr:getRenderTable()
 end
 
 --------------------------------------------------------------------------------
--- 画面をタッチしたときのイベントハンドラです.
--- SceneにTouchイベントを発出させます.
+-- The event handler is called when you touch the screen.
+-- Touch to fire a event to Scene.
+-- @param e Touch event
 --------------------------------------------------------------------------------
 function SceneMgr:onTouch(e)
     local scene = self.currentScene
@@ -1203,7 +1210,27 @@ DisplayObject.__factory = MOAIProp
 M.DisplayObject = DisplayObject
 
 --------------------------------------------------------------------------------
--- 左上原点の座標を設定します.
+-- Returns the width.
+-- @return width
+--------------------------------------------------------------------------------
+function DisplayObject:getWidth()
+    local w, h, d = self:getDims()
+    return w
+end
+
+--------------------------------------------------------------------------------
+-- Returns the height.
+-- @return height
+--------------------------------------------------------------------------------
+function DisplayObject:getHeight()
+    local w, h, d = self:getDims()
+    return h
+end
+
+--------------------------------------------------------------------------------
+-- Sets the position.
+-- @param left Left position
+-- @param left Top position
 --------------------------------------------------------------------------------
 function DisplayObject:setPos(left, top)
     local xMin, yMin, zMin, xMax, yMax, zMax = self:getBounds()
@@ -1216,7 +1243,8 @@ function DisplayObject:setPos(left, top)
 end
 
 --------------------------------------------------------------------------------
--- 左上原点の座標を返します.
+-- Returns the position.
+-- @return Left, Top.
 --------------------------------------------------------------------------------
 function DisplayObject:getPos()
     local xMin, yMin, zMin, xMax, yMax, zMax = self:getBounds()
@@ -1229,23 +1257,8 @@ function DisplayObject:getPos()
 end
 
 --------------------------------------------------------------------------------
--- widthを返します.
---------------------------------------------------------------------------------
-function DisplayObject:getWidth()
-    local w, h, d = self:getDims()
-    return w
-end
-
---------------------------------------------------------------------------------
--- heightを返します.
---------------------------------------------------------------------------------
-function DisplayObject:getHeight()
-    local w, h, d = self:getDims()
-    return h
-end
-
---------------------------------------------------------------------------------
--- 左上原点の座標を返します.
+-- Returns the left position.
+-- @return left
 --------------------------------------------------------------------------------
 function DisplayObject:getLeft()
     local left, top = self:getPos()
@@ -1253,7 +1266,8 @@ function DisplayObject:getLeft()
 end
 
 --------------------------------------------------------------------------------
--- 左上原点の座標を返します.
+-- Returns the top position.
+-- @return top
 --------------------------------------------------------------------------------
 function DisplayObject:getTop()
     local left, top = self:getPos()
@@ -1261,7 +1275,8 @@ function DisplayObject:getTop()
 end
 
 --------------------------------------------------------------------------------
--- 左上原点の座標を返します.
+-- Returns the right position.
+-- @return right
 --------------------------------------------------------------------------------
 function DisplayObject:getRight()
     local left, top = self:getPos()
@@ -1270,7 +1285,8 @@ function DisplayObject:getRight()
 end
 
 --------------------------------------------------------------------------------
--- 左上原点の座標を返します.
+-- Returns the bottom position.
+-- @return bottom
 --------------------------------------------------------------------------------
 function DisplayObject:getBottom()
     local left, top = self:getPos()
@@ -1279,7 +1295,8 @@ function DisplayObject:getBottom()
 end
 
 --------------------------------------------------------------------------------
--- 左上原点の座標を返します.
+-- Returns the color.
+-- @return red, green, blue, alpha
 --------------------------------------------------------------------------------
 function DisplayObject:getColor()
     local r = self:getAttr(MOAIColor.ATTR_R_COL)
@@ -1290,7 +1307,7 @@ function DisplayObject:getColor()
 end
 
 --------------------------------------------------------------------------------
--- オブジェクトの回転軸を中心に設定します..
+-- Sets the piv to center position.
 --------------------------------------------------------------------------------
 function DisplayObject:setPivToCenter()
     local w, h, d = self:getDims()
@@ -1300,15 +1317,16 @@ function DisplayObject:setPivToCenter()
 end
 
 --------------------------------------------------------------------------------
--- オブジェクトのvisibleを返します.
+-- Returns the visible.
+-- @return visible
 --------------------------------------------------------------------------------
 function DisplayObject:getVisible()
     return self:getAttr(MOAIProp.ATTR_VISIBLE) > 0
 end
 
 --------------------------------------------------------------------------------
--- 親オブジェクトを設定します.
--- 親オブジェクトが取得できるように横取りします.
+-- Sets the parent.
+-- @param parent parent
 --------------------------------------------------------------------------------
 function DisplayObject:setParent(parent)
     self.parent = parent
@@ -1322,7 +1340,8 @@ function DisplayObject:setParent(parent)
 end
 
 --------------------------------------------------------------------------------
--- Set the MOAILayer instance.
+-- Set the MOAILayer object.
+-- @param layer
 --------------------------------------------------------------------------------
 function DisplayObject:setLayer(layer)
     if self.layer == layer then
@@ -1341,7 +1360,11 @@ function DisplayObject:setLayer(layer)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Layer
+-- This is the drawing Layer.
+--
+-- @auther Makoto
+-- @class table
+-- @name Layer
 ----------------------------------------------------------------------------------------------------
 Layer = class(DisplayObject)
 Layer.__factory = MOAILayer
@@ -1365,6 +1388,11 @@ function Layer:init()
     self.touchHandler = nil
 end
 
+--------------------------------------------------------------------------------
+-- Sets the touch enabled.
+-- If true, the touch event is to be issued.
+-- @param value enabled
+--------------------------------------------------------------------------------
 function Layer:setTouchEnabled(value)
     if self.touchEnabled == value then
         return
@@ -1375,6 +1403,10 @@ function Layer:setTouchEnabled(value)
     end
 end
 
+--------------------------------------------------------------------------------
+-- Sets the scene.
+-- @param scene scene
+--------------------------------------------------------------------------------
 function Layer:setScene(scene)
     if self.scene == scene then
         return
@@ -1392,7 +1424,11 @@ function Layer:setScene(scene)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Camera
+-- The Camera.
+--
+-- @auther Makoto
+-- @class table
+-- @name Camera
 ----------------------------------------------------------------------------------------------------
 Camera = class()
 Camera.__factory = MOAICamera
@@ -1409,11 +1445,21 @@ function Camera:init(ortho, near, far)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Group
+-- It is a group class that manages the children.
+--
+-- @auther Makoto
+-- @class table
+-- @name Group
 ----------------------------------------------------------------------------------------------------
 Group = class(DisplayObject)
 M.Group = Group
 
+--------------------------------------------------------------------------------
+-- The constructor.
+-- @param layer (option)layer object
+-- @param width (option)width
+-- @param height (option)height
+--------------------------------------------------------------------------------
 function Group:init(layer, width, height)
     DisplayObject.init(self)
     self.children = {}
@@ -1426,7 +1472,10 @@ function Group:init(layer, width, height)
 end
 
 --------------------------------------------------------------------------------
--- サイズを設定します.
+-- Sets the size.
+-- This is the size of a virtual.
+-- @param width width
+-- @param height height
 --------------------------------------------------------------------------------
 function Group:setSize(width, height)
     self.width = width
@@ -1434,21 +1483,24 @@ function Group:setSize(width, height)
 end
 
 --------------------------------------------------------------------------------
--- サイズを返します.
+-- Returns the size.
+-- @return width, height, 0
 --------------------------------------------------------------------------------
 function Group:getDims()
     return self.width, self.height, 0
 end
 
 --------------------------------------------------------------------------------
--- Boundsを返します.
+-- Returns the bounds.
+-- @return xMin, yMin, zMin, xMax, yMax, zMax
 --------------------------------------------------------------------------------
 function Group:getBounds()
     return 0, 0, 0, self.width, self.height, 0
 end
 
 --------------------------------------------------------------------------------
--- 子オブジェクトを追加します.
+-- Adds the specified child.
+-- @param child MOAIProp object
 --------------------------------------------------------------------------------
 function Group:addChild(child)
     if table.insertElement(self.children, child) then
@@ -1456,11 +1508,15 @@ function Group:addChild(child)
         if self.layer then
             self.layer:insertProp(child)
         end
+        return true
     end
+    return false
 end
 
 --------------------------------------------------------------------------------
--- 子オブジェクトを削除します.
+-- Removes a child.
+-- @param child MOAIProp object.
+-- @return True if removed.
 --------------------------------------------------------------------------------
 function Group:removeChild(child)
     if table.removeElement(self.children, child) then
@@ -1468,11 +1524,27 @@ function Group:removeChild(child)
         if self.layer then
             self.layer:removeProp(child)
         end
+        return true
+    end
+    return false
+end
+
+--------------------------------------------------------------------------------
+-- Returns a child by name.
+-- @param name child.name
+-- @return child
+--------------------------------------------------------------------------------
+function Group:getChildByName(name)
+    for i, child in ipairs(self.children) do
+        if child.name == name then
+            return child
+        end
     end
 end
 
 --------------------------------------------------------------------------------
--- グループにレイヤーを設定します.
+-- Sets the layer to use.
+-- @param layer MOAILayer object
 --------------------------------------------------------------------------------
 function Group:setLayer(layer)
     if self.layer then
@@ -1491,7 +1563,9 @@ function Group:setLayer(layer)
 end
 
 --------------------------------------------------------------------------------
--- 子オブジェクトのvisibleを設定します.
+-- Sets the visible.
+-- Also sets the visible of the child.
+-- @param value visible
 --------------------------------------------------------------------------------
 function Group:setVisible(value)
     local I = MOAIProp.getInterfaceTable()
@@ -1503,7 +1577,16 @@ function Group:setVisible(value)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Scene
+-- A scene class.
+-- Scene shows the multiple layers.
+-- In addition, the scene is to fire a event for the layer.
+--
+-- Object is generated by SceneMgr.
+-- From the controller to manipulate the scene.
+-- 
+-- @auther Makoto
+-- @class table
+-- @name Scene
 ----------------------------------------------------------------------------------------------------
 Scene = class(Group)
 M.Scene = Scene
@@ -1511,7 +1594,9 @@ M.Scene = Scene
 Scene.TOUCH_EVENT = Event()
 
 --------------------------------------------------------------------------------
--- コンストラクタ
+-- The constructor.
+-- @param sceneName Module name
+-- @param params Scene parameters
 --------------------------------------------------------------------------------
 function Scene:init(sceneName, params)
     Group.init(self, nil, M.screenWidth, M.screenHeight)
@@ -1538,9 +1623,6 @@ function Scene:createController(params)
     return sceneName and require(sceneName) or {}
 end
 
---------------------------------------------------------------------------------
--- イベントリスナをセットします.
---------------------------------------------------------------------------------
 function Scene:initListeners()
     local addEventListener = function(type, func, obj)
         if func then
@@ -1559,8 +1641,10 @@ function Scene:initListeners()
 end
 
 --------------------------------------------------------------------------------
--- シーンをオープンします.
--- シーンをオープンすると、シーンマネージャに自身を追加します.
+-- Open the scene.
+-- When you open the scene, to add themselves to a scene manager.
+-- Is usually called from SceneMgr.
+-- @param params Scene event parameters.(event.data)
 --------------------------------------------------------------------------------
 function Scene:open(params)
     if self.opened then
@@ -1573,7 +1657,9 @@ function Scene:open(params)
 end
 
 --------------------------------------------------------------------------------
--- シーンをクローズします.
+-- Close the scene.
+-- Is removed from the SceneMgr.
+-- @param params Scene event parameters.(event.data)
 --------------------------------------------------------------------------------
 function Scene:close(params)
     if not self.opened then
@@ -1585,7 +1671,9 @@ function Scene:close(params)
 end
 
 --------------------------------------------------------------------------------
--- シーンを開始します.
+-- Start the scene.
+-- Start event is issued.
+-- @param params Scene event parameters.(event.data)
 --------------------------------------------------------------------------------
 function Scene:start(params)
     if self.started or not self.opened then
@@ -1597,7 +1685,9 @@ function Scene:start(params)
 end
 
 --------------------------------------------------------------------------------
--- シーンを停止します.
+-- Stop the scene.
+-- Stop event is issued.
+-- @param params Scene event parameters.(event.data)
 --------------------------------------------------------------------------------
 function Scene:stop(params)
     if not self.started then
@@ -1608,8 +1698,7 @@ function Scene:stop(params)
 end
 
 --------------------------------------------------------------------------------
--- シーンをタッチした時のイベントハンドラです.
--- シーンマネージャによってイベントが発出されます.
+-- It is the event handler when you touch the screen.
 --------------------------------------------------------------------------------
 function Scene:onTouch(e)
     local e2 = table.copy(e, Scene.TOUCH_EVENT)
@@ -1627,14 +1716,18 @@ function Scene:onTouch(e)
 end
 
 --------------------------------------------------------------------------------
--- 描画テーブルを返します.
+-- Returns the rendering table.
+-- Used by RenderMgr.
+-- @return rendering table
 --------------------------------------------------------------------------------
 function Scene:getRenderTable()
     return self.children
 end
 
 ----------------------------------------------------------------------------------------------------
--- This is a utility class to execute.
+-- It is a scene transition animation classes.
+-- Define a function to do the animation.
+-- 
 -- @class table
 -- @name SceneAnimations
 ----------------------------------------------------------------------------------------------------
@@ -1681,9 +1774,6 @@ function SceneAnimations.crossFade(currentScene, nextScene, params)
     currentScene:setVisible(false)
 end
 
---------------------------------------------------------------------------------
--- ポップインアニメーションです.
---------------------------------------------------------------------------------
 function SceneAnimations.popIn(currentScene, nextScene, params)
     local sec = params.second or 0.5
     
@@ -1696,10 +1786,6 @@ function SceneAnimations.popIn(currentScene, nextScene, params)
     MOAICoroutine.blockOnAction(action1)
 end
 
---------------------------------------------------------------------------------
--- ポップアウトアニメーションです.
--- ポップインとセットで使用する必要があります.
---------------------------------------------------------------------------------
 function SceneAnimations.popOut(currentScene, nextScene, params)
     local sec = params.second or 0.5
 
@@ -1708,9 +1794,6 @@ function SceneAnimations.popOut(currentScene, nextScene, params)
     MOAICoroutine.blockOnAction(action1)
 end
 
---------------------------------------------------------------------------------
--- スライドアニメーションです.
---------------------------------------------------------------------------------
 function SceneAnimations.slideLeft(currentScene, nextScene, params)
     local sec = params.second or 0.5
     local sw, sh = M.getScreenSize()
@@ -1726,9 +1809,6 @@ function SceneAnimations.slideLeft(currentScene, nextScene, params)
     nextScene:setPos(0, 0)
 end
 
---------------------------------------------------------------------------------
--- スライドアニメーションです.
---------------------------------------------------------------------------------
 function SceneAnimations.slideRight(currentScene, nextScene, params)
     local sec = params.second or 0.5
     local sw, sh = M.getScreenSize()
@@ -1744,9 +1824,6 @@ function SceneAnimations.slideRight(currentScene, nextScene, params)
     nextScene:setPos(0, 0)
 end
 
---------------------------------------------------------------------------------
--- スライドアニメーションです.
---------------------------------------------------------------------------------
 function SceneAnimations.slideTop(currentScene, nextScene, params)
     local sec = params.second or 0.5
     local sw, sh = M.getScreenSize()
@@ -1762,9 +1839,6 @@ function SceneAnimations.slideTop(currentScene, nextScene, params)
     nextScene:setPos(0, 0)
 end
 
---------------------------------------------------------------------------------
--- スライドアニメーションです.
---------------------------------------------------------------------------------
 function SceneAnimations.slideBottom(currentScene, nextScene, params)
     local sec = params.second or 0.5
     local sw, sh = M.getScreenSize()
@@ -1781,13 +1855,19 @@ function SceneAnimations.slideBottom(currentScene, nextScene, params)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Image
+-- Class to display a simple texture.
+-- 
+-- @class table
+-- @name Image
 ----------------------------------------------------------------------------------------------------
 Image = class(DisplayObject)
 M.Image = Image
 
 --------------------------------------------------------------------------------
--- コンストラクタです.
+-- Constructor.
+-- @param texture Texture path, or texture.
+-- @param width (option) Width of image.
+-- @param height (option) Height of image.
 --------------------------------------------------------------------------------
 function Image:init(texture, width, height)
     DisplayObject.init(self)
@@ -1811,7 +1891,9 @@ function Image:init(texture, width, height)
 end
 
 --------------------------------------------------------------------------------
--- サイズを設定します.
+-- Sets the size.
+-- @param width Width of image.
+-- @param height Height of image.
 --------------------------------------------------------------------------------
 function Image:setSize(width, height)
     deck:setRect(0, 0, width, height)
@@ -1819,7 +1901,8 @@ function Image:setSize(width, height)
 end
 
 --------------------------------------------------------------------------------
--- テクスチャを設定します.
+-- Sets the texture.
+-- @param texture Texture path, or texture
 --------------------------------------------------------------------------------
 function Image:setTexture(texture)
     self.texture = Resources.getTexture(texture)
@@ -1829,11 +1912,21 @@ function Image:setTexture(texture)
 end
 
 ----------------------------------------------------------------------------------------------------
--- SheetImage
+-- Class that displays an image of the form sheet.
+-- Support the texture packer.
+-- 
+-- @class table
+-- @name SheetImage
 ----------------------------------------------------------------------------------------------------
 SheetImage = class(DisplayObject)
 M.SheetImage = SheetImage
 
+--------------------------------------------------------------------------------
+-- Constructor.
+-- @param texture Texture path, or texture
+-- @param sizeX (option) The size of the sheet
+-- @param sizeY (option) The size of the sheet
+--------------------------------------------------------------------------------
 function SheetImage:init(texture, sizeX, sizeY)
     DisplayObject.init(self)
     
@@ -1854,7 +1947,9 @@ function SheetImage:init(texture, sizeX, sizeY)
 end
 
 --------------------------------------------------------------------------------
--- TexturePacker形式のデータを元にフレームデータを設定します.
+-- Sets the sheet of TexturePacker.
+-- @param atlas Texture atlas
+-- @param texture Texture path, or texture
 --------------------------------------------------------------------------------
 function SheetImage:setTextureAtlas(atlas, texture)
     if type(atlas) == "string" then
@@ -1879,7 +1974,11 @@ function SheetImage:setTextureAtlas(atlas, texture)
 end
 
 --------------------------------------------------------------------------------
--- フレームデータをテクスチャのカラム数から設定します.
+-- Sets the size of the sheet.
+-- @param sizeX The size of the sheet
+-- @param sizeY The size of the sheet
+-- @param spacing (option)Spacing of the tiles
+-- @param margin (option)Margin of the sheet
 --------------------------------------------------------------------------------
 function SheetImage:setSheetSize(sizeX, sizeY, spacing, margin)
     local tw, th = self.texture:getSize()
@@ -1888,7 +1987,11 @@ function SheetImage:setSheetSize(sizeX, sizeY, spacing, margin)
 end
 
 --------------------------------------------------------------------------------
--- フレームデータをテクスチャのタイルサイズから設定します.
+-- Sets the sheet depending on the size of the tile.
+-- @param tileWidth The width of the tile
+-- @param tileHeight The height of the tile
+-- @param spacing (option)Spacing of the tiles
+-- @param margin (option)Margin of the sheet
 --------------------------------------------------------------------------------
 function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
     spacing = spacing or 0
@@ -1920,7 +2023,8 @@ function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
 end
 
 --------------------------------------------------------------------------------
--- フレームデータをテクスチャのタイルサイズから設定します.
+-- Sets the index by the sheet name.
+-- @param name Sheet name.
 --------------------------------------------------------------------------------
 function SheetImage:setIndexByName(name)
     if type(name) == "string" then
@@ -1932,13 +2036,23 @@ function SheetImage:setIndexByName(name)
 end
 
 ----------------------------------------------------------------------------------------------------
--- MapImage
+-- Class that displays a map of the form of a grid.
+-- 
+-- @class table
+-- @name MapImage
 ----------------------------------------------------------------------------------------------------
 MapImage = class(SheetImage)
 M.MapImage = MapImage
 
 --------------------------------------------------------------------------------
--- コンストラクタです.
+-- Constructor.
+-- @param texture Texture path, or texture
+-- @param gridWidth (option) The size of the grid
+-- @param gridHeight (option) The size of the grid
+-- @param tileWidth (option) The size of the tile
+-- @param tileHeight (option) The size of the tile
+-- @param spacing (option) The spacing of the tile
+-- @param margin (option) The margin of the tile
 --------------------------------------------------------------------------------
 function MapImage:init(texture, gridWidth, gridHeight, tileWidth, tileHeight, spacing, margin)
     SheetImage.init(self, texture)
@@ -1952,7 +2066,13 @@ function MapImage:init(texture, gridWidth, gridHeight, tileWidth, tileHeight, sp
 end
 
 --------------------------------------------------------------------------------
--- マップのグリッドサイズを設定します.
+-- Sets the size of the map grid.
+-- @param gridWidth (option) The size of the grid
+-- @param gridHeight (option) The size of the grid
+-- @param tileWidth (option) The size of the tile
+-- @param tileHeight (option) The size of the tile
+-- @param spacing (option) The spacing of the tile
+-- @param margin (option) The margin of the tile
 --------------------------------------------------------------------------------
 function MapImage:setMapSize(gridWidth, gridHeight, tileWidth, tileHeight, spacing, margin)
     self.grid:setSize(gridWidth, gridHeight, tileWidth, tileHeight)
@@ -1960,7 +2080,7 @@ function MapImage:setMapSize(gridWidth, gridHeight, tileWidth, tileHeight, spaci
 end
 
 --------------------------------------------------------------------------------
--- Set the map data.
+-- Sets the map rows data.
 -- @param rows Multiple rows of data.
 --------------------------------------------------------------------------------
 function MapImage:setRows(rows)
@@ -1970,7 +2090,7 @@ function MapImage:setRows(rows)
 end
 
 --------------------------------------------------------------------------------
--- Set the map data.
+-- Sets the map row data.
 -- @params ... rows of data.
 --------------------------------------------------------------------------------
 function MapImage:setRow(...)
@@ -1978,7 +2098,7 @@ function MapImage:setRow(...)
 end
 
 --------------------------------------------------------------------------------
--- Set the map value.
+-- Sets the map value.
 -- @params tile x.
 -- @params tile y.
 -- @params tile value.
@@ -1988,7 +2108,7 @@ function MapImage:setTile(x, y, value)
 end
 
 --------------------------------------------------------------------------------
--- Return the map value.
+-- Returns the map value.
 -- @params tile x.
 -- @params tile y.
 -- @return tile value.
@@ -1998,7 +2118,7 @@ function MapImage:getTile(x, y)
 end
 
 --------------------------------------------------------------------------------
--- Set the repeat flag.
+-- Sets the repeat flag.
 -- @param repeatX
 -- @param repeatY
 --------------------------------------------------------------------------------
@@ -2007,23 +2127,40 @@ function MapImage:setRepeat(repeatX, repeatY)
 end
 
 ----------------------------------------------------------------------------------------------------
--- MovieClip
+-- Class to animate the sheet.
+--
+-- @class table
+-- @name MapImage
 ----------------------------------------------------------------------------------------------------
 MovieClip = class(SheetImage)
 M.MovieClip = MovieClip
 
+--------------------------------------------------------------------------------
+-- Constructor.
+-- @param texture Texture path, or texture
+-- @param sizeX (option) The size of the sheet
+-- @param sizeY (option) The size of the sheet
+--------------------------------------------------------------------------------
 function MovieClip:init(texture, sizeX, sizeY)
     SheetImage.init(self, texture, sizeX, sizeY)
     self.animTable = {}
     self.currentAnim = nil
 end
 
+--------------------------------------------------------------------------------
+-- Sets the custom animation.
+-- @params name Name of anim
+-- @params anim Anim object
+--------------------------------------------------------------------------------
 function MovieClip:setAnim(name, anim)
     self.animTable[name] = anim
 end
 
 --------------------------------------------------------------------------------
--- フレームアニメーションを設定します.
+-- Sets the animation data.
+-- The frame is generated from the data.
+-- @param name Name of anim
+-- @param data Animation data
 --------------------------------------------------------------------------------
 function MovieClip:setAnimData(name, data)
     local curve = MOAIAnimCurve.new()
@@ -2046,7 +2183,8 @@ function MovieClip:setAnimData(name, data)
 end
 
 --------------------------------------------------------------------------------
--- 複数のフレームフレームアニメーションを設定します.
+-- Sets multiple animation data.
+-- @param datas Multiple data
 --------------------------------------------------------------------------------
 function MovieClip:setAnimDatas(datas)
     for i, data in ipairs(datas) do
@@ -2057,6 +2195,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Start the animation.
+-- @param name Name of anim
 --------------------------------------------------------------------------------
 function MovieClip:playAnim(name)
     local currentAnim = self.currentAnim
@@ -2092,17 +2231,33 @@ function MovieClip:isCurrentAnim(name)
     return self.currentAnim == self.animTable[name]
 end
 
+--------------------------------------------------------------------------------
+-- Returns whether the running.
+-- @return True if busy
+--------------------------------------------------------------------------------
 function MovieClip:isBusy()
     return self.currentAnim and self.currentAnim:isBusy() or false
 end
 
 ----------------------------------------------------------------------------------------------------
--- Text
+-- Label to display the text.
+-- Based on MOAITextBox.
+-- 
+-- @class table
+-- @name Label
 ----------------------------------------------------------------------------------------------------
 Label = class(DisplayObject)
 Label.__factory = MOAITextBox
 M.Label = Label
 
+--------------------------------------------------------------------------------
+-- Constructor.
+-- @param text Text
+-- @param width Width
+-- @param height Height
+-- @param font (option) Font path, or Font object
+-- @param textSize (option) TextSize
+--------------------------------------------------------------------------------
 function Label:init(text, width, height, font, textSize)
     DisplayObject.init(self)
     
@@ -2114,12 +2269,29 @@ function Label:init(text, width, height, font, textSize)
     self:setString(text)
 end
 
+--------------------------------------------------------------------------------
+-- Sets the size.
+-- @params width Width
+-- @params height Height
+--------------------------------------------------------------------------------
+function Label:setSize(width, height)
+    self:setRect(0, 0, width, height)
+end
+
 ----------------------------------------------------------------------------------------------------
--- Rect
+-- Class to fill a rectangle.
+-- 
+-- @class table
+-- @name Rect
 ----------------------------------------------------------------------------------------------------
 Rect = class(DisplayObject)
 M.Rect = Rect
 
+--------------------------------------------------------------------------------
+-- Constructor.
+-- @param width Width
+-- @param height Height
+--------------------------------------------------------------------------------
 function Rect:init(width, height)
     DisplayObject.init(self)
 
@@ -2139,24 +2311,39 @@ function Rect:init(width, height)
     )
 end
 
+--------------------------------------------------------------------------------
+-- Sets the size.
+-- @params width Width
+-- @params height Height
+--------------------------------------------------------------------------------
 function Rect:setSize(width, height)
     self.deck:setRect(0, 0, width, height)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Texture
+-- Texture class.
+-- 
+-- @class table
+-- @name Texture
 ----------------------------------------------------------------------------------------------------
 Texture = class()
 Texture.__factory = MOAITexture
 M.Texture = Texture
 
+--------------------------------------------------------------------------------
+-- Constructor.
+-- @param path Texture path
+--------------------------------------------------------------------------------
 function Texture:init(path)
     self:load(path)
     self.path = path
 end
 
 ----------------------------------------------------------------------------------------------------
--- Font
+-- Font class.
+-- 
+-- @class table
+-- @name Font
 ----------------------------------------------------------------------------------------------------
 Font = class()
 Font.__factory = MOAIFont
@@ -2170,6 +2357,13 @@ Font.DEFAULT_CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01
 --- Default font points
 Font.DEFAULT_POINTS = 24
 
+--------------------------------------------------------------------------------
+-- Constructor.
+-- @param path Font path
+-- @param charcodes (option) Font charcodes
+-- @param points (option) Font points
+-- @param dpi (option) Font dpi
+--------------------------------------------------------------------------------
 function Font:init(path, charcodes, points, dpi)
     self:load(path)
     self.path = path
@@ -2183,7 +2377,10 @@ function Font:init(path, charcodes, points, dpi)
 end
 
 ----------------------------------------------------------------------------------------------------
--- TouchHandler
+-- Class to perform the handling of touch events that are emitted from the layer.
+--
+-- @class table
+-- @name TouchHandler
 ----------------------------------------------------------------------------------------------------
 TouchHandler = class()
 M.TouchHandler = TouchHandler
@@ -2193,7 +2390,7 @@ TouchHandler.TOUCH_EVENT = Event()
 
 --------------------------------------------------------------------------------
 -- The constructor.
--- @param params (option)Parameter is set to Object.
+-- @param layer Layer object
 --------------------------------------------------------------------------------
 function TouchHandler:init(layer)
     self.touchLayer = assert(layer)
@@ -2206,7 +2403,8 @@ function TouchHandler:init(layer)
 end
 
 --------------------------------------------------------------------------------
--- タッチした時のイベント処理を行います.
+-- Event handler when you touch the layer.
+-- @param e Event object
 --------------------------------------------------------------------------------
 function TouchHandler:onTouch(e)
     if not self.touchLayer.touchEnabled then
@@ -2257,7 +2455,9 @@ function TouchHandler:getTouchableProp(e)
 end
 
 --------------------------------------------------------------------------------
--- タッチイベントを発出します.
+-- To fire a touch event on the object.
+-- @param e Event object
+-- @param o Display object
 --------------------------------------------------------------------------------
 function TouchHandler:dispatchTouchEvent(e, o)
     local layer = self.touchLayer
@@ -2267,6 +2467,18 @@ function TouchHandler:dispatchTouchEvent(e, o)
         end
         o = o.parent
     end
+end
+
+--------------------------------------------------------------------------------
+-- Remove the handler from the layer, and release resources.
+--------------------------------------------------------------------------------
+function TouchHandler:dispose()
+    local layer = self.touchLayer
+    
+    layer:removeEventListener(Event.TOUCH_DOWN, self.onTouch, self)
+    layer:removeEventListener(Event.TOUCH_UP, self.onTouch, self)
+    layer:removeEventListener(Event.TOUCH_MOVE, self.onTouch, self)
+    layer:removeEventListener(Event.TOUCH_CANCEL, self.onTouch, self)
 end
 
 return M

@@ -94,7 +94,7 @@ function item_onTouchMove(e)
     printTouchEvent(e)
     
     local prop = e.prop
-    if prop == nil or prop.touchDown and prop.touchIdx ~= e.idx then
+    if prop == nil or not prop.touchDown then
         return
     end
     
@@ -109,7 +109,7 @@ function item_onTouchCancel(e)
     printTouchEvent(e)
     
     local prop = e.prop
-    if prop == nil or prop.touchDown and prop.touchIdx ~= e.idx then
+    if prop == nil or not prop.touchDown then
         return
     end
     
