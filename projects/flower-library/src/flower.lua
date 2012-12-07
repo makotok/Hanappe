@@ -4,7 +4,9 @@
 -- MEMO:
 -- English document is automatically translated.
 -- I want to point out mistakes.
+--
 -- @author Makoto
+-- @release V1.0
 ----------------------------------------------------------------------------------------------------
 
 -- module
