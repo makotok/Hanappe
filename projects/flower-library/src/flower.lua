@@ -65,12 +65,12 @@ local keyboardSensor    = MOAIInputMgr.device.keyboard
 -- @param scale Scale of the Viewport to the Screen
 --------------------------------------------------------------------------------
 function M.openWindow(title, width, height, scale)
-    scale = scale or 1    
+    scale = scale or 1.0    
     MOAISim.openWindow(title, width, height)
-    M.screenWidth = MOAIEnvironment.horizontalResolution or width
-    M.screenHeight = MOAIEnvironment.verticalResolution or height
-    M.viewWidth, M.viewHeight = math.floor(width / scale), math.floor(height / scale)
+    M.screenWidth = width or MOAIEnvironment.horizontalResolution
+    M.screenHeight = height or MOAIEnvironment.verticalResolution
     M.viewScale = scale
+    M.viewWidth, M.viewHeight = math.floor(M.screenWidth / M.viewScale), math.floor(M.screenHeight / M.viewScale)
     
     InputMgr:initialize()
     RenderMgr:initialize()
@@ -1459,7 +1459,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Adds the specified child.
--- @param child MOAIProp object
+-- @param child DisplayObject
 --------------------------------------------------------------------------------
 function Group:addChild(child)
     if table.insertIfAbsent(self.children, child) then
@@ -1474,7 +1474,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Removes a child.
--- @param child MOAIProp
+-- @param child DisplayObject
 -- @return True if removed.
 --------------------------------------------------------------------------------
 function Group:removeChild(child)
