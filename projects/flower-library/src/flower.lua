@@ -2,8 +2,8 @@
 -- Flower library is a lightweight library for Moai SDK.
 --
 -- MEMO:
--- English document is automatically translated.
--- I want to point out mistakes.
+-- English documentation has been updated.  Please contact github://Cloven with 
+-- issues, questions, or problems regarding the documentation.
 --
 -- @author Makoto
 -- @release V1.0
@@ -58,18 +58,19 @@ local keyboardSensor    = MOAIInputMgr.device.keyboard
 
 --------------------------------------------------------------------------------
 -- Open the window.
--- Initialize the library.
+-- Initializes the library.
 -- @param title Title of the window
 -- @param width Width of the window
 -- @param height Height of the window
--- @param scale cale of the Viewport to the Screen
+-- @param scale Scale of the Viewport to the Screen
 --------------------------------------------------------------------------------
 function M.openWindow(title, width, height, scale)
-    scale = scale or 1    
+    scale = scale or 1.0    
     MOAISim.openWindow(title, width, height)
-    M.screenWidth, M.screenHeight = width, height
-    M.viewWidth, M.viewHeight = math.floor(width / scale), math.floor(height / scale)
+    M.screenWidth = width or MOAIEnvironment.horizontalResolution
+    M.screenHeight = height or MOAIEnvironment.verticalResolution
     M.viewScale = scale
+    M.viewWidth, M.viewHeight = math.floor(M.screenWidth / M.viewScale), math.floor(M.screenHeight / M.viewScale)
     
     InputMgr:initialize()
     RenderMgr:initialize()
@@ -103,13 +104,13 @@ function M.getTexture(path)
 end
 
 --------------------------------------------------------------------------------
--- Reads the file of TexturePacker, Returns the atlas.
+-- Reads TexturePacker output files and returns a texture atlas.
 -- @param luaFilePath TexturePacker lua file path
 -- @param texture (option)Path of the texture or Texture instance
 -- @return Texture atlas
 --------------------------------------------------------------------------------
 function M.getTextureAtlas(luaFilePath, texture)
-    return Resources.getTextureAtles(luaFilePath, texture)
+    return Resources.getTextureAtlas(luaFilePath, texture)
 end
 
 --------------------------------------------------------------------------------
@@ -126,7 +127,7 @@ function M.getFont(path, charcodes, points, dpi)
 end
 
 --------------------------------------------------------------------------------
--- Open the Scene.
+-- Opens the scene.  This is a convenience function.
 -- Delegate to SceneMgr.
 -- @param sceneName module name of the Scene
 -- @param params (option)Parameters of the Scene
@@ -136,7 +137,7 @@ function M.openScene(sceneName, params)
 end
 
 --------------------------------------------------------------------------------
--- Goto the Scene.
+-- Goto the Scene.  This is a convenience function.
 -- Delegate to SceneMgr.
 -- @param sceneName module name of the Scene
 -- @param params (option)Parameters of the Scene
@@ -146,7 +147,7 @@ function M.gotoScene(sceneName, params)
 end
 
 --------------------------------------------------------------------------------
--- Close the Scene.
+-- Close the Scene.  This is a convenience function.
 -- Delegate to SceneMgr.
 -- @param params (option)Parameters of the Scene
 --------------------------------------------------------------------------------
@@ -155,18 +156,23 @@ function M.closeScene(params)
 end
 
 --------------------------------------------------------------------------------
--- Delay a function call.
--- Called by MOAICoroutine.
+-- Executes a function in a MOAICoroutine.
+-- This variant of the function family will run the func immediately 
+-- upon the next coroutine.yield().
 -- @param func function object
 -- @param ... (option)function arguments
 --------------------------------------------------------------------------------
-function M.callLater(func, ...)
-    return Executors.callLater(func, ...)
+function M.callOnce(func, ...)
+    return Executors.callOnce(func, ...)
 end
 
 ----------------------------------------------------------------------------------------------------
--- It is a class that provides an object-oriented.
--- By using this class, you will be able to a class definition.
+-- This implements object-oriented style classes in Lua, including multiple inheritance.
+-- This particular variation of class implementation copies the base class
+-- functions into this class, which improves speed over other implementations
+-- in return for slightly larger class tables.  Please note that the inherited
+-- class members are therefore cached and subsequent changes to a superclass
+-- may not be reflected in your subclasses.
 -- @class table
 -- @name class
 ----------------------------------------------------------------------------------------------------
@@ -175,7 +181,9 @@ setmetatable(class, class)
 M.class = class
 
 --------------------------------------------------------------------------------
--- Class definition is a function.
+-- This allows you to define a class by calling 'class' as a function, 
+-- specifying the superclasses as a list.  For example:
+-- mynewclass = class(superclass1, superclass2)
 -- @param ... Base class list.
 -- @return class
 --------------------------------------------------------------------------------
@@ -192,9 +200,8 @@ function class:__call(...)
 end
 
 --------------------------------------------------------------------------------
--- Instance generating functions.
--- The user can use this function.
--- Calling this function, init function will be called internally.
+-- Generic constructor function for classes.
+-- Note that new() will call init() if it is available in the class.
 -- @return Instance
 --------------------------------------------------------------------------------
 function class:new(...)
@@ -218,7 +225,8 @@ function class:new(...)
 end
 
 ----------------------------------------------------------------------------------------------------
--- This table extends the functionality of the table.
+-- The next group of functions extends the default lua table implementation
+-- to include some additional useful methods.
 -- @class table
 -- @name table
 ----------------------------------------------------------------------------------------------------
@@ -226,10 +234,10 @@ table = setmetatable({}, {__index = _G.table})
 M.table = table
 
 --------------------------------------------------------------------------------
--- Returns the position found by searching for a matching value from the array.
+-- Returns the position found by searching for a matching value from an array.
 -- @param array table array
 -- @param value Search value
--- @return If one is found the index. 0 if not found.
+-- @return the index number if the value is found, or 0 if not found.
 --------------------------------------------------------------------------------
 function table.indexOf(array, value)
     for i, v in ipairs(array) do
@@ -254,7 +262,7 @@ function table.keyOf( src, val )
 end
 
 --------------------------------------------------------------------------------
--- The shallow copy of the table.
+-- Copy the table shallowly (i.e. do not create recursive copies of values)
 -- @param src copy
 -- @param dest (option)Destination
 -- @return dest
@@ -268,7 +276,7 @@ function table.copy(src, dest)
 end
 
 --------------------------------------------------------------------------------
--- The deep copy of the table.
+-- Copy the table deeply (i.e. create recursive copies of values)
 -- @param src copy
 -- @param dest (option)Destination
 -- @return dest
@@ -286,14 +294,12 @@ function table.deepCopy(src, dest)
 end
 
 --------------------------------------------------------------------------------
--- Adds an element to the table.
--- If the element was present, the element will return false without the need for additional.
--- If the element does not exist, and returns true add an element.
+-- Adds an element to the table if and only if the value did not already exist.
 -- @param t table
 -- @param o element
--- @return If it already exists, false. If you add is true.
+-- @return If it already exists, returns false. If it did not previously exist, returns true.
 --------------------------------------------------------------------------------
-function table.insertElement(t, o)
+function table.insertIfAbsent(t, o)
     if table.indexOf(t, o) > 0 then
         return false
     end
@@ -302,9 +308,9 @@ function table.insertElement(t, o)
 end
 
 --------------------------------------------------------------------------------
--- This removes the element from the table.
--- If you have successfully removed, it returns the index of the yuan.
--- If there is no element, it returns 0.
+-- Removes the element from the table.
+-- If the element existed, then returns its index value.
+-- If the element did not previously exist, then return 0.
 -- @param t table
 -- @param o element
 -- @return index
@@ -318,7 +324,8 @@ function table.removeElement(t, o)
 end
 
 ----------------------------------------------------------------------------------------------------
--- This table extends the functionality of the math.
+-- This set of functions extends the native lua 'math' function set with
+-- additional useful methods.
 -- @class table
 -- @name math
 ----------------------------------------------------------------------------------------------------
@@ -327,7 +334,7 @@ M.math = math
 
 --------------------------------------------------------------------------------
 -- Calculate the average of the values of the argument.
--- @param ... The number of variable-length argument
+-- @param ... a variable number of arguments, all of which should be numbers
 -- @return average
 --------------------------------------------------------------------------------
 function math.average(...)
@@ -341,7 +348,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Calculate the total values of the argument
--- @param ... The number of variable-length argument
+-- @param ... a variable number of arguments, all of which should be numbers
 -- @return total
 --------------------------------------------------------------------------------
 function math.sum(...)
@@ -357,8 +364,8 @@ end
 -- Calculate the distance.
 -- @param x0 Start position.
 -- @param y0 Start position.
--- @param x1 (option)End position.
--- @param y1 (option)End position.
+-- @param x1 (option)End position (note: default value is 0)
+-- @param y1 (option)End position (note: default value is 0)
 -- @return distance
 --------------------------------------------------------------------------------
 function math.distance( x0, y0, x1, y1 )
@@ -372,7 +379,7 @@ function math.distance( x0, y0, x1, y1 )
 end
 
 --------------------------------------------------------------------------------
--- Normalized by calculating the distance
+-- Get the normal vector 
 -- @param x 
 -- @param y
 -- @return x/d, y/d
@@ -384,7 +391,7 @@ end
 
 
 ----------------------------------------------------------------------------------------------------
--- This is a utility class to execute.
+-- This is a utility class for asynchronous (coroutine-style) execution.
 -- @class table
 -- @name Executors
 ----------------------------------------------------------------------------------------------------
@@ -392,9 +399,9 @@ Executors = {}
 M.Executors = Executors
 
 --------------------------------------------------------------------------------
--- Run the specified function looping 
+-- Run the specified function in a loop in a coroutine, forever.
 -- @param func Target function.
--- @param ... Argument.
+-- @param ... Arguments to be passed to the function.
 --------------------------------------------------------------------------------
 function Executors.callLoop(func, ...)
     local thread = MOAICoroutine.new()
@@ -412,16 +419,17 @@ function Executors.callLoop(func, ...)
 end
 
 --------------------------------------------------------------------------------
--- Run the specified function delay.
+-- Run the specified function once, in a coroutine, immediately
+-- (upon next coroutine.yield())
 -- @param func Target function.
 -- @param ... Arguments.
 --------------------------------------------------------------------------------
-function Executors.callLater(func, ...)
+function Executors.callOnce(func, ...)
     Executors.callLaterFrame(0, func, ...)
 end
 
 --------------------------------------------------------------------------------
--- Run the specified function delay.
+-- Run the specified function once, in a coroutine, after a specified delay in frames.
 -- @param frame Delay frame count.
 -- @param func Target function.
 -- @param ... Arguments.
@@ -442,7 +450,7 @@ function Executors.callLaterFrame(frame, func, ...)
 end
 
 --------------------------------------------------------------------------------
--- Run the specified function delay.
+-- Run the specified function once, in a coroutine, after a specified delay in seconds.
 -- @param time Delay seconds.
 -- @param func Target function.
 -- @param ... Arguments.
@@ -456,8 +464,7 @@ function Executors.callLaterTime(time, func, ...)
 end
 
 ----------------------------------------------------------------------------------------------------
--- It is a class that manages the resource.
--- Caches the resources, I improve the performance.
+-- A resource management system that caches loaded resources to maximize performance.
 -- @class table
 -- @name Resources
 ----------------------------------------------------------------------------------------------------
@@ -470,7 +477,7 @@ Resources.fontCache = {}
 Resources.atlasCache = {}
 
 --------------------------------------------------------------------------------
--- Returns the texture.
+-- Loads (or obtains from its cache) a texture and returns it.
 -- Textures are cached.
 -- @param path The path of the texture
 -- @return Texture instance
@@ -488,8 +495,7 @@ function Resources.getTexture(path)
 end
 
 --------------------------------------------------------------------------------
--- Returns the font.
--- Fonts are cached.
+-- Loads (or obtains from its cache) a font and returns it.
 -- @param path The path of the font.
 -- @param charcodes (option)Charcodes of the font
 -- @param points (option)Points of the font
@@ -516,7 +522,8 @@ function Resources.getFont(path, charcodes, points, dpi)
 end
 
 --------------------------------------------------------------------------------
--- Reads the file of TexturePacker, Returns the atlas.
+-- Reads TexturePacker output files (or obtains the result from its cache) 
+-- and returns the texture atlas.
 -- @param luaFilePath TexturePacker lua file path
 -- @param texture (option)Path of the texture or Texture instance
 -- @return Texture atlas
@@ -553,10 +560,10 @@ function Resources.getTextureAtlas(luaFilePath, texture)
 end
 
 ----------------------------------------------------------------------------------------------------
--- The base class Event. 
+-- A class for events, which are communicated to, and handled by, event handlers
 -- Holds the data of the Event. 
 --
--- @auther Makoto
+-- @author Makoto
 -- @class table
 -- @name Event
 ----------------------------------------------------------------------------------------------------
@@ -584,7 +591,7 @@ Event.TOUCH_CANCEL      = "touchCancel"
 Event.ENTER_FRAME       = "enterFrame"
 
 --------------------------------------------------------------------------------
--- The constructor.
+-- Event's constructor.
 -- @param eventType (option)The type of event.
 --------------------------------------------------------------------------------
 function Event:init(eventType)
@@ -593,8 +600,7 @@ function Event:init(eventType)
 end
 
 --------------------------------------------------------------------------------
--- Sets the event listener by EventDispatcher. 
--- Please do not accessible from the outside.
+-- INTERNAL USE ONLY -- Sets the event listener via EventDispatcher. 
 --------------------------------------------------------------------------------
 function Event:setListener(callback, source)
     self.callback = callback
@@ -609,10 +615,11 @@ function Event:stop()
 end
 
 ----------------------------------------------------------------------------------------------------
--- This class is an event listener. 
--- Framework will be used internally. 
+-- A virtual superclass for EventListeners.
+-- Classes which inherit from this class become able to receive events.
+-- Currently intended for internal use only.
 --
--- @auther Makoto
+-- @author Makoto
 -- @class table
 -- @name EventListener
 ----------------------------------------------------------------------------------------------------
@@ -635,9 +642,9 @@ function EventListener:call(event)
 end
 
 ----------------------------------------------------------------------------------------------------
--- This class is has a function of event notification. 
+-- This class is responsible for event notifications.
 --
--- @auther Makoto
+-- @author Makoto
 -- @class table
 -- @name EventDispatcher
 ----------------------------------------------------------------------------------------------------
@@ -708,7 +715,7 @@ end
 -- @param eventType
 -- @param callback
 -- @param source
--- @return Returns true if you have an event listener.
+-- @return Returns true if you have an event listener matching the criteria.
 --------------------------------------------------------------------------------
 function EventDispatcher:hasEventListener(eventType, callback, source)
     assert(eventType)
@@ -768,7 +775,9 @@ function EventDispatcher:clearEventListeners()
 end
 
 ----------------------------------------------------------------------------------------------------
--- This is a utility class to execute.
+-- This is a utility class which starts immediately upon library load
+-- and acts as the single handler for ENTER_FRAME events (which occur
+-- whenever Moai yields control to the Lua subsystem on each frame).
 -- @class table
 -- @name RenderMgr
 ----------------------------------------------------------------------------------------------------
@@ -783,10 +792,9 @@ Executors.callLoop(
 )
 
 ----------------------------------------------------------------------------------------------------
--- This singleton class manages the input event.
--- Easy to deal with MOAIInputMgr. 
+-- This singleton class manages all input events (touch, key, cursor).
 --
--- @auther Makoto
+-- @author Makoto
 -- @class table
 -- @name InputMgr
 ----------------------------------------------------------------------------------------------------
@@ -873,7 +881,7 @@ end
 --------------------------------------------------------------------------------
 -- If the user has pressed a key returns true.
 -- @param key Key code
--- @return If the user has pressed a key true
+-- @return true is a key is down.
 --------------------------------------------------------------------------------
 function InputMgr:keyIsDown(key)
     if keyboardSensor then
@@ -883,7 +891,6 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- This is a singleton class that manages the rendering object.
--- 
 --
 -- @class table
 -- @name RenderMgr
@@ -906,7 +913,7 @@ end
 -- @param render Render object
 --------------------------------------------------------------------------------
 function RenderMgr:addChild(render)
-    table.insertElement(self.renders, render)
+    table.insertIfAbsent(self.renders, render)
     self:invalidate()
 end
 
@@ -920,13 +927,13 @@ function RenderMgr:removeChild(render)
 end
 
 --------------------------------------------------------------------------------
--- Reflected on the screen to generate a rendering table.
+-- Update Moai's RenderTable with flower's render list.
 --------------------------------------------------------------------------------
 function RenderMgr:updateRenderTable()
     local renderTable = {}
     for i, v in ipairs(self.renders) do
         local render = v.getRenderTable and v:getRenderTable() or v
-        table.insertElement(renderTable, render)
+        table.insertIfAbsent(renderTable, render)
     end
     MOAIRenderMgr.setRenderTable(renderTable)
 end
@@ -939,7 +946,8 @@ function RenderMgr:invalidate()
 end
 
 --------------------------------------------------------------------------------
--- Event handler for the enter frame.
+-- Event handler for the enter frame.  Revalidates the render table if it has
+-- been changed since the last frame.
 --------------------------------------------------------------------------------
 function RenderMgr:onEnterFrame()
     if self.invalidFlag then
@@ -979,7 +987,7 @@ function SceneMgr:initialize()
 end
 
 --------------------------------------------------------------------------------
--- Goto the Scene.
+-- Goes to a new scene.
 -- Will close the current scene.
 -- @param sceneName module name of the Scene
 -- @param params (option)Parameters of the Scene
@@ -999,7 +1007,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Open the scene for the internal implementation.
--- Please do not be accessed from outside.
+-- NOTE: FOR INTERNAL USE ONLY
 --------------------------------------------------------------------------------
 function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     params = params or {}
@@ -1023,7 +1031,7 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     self.nextScene:open(params)
     
     -- scene animation
-    Executors.callLater(
+    Executors.callOnce(
         function()
             local animation = self:getSceneAnimationByName(params.animation)
             animation(self.currentScene or Scene(), self.nextScene, params)
@@ -1044,7 +1052,6 @@ end
 
 --------------------------------------------------------------------------------
 -- Close the Scene.
--- Delegate to SceneMgr.
 -- @param params (option)Parameters of the Scene
 --------------------------------------------------------------------------------
 function SceneMgr:closeScene(params)
@@ -1060,7 +1067,7 @@ function SceneMgr:closeScene(params)
     self.nextScene = self.scenes[#self.scenes - 1]
     self.currentScene:stop(params)
 
-    Executors.callLater(
+    Executors.callOnce(
         function()
             local animation = self:getSceneAnimationByName(params.animation)
             animation(self.currentScene, self.nextScene or Scene(), params) 
@@ -1080,8 +1087,8 @@ function SceneMgr:closeScene(params)
 end
 
 --------------------------------------------------------------------------------
--- Return the animation scene with the specified name.
--- If you do not specify a name, will return to "change" the default animation.
+-- Return the scene transition animation with the specified name.
+-- If you do not specify a name, will return to the default animation ('change').
 -- @param name Animation name of the SceneAnimations
 -- @return animation function
 --------------------------------------------------------------------------------
@@ -1092,8 +1099,7 @@ function SceneMgr:getSceneAnimationByName(name)
 end
 
 --------------------------------------------------------------------------------
--- Returned to the scene with the specified name.
--- Find that open from the scene.
+-- Find a scene by its name.
 -- @param sceneName name of the Scene.
 -- @return Scene object
 --------------------------------------------------------------------------------
@@ -1108,17 +1114,17 @@ end
 --------------------------------------------------------------------------------
 -- Add a scene.
 -- @param scene scene
--- @return True if you add
+-- @return True if this scene didn't already exist in the list.
 --------------------------------------------------------------------------------
 function SceneMgr:addScene(scene)
     RenderMgr:invalidate()
-    return table.insertElement(self.scenes, scene)
+    return table.insertIfAbsent(self.scenes, scene)
 end
 
 --------------------------------------------------------------------------------
 -- Remove a scene.
 -- @param scene scene
--- @return True if you remove
+-- @return a number if the scene was removed; false if it wasn't there in the first place.
 --------------------------------------------------------------------------------
 function SceneMgr:removeScene(scene)
     RenderMgr:invalidate()
@@ -1134,7 +1140,7 @@ function SceneMgr:getRenderTable()
     local t = {}
     for i, scene in ipairs(self.scenes) do
         if scene.opened then
-            table.insertElement(t, scene:getRenderTable())
+            table.insertIfAbsent(t, scene:getRenderTable())
         end
     end
     return t
@@ -1153,10 +1159,9 @@ function SceneMgr:onTouch(e)
 end
 
 ----------------------------------------------------------------------------------------------------
--- It is the base class of the display object.
--- Added some useful classes.
+-- The base class of the display object, adding several useful methods.
 --
--- @auther Makoto
+-- @author Makoto
 -- @class table
 -- @name DisplayObject
 ----------------------------------------------------------------------------------------------------
@@ -1262,7 +1267,7 @@ function DisplayObject:getColor()
 end
 
 --------------------------------------------------------------------------------
--- Sets the piv to center position.
+-- Sets the piv (the anchor around which the object can 'pivot') to the object's center.
 --------------------------------------------------------------------------------
 function DisplayObject:setPivToCenter()
     local w, h, d = self:getDims()
@@ -1272,7 +1277,7 @@ function DisplayObject:setPivToCenter()
 end
 
 --------------------------------------------------------------------------------
--- Returns the visible.
+-- Returns whether or not the object is currently visible or invisible.
 -- @return visible
 --------------------------------------------------------------------------------
 function DisplayObject:getVisible()
@@ -1280,7 +1285,7 @@ function DisplayObject:getVisible()
 end
 
 --------------------------------------------------------------------------------
--- Sets the parent.
+-- Sets the object's parent, inheriting its color and transform.
 -- @param parent parent
 --------------------------------------------------------------------------------
 function DisplayObject:setParent(parent)
@@ -1295,7 +1300,7 @@ function DisplayObject:setParent(parent)
 end
 
 --------------------------------------------------------------------------------
--- Set the MOAILayer object.
+-- Insert the DisplayObject's prop into a given Moai layer.
 -- @param layer
 --------------------------------------------------------------------------------
 function DisplayObject:setLayer(layer)
@@ -1315,9 +1320,9 @@ function DisplayObject:setLayer(layer)
 end
 
 ----------------------------------------------------------------------------------------------------
--- This is the drawing Layer.
+-- This is flower's idea of a Layer, which is a superclass of the MOAI concept of Layer.
 --
--- @auther Makoto
+-- @author Makoto
 -- @class table
 -- @name Layer
 ----------------------------------------------------------------------------------------------------
@@ -1344,8 +1349,7 @@ function Layer:init()
 end
 
 --------------------------------------------------------------------------------
--- Sets the touch enabled.
--- If true, the touch event is to be issued.
+-- Enables this layer for touch events.
 -- @param value enabled
 --------------------------------------------------------------------------------
 function Layer:setTouchEnabled(value)
@@ -1359,7 +1363,7 @@ function Layer:setTouchEnabled(value)
 end
 
 --------------------------------------------------------------------------------
--- Sets the scene.
+-- Sets the scene for this layer.
 -- @param scene scene
 --------------------------------------------------------------------------------
 function Layer:setScene(scene)
@@ -1379,9 +1383,9 @@ function Layer:setScene(scene)
 end
 
 ----------------------------------------------------------------------------------------------------
--- The Camera.
+-- flower's idea of a Camera, which is a superclass of the Moai Camera.
 --
--- @auther Makoto
+-- @author Makoto
 -- @class table
 -- @name Camera
 ----------------------------------------------------------------------------------------------------
@@ -1400,9 +1404,9 @@ function Camera:init(ortho, near, far)
 end
 
 ----------------------------------------------------------------------------------------------------
--- It is a group class that manages the children.
+-- A class to manage and control sets of DisplayObjects.
 --
--- @auther Makoto
+-- @author Makoto
 -- @class table
 -- @name Group
 ----------------------------------------------------------------------------------------------------
@@ -1428,7 +1432,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the size.
--- This is the size of a virtual.
+-- This is the size of a Group, rather than of the children.
 -- @param width width
 -- @param height height
 --------------------------------------------------------------------------------
@@ -1455,10 +1459,10 @@ end
 
 --------------------------------------------------------------------------------
 -- Adds the specified child.
--- @param child MOAIProp object
+-- @param child DisplayObject
 --------------------------------------------------------------------------------
 function Group:addChild(child)
-    if table.insertElement(self.children, child) then
+    if table.insertIfAbsent(self.children, child) then
         child:setParent(self)
         if self.layer then
             self.layer:insertProp(child)
@@ -1470,7 +1474,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Removes a child.
--- @param child MOAIProp object.
+-- @param child DisplayObject
 -- @return True if removed.
 --------------------------------------------------------------------------------
 function Group:removeChild(child)
@@ -1486,7 +1490,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns a child by name.
--- @param name child.name
+-- @param name child's name
 -- @return child
 --------------------------------------------------------------------------------
 function Group:getChildByName(name)
@@ -1498,7 +1502,7 @@ function Group:getChildByName(name)
 end
 
 --------------------------------------------------------------------------------
--- Sets the layer to use.
+-- Sets the layer for this group to use.
 -- @param layer MOAILayer object
 --------------------------------------------------------------------------------
 function Group:setLayer(layer)
@@ -1518,8 +1522,8 @@ function Group:setLayer(layer)
 end
 
 --------------------------------------------------------------------------------
--- Sets the visible.
--- Also sets the visible of the child.
+-- Sets the group's visibility.
+-- Also sets the visibility of any children.
 -- @param value visible
 --------------------------------------------------------------------------------
 function Group:setVisible(value)
@@ -1532,14 +1536,11 @@ function Group:setVisible(value)
 end
 
 ----------------------------------------------------------------------------------------------------
--- A scene class.
--- Scene shows the multiple layers.
--- In addition, the scene is to fire a event for the layer.
+-- A scene class, handling display on one or more layers and receiving events from the EventMgr.
 --
--- Object is generated by SceneMgr.
--- From the controller to manipulate the scene.
+-- Object is controlled by SceneMgr; use that class to manipulate scenes.
 -- 
--- @auther Makoto
+-- @author Makoto
 -- @class table
 -- @name Scene
 ----------------------------------------------------------------------------------------------------
@@ -1597,8 +1598,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Open the scene.
--- When you open the scene, to add themselves to a scene manager.
--- Is usually called from SceneMgr.
+-- Scenes add themselves to the SceneMgr when opened.
 -- @param params Scene event parameters.(event.data)
 --------------------------------------------------------------------------------
 function Scene:open(params)
@@ -1612,8 +1612,7 @@ function Scene:open(params)
 end
 
 --------------------------------------------------------------------------------
--- Close the scene.
--- Is removed from the SceneMgr.
+-- Close the scene, removing it from the SceneMgr.
 -- @param params Scene event parameters.(event.data)
 --------------------------------------------------------------------------------
 function Scene:close(params)
@@ -1653,7 +1652,7 @@ function Scene:stop(params)
 end
 
 --------------------------------------------------------------------------------
--- It is the event handler when you touch the screen.
+-- Handle touch events sent by the EventMgr.
 --------------------------------------------------------------------------------
 function Scene:onTouch(e)
     local e2 = table.copy(e, Scene.TOUCH_EVENT)
@@ -1680,8 +1679,7 @@ function Scene:getRenderTable()
 end
 
 ----------------------------------------------------------------------------------------------------
--- It is a scene transition animation classes.
--- Define a function to do the animation.
+-- A class to handle transitions between scenes and defining various animations for those transitions.
 -- 
 -- @class table
 -- @name SceneAnimations
@@ -1867,8 +1865,7 @@ function Image:setTexture(texture)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Class that displays an image of the form sheet.
--- Support the texture packer.
+-- Class that displays an image from a sheet of images, supporting TexturePacker's format.
 -- 
 -- @class table
 -- @name SheetImage
@@ -1902,7 +1899,7 @@ function SheetImage:init(texture, sizeX, sizeY)
 end
 
 --------------------------------------------------------------------------------
--- Sets the sheet of TexturePacker.
+-- Parses TexturePacker atlases and sets up the texture as a deck of images in the atlas.
 -- @param atlas Texture atlas
 -- @param texture Texture path, or texture
 --------------------------------------------------------------------------------
@@ -1929,7 +1926,7 @@ function SheetImage:setTextureAtlas(atlas, texture)
 end
 
 --------------------------------------------------------------------------------
--- Sets the size of the sheet.
+-- Sets the size of the sheet (for quad-tiled texture atlas sheets).
 -- @param sizeX The size of the sheet
 -- @param sizeY The size of the sheet
 -- @param spacing (option)Spacing of the tiles
@@ -1978,7 +1975,7 @@ function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
 end
 
 --------------------------------------------------------------------------------
--- Sets the index by the sheet name.
+-- Sets the sheet's image index via a given subtexture name (for TexturePacker).
 -- @param name Sheet name.
 --------------------------------------------------------------------------------
 function SheetImage:setIndexByName(name)
@@ -1991,7 +1988,7 @@ function SheetImage:setIndexByName(name)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Class that displays a map of the form of a grid.
+-- Class that loads a tiled map of images (see MOAIGrid).
 -- 
 -- @class table
 -- @name MapImage
@@ -2035,7 +2032,7 @@ function MapImage:setMapSize(gridWidth, gridHeight, tileWidth, tileHeight, spaci
 end
 
 --------------------------------------------------------------------------------
--- Sets the map rows data.
+-- Sets the map data by rows.
 -- @param rows Multiple rows of data.
 --------------------------------------------------------------------------------
 function MapImage:setRows(rows)
@@ -2082,7 +2079,7 @@ function MapImage:setRepeat(repeatX, repeatY)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Class to animate the sheet.
+-- Class for animated texture atlases ('MovieClip' is the Adobe Flash terminology)
 --
 -- @class table
 -- @name MapImage
@@ -2113,7 +2110,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the animation data.
--- The frame is generated from the data.
+-- The frame is interpolated from the data.
 -- @param name Name of anim
 -- @param data Animation data
 --------------------------------------------------------------------------------
@@ -2138,7 +2135,7 @@ function MovieClip:setAnimData(name, data)
 end
 
 --------------------------------------------------------------------------------
--- Sets multiple animation data.
+-- Sets multiple animation data up at the same time (convenience function).
 -- @param datas Multiple data
 --------------------------------------------------------------------------------
 function MovieClip:setAnimDatas(datas)
@@ -2195,7 +2192,7 @@ function MovieClip:isBusy()
 end
 
 ----------------------------------------------------------------------------------------------------
--- Label to display the text.
+-- Label for text display.
 -- Based on MOAITextBox.
 -- 
 -- @class table
@@ -2235,6 +2232,9 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- Class to fill a rectangle.
+-- NOTE: This uses immediate mode drawing and so has a high performance impact when
+-- used on mobile devices.  You may wish to use a 1-pixel high Image instead if you
+-- wish to minimize draw calls.
 -- 
 -- @class table
 -- @name Rect
@@ -2332,7 +2332,7 @@ function Font:init(path, charcodes, points, dpi)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Class to perform the handling of touch events that are emitted from the layer.
+-- Class to perform the handling of touch events emitted from a layer.
 --
 -- @class table
 -- @name TouchHandler
@@ -2358,7 +2358,7 @@ function TouchHandler:init(layer)
 end
 
 --------------------------------------------------------------------------------
--- Event handler when you touch the layer.
+-- Event handler when you touch a layer.
 -- @param e Event object
 --------------------------------------------------------------------------------
 function TouchHandler:onTouch(e)
@@ -2410,7 +2410,7 @@ function TouchHandler:getTouchableProp(e)
 end
 
 --------------------------------------------------------------------------------
--- To fire a touch event on the object.
+-- Fire touch handler events on a given object.
 -- @param e Event object
 -- @param o Display object
 --------------------------------------------------------------------------------
