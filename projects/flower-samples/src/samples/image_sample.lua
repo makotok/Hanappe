@@ -20,7 +20,7 @@ end
 
 function onStart(e)
     -- animation test
-    flower.callLater(function()
+    flower.callOnce(function()
         -- move loc
         local action1 = image1:moveLoc(40, 40, 0, 3)
         MOAICoroutine.blockOnAction(action1)
