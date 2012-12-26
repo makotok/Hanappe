@@ -1,6 +1,43 @@
 module(..., package.seeall)
 
 --------------------------------------------------------------------------------
+-- Classes
+--------------------------------------------------------------------------------
+
+CustomScene = flower.class(flower.Scene)
+
+function CustomScene:createController(params)
+    local controller = {}
+    
+    function controller.onCreate(e)
+        local scene = e.target
+        
+        local layer = flower.Layer()
+        layer:setScene(scene)
+        layer:setTouchEnabled(true)
+        
+        local group = flower.Group(layer, 200, 30)
+        group:setPos(scene:getWidth() / 2 - group:getWidth() / 2, scene:getHeight() / 2 - group:getHeight() / 2)
+        
+        local rect = flower.Rect(200, 30)
+        rect:setColor(0, 0, 0.5, 1)
+    
+        local label = flower.Label("Custom Scene", 200, 30)
+        label:setAlignment(MOAITextBox.CENTER_JUSTIFY, MOAITextBox.CENTER_JUSTIFY)
+        label:addEventListener("touchDown", controller.onTouchDown)
+    
+        group:addChild(rect)
+        group:addChild(label)
+    end
+    
+    function controller.onTouchDown(e)
+        flower.closeScene({animation = "popOut"})
+    end
+    
+    return controller
+end
+
+--------------------------------------------------------------------------------
 -- Event Handler
 --------------------------------------------------------------------------------
 
@@ -9,9 +46,11 @@ function onCreate(e)
 
     mainLayer = flower.Layer()
     mainLayer:setScene(scene)
+    mainLayer:setTouchEnabled(true)
 
     image = flower.Image("cathead.png")
     image:setLayer(mainLayer)
+    image:addEventListener("touchDown", image_onTouchDown)
 end
 
 function onOpen(e)
@@ -30,6 +69,10 @@ function onStop(e)
     print("Scene:onStop")
 end
 
-function item_onTouchDown(e)
+function onUpdate(e)
+    print("Scene:onUpdate")
+end
 
+function image_onTouchDown(e)
+    flower.openScene("CustomScene", {animation = "popIn", sceneFactory = flower.ClassFactory(CustomScene)})
 end
