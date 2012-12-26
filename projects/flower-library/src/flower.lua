@@ -16,11 +16,12 @@ local M = {}
 local table
 local math
 local class
+local Executors
+local Resources
+local ClassFactory
 local Event
 local EventListener
 local EventDispatcher
-local Executors
-local Resources
 local Runtime
 local InputMgr
 local RenderMgr
@@ -389,7 +390,6 @@ function math.normalize( x, y )
     return x/d, y/d
 end
 
-
 ----------------------------------------------------------------------------------------------------
 -- This is a utility class for asynchronous (coroutine-style) execution.
 -- @class table
@@ -560,6 +560,56 @@ function Resources.getTextureAtlas(luaFilePath, texture)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- Factory that creates an instance of the Class.
+-- @class table
+-- @name ClassFactory
+----------------------------------------------------------------------------------------------------
+ClassFactory = class()
+M.ClassFactory = ClassFactory
+
+--------------------------------------------------------------------------------
+-- Constructor.
+-- @param generator (option)It is a class to be generated
+-- @param properties (option)Properties that set on the object.
+--------------------------------------------------------------------------------
+function ClassFactory:init(generator, properties)
+    self.generator = generator
+    self.properties = properties
+    self.fieldAccess = false
+end
+
+--------------------------------------------------------------------------------
+-- Creates an object from generator.
+-- @param ... arguments of generator
+-- @return object
+--------------------------------------------------------------------------------
+function ClassFactory:newInstance(...)
+    local obj = self.generator(...)
+    return self:copyPropertiesToObject(self.properties, obj, self.fieldAccess)
+end
+
+--------------------------------------------------------------------------------
+-- INTERNAL USE ONLY
+--------------------------------------------------------------------------------
+function ClassFactory:copyPropertiesToObject(properties, obj, fieldAccess)
+    if not properties then
+        return obj
+    end
+
+    for k, v in pairs(properties) do
+        local setterName = "set" .. k:sub(1, 1):upper() .. (#k > 1 and k:sub(2) or "")
+        local setter = obj[setterName]
+        
+        if not fieldAccess and setter then
+            setter(obj, v)
+        else
+            obj[k] = v
+        end
+    end
+    return obj
+end
+
+----------------------------------------------------------------------------------------------------
 -- A class for events, which are communicated to, and handled by, event handlers
 -- Holds the data of the Event. 
 --
@@ -574,8 +624,11 @@ M.Event = Event
 Event.CREATE            = "create"
 Event.OPEN              = "open"
 Event.CLOSE             = "close"
+Event.OPEN_COMPLETE     = "openComplete"
+Event.CLOSE_COMPLETE    = "closeComplete"
 Event.START             = "start"
 Event.STOP              = "stop"
+Event.UPDATE            = "update"
 Event.DOWN              = "down"
 Event.UP                = "up"
 Event.MOVE              = "move"
@@ -970,9 +1023,8 @@ SceneMgr.scenes = {}
 SceneMgr.currentScene = nil
 SceneMgr.nextScene = nil
 SceneMgr.transitioning = false
-SceneMgr.createScene = function(sceneName, params)
-    return Scene(sceneName, params)
-end
+SceneMgr.sceneUpdateEnabled = true
+SceneMgr.sceneFactory = nil
 
 --------------------------------------------------------------------------------
 -- Initialize.
@@ -983,7 +1035,10 @@ function SceneMgr:initialize()
     InputMgr:addEventListener(Event.TOUCH_UP, self.onTouch, self)
     InputMgr:addEventListener(Event.TOUCH_MOVE, self.onTouch, self)
     InputMgr:addEventListener(Event.TOUCH_CANCEL, self.onTouch, self)
+    Runtime:addEventListener(Event.ENTER_FRAME, self.onEnterFrame, self)
     RenderMgr:addChild(self)
+    
+    self.sceneFactory = self.sceneFactory or ClassFactory(Scene)
 end
 
 --------------------------------------------------------------------------------
@@ -1027,7 +1082,7 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     end
     
     -- create next scene
-    self.nextScene = self.createScene(sceneName, params)
+    self.nextScene = self:createScene(sceneName, params)
     self.nextScene:open(params)
     
     -- scene animation
@@ -1044,6 +1099,8 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
             self.nextScene = nil
             self.transitioning = false
             self.currentScene:start(params)
+            
+            self:dispatchEvent(Event.OPEN_COMPLETE)
         end
     )
     
@@ -1080,10 +1137,21 @@ function SceneMgr:closeScene(params)
             if self.currentScene then
                 self.currentScene:start(params)
             end
+
+            self:dispatchEvent(Event.CLOSE_COMPLETE)
         end
     )
     
     return true    
+end
+
+--------------------------------------------------------------------------------
+-- Create the Scene.
+-- NOTE: FOR INTERNAL USE ONLY
+--------------------------------------------------------------------------------
+function SceneMgr:createScene(sceneName, params)
+    local sceneFactory = params.sceneFactory or self.sceneFactory
+    return sceneFactory:newInstance(sceneName, params)
 end
 
 --------------------------------------------------------------------------------
@@ -1155,6 +1223,23 @@ function SceneMgr:onTouch(e)
     local scene = self.currentScene
     if scene then
         scene:dispatchEvent(e)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- The event handler is called when enter frame.
+-- Fire a event to Scene.
+-- @param e Enter frame event
+--------------------------------------------------------------------------------
+function SceneMgr:onEnterFrame(e)
+    if not self.sceneUpdateEnabled then
+        return
+    end
+    
+    for i, scene in ipairs(self.scenes) do
+        if scene.sceneUpdateEnabled then
+            scene:dispatchEvent(Event.UPDATE)
+        end
     end
 end
 
@@ -1330,6 +1415,9 @@ Layer = class(DisplayObject)
 Layer.__factory = MOAILayer
 M.Layer = Layer
 
+--------------------------------------------------------------------------------
+-- The constructor.
+--------------------------------------------------------------------------------
 function Layer:init()
     DisplayObject.init(self)
 
@@ -1393,6 +1481,12 @@ Camera = class()
 Camera.__factory = MOAICamera
 M.Camera = Camera
 
+--------------------------------------------------------------------------------
+-- The constructor.
+-- @param ortho (option)ortho
+-- @param near (option)near plane
+-- @param far (option)far plane
+--------------------------------------------------------------------------------
 function Camera:init(ortho, near, far)
     ortho = ortho ~= nil and ortho or true
     near = near or 1
@@ -1464,9 +1558,13 @@ end
 function Group:addChild(child)
     if table.insertIfAbsent(self.children, child) then
         child:setParent(self)
-        if self.layer then
+
+        if child.setLayer then
+            child:setLayer(self.layer)
+        elseif self.layer then
             self.layer:insertProp(child)
         end
+
         return true
     end
     return false
@@ -1480,9 +1578,13 @@ end
 function Group:removeChild(child)
     if table.removeElement(self.children, child) then
         child:setParent(nil)
-        if self.layer then
+
+        if child.setLayer then
+            child:setLayer(self.layer)
+        elseif self.layer then
             self.layer:removeProp(child)
         end
+        
         return true
     end
     return false
@@ -1506,9 +1608,17 @@ end
 -- @param layer MOAILayer object
 --------------------------------------------------------------------------------
 function Group:setLayer(layer)
+    if self.layer == layer then
+        return
+    end
+
     if self.layer then
         for i, v in ipairs(self.children) do
-            self.layer:removeProp(v)
+            if v.setLayer then
+                v:setLayer(nil)
+            else
+                self.layer:removeProp(v)
+            end
         end
     end
 
@@ -1516,7 +1626,11 @@ function Group:setLayer(layer)
 
     if self.layer then
         for i, v in ipairs(self.children) do
-            self.layer:insertProp(v)
+            if v.setLayer then
+                v:setLayer(self.layer)
+            else
+                self.layer:insertProp(v)
+            end
         end
     end
 end
@@ -1560,6 +1674,7 @@ function Scene:init(sceneName, params)
     self.isScene = true
     self.opened = false
     self.started = false
+    self.sceneUpdateEnabled = false
     self.controller = self:createController(params)
     self.controller.scene = self
     self:initListeners()
@@ -1567,6 +1682,9 @@ function Scene:init(sceneName, params)
     self:dispatchEvent(Event.CREATE, params)
 end
 
+--------------------------------------------------------------------------------
+-- INTERNAL USE ONLY -- create the scene controller. 
+--------------------------------------------------------------------------------
 function Scene:createController(params)
     params = params or {}
     
@@ -1579,6 +1697,9 @@ function Scene:createController(params)
     return sceneName and require(sceneName) or {}
 end
 
+--------------------------------------------------------------------------------
+-- INTERNAL USE ONLY -- initialize event listeners.
+--------------------------------------------------------------------------------
 function Scene:initListeners()
     local addEventListener = function(type, func, obj)
         if func then
@@ -1590,6 +1711,7 @@ function Scene:initListeners()
     addEventListener(Event.CLOSE, self.controller.onClose)
     addEventListener(Event.START, self.controller.onStart)
     addEventListener(Event.STOP, self.controller.onStop)
+    addEventListener(Event.UPDATE, self.controller.onUpdate)
     addEventListener(Event.TOUCH_DOWN, self.onTouch, self)
     addEventListener(Event.TOUCH_UP, self.onTouch, self)
     addEventListener(Event.TOUCH_MOVE, self.onTouch, self)
@@ -1636,6 +1758,7 @@ function Scene:start(params)
     self:dispatchEvent(Event.START, params)
     self.started = true
     self.paused = false
+    self.sceneUpdateEnabled = true
 end
 
 --------------------------------------------------------------------------------
@@ -1649,6 +1772,7 @@ function Scene:stop(params)
     end
     self:dispatchEvent(Event.STOP, params)
     self.started = false
+    self.sceneUpdateEnabled = false
 end
 
 --------------------------------------------------------------------------------
