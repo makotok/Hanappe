@@ -80,8 +80,8 @@ end
 -- @return True in the case of mobile.
 --------------------------------------------------------------------------------
 function M:isMobile()
-    local bland = MOAIEnvironment.osBrand
-    return bland == MOAIEnvironment.OS_BRAND_ANDROID or bland == MOAIEnvironment.OS_BRAND_IOS
+    local brand = MOAIEnvironment.osBrand
+    return brand == 'Android' or brand == 'iOS'
 end
 
 --------------------------------------------------------------------------------
