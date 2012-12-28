@@ -45,14 +45,14 @@ end
 function M:new(...)
     local obj = {__index = self}
     setmetatable(obj, obj)
-    
+
     if obj.init then
         obj:init(...)
     end
 
     obj.new = nil
     obj.init = nil
-    
+
     return obj
 end
 

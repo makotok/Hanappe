@@ -3,7 +3,7 @@
 -- <br>
 -- Some functions, please do not see from the outside. <br>
 -- Dare, leaving for the inheritance. <br>
--- 
+--
 -- @class table
 -- @name TMXMapLoader
 --------------------------------------------------------------------------------
