@@ -30,6 +30,11 @@ function CustomScene:createController(params)
         group:addChild(label)
     end
     
+    function controller.onOpen(e)
+        local data = e.data
+        data.animation = "popIn"
+    end
+    
     function controller.onTouchDown(e)
         flower.closeScene({animation = "popOut"})
     end
@@ -74,5 +79,5 @@ function onUpdate(e)
 end
 
 function image_onTouchDown(e)
-    flower.openScene("CustomScene", {animation = "popIn", sceneFactory = flower.ClassFactory(CustomScene)})
+    flower.openScene("CustomScene", {sceneFactory = flower.ClassFactory(CustomScene)})
 end
