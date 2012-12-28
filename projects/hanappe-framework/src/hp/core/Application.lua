@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 -- Module for the start of the application.<br>
--- 
+--
 -- @class table
 -- @name Application
 --------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ local function getScreenSize(config)
     local w, h = getDeviceSize()
     w = w > 0 and w or config.screenWidth
     h = h > 0 and h or config.screenHeight
-    
+
     if config.landscape then
         if w > h then
             return w, h
@@ -39,12 +39,12 @@ end
 
 local function getViewSize(config)
     local w, h = getScreenSize(config)
-    
+
     local scaleX, scaleY = math.floor(w / config.viewWidth), math.floor(h / config.viewWidth)
     local scale = math.min(scaleX, scaleY)
     scale = scale < 1 and 1 or scale
     scale = scale > 2 and 2 or scale
-    
+
     w, h  = math.floor(w / scale + 0.5), math.floor(h / scale + 0.5)
     return w, h, scale
 end
@@ -55,21 +55,21 @@ end
 -- @param config
 --------------------------------------------------------------------------------
 function M:start(config)
-    
+
     local title = config.title
     local screenWidth, screenHeight = getScreenSize(config)
     local viewWidth, viewHeight, viewScale = getViewSize(config)
-    
+
     self.title = title
     self.screenWidth = screenWidth
     self.screenHeight = screenHeight
     self.viewWidth = viewWidth
     self.viewHeight = viewHeight
     self.viewScale = viewScale
-    
+
     MOAISim.openWindow(title, screenWidth, screenHeight)
     InputManager:initialize()
-    
+
     --
     print("screenSize:", screenWidth, screenHeight)
     print("viewSize  :", viewWidth, viewHeight)
@@ -80,8 +80,8 @@ end
 -- @return True in the case of mobile.
 --------------------------------------------------------------------------------
 function M:isMobile()
-    local bland = MOAIEnvironment.osBrand
-    return bland == MOAIEnvironment.OS_BRAND_ANDROID or bland == MOAIEnvironment.OS_BRAND_IOS
+    local brand = MOAIEnvironment.osBrand
+    return brand == 'Android' or brand == 'iOS'
 end
 
 --------------------------------------------------------------------------------
@@ -110,7 +110,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the scale of the Viewport to the screen.
--- @return scale of the x-direction, scale of the y-direction, 
+-- @return scale of the x-direction, scale of the y-direction,
 --------------------------------------------------------------------------------
 function M:getViewScale()
     return self.viewScale
