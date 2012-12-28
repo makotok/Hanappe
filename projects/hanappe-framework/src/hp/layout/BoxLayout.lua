@@ -62,15 +62,15 @@ end
 function M:updateVertical(parent)
     local children = parent:getChildren()
     local childrenWidth, childrenHeight = self:getVerticalLayoutSize(children)
-    
+
     local parentWidth, parentHeight = parent:getSize()
-    local parentWidth = parentWidth > childrenWidth and parentWidth or childrenWidth
-    local parentHeight = parentHeight > childrenHeight and parentHeight or childrenHeight
-    
+    local parentWidth = parentWidth ~= childrenWidth and parentWidth or childrenWidth
+    local parentHeight = parentHeight ~= childrenHeight and parentHeight or childrenHeight
+
     if self._parentResizable then
         parent:setSize(parentWidth, parentHeight)
     end
-    
+
     local childY = self:getChildY(parentHeight, childrenHeight)
     for i, child in ipairs(children) do
         if child.isIncludeLayout == nil or child:isIncludeLayout() then
@@ -90,9 +90,9 @@ function M:updateHorizotal(parent)
     local childrenWidth, childrenHeight = self:getHorizotalLayoutSize(children)
 
     local parentWidth, parentHeight = parent:getSize()
-    local parentWidth = parentWidth > childrenWidth and parentWidth or childrenWidth
-    local parentHeight = parentHeight > childrenHeight and parentHeight or childrenHeight
-    
+    local parentWidth = parentWidth ~= childrenWidth and parentWidth or childrenWidth
+    local parentHeight = parentHeight ~= childrenHeight and parentHeight or childrenHeight
+
     if self._parentResizable then
         parent:setSize(parentWidth, parentHeight)
     end
