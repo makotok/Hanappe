@@ -1581,7 +1581,7 @@ function Group:removeChild(child)
         child:setParent(nil)
 
         if child.setLayer then
-            child:setLayer(self.layer)
+            child:setLayer(nil)
         elseif self.layer then
             self.layer:removeProp(child)
         end
