@@ -66,12 +66,13 @@ local keyboardSensor    = MOAIInputMgr.device.keyboard
 -- @param scale Scale of the Viewport to the Screen
 --------------------------------------------------------------------------------
 function M.openWindow(title, width, height, scale)
-    scale = scale or 1.0    
-    MOAISim.openWindow(title, width, height)
     M.screenWidth = width or MOAIEnvironment.horizontalResolution
     M.screenHeight = height or MOAIEnvironment.verticalResolution
-    M.viewScale = scale
-    M.viewWidth, M.viewHeight = math.floor(M.screenWidth / M.viewScale), math.floor(M.screenHeight / M.viewScale)
+    M.viewScale = scale or 1.0
+    M.viewWidth = math.floor(M.screenWidth / M.viewScale)
+    M.viewHeight = math.floor(M.screenHeight / M.viewScale)
+    
+    MOAISim.openWindow(title, M.screenWidth, M.screenHeight)
     
     InputMgr:initialize()
     RenderMgr:initialize()
