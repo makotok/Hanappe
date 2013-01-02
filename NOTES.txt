@@ -1,4 +1,23 @@
 -------------------------------------------------------------------
+-- Hanappe Version:2.0.2
+-- Moai SDK Version 1.3 Build 160
+-- Update: 2013/01/02
+-------------------------------------------------------------------
+I made ​​a few important fixes.
+
+1) Flower library
+* Documentation updates. (Thanks Felix Gallo!)
+* Rename the function. 
+  table.insertElement to table.insertIfAbsent.
+  Executors.callLater to Executors.callOnce.
+* Refactoring openWindow.
+* Improve the Group to be included as a child of the Group.
+* Update event to add the Scene.
+
+2) Hanappe framework
+* Fixed a bug in the Application:isMobile function.
+
+-------------------------------------------------------------------
 -- Hanappe Version:2.0.1
 -- Moai SDK Version 1.3 Build 98
 -- Update: 2012/12/08

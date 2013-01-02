@@ -4,15 +4,15 @@
 -- https://github.com/makotok/Hanappe
 --------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
+----------------------------------------
 -- Description
---------------------------------------------------------------------------------
+----------------------------------------
 
 Open source framework for Moai SDK.(http://getmoai.com)
 
---------------------------------------------------------------------------------
+----------------------------------------
 -- Projects
---------------------------------------------------------------------------------
+----------------------------------------
 
 1. hanappe-framework
 Source code of Hanappe framework.
@@ -28,9 +28,9 @@ Lightweight library.
 4. flower-samples
 Sample code Flower.
 
---------------------------------------------------------------------------------
+----------------------------------------
 -- Introduction
---------------------------------------------------------------------------------
+----------------------------------------
 
 I'm using the following tools in Hanappe.
 Even if you do not use, you can run if you have MoaiSDK.
@@ -53,9 +53,16 @@ If you do not want to use the ant, it can be done by copying the source to be us
 
 http://ant.apache.org/
 
---------------------------------------------------------------------------------
+----------------------------------------
+-- Moai SDK version.
+----------------------------------------
+
+I will support the latest version as far as possible.
+The version I tested, please refer to the NOTES.txt.
+
+----------------------------------------
 -- Run samples
---------------------------------------------------------------------------------
+----------------------------------------
 
 Notes when running the sample.
 
@@ -63,4 +70,8 @@ It is making a run to copy the source to a temporary directory.
 Automatically copied to the shell.
 You can also be performed manually copy all the sources.
 
+----------------------------------------
+-- Memo
+----------------------------------------
+We are looking for someone to write an easy-to-read Readme.
 
