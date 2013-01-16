@@ -6,7 +6,7 @@
 -- issues, questions, or problems regarding the documentation.
 --
 -- @author Makoto
--- @release V1.0
+-- @release V1.1
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -31,6 +31,7 @@ local Group
 local Scene
 local SceneAnimations
 local Layer
+local Viewport
 local Camera
 local Image
 local SheetImage
@@ -63,20 +64,41 @@ local keyboardSensor    = MOAIInputMgr.device.keyboard
 -- @param title Title of the window
 -- @param width Width of the window
 -- @param height Height of the window
--- @param scale Scale of the Viewport to the Screen
+-- @param scale (Option)Scale of the Viewport to the Screen
 --------------------------------------------------------------------------------
 function M.openWindow(title, width, height, scale)
-    M.screenWidth = width or MOAIEnvironment.horizontalResolution
-    M.screenHeight = height or MOAIEnvironment.verticalResolution
-    M.viewScale = scale or 1.0
-    M.viewWidth = math.floor(M.screenWidth / M.viewScale)
-    M.viewHeight = math.floor(M.screenHeight / M.viewScale)
+    width = width or MOAIEnvironment.horizontalResolution
+    height = height or MOAIEnvironment.verticalResolution
+    scale = scale or 1.0
     
-    MOAISim.openWindow(title, M.screenWidth, M.screenHeight)
+    M.updateDisplaySize(width, height, scale)
     
+    Runtime:initialize()
     InputMgr:initialize()
     RenderMgr:initialize()
     SceneMgr:initialize()
+
+    MOAISim.openWindow(title, M.screenWidth, M.screenHeight)
+end
+
+--------------------------------------------------------------------------------
+-- Update the screen and view size.
+-- Please call if you have to recalculate.
+-- @param width Width of the screen
+-- @param height Height of the screen
+-- @param scale (Option)Scale of the Viewport to the Screen
+--------------------------------------------------------------------------------
+function M.updateDisplaySize(width, height, scale)
+    M.screenWidth = width
+    M.screenHeight = height
+    M.viewScale = scale or M.viewScale
+    M.viewWidth = M.screenWidth / M.viewScale
+    M.viewHeight = M.screenHeight / M.viewScale
+    
+    M.viewport = M.viewport or MOAIViewport.new()
+    M.viewport:setSize(M.screenWidth, M.screenHeight)
+    M.viewport:setScale(M.viewWidth, -M.viewHeight)
+    M.viewport:setOffset(-1, 1)
 end
 
 --------------------------------------------------------------------------------
@@ -305,6 +327,17 @@ function table.insertIfAbsent(t, o)
     if table.indexOf(t, o) > 0 then
         return false
     end
+    t[#t + 1] = o
+    return true
+end
+
+--------------------------------------------------------------------------------
+-- Adds an element to the table.
+-- @param t table
+-- @param o element
+-- @return true
+--------------------------------------------------------------------------------
+function table.insertElement(t, o)
     t[#t + 1] = o
     return true
 end
@@ -643,6 +676,7 @@ Event.TOUCH_UP          = "touchUp"
 Event.TOUCH_MOVE        = "touchMove"
 Event.TOUCH_CANCEL      = "touchCancel"
 Event.ENTER_FRAME       = "enterFrame"
+Event.RESIZE            = "resize"
 
 --------------------------------------------------------------------------------
 -- Event's constructor.
@@ -833,17 +867,32 @@ end
 -- and acts as the single handler for ENTER_FRAME events (which occur
 -- whenever Moai yields control to the Lua subsystem on each frame).
 -- @class table
--- @name RenderMgr
+-- @name Runtime
 ----------------------------------------------------------------------------------------------------
 Runtime = EventDispatcher()
 M.Runtime = Runtime
 
+-- initialize
+function Runtime:initialize()
+    Executors.callLoop(self.onEnterFrame)
+    MOAIGfxDevice.setListener(MOAIGfxDevice.EVENT_RESIZE, self.onResize)
+end
+
 -- enter frame
-Executors.callLoop(
-    function()
-        Runtime:dispatchEvent(Event.ENTER_FRAME)
-    end
-)
+function Runtime.onEnterFrame()
+    Runtime:dispatchEvent(Event.ENTER_FRAME)
+end
+
+
+-- view resize
+function Runtime.onResize(width, height)
+    M.updateDisplaySize(width, height)
+
+    local e = Event(Event.RESIZE)
+    e.width = width
+    e.height = height
+    Runtime:dispatchEvent(e)
+end
 
 ----------------------------------------------------------------------------------------------------
 -- This singleton class manages all input events (touch, key, cursor).
@@ -1426,13 +1475,7 @@ function Layer:init()
     self:setPartition(partition)
     self.partition = partition
     
-    local viewport = MOAIViewport.new()
-    viewport:setSize(M.screenWidth, M.screenHeight)
-    viewport:setScale(M.viewWidth, -M.viewHeight)
-    viewport:setOffset(-1, 1)
-
-    self:setViewport(viewport)
-    self.viewport = viewport
+    self:setViewport(M.viewport)
     self.touchEnabled = false
     self.touchHandler = nil
 end

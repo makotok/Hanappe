@@ -69,6 +69,12 @@ function onCreate(e)
         menuitem:addChild(label)
         menuitem:addEventListener("touchDown", menuitem_onTouchDown)
     end
+    
+    flower.Runtime:addEventListener("resize", onResize)
+end
+
+function onResize(e)
+    print("width = " .. e.width, "height = " .. e.height)
 end
 
 function menuitem_onTouchDown(e)
