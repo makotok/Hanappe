@@ -1974,7 +1974,7 @@ end
 -- @param height Height of image.
 --------------------------------------------------------------------------------
 function Image:setSize(width, height)
-    deck:setRect(0, 0, width, height)
+    self.deck:setRect(0, 0, width, height)
     self:setPivToCenter()
 end
 
