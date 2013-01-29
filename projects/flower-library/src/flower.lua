@@ -31,11 +31,9 @@ local Group
 local Scene
 local SceneAnimations
 local Layer
-local Viewport
 local Camera
 local Image
 local SheetImage
-local ScaleImage
 local MapImage
 local MovieClip
 local Label
@@ -1305,11 +1303,22 @@ DisplayObject.__factory = MOAIProp
 M.DisplayObject = DisplayObject
 
 --------------------------------------------------------------------------------
+-- Returns the size.
+-- If there is a function that returns a negative getDims.
+-- getSize function always returns the size of the positive.
+-- @return width, height, depth
+--------------------------------------------------------------------------------
+function DisplayObject:getSize()
+    local w, h, d = self:getDims()
+    return math.abs(w), math.abs(h), math.abs(d)
+end
+
+--------------------------------------------------------------------------------
 -- Returns the width.
 -- @return width
 --------------------------------------------------------------------------------
 function DisplayObject:getWidth()
-    local w, h, d = self:getDims()
+    local w, h, d = self:getSize()
     return w
 end
 
@@ -1318,7 +1327,7 @@ end
 -- @return height
 --------------------------------------------------------------------------------
 function DisplayObject:getHeight()
-    local w, h, d = self:getDims()
+    local w, h, d = self:getSize()
     return h
 end
 
@@ -1385,7 +1394,7 @@ end
 --------------------------------------------------------------------------------
 function DisplayObject:getBottom()
     local left, top = self:getPos()
-    local width, height = self:getDims()
+    local width, height = self:getSize()
     return top + height
 end
 
@@ -1405,7 +1414,7 @@ end
 -- Sets the piv (the anchor around which the object can 'pivot') to the object's center.
 --------------------------------------------------------------------------------
 function DisplayObject:setPivToCenter()
-    local w, h, d = self:getDims()
+    local w, h, d = self:getSize()
     local left, top = self:getPos()
     self:setPiv(w / 2, h / 2, 0)
     self:setPos(left, top)
@@ -2426,7 +2435,7 @@ function Rect:init(width, height)
     
     deck:setDrawCallback(
         function(index, xOff, yOff, xFlip, yFlip)
-            local w, h, d = self:getDims()
+            local w, h, d = self:getSize()
             
             MOAIGfxDevice.setPenColor(self:getColor())
             MOAIDraw.fillRect(0, 0, w, h)
