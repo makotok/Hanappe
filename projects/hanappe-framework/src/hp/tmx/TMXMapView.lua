@@ -332,13 +332,19 @@ function M:updateGid(layer, x, y, gid)
     layer = type(layer) == "string" and self:findLayerByName(layer) or layer
     layer.mapLayer:setGid(x, y, gid)
     
+
     local tileset = self.tmxMap:findTilesetByGid(gid)
+    for i, renderer in ipairs(layer.tilesetRenderers) do
+        if renderer.tileset == tileset then
+            local tileNo = gid == 0 and gid or gid - tileset.firstgid + 1
+            renderer:setTile(x, y, tileNo)
+        else
+            renderer:setTile(x, y, 0)
+        end
+    end
+
     local renderer = self:findLayerRendererByTileset(layer, tileset)
-    
-    if renderer then
-        local tileNo = gid == 0 and gid or gid - tileset.firstgid + 1
-        renderer:setTile(x, y, tileNo)
-    else
+    if not renderer then
         self:loadTexture(tileset)
         if tileset.texture then
             renderer = self:createDisplayLayerRenderer(layer, tileset)
