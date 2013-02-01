@@ -45,6 +45,7 @@ function M:loadFile(filename)
     return self:loadString(data)
 
     -- TODO:Windowsだとpackage.pathを使用した場合に動作しない
+    -- MEMO:Moai1.3 Build160以降で修正されたかもしれない
     --[[
     local xml = MOAIXmlParser.parseFile(filename)
     self:parseNode(xml)

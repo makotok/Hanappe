@@ -126,6 +126,7 @@ function M:createDisplayLayerRenderer(displayLayer, tileset)
     local mapSprite = MapSprite({texture = texture, layer = displayLayer})
     mapSprite:setMapSize(mapWidth, mapHeight, tilewidth, tileheight)
     mapSprite:setMapSheets(tilewidth, tileheight, tileCol, tileRow, spacing, margin)
+    mapSprite.tileset = tileset
     
     for y = 1, mapLayer.height do
         local rowData = {}
@@ -303,6 +304,45 @@ function M:findLayerByName(name)
     for i, layer in ipairs(self.layers) do
         if layer.mapLayer.name == name then
             return layer
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Search for renderer for the Tileset and Layer.
+-- @param layer Display layer
+-- @param tileset TMXTileset
+--------------------------------------------------------------------------------
+function M:findLayerRendererByTileset(layer, tileset)
+    for i, renderer in ipairs(layer.tilesetRenderers) do
+        if renderer.tileset == tileset then
+            return renderer
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Update the GID of the specified layer.
+-- @param layer The name of the layer or object
+-- @param x position of x.
+-- @param y position of y.
+-- @param gid Global tile ID
+--------------------------------------------------------------------------------
+function M:updateGid(layer, x, y, gid)
+    layer = type(layer) == "string" and self:findLayerByName(layer) or layer
+    layer.mapLayer:setGid(x, y, gid)
+    
+    local tileset = self.tmxMap:findTilesetByGid(gid)
+    local renderer = self:findLayerRendererByTileset(layer, tileset)
+    
+    if renderer then
+        local tileNo = gid == 0 and gid or gid - tileset.firstgid + 1
+        renderer:setTile(x, y, tileNo)
+    else
+        self:loadTexture(tileset)
+        if tileset.texture then
+            renderer = self:createDisplayLayerRenderer(layer, tileset)
+            table.insert(layer.tilesetRenderers, renderer)
         end
     end
 end
