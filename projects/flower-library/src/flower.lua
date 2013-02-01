@@ -1523,6 +1523,14 @@ function Layer:setScene(scene)
     end
 end
 
+--------------------------------------------------------------------------------
+-- Unsupport nested layer.
+-- @param layer layer
+--------------------------------------------------------------------------------
+function Layer:setLayer(layer)
+    print("Unsupport nested layer!")
+end
+
 ----------------------------------------------------------------------------------------------------
 -- flower's idea of a Camera, which is a superclass of the Moai Camera.
 --
@@ -1641,6 +1649,16 @@ function Group:removeChild(child)
         return true
     end
     return false
+end
+
+--------------------------------------------------------------------------------
+-- Remove the children.
+--------------------------------------------------------------------------------
+function M:removeChildren()
+    local children = table.copy(self.children)
+    for i, child in ipairs(children) do
+        self:removeChild(child)
+    end
 end
 
 --------------------------------------------------------------------------------
