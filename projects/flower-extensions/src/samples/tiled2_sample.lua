@@ -11,7 +11,7 @@ function onCreate(e)
     camera = flower.Camera()
 
     tileMap = tiled.TileMap()
-    tileMap:loadMapfile("platform.lue")
+    tileMap:loadMapfile("desert.lue")
     tileMap:setLayer(layer)
     
 end

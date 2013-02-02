@@ -6,6 +6,7 @@ module(..., package.seeall)
 
 SAMPLES = {
     {title = "Tiled1",       scene = "samples/tiled1_sample",         openAnime = "fade",         closeAnime = "fade"},
+    {title = "Tiled2",       scene = "samples/tiled2_sample",         openAnime = "fade",         closeAnime = "fade"},
 }
 
 --------------------------------------------------------------------------------
