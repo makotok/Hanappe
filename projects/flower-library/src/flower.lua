@@ -2200,10 +2200,12 @@ function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
     local i = 1
     for y = 1, tileY do
         for x = 1, tileX do
-            local ux0 = (x - 1) * tileWidth / tw
-            local uy0 = (y - 1) * tileHeight / th
-            local ux1 = x * tileWidth / tw
-            local uy1 = y * tileHeight / th
+            local sx = (x - 1) * (tileWidth + spacing) + margin
+            local sy = (y - 1) * (tileHeight + spacing) + margin
+            local ux0 = sx / tw
+            local uy0 = sy / th
+            local ux1 = (sx + tileWidth) / tw
+            local uy1 = (sy + tileHeight) / th
 
             if not self.grid then
                 deck:setRect(i, 0, 0, tileWidth, tileHeight)
