@@ -11,6 +11,11 @@
  <tileset firstgid="241" name="actor" tilewidth="32" tileheight="32">
   <tileoffset x="-8" y="-8"/>
   <image source="actor.png" width="96" height="128"/>
+  <tile id="0">
+   <properties>
+    <property name="testkey" value="testvalue"/>
+   </properties>
+  </tile>
  </tileset>
  <layer name="Back" width="100" height="31">
   <data>

@@ -332,7 +332,6 @@ function M:updateGid(layer, x, y, gid)
     layer = type(layer) == "string" and self:findLayerByName(layer) or layer
     layer.mapLayer:setGid(x, y, gid)
     
-
     local tileset = self.tmxMap:findTilesetByGid(gid)
     for i, renderer in ipairs(layer.tilesetRenderers) do
         if renderer.tileset == tileset then
@@ -364,7 +363,5 @@ function M:getViewSize()
     local height = self.tmxMap.height * self.tmxMap.tileheight
     return width, height
 end
-
-
 
 return M

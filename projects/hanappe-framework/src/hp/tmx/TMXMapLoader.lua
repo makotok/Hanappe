@@ -101,7 +101,6 @@ function M:parseNodeMap(node)
 
     self:parseNodeAttributes(node, map)
     self:parseNodeProperties(node, map.properties)
-
 end
 
 --------------------------------------------------------------------------------
@@ -148,15 +147,15 @@ end
 -- Please do not accessible from the outside.
 --------------------------------------------------------------------------------
 function M:parseNodeTile(node, tileset)
-    if node.children.node == nil then
+    if not node.children.tile then
         return
     end
     for key, value in pairs(node.children.tile) do
-        local gid = tonumber(value.attributes.id)
-        if tileset.tiles[gid] == nil then
-            tileset.tiles[gid] = {properties = {}}
+        local id = tonumber(value.attributes.id) + 1
+        if tileset.tiles[id] == nil then
+            tileset.tiles[id] = {properties = {}}
         end
-        self:parseNodeProperties(value, self.tiles[gid].properties)
+        self:parseNodeProperties(value, tileset.tiles[id].properties)
     end
 end
 

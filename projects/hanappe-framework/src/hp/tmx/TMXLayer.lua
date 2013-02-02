@@ -34,6 +34,29 @@ function M:getProperty(key)
 end
 
 --------------------------------------------------------------------------------
+-- Returns the property of the tile that is at the specified point.
+-- @param x position of x
+-- @param y position of y
+-- @param key property key
+-- @return property value
+--------------------------------------------------------------------------------
+function M:getTileProperty(x, y, key)
+    local gid = self:getGid(x, y)
+    return self.tmxMap:getTileProperty(gid, key)
+end
+
+--------------------------------------------------------------------------------
+-- Returns the properties of the tile that is at the specified point.
+-- @param x position of x
+-- @param y position of y
+-- @return Properties
+--------------------------------------------------------------------------------
+function M:getTileProperties(x, y)
+    local gid = self:getGid(x, y)
+    return self.tmxMap:getTileProperties(gid)
+end
+
+--------------------------------------------------------------------------------
 -- Returns the gid of the specified position. <br>
 -- If is out of range, return nil.
 -- @param x potision of x.

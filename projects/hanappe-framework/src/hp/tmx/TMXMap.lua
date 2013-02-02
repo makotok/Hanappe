@@ -154,4 +154,32 @@ function M:getProperty(key)
     return self.properties[key]
 end
 
+--------------------------------------------------------------------------------
+-- Returns the property of the tile that corresponds to the specified gid.
+-- @param gid gid
+-- @param key property key
+-- @return tile property
+--------------------------------------------------------------------------------
+function M:getTileProperty(gid, key)
+    local properties = self:getTileProperties(gid)
+    if properties then
+        return properties[key]
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Returns the properties of the tile that corresponds to the specified gid.
+-- @param gid gid
+-- @return tile properties
+--------------------------------------------------------------------------------
+function M:getTileProperties(gid)
+    for i, tileset in ipairs(self.tilesets) do
+        local tileId = tileset:getTileIndexByGid(gid)
+        if tileset.tiles[tileId] then
+            return tileset.tiles[tileId].properties
+        end
+    end
+end
+
+
 return M
