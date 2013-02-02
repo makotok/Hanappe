@@ -504,9 +504,38 @@ Resources = {}
 M.Resources = Resources
 
 -- variables
+Resources.resourceDirectories = {}
 Resources.textureCache = setmetatable({}, {__mode = "v"})
 Resources.fontCache = {}
 Resources.atlasCache = {}
+
+--------------------------------------------------------------------------------
+-- Add the resource directory path.
+-- You can omit the file path by adding.
+-- It is assumed that the file is switched by the resolution and the environment.
+-- @param path resource directory path
+--------------------------------------------------------------------------------
+function Resources.addResourceDirectory(path)
+    table.insertElement(Resources.resourceDirectories, path)
+end
+
+--------------------------------------------------------------------------------
+-- Returns the filePath from fileName.
+-- @param filename 
+-- @return file path
+--------------------------------------------------------------------------------
+function Resources.getResourceFilePath(fileName)
+    if MOAIFileSystem.checkFileExists(fileName) then
+        return fileName
+    end
+    for i, path in ipairs(Resources.resourceDirectories) do
+        local filePath = path .. "/" .. fileName
+        if MOAIFileSystem.checkFileExists(filePath) then
+            return filePath
+        end
+    end
+    return fileName
+end
 
 --------------------------------------------------------------------------------
 -- Loads (or obtains from its cache) a texture and returns it.
@@ -515,15 +544,17 @@ Resources.atlasCache = {}
 -- @return Texture instance
 --------------------------------------------------------------------------------
 function Resources.getTexture(path)
-    local cache = Resources.textureCache
-    if type(path) ~= "string" then
+    if type(path) == "userdata" then
         return path
     end
-    if cache[path] == nil then
-        local texture = Texture(path)
-        cache[path] = texture
+    
+    local cache = Resources.textureCache
+    local filepath = Resources.getResourceFilePath(path)
+    if cache[filepath] == nil then
+        local texture = Texture(filepath)
+        cache[filepath] = texture
     end
-    return cache[path]
+    return cache[filepath]
 end
 
 --------------------------------------------------------------------------------
@@ -535,12 +566,13 @@ end
 -- @return Font instance
 --------------------------------------------------------------------------------
 function Resources.getFont(path, charcodes, points, dpi)
-    local cache = Resources.fontCache
     if type(path) == "userdata" then
         return path
     end
     
+    local cache = Resources.fontCache
     path = path or Font.DEFAULT_FONT
+    path = Resources.getResourceFilePath(path)
     charcodes = charcodes or Font.DEFAULT_CHARCODES
     points = points or Font.DEFAULT_POINTS
 
@@ -561,12 +593,13 @@ end
 -- @return Texture atlas
 --------------------------------------------------------------------------------
 function Resources.getTextureAtlas(luaFilePath, texture)
+    local filePath = Resources.getResourceFilePath(luaFilePath)
     local cache = Resources.atlasCache
-    if cache[luaFilePath] then
-        return cache[luaFilePath]
+    if cache[filePath] then
+        return cache[filePath]
     end
 
-    local frames = dofile(luaFilePath).frames
+    local frames = dofile(filePath).frames
     local data = {}
     data.frames = {}
     data.names = {}
@@ -587,7 +620,20 @@ function Resources.getTextureAtlas(luaFilePath, texture)
             dataFrame.rect = {0, 0, r.width, r.height}
         end
     end
-    cache[luaFilePath] = data
+    cache[filePath] = data
+    return data
+end
+
+--------------------------------------------------------------------------------
+-- Returns the file data.
+-- @param filename filename
+-- @return file data
+--------------------------------------------------------------------------------
+function Resources.readFile(fileName)
+    local path = Resources.getResourceFilePath(fileName)
+    local input = assert(io.input(path))
+    local data = input:read("*a")
+    input:close()
     return data
 end
 
@@ -1528,7 +1574,6 @@ end
 -- @param layer layer
 --------------------------------------------------------------------------------
 function Layer:setLayer(layer)
-    print("Unsupport nested layer!")
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1654,7 +1699,7 @@ end
 --------------------------------------------------------------------------------
 -- Remove the children.
 --------------------------------------------------------------------------------
-function M:removeChildren()
+function Group:removeChildren()
     local children = table.copy(self.children)
     for i, child in ipairs(children) do
         self:removeChild(child)
