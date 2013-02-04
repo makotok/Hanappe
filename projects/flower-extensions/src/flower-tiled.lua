@@ -25,12 +25,12 @@ local TileObjectGroup
 local TileLayerRendererFactory
 local TileObjectRendererFactory
 local TMXReader
---local TMXWriter --TOOD:Quite cumbersome.
 
 ----------------------------------------------------------------------------------------------------
--- TMXMap
+-- Class that displays the map data created by Tiled Map Editor.
+-- 
 -- @class table
--- @name TMXMap
+-- @name TileMap
 ----------------------------------------------------------------------------------------------------
 TileMap = class(Group)
 M.TileMap = TileMap
@@ -55,12 +55,20 @@ function TileMap:init()
     self.objectGroupFactory = ClassFactory(TileObjectGroup)
 end
 
-function TileMap:loadMapfile(mapfile)
-    self:loadMapData(dofile(mapfile))
+--------------------------------------------------------------------------------
+-- Load the map data from luefile.
+-- @param luefile path.
+--------------------------------------------------------------------------------
+function TileMap:loadLueFile(luefile)
+    self:loadMapData(dofile(luefile))
 end
 
+--------------------------------------------------------------------------------
+-- Load the map data.
+-- @param data mapdata.
+--------------------------------------------------------------------------------
 function TileMap:loadMapData(data)
-    self.mapData = data
+    self.data = data
     self.version = data.version
     self.luaversion = data.luaversion
     self.orientation = data.orientation
@@ -74,20 +82,51 @@ function TileMap:loadMapData(data)
     self:createLayers(data.layers)
 end
 
+--------------------------------------------------------------------------------
+-- Save the map data.
+-- @return mapdata.
+--------------------------------------------------------------------------------
 function TileMap:saveMapData()
     local data = self.data or {}
-    seld.data = data
+    self.data = data
     data.version = self.version
     data.luaversion = self.luaversion
     data.orientation = self.orientation
     data.width = self.mapWidth
     data.height = self.mapHeight
+    return data
 end
 
+--------------------------------------------------------------------------------
+-- Update the order of the rendering.
+-- If you are using a single layer,
+-- you should update the drawing order in a timely manner.
+-- @param priority Priority of start
+--------------------------------------------------------------------------------
+function TileMap:updateRenderOrder(priority)
+    priority = priority or 1
+    for i, child in ipairs(self.children) do
+        if child.updateRenderOrder then
+            priority = child:updateRenderOrder(priority) + 1
+        else
+            child:setPriority(priority)
+            priority = priority + 1
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Set the directory to refer to the resource.
+-- @param path resource directory
+--------------------------------------------------------------------------------
 function TileMap:setResourceDirectory(path)
     self.resourceDirectory = path
 end
 
+--------------------------------------------------------------------------------
+-- Create a tilesets.
+-- @param tilesetDatas tileset data's
+--------------------------------------------------------------------------------
 function TileMap:createTilesets(tilesetDatas)
     for i, tilesetData in ipairs(tilesetDatas) do
         local tileset = self.tilesetFactory:newInstance(self)
@@ -96,15 +135,23 @@ function TileMap:createTilesets(tilesetDatas)
     end
 end
 
+--------------------------------------------------------------------------------
+-- Create a layers.
+-- @param layerDatas layer data's
+--------------------------------------------------------------------------------
 function TileMap:createLayers(layerDatas)
     for i, layerData in ipairs(layerDatas) do
-        local layer = self:newLayerInstance(layerData)
+        local layer = self:createLayer(layerData)
         layer:loadData(layerData)
         self:addLayer(layer)
     end
 end
 
-function TileMap:newLayerInstance(layerData)
+--------------------------------------------------------------------------------
+-- Create a layers.
+-- @param layerDatas layer data's
+--------------------------------------------------------------------------------
+function TileMap:createLayer(layerData)
     if layerData.type == "tilelayer" then
         return self.layerFactory:newInstance(self)
     elseif layerData.type == "objectgroup" then
@@ -115,15 +162,17 @@ function TileMap:newLayerInstance(layerData)
 end
 
 --------------------------------------------------------------------------------
--- Add a layer.
--- @param layer layer.
+-- Return the layers.
+-- You must not be edited on this table.
+-- @return layers.
 --------------------------------------------------------------------------------
 function TileMap:getLayers()
     return self.layers
 end
 
 --------------------------------------------------------------------------------
--- Add a layer.
+-- Add the layer.
+-- Also be added to the rendering list.
 -- @param layer layer.
 --------------------------------------------------------------------------------
 function TileMap:addLayer(layer)
@@ -132,7 +181,8 @@ function TileMap:addLayer(layer)
 end
 
 --------------------------------------------------------------------------------
--- Remove a layer.
+-- Remove the layer.
+-- @param layer layer
 --------------------------------------------------------------------------------
 function TileMap:removeLayer(layer)
     table.removeElement(self.layers, layer)
@@ -141,7 +191,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Finds and returns the layer.
--- @param name Find name.
+-- @param name The name of the layer
 --------------------------------------------------------------------------------
 function TileMap:findLayerByName(name)
     for i, v in ipairs(self.layers) do
@@ -152,25 +202,26 @@ function TileMap:findLayerByName(name)
 end
 
 --------------------------------------------------------------------------------
--- Add the tile set.
--- @param tileset tileset.
+-- Returns the tilesets.
+-- @return tilesets
+--------------------------------------------------------------------------------
+function TileMap:getTilesets()
+    return self.tilesets
+end
+
+--------------------------------------------------------------------------------
+-- Add the tileset.
+-- @param tileset tileset
 --------------------------------------------------------------------------------
 function TileMap:addTileset(tileset)
     table.insertElement(self.tilesets, tileset)
 end
 
 --------------------------------------------------------------------------------
--- Remove the tile set.
+-- Remove the tileset.
 --------------------------------------------------------------------------------
 function TileMap:removeTileset(tileset)
     return table.removeElement(self.tilesets, tileset)
-end
-
---------------------------------------------------------------------------------
--- Remove the tile set.
---------------------------------------------------------------------------------
-function TileMap:removeTilesetAt(index)
-    return table.remove(self.tilesets, index)
 end
 
 --------------------------------------------------------------------------------
@@ -194,6 +245,17 @@ function TileMap:getProperty(key)
     return self.properties[key]
 end
 
+function TileMap:getTileProperty(gid)
+    
+end
+
+----------------------------------------------------------------------------------------------------
+-- This class to display a tile layer.
+-- Inherit from the Group class is the name of a class that layer.
+-- 
+-- @class table
+-- @name TileLayer
+----------------------------------------------------------------------------------------------------
 TileLayer = class(Group)
 M.TileLayer = TileLayer
 
@@ -314,7 +376,7 @@ function TileLayer:getGid(x, y)
 end
 
 --------------------------------------------------------------------------------
--- Sets gid of the specified position. <br>
+-- Sets gid of the specified position.
 -- If you set the position is out of range to error.
 -- @param x potision of x.
 -- @param y potision of y.
@@ -330,9 +392,14 @@ function TileLayer:setGid(x, y, gid)
     local tileNo = tileset:getTileIndexByGid(gid)
     local renderer = self:findRendererByTileset(tileset) or self:createRenderer(tileset)
     renderer:setTile(x, y, tileNo)
-    self:addChild()
+    self:addChild(renderer)
 end
 
+--------------------------------------------------------------------------------
+-- Returns the renderer for the tileset.
+-- @param tileset tileset
+-- @return renderer
+--------------------------------------------------------------------------------
 function TileLayer:findRendererByTileset(tileset)
     for i, renderer in ipairs(self.children) do
         if renderer.tileset == tileset then
@@ -393,7 +460,24 @@ function Tileset:loadData(data)
     self.image = data.image
     self.imageWidth = data.imagewidth
     self.imageHeight = data.imageheight
-    self.properties = self.properties
+    self.tiles = data.tiles
+    self.properties = data.properties
+end
+
+function Tileset:saveData()
+    local data = self.data or {}
+    self.data = data
+    data.name = self.name
+    data.firstgid = self.firstgid
+    data.tilewidth = self.tileWidth
+    data.tileheight = self.tileHeight
+    data.spacing = self.spacing
+    data.margin = self.margin
+    data.image = self.image
+    data.imagewidth = self.imageWidth
+    data.imageheight = self.imageHeight
+    data.tiles = self.tiles
+    data.properties = self.properties
 end
 
 --------------------------------------------------------------------------------
@@ -605,7 +689,7 @@ TileObjectRendererFactory = class()
 M.TileObjectRendererFactory = TileObjectRendererFactory
 
 function TileObjectRendererFactory:newInstance(object)
-    if not object.gid then
+    if not object.gid or object.gid == 0 then
         return
     end
     
