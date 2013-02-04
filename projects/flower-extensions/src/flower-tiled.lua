@@ -76,7 +76,7 @@ end
 
 function TileMap:saveMapData()
     local data = self.data or {}
-    seld.data = data
+    self.data = data
     data.version = self.version
     data.luaversion = self.luaversion
     data.orientation = self.orientation
@@ -456,7 +456,7 @@ end
 
 function TileObject:saveData()
     local data = self.data or {}
-    seld.data = data
+    self.data = data
     data.name = self.name
     data.type = self.type
     data.shape = self.shape
