@@ -516,7 +516,7 @@ function TileObject:loadData(data)
     self.gid = data.gid
     self.properties = data.properties
     
-    self:setPos(data.x, data.y)
+    self:setMapPos(data.x, data.y)
     self:setSize(data.width, data.height)
     self:createRenderer()
 end
@@ -562,7 +562,7 @@ end
 
 function TileObject:setIsometricPos(x, y)
     local posX = x - y
-    local posY = x + y
+    local posY = (x + y) / 2
     self:setPos(posX, posY)
 end
 

@@ -59,7 +59,6 @@ function tileMap_OnTouchMove(e)
     local x, y, z = camera:getLoc()
     x = math.min(math.max(0, x - moveX), math.max(tileMap:getWidth() - flower.viewWidth, 0))
     y = math.min(math.max(0, y - moveY), math.max(tileMap:getHeight() - flower.viewHeight, 0))
-    print(x, y)
     camera:setLoc(x, y, z)
 
     tileMap.lastTouchX = e.x
