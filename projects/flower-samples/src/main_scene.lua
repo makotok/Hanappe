@@ -9,6 +9,7 @@ SAMPLES = {
     {title = "SheetImage",  scene = "samples/sheetimage_sample",    openAnime = "crossFade",    closeAnime = "crossFade"},
     {title = "MovieClip",   scene = "samples/movieclip_sample",     openAnime = "popIn",        closeAnime = "popOut"},
     {title = "MapImage",    scene = "samples/mapimage_sample",      openAnime = "slideLeft",    closeAnime = "slideRight"},
+    {title = "NineImage",   scene = "samples/nineimage_sample",     openAnime = "slideLeft",    closeAnime = "slideRight"},
     {title = "Label",       scene = "samples/label_sample",         openAnime = "slideRight",   closeAnime = "slideLeft"},
     {title = "Group",       scene = "samples/group_sample",         openAnime = "slideRight",   closeAnime = "slideLeft"},
     {title = "Scene",       scene = "samples/scene_sample",         openAnime = "slideTop",     closeAnime = "slideBottom"},

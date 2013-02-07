@@ -36,6 +36,7 @@ local Image
 local SheetImage
 local MapImage
 local MovieClip
+local NineImage
 local Label
 local Rect
 local Font
@@ -508,6 +509,7 @@ Resources.resourceDirectories = {}
 Resources.textureCache = setmetatable({}, {__mode = "v"})
 Resources.fontCache = {}
 Resources.atlasCache = {}
+Resources.ninePatchCache = {}
 
 --------------------------------------------------------------------------------
 -- Add the resource directory path.
@@ -622,6 +624,62 @@ function Resources.getTextureAtlas(luaFilePath, texture)
     end
     cache[filePath] = data
     return data
+end
+
+--------------------------------------------------------------------------------
+-- Returns the file data.
+-- @param filename filename
+-- @return file data
+--------------------------------------------------------------------------------
+function Resources.getNineImageData(fileName)
+    local filePath = Resources.getResourceFilePath(fileName)
+    local cache = Resources.ninePatchCache
+    if cache[filePath] then
+        return cache[filePath]
+    end
+    
+    local function createStretchRowsOrColumns(image, isRow)
+        local stretchs = {}
+        local imageWidth, imageHeight = image:getSize()
+        local targetSize = isRow and imageHeight or imageWidth
+        local stretchSize = 0
+        local pr, pg, pb, pa = image:getRGBA(0, 1)
+        
+        for i = 1, targetSize - 1 do
+            local r, g, b, a = image:getRGBA(isRow and 0 or i, isRow and i or 0)
+            stretchSize = stretchSize + 1
+            
+            if pa ~= a then
+                table.insert(stretchs, {weight = stretchSize / (targetSize - 2), stretch = pa > 0})
+                pa, stretchSize = a, 0
+            end
+        end
+        if stretchSize > 0 then
+            table.insert(stretchs, {weight = stretchSize / (targetSize - 2), stretch = pa > 0})
+        end
+        
+        return stretchs
+    end
+    
+    local image = MOAIImage.new()
+    image:load(filePath)
+    
+    local imageWidth, imageHeight = image:getSize()
+    local displayWidth, displayHeight = imageWidth - 2, imageHeight - 2
+    local stretchRows = createStretchRowsOrColumns(image, true)
+    local stretchColumns = createStretchRowsOrColumns(image, false)
+    local texture = Resources.getTexture(filePath)
+    
+    cache[filePath] = {
+        texture = texture,
+        width = displayWidth,
+        height = displayHeight,
+        stretchRows = stretchRows,
+        stretchColumns = stretchColumns,
+        rect = {0, 0, displayWidth, displayHeight},
+        uvRect = {1 / imageWidth, 1 / imageHeight, (imageWidth - 1) / imageWidth, (imageHeight - 1) / imageHeight},
+    }
+    return cache[filePath]
 end
 
 --------------------------------------------------------------------------------
@@ -1765,6 +1823,20 @@ function Group:setVisible(value)
     end
 end
 
+--------------------------------------------------------------------------------
+-- Sets the group's priority.
+-- Also sets the priority of any children.
+-- @param value priority
+--------------------------------------------------------------------------------
+function Group:setPriority(value)
+    local I = MOAIProp.getInterfaceTable()
+    I.setPriority(self, value)
+    
+    for i, v in ipairs(self.children) do
+        v:setPriority(value)
+    end
+end
+
 ----------------------------------------------------------------------------------------------------
 -- A scene class, handling display on one or more layers and receiving events from the EventMgr.
 --
@@ -2432,6 +2504,128 @@ end
 function MovieClip:isBusy()
     return self.currentAnim and self.currentAnim:isBusy() or false
 end
+
+
+----------------------------------------------------------------------------------------------------
+-- This class displays the NinePatch of Android.
+-- The following restrictions exist.
+-- In many cases, to solve by wrapping it in Group class.
+-- 1) setPiv function does not work.
+-- 2) Scale should not be set directly.
+-- 
+-- @class table
+-- @name NineImage
+----------------------------------------------------------------------------------------------------
+NineImage = class(DisplayObject)
+M.NineImage = NineImage
+
+--------------------------------------------------------------------------------
+-- Constructor.
+-- @param texture Texture path, or texture.
+-- @param width (option) Width of image.
+-- @param height (option) Height of image.
+--------------------------------------------------------------------------------
+function NineImage:init(imagePath, width, height)
+    DisplayObject.init(self)
+    
+    local imageData = Resources.getNineImageData(imagePath)
+
+    width = width or imageData.width
+    height = height or imageData.height
+    
+    local deck = MOAIStretchPatch2D.new()
+    deck:reserveUVRects(1)
+    deck:setTexture(imageData.texture)
+    deck:setRect(unpack(imageData.rect))
+    deck:setUVRect(1, unpack(imageData.uvRect))
+    
+    self.imageData = imageData
+    self.deck = deck
+    self:setDeck(deck)
+    self:setStretchRows(imageData.stretchRows)
+    self:setStretchColumns(imageData.stretchColumns)
+    self:setSize(width, height)
+end
+
+--------------------------------------------------------------------------------
+-- Sets the image data.
+-- @param imageData NinePatch image data
+--------------------------------------------------------------------------------
+function NineImage:setImageData(imageData)
+    if type(imageData) == "string" then
+        imageData = Resources.getNineImageData(imageData)
+    end
+    
+    self.imageData = imageData
+    self.deck:setTexture(imageData.texture)
+    self.deck:setRect(unpack(imageData.rect))
+    self.deck:setUVRect(1, unpack(imageData.uvRect))
+    self:setStretchRows(imageData.stretchRows)
+    self:setStretchColumns(imageData.stretchColumns)
+end
+
+--------------------------------------------------------------------------------
+-- Sets the stretch rows.
+-- @param columns stretch rows data.
+--------------------------------------------------------------------------------
+function NineImage:setStretchRows(rows)
+    self.deck:reserveRows(#rows)
+    for i, row in ipairs(rows) do
+        self.deck:setRow(i, row.weight, row.stretch)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Sets the stretch columns.
+-- @param columns stretch columns data.
+--------------------------------------------------------------------------------
+function NineImage:setStretchColumns(columns)
+    self.deck:reserveColumns(#columns)
+    for i, column in ipairs(columns) do
+        self.deck:setColumn(i, column.weight, column.stretch)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Set the scale to match the size.
+-- Is set as the size artificially.
+-- @param width Width of image.
+-- @param height Height of image.
+--------------------------------------------------------------------------------
+function NineImage:setSize(width, height)
+    local iw, ih = self.imageData.width, self.imageData.height
+    local left, top = self:getPos()
+    local sclX, sclY, sclZ = width / iw, height / ih, 1
+    
+    self.width = width
+    self.height = height
+    
+    self:setScl(sclX, sclY, sclZ)
+end
+
+--------------------------------------------------------------------------------
+-- Unsupported pivot.
+--------------------------------------------------------------------------------
+function NineImage:setPiv(xPiv, yPiv, zPiv)
+    print("Unsupported!")
+end
+
+--------------------------------------------------------------------------------
+-- Returns the size.
+-- @return width, height, 0
+--------------------------------------------------------------------------------
+function NineImage:getDims()
+    return self.width, self.height, 0
+end
+
+--------------------------------------------------------------------------------
+-- Returns the bounds.
+-- @return xMin, yMin, zMin, xMax, yMax, zMax
+--------------------------------------------------------------------------------
+function NineImage:getBounds()
+    return 0, 0, 0, self.width, self.height, 0
+end
+
 
 ----------------------------------------------------------------------------------------------------
 -- Label for text display.
