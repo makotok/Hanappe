@@ -5,8 +5,9 @@ module(..., package.seeall)
 --------------------------------------------------------------------------------
 
 SAMPLES = {
-    {title = "Tiled1",       scene = "samples/tiled1_sample",         openAnime = "fade",         closeAnime = "fade"},
-    {title = "Tiled2",       scene = "samples/tiled2_sample",         openAnime = "fade",         closeAnime = "fade"},
+    {title = "Tiled Basic 1", scene = "samples/tiled_basic_1_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Tiled Basic 2", scene = "samples/tiled_basic_2_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Tiled Isometric 1", scene = "samples/tiled_iso_1_sample", openAnime = "fade", closeAnime = "fade"},
 }
 
 --------------------------------------------------------------------------------

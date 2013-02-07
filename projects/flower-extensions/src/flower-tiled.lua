@@ -12,6 +12,7 @@ local flower = require "flower"
 local class = flower.class
 local table = flower.table
 local Group = flower.Group
+local SheetImage = flower.SheetImage
 local MapImage = flower.MapImage
 local MovieClip = flower.MovieClip
 local ClassFactory = flower.ClassFactory
@@ -22,6 +23,9 @@ local Tileset
 local TileLayer
 local TileObject
 local TileObjectGroup
+local TileLayerRenderer
+local IsometricLayerRenderer
+local TileObjectRenderer
 local TileLayerRendererFactory
 local TileObjectRendererFactory
 local TMXReader
@@ -76,6 +80,7 @@ function TileMap:loadMapData(data)
     self.mapHeight = data.height
     self.tileWidth = data.tilewidth
     self.tileHeight = data.tileheight
+    self.properties = data.properties
     
     self:setSize(self.mapWidth * self.tileWidth, self.mapHeight * self.tileHeight)
     self:createTilesets(data.tilesets)
@@ -94,6 +99,19 @@ function TileMap:saveMapData()
     data.orientation = self.orientation
     data.width = self.mapWidth
     data.height = self.mapHeight
+    data.tilewidth = self.tileWidth
+    data.tileheight = self.tileHeight
+    data.properties = self.properties
+    data.tilesets = {}
+    data.layers = {}
+
+    for i, tileset in ipairs(self.tilesets) do
+        table.insertElement(data.tilesets, tileset:saveData())
+    end
+    for i, layer in ipairs(self.layers) do
+        table.insertElement(data.layers, layer:saveData())
+    end
+    
     return data
 end
 
@@ -245,8 +263,25 @@ function TileMap:getProperty(key)
     return self.properties[key]
 end
 
+--------------------------------------------------------------------------------
+-- Returns the tile property with the specified gid.
+--------------------------------------------------------------------------------
 function TileMap:getTileProperty(gid)
-    
+    -- TODO
+end
+
+--------------------------------------------------------------------------------
+-- TODO:Documents
+--------------------------------------------------------------------------------
+function TileMap:isOrthogonal()
+    return self.orientation == "orthogonal"
+end
+
+--------------------------------------------------------------------------------
+-- TODO:Documents
+--------------------------------------------------------------------------------
+function TileMap:isIsometric()
+    return self.orientation == "isometric"
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -273,6 +308,7 @@ function TileLayer:init(tileMap)
     self.properties = {}
     self.tiles = {}
     self.tilesetToRendererMap = {}
+    self.renderer = nil
     self.rendererFactory = TileLayerRendererFactory()
 end
 
@@ -288,8 +324,7 @@ function TileLayer:loadData(data)
     self:setPos(data.x, data.y)
     self:setVisible(data.visible)
     
-    self:removeRenderers()
-    self:createRenderers()
+    self:createRenderer()
 end
 
 function TileLayer:saveData()
@@ -309,47 +344,11 @@ function TileLayer:saveData()
     return data
 end
 
-function TileLayer:removeRenderers()
-    self:removeChildren()
-end
-
---------------------------------------------------------------------------------
--- Display to generate a tile layer.
--- Because of inheritance has been left for, please do not call from the outside.
---------------------------------------------------------------------------------
-function TileLayer:createRenderers()
-    local tilesets = self:getRenderableTilesets()
-    
-    for key, tileset in pairs(tilesets) do
-        if tileset.texture then
-            local renderer = self:createRenderer(tileset)
-            self:addChild(renderer)
-        end
+function TileLayer:createRenderer()
+    if not self.renderer then
+        self.renderer = self.rendererFactory:newInstance(self)
+        self:addChild(self.renderer)
     end
-end
-
---------------------------------------------------------------------------------
--- To generate the object on which to draw the layer.
--- Because of inheritance has been left for, please do not call from the outside.
---------------------------------------------------------------------------------
-function TileLayer:createRenderer(tileset)
-    return self.rendererFactory:newInstance(self, tileset)
-end
-
---------------------------------------------------------------------------------
--- To generate a list of tile set that is used by a given layer.
--- Because of inheritance has been left for, please do not call from the outside.
---------------------------------------------------------------------------------
-function TileLayer:getRenderableTilesets()
-    local tilesets = {}
-    for i, gid in ipairs(self.tiles) do
-        local tileset = self.tileMap:findTilesetByGid(gid)
-        if tileset and not tilesets[tileset.name] then
-            tileset:loadTexture()
-            tilesets[tileset.name] = tileset
-        end
-    end
-    return tilesets
 end
 
 --------------------------------------------------------------------------------
@@ -362,7 +361,7 @@ function TileLayer:getProperty(key)
 end
 
 --------------------------------------------------------------------------------
--- Returns the gid of the specified position. <br>
+-- Returns the gid of the specified position.
 -- If is out of range, return nil.
 -- @param x potision of x.
 -- @param y potision of y.
@@ -384,28 +383,12 @@ end
 --------------------------------------------------------------------------------
 function TileLayer:setGid(x, y, gid)
     if not self:checkBounds(x, y) then
-        error("index out of bounds!")
+        error("Index out of bounds!")
     end
     self.tiles[(y - 1) * self.mapWidth + x] = gid
-
-    local tileset = self.tileMap:findTilesetByGid(gid)
-    local tileNo = tileset:getTileIndexByGid(gid)
-    local renderer = self:findRendererByTileset(tileset) or self:createRenderer(tileset)
-    renderer:setTile(x, y, tileNo)
-    self:addChild(renderer)
-end
-
---------------------------------------------------------------------------------
--- Returns the renderer for the tileset.
--- @param tileset tileset
--- @return renderer
---------------------------------------------------------------------------------
-function TileLayer:findRendererByTileset(tileset)
-    for i, renderer in ipairs(self.children) do
-        if renderer.tileset == tileset then
-            return rendrer
-        end
-    end
+    
+    self:createRenderer()
+    self.renderer:setGid(x, y, gid)
 end
 
 --------------------------------------------------------------------------------
@@ -567,6 +550,22 @@ function TileObject:createRenderer()
     end
 end
 
+function TileObject:setMapPos(x, y)
+    local tileMap = self.tileMap
+    
+    if tileMap:isOrthogonal() then
+        self:setPos(x, y)
+    elseif tileMap:isIsometric() then
+        self:setIsometricPos(x, y)
+    end
+end
+
+function TileObject:setIsometricPos(x, y)
+    local posX = x - y
+    local posY = x + y
+    self:setPos(posX, posY)
+end
+
 ----------------------------------------------------------------------------------------------------
 -- TileObjectGroup
 -- @class table
@@ -645,18 +644,49 @@ function TileObjectGroup:getProperty(key)
 end
 
 ----------------------------------------------------------------------------------------------------
--- TileObjectRendererFactory
+-- TileLayerRenderer
 -- @class table
 -- @name TileObjectRendererFactory
 ----------------------------------------------------------------------------------------------------
-TileLayerRendererFactory = class()
-M.TileLayerRendererFactory = TileLayerRendererFactory
+TileLayerRenderer = class(Group)
+M.TileLayerRenderer = TileLayerRenderer
 
-function TileLayerRendererFactory:newInstance(layer, tileset)
+--------------------------------------------------------------------------------
+-- Constructor.
+-- @param tileLayer Renderable tileLayer
+--------------------------------------------------------------------------------
+function TileLayerRenderer:init(tileLayer)
+    Group.init(self)
+    self.tileLayer = assert(tileLayer)
+    self.tileMap = tileLayer.tileMap
+    
+    self:createRenderers()
+end
+
+--------------------------------------------------------------------------------
+-- Create the tileset renderers.
+--------------------------------------------------------------------------------
+function TileLayerRenderer:createRenderers()
+    local tilesets = self:getRenderableTilesets()
+    
+    for key, tileset in pairs(tilesets) do
+        if tileset.texture then
+            local renderer = self:createRenderer(tileset)
+            self:addChild(renderer)
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Create the tileset renderer.
+-- @param tileset tileset
+--------------------------------------------------------------------------------
+function TileLayerRenderer:createRenderer(tileset)
     local texture = tileset.texture
     local tw, th = texture:getSize()
 
-    local mapWidth, mapHeight = layer.mapWidth, layer.mapHeight
+    local tileLayer = self.tileLayer
+    local mapWidth, mapHeight = tileLayer.mapWidth, tileLayer.mapHeight
     local tileWidth, tileHeight = tileset.tileWidth, tileset.tileHeight
     local spacing, margin = tileset.spacing, tileset.margin
 
@@ -664,20 +694,234 @@ function TileLayerRendererFactory:newInstance(layer, tileset)
     mapImage.tileset = tileset
     
     local tileSize = mapImage.sheetSize
-    local tiles = layer.tiles
+    local tiles = tileLayer.tiles
     
     for y = 1, mapHeight do
         local rowData = {}
         for x = 1, mapWidth do
-            local gid = layer:getGid(x, y)
+            local gid = tileLayer:getGid(x, y)
             local tileNo = tileset:getTileIndexByGid(gid)
             tileNo = tileNo > tileSize and 0 or tileNo
             table.insertElement(rowData, tileNo)
         end
         mapImage:setRow(y, unpack(rowData))
     end
-    
     return mapImage
+end
+
+--------------------------------------------------------------------------------
+-- Returns the renderable tilesets.
+-- @return renderable tilesets
+--------------------------------------------------------------------------------
+function TileLayerRenderer:getRenderableTilesets()
+    local tileLayer = self.tileLayer
+    local tileMap = tileLayer.tileMap
+    local tilesets = {}
+    for i, gid in ipairs(tileLayer.tiles) do
+        local tileset = tileMap:findTilesetByGid(gid)
+        if tileset and not tilesets[tileset.name] then
+            tileset:loadTexture()
+            tilesets[tileset.name] = tileset
+        end
+    end
+    return tilesets
+end
+
+--------------------------------------------------------------------------------
+-- Sets gid of the specified position.
+-- If you set the position is out of range to error.
+-- @param x potision of x.
+-- @param y potision of y.
+-- @param gid global id.
+--------------------------------------------------------------------------------
+function TileLayerRenderer:setGid(x, y, gid)
+    local tileset = self.tileMap:findTilesetByGid(gid)
+    local tileNo = tileset:getTileIndexByGid(gid)
+    local renderer = self:findRendererByTileset(tileset) or self:createRenderer(tileset)
+    renderer:setTile(x, y, tileNo)
+    self:addChild(renderer)
+end
+
+--------------------------------------------------------------------------------
+-- Returns the renderer for the tileset.
+-- @param tileset tileset
+-- @return renderer
+--------------------------------------------------------------------------------
+function TileLayerRenderer:findRendererByTileset(tileset)
+    for i, renderer in ipairs(self.children) do
+        if renderer.tileset == tileset then
+            return rendrer
+        end
+    end
+end
+
+
+----------------------------------------------------------------------------------------------------
+-- IsometricLayerRenderer
+-- @class table
+-- @name TileObjectRendererFactory
+----------------------------------------------------------------------------------------------------
+IsometricLayerRenderer = class(Group)
+M.IsometricLayerRenderer = IsometricLayerRenderer
+
+--------------------------------------------------------------------------------
+-- Constructor.
+-- @param tileLayer Renderable tileLayer
+--------------------------------------------------------------------------------
+function IsometricLayerRenderer:init(tileLayer)
+    Group.init(self)
+    self.tileLayer = assert(tileLayer)
+    self.tileMap = tileLayer.tileMap
+    self.renderers = {}
+    self.deckCache = {}
+    
+    self:createRenderers()
+end
+
+--------------------------------------------------------------------------------
+-- Create the tileset renderers.
+--------------------------------------------------------------------------------
+function IsometricLayerRenderer:createRenderers()
+    local tileMap = self.tileMap
+    
+    for y = 1, tileMap.mapHeight do
+        for x = 1, tileMap.mapWidth do
+            local gid = self.tileLayer:getGid(x, y)
+            self:createRenderer(x, y, gid)
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Create the tileset renderer.
+-- @param tileset tileset
+--------------------------------------------------------------------------------
+function IsometricLayerRenderer:createRenderer(x, y, gid)
+    if gid == 0 then
+        return
+    end
+
+    local tileMap = self.tileMap
+    local tileset = tileMap:findTilesetByGid(gid)
+    local tileNo = tileset:getTileIndexByGid(gid)
+    local texture = tileset:loadTexture()
+
+    local tileLayer = self.tileLayer
+    local mapWidth, mapHeight = tileLayer.mapWidth, tileLayer.mapHeight
+    local tileWidth, tileHeight = tileset.tileWidth, tileset.tileHeight
+    local spacing, margin = tileset.spacing, tileset.margin
+
+    local image = SheetImage(texture)
+    image:setIndex(tileNo)
+    
+    local deck = self.deckCache[tileset]
+    if not deck then
+        image:setTileSize(tileWidth, tileHeight, spacing, margin)
+        deck = image.deck
+        self.deckCache[tileset] = deck
+    end
+    image:setDeck(deck)
+    
+    posX = (x - 1) * (tileMap.tileWidth / 2) - (y - 1) * (tileMap.tileWidth / 2)
+    posY = (x - 1) * (tileMap.tileHeight / 2) + (y - 1) * (tileMap.tileHeight / 2)
+    image:setPos(posX, posY)
+    
+    self:addChild(image)
+    self.renderers[(y - 1) * mapWidth + x] = image
+end
+
+--------------------------------------------------------------------------------
+-- Sets gid of the specified position.
+-- If you set the position is out of range to error.
+-- @param x potision of x.
+-- @param y potision of y.
+-- @param gid global id.
+--------------------------------------------------------------------------------
+function IsometricLayerRenderer:setGid(x, y, gid)
+    local renderer = self:getRenderer(x, y)
+    if renderer then
+        self:removeChild(renderer)
+        self.renderers[(y - 1) * self.tileLayer.mapWidth + x] = nil
+    end
+    
+    self:createRenderer(x, y, gid)
+end
+
+--------------------------------------------------------------------------------
+-- Returns the renderer for the tileset.
+-- @param tileset tileset
+-- @return renderer
+--------------------------------------------------------------------------------
+function IsometricLayerRenderer:getRenderer(x, y)
+    return self.renderers[(y - 1) * self.tileLayer.mapWidth + x]
+end
+
+----------------------------------------------------------------------------------------------------
+-- TileLayerRendererFactory
+-- @class table
+-- @name TileLayerRendererFactory
+----------------------------------------------------------------------------------------------------
+TileLayerRendererFactory = class()
+M.TileLayerRendererFactory = TileLayerRendererFactory
+
+function TileLayerRendererFactory:newInstance(layer)
+    local tileMap = layer.tileMap
+    
+    if tileMap:isOrthogonal() then
+        return TileLayerRenderer(layer)
+    elseif tileMap:isIsometric() then
+        return IsometricLayerRenderer(layer)
+    else
+        error("Unsupported orientation!!")
+    end
+end
+
+----------------------------------------------------------------------------------------------------
+-- TileObjectRenderer
+-- @class table
+-- @name TileObjectRenderer
+----------------------------------------------------------------------------------------------------
+TileObjectRenderer = class(MovieClip)
+M.TileObjectRenderer = TileObjectRenderer
+
+function TileObjectRenderer:init(tileObject)
+    local tileMap = tileObject.tileMap
+    local tileset = tileMap:findTilesetByGid(tileObject.gid)
+    local texture = tileset:loadTexture()
+    local tileWidth, tileHeight = tileset.tileWidth, tileset.tileHeight
+    local spacing, margin = tileset.spacing, tileset.margin
+
+    MovieClip.init(self, texture)
+    
+    self.tileMap = tileMap
+    self.tileObject = tileObject
+    self.tileset = tileset
+    self.gid = tileObject.gid
+    self:setTileSize(tileWidth, tileHeight, spacing, margin)
+    self:setIndex(tileset:getTileIndexByGid(self.gid))
+    self:setPos(0, -self:getHeight())
+end
+
+function TileObjectRenderer:setGid(gid)
+    if self.gid == gid then
+        return
+    end
+
+    local tileset = self.tileMap:findTilesetByGid(gid)
+    if tileset ~= self.tileset then
+        local tileWidth, tileHeight = tileset.tileWidth, tileset.tileHeight
+        local spacing, margin = tileset.spacing, tileset.margin
+        self.tileset = tileset
+        self:setTexture(tileset:loadTexture())
+        self:setTileSize(tileWidth, tileHeight, spacing, margin)
+    end
+    
+    self.gid = gid
+    self:setIndex(tileset:getTileIndexByGid(gid))
+end
+
+function TileObjectRenderer:getGid()
+    return self.gid
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -688,22 +932,12 @@ end
 TileObjectRendererFactory = class()
 M.TileObjectRendererFactory = TileObjectRendererFactory
 
-function TileObjectRendererFactory:newInstance(object)
-    if not object.gid or object.gid == 0 then
+function TileObjectRendererFactory:newInstance(tileObject)
+    if not tileObject.gid or tileObject.gid == 0 then
         return
     end
     
-    local tileMap = object.tileMap
-    local tileset = tileMap:findTilesetByGid(object.gid)
-    local texture = tileset:loadTexture()
-    local tileWidth, tileHeight = tileset.tileWidth, tileset.tileHeight
-    local spacing, margin = tileset.spacing, tileset.margin
-    
-    local movieClip = MovieClip(texture)
-    movieClip:setTileSize(tileWidth, tileHeight, spacing, margin)
-    movieClip:setIndex(object.gid - tileset.firstgid + 1)
-    movieClip:setPos(0, -movieClip:getHeight())
-    return movieClip
+    return TileObjectRenderer(tileObject)
 end
 
 return M
