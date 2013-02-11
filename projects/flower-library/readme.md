@@ -110,3 +110,18 @@ The animation can specify the following parameters.
 * "slideTop" ... Slide animation
 * "slideBottom" ... Slide animation
 * custom function ... You can specify a function that defines the scene
+
+## Layer
+Coming soon.
+
+## Images
+Coming soon.
+
+## Label
+Coming soon.
+
+## Class Inheritance
+Coming soon.
+
+## Performance
+Coming soon.
