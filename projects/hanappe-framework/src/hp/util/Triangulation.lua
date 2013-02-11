@@ -9,7 +9,6 @@ local M = {}
 
 local EPSILON = 0.0000000001
 
---------------------------------------------------------------------------------
 local function area( contour )
     local n = #contour
     local A = 0
@@ -27,7 +26,6 @@ local function area( contour )
     return .5 * A
 end
 
---------------------------------------------------------------------------------
 local function insideTriangle( Ax, Ay, Bx, By, Cx, Cy, Px, Py )
     local ax, ay, bx, by, cx, cy, apx, apy, bpx, bpy, cpx, cpy;
     local cCROSSap, bCROSScp, aCROSSbp;
@@ -52,7 +50,6 @@ local function insideTriangle( Ax, Ay, Bx, By, Cx, Cy, Px, Py )
     return ( aCROSSbp >= 0 ) and ( bCROSScp >= 0 ) and ( cCROSSap >= 0 )
 end
 
---------------------------------------------------------------------------------
 local function snip( contour, u, v, w, n, V )
 	
     local Ax, Ay, Bx, By, Cx, Cy, Px, Py
@@ -88,9 +85,6 @@ local function snip( contour, u, v, w, n, V )
     return true
 end
 
---------------------------------------------------------------------------------
--- 
---------------------------------------------------------------------------------
 function M.process( contour )
     
     local result = {}

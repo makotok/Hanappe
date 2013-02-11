@@ -2,7 +2,6 @@
 -- This class inherits the MOAILayer. <br>
 -- Simplifies the generation of a set of size and layer. <br>
 --
--- @auther Makoto
 -- @class table
 -- @name Layer
 --------------------------------------------------------------------------------
@@ -65,7 +64,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the size of the layer on the screen.
--- @param Width of screen.
+-- @param width Width of screen.
 --------------------------------------------------------------------------------
 function M:setScreenWidth(width)
     self:setScreenSize(width, self:getScreenHeight())
@@ -81,7 +80,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the size of the layer on the screen.
--- @param Width of screen.
+-- @param height Height of screen.
 --------------------------------------------------------------------------------
 function M:setScreenHeight(height)
     self:setScreenSize(self:getScreenHeight(), height)
@@ -89,7 +88,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the size of the layer on the screen.
--- @return width, height
+-- @return width
+-- @return height
 --------------------------------------------------------------------------------
 function M:getScreenSize()
     return self:getScreenWidth(), self:getScreenHeight()
@@ -118,7 +118,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the viewport size of the layer.
--- @param viewWidth.
+-- @param width Width of viewport.
 --------------------------------------------------------------------------------
 function M:setViewWidth(width)
     self:setViewSize(width, self:getViewHeight())
@@ -134,7 +134,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the viewport size of the layer.
--- @param viewHeight
+-- @param height height of viewport
 --------------------------------------------------------------------------------
 function M:setViewHeight(height)
     self:setViewSize(self:getViewWidth(), height)
@@ -142,7 +142,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the viewport size of the layer.
--- @return viewWidth, viewHeight.
+-- @return viewWidth
+-- @return viewHeight
 --------------------------------------------------------------------------------
 function M:getViewSize()
     return self:getViewWidth(), self:getViewHeight()
@@ -279,6 +280,8 @@ end
 --------------------------------------------------------------------------------
 -- Create and sets camera.
 -- @param ortho
+-- @param near
+-- @param for
 --------------------------------------------------------------------------------
 function M:createCamera(ortho, near, far)
     ortho = ortho ~= nil and ortho or true

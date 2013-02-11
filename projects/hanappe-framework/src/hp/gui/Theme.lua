@@ -9,7 +9,6 @@ local NinePatch         = require "hp/display/NinePatch"
 -- module define
 local M                 = {}
 
---------------------------------------------------------------------------------
 M.Button = {
     normal = {
         skin = "skins/button-normal.png",
@@ -32,7 +31,6 @@ M.Button = {
     },
 }
 
---------------------------------------------------------------------------------
 M.Joystick = {
     normal = {
         baseSkin = "skins/joystick_base.png",
@@ -46,7 +44,6 @@ M.Joystick = {
     },
 }
 
---------------------------------------------------------------------------------
 M.Panel = {
     normal = {
         backgroundSkin = "skins/panel.png",
@@ -58,7 +55,6 @@ M.Panel = {
     },
 }
 
---------------------------------------------------------------------------------
 M.MessageBox = {
     normal = {
         backgroundSkin = "skins/panel.png",
@@ -74,7 +70,5 @@ M.MessageBox = {
         textColor = {0.2, 0.2, 0.2, 1},
     },
 }
-
---------------------------------------------------------------------------------
 
 return M

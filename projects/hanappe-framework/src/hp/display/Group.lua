@@ -3,7 +3,6 @@
 -- Will be used as a dummy MOAIProp. <br>
 -- Base Classes => DisplayObject, Resizable <br>
 --
--- @auther Makoto
 -- @class table
 -- @name Group
 --------------------------------------------------------------------------------
@@ -138,7 +137,7 @@ end
 
 ----------------------------------------------------------------
 -- Sets the children.
--- @param children.
+-- @param children children
 ----------------------------------------------------------------
 function M:setChildren(children)
     self:removeChildren()
@@ -168,7 +167,7 @@ end
 -- Add a child object. <br>
 -- The child object to duplicate is not added. <br>
 -- If you have set the Layer to the group, the layer is set to the child.
--- @param Child to inherit the MOAIProp.
+-- @param child Child to inherit the MOAIProp.
 ----------------------------------------------------------------
 function M:addChild(child)
     local index = table.indexOf(self.children, child)
@@ -203,7 +202,7 @@ end
 ----------------------------------------------------------------
 -- Remove the child object. <br>
 -- If you have set the Layer to the group, layer of the child is removed.
--- @param Child to inherit the MOAIProp.
+-- @param child Child to inherit the MOAIProp.
 ----------------------------------------------------------------
 function M:removeChild(child)
     local children = self.children

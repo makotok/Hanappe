@@ -616,7 +616,7 @@ end
 -- If maxCount of the function, and loop until it returns the function's return value is true.<br>
 -- 
 -- @param maxCount Loop count, or, End judgment function.
--- @animation Animation
+-- @param animation Animation
 -- @return self
 --------------------------------------------------------------------------------
 function M:loop(maxCount, animation)

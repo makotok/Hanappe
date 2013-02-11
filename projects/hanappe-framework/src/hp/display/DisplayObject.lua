@@ -8,7 +8,6 @@
 -- See MOAIProp.<br>
 -- Base Classes => EventDispatcher, MOAIPropUtil<br>
 --
--- @auther Makoto
 -- @class table
 -- @name DisplayObject
 --------------------------------------------------------------------------------
@@ -86,7 +85,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the parent.
--- @params value parent
+-- @param value parent
 --------------------------------------------------------------------------------
 function M:setParent(parent)
     if parent == self:getParent() then
@@ -207,7 +206,7 @@ end
 --------------------------------------------------------------------------------
 -- If the object will collide with the screen, it returns true.<br>
 -- TODO:If you are rotating, it will not work.
--- @param object MOAIProp object
+-- @param prop MOAIProp object
 -- @return If the object is a true conflict
 --------------------------------------------------------------------------------
 function M:hitTestObject(prop)

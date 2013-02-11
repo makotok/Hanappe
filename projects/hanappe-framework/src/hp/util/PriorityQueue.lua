@@ -14,7 +14,7 @@ local M = class()
 
 ----------------------------------------
 -- コンストラクタです.
--- @param 文字列
+-- @param comparetor
 ----------------------------------------
 function M:init(comparetor)
     assert(comparetor, "comparetor is nil!")

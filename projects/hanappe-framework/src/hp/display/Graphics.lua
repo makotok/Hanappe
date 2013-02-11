@@ -12,7 +12,6 @@
 -- g:setLayer(layer)<br>
 -- </code>
 --
--- @auther Makoto
 -- @class table
 -- @name Graphics
 --------------------------------------------------------------------------------
@@ -201,8 +200,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Draw an ellipse.<br>
--- @param Position of the left.
--- @param Position of the top.
+-- @param x Position of the left.
+-- @param y Position of the top.
 -- @param xRad Radius.(Not in diameter.)
 -- @param yRad Radius.(Not in diameter.)
 -- @param steps Number of points.
