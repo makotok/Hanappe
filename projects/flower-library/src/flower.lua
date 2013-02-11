@@ -190,14 +190,14 @@ function M.callOnce(func, ...)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type class
+-- 
 -- This implements object-oriented style classes in Lua, including multiple inheritance.
 -- This particular variation of class implementation copies the base class
 -- functions into this class, which improves speed over other implementations
 -- in return for slightly larger class tables.  Please note that the inherited
 -- class members are therefore cached and subsequent changes to a superclass
 -- may not be reflected in your subclasses.
--- @class table
--- @name class
 ----------------------------------------------------------------------------------------------------
 class = {}
 setmetatable(class, class)
@@ -248,10 +248,10 @@ function class:new(...)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type table
+-- 
 -- The next group of functions extends the default lua table implementation
 -- to include some additional useful methods.
--- @class table
--- @name table
 ----------------------------------------------------------------------------------------------------
 table = setmetatable({}, {__index = _G.table})
 M.table = table
@@ -358,10 +358,10 @@ function table.removeElement(t, o)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type math
+-- 
 -- This set of functions extends the native lua 'math' function set with
 -- additional useful methods.
--- @class table
--- @name math
 ----------------------------------------------------------------------------------------------------
 math = setmetatable({}, {__index = _G.math})
 M.math = math
@@ -424,15 +424,16 @@ function math.normalize( x, y )
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Executors
+-- 
 -- This is a utility class for asynchronous (coroutine-style) execution.
--- @class table
--- @name Executors
 ----------------------------------------------------------------------------------------------------
 Executors = {}
 M.Executors = Executors
 
 --------------------------------------------------------------------------------
--- Run the specified function in a loop in a coroutine, forever.
+-- Run the specified function in a loop in a coroutine, forever. <br>
+-- If there is a return value of a function of argument, the loop is terminated.
 -- @param func Target function.
 -- @param ... Arguments to be passed to the function.
 --------------------------------------------------------------------------------
@@ -497,9 +498,9 @@ function Executors.callLaterTime(time, func, ...)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Resources
+-- 
 -- A resource management system that caches loaded resources to maximize performance.
--- @class table
--- @name Resources
 ----------------------------------------------------------------------------------------------------
 Resources = {}
 M.Resources = Resources
@@ -523,7 +524,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the filePath from fileName.
--- @param filename 
+-- @param fileName 
 -- @return file path
 --------------------------------------------------------------------------------
 function Resources.getResourceFilePath(fileName)
@@ -628,7 +629,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the file data.
--- @param filename filename
+-- @param fileName fileName
 -- @return file data
 --------------------------------------------------------------------------------
 function Resources.getNineImageData(fileName)
@@ -684,7 +685,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the file data.
--- @param filename filename
+-- @param fileName file name
 -- @return file data
 --------------------------------------------------------------------------------
 function Resources.readFile(fileName)
@@ -696,9 +697,9 @@ function Resources.readFile(fileName)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type ClassFactory
+-- 
 -- Factory that creates an instance of the Class.
--- @class table
--- @name ClassFactory
 ----------------------------------------------------------------------------------------------------
 ClassFactory = class()
 M.ClassFactory = ClassFactory
@@ -746,12 +747,10 @@ function ClassFactory:copyPropertiesToObject(properties, obj, fieldAccess)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Event
+-- 
 -- A class for events, which are communicated to, and handled by, event handlers
 -- Holds the data of the Event. 
---
--- @author Makoto
--- @class table
--- @name Event
 ----------------------------------------------------------------------------------------------------
 Event = class()
 M.Event = Event
@@ -805,17 +804,22 @@ function Event:stop()
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type EventListener
+-- 
 -- A virtual superclass for EventListeners.
 -- Classes which inherit from this class become able to receive events.
 -- Currently intended for internal use only.
---
--- @author Makoto
--- @class table
--- @name EventListener
 ----------------------------------------------------------------------------------------------------
 EventListener = class()
 M.EventListener = EventListener
 
+--------------------------------------------------------------------------------
+-- The constructor.
+-- @param eventType The type of event.
+-- @param callback The callback function.
+-- @param source The source.
+-- @param priority The priority.
+--------------------------------------------------------------------------------
 function EventListener:init(eventType, callback, source, priority)
     self.type = eventType
     self.callback = callback
@@ -823,6 +827,10 @@ function EventListener:init(eventType, callback, source, priority)
     self.priority = priority or 0
 end
 
+--------------------------------------------------------------------------------
+-- Call the event listener.
+-- @param event Event
+--------------------------------------------------------------------------------
 function EventListener:call(event)
     if self.source then
         self.callback(self.source, event)
@@ -832,11 +840,9 @@ function EventListener:call(event)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type EventDispatcher
+-- 
 -- This class is responsible for event notifications.
---
--- @author Makoto
--- @class table
--- @name EventDispatcher
 ----------------------------------------------------------------------------------------------------
 EventDispatcher = class()
 M.EventDispatcher = EventDispatcher
@@ -854,7 +860,7 @@ end
 --------------------------------------------------------------------------------
 -- Adds an event listener. 
 -- will now catch the events that are sent in the dispatchEvent. 
--- @param evenType Target event type.
+-- @param eventType Target event type.
 -- @param callback The callback function.
 -- @param source (option)The first argument passed to the callback function.
 -- @param priority (option)Notification order.
@@ -965,11 +971,11 @@ function EventDispatcher:clearEventListeners()
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Runtime
+-- 
 -- This is a utility class which starts immediately upon library load
 -- and acts as the single handler for ENTER_FRAME events (which occur
 -- whenever Moai yields control to the Lua subsystem on each frame).
--- @class table
--- @name Runtime
 ----------------------------------------------------------------------------------------------------
 Runtime = EventDispatcher()
 M.Runtime = Runtime
@@ -997,11 +1003,9 @@ function Runtime.onResize(width, height)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type InputMgr
+-- 
 -- This singleton class manages all input events (touch, key, cursor).
---
--- @author Makoto
--- @class table
--- @name InputMgr
 ----------------------------------------------------------------------------------------------------
 InputMgr = EventDispatcher()
 M.InputMgr = InputMgr
@@ -1095,10 +1099,9 @@ function InputMgr:keyIsDown(key)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type RenderMgr
+-- 
 -- This is a singleton class that manages the rendering object.
---
--- @class table
--- @name RenderMgr
 ----------------------------------------------------------------------------------------------------
 RenderMgr = EventDispatcher()
 M.RenderMgr = RenderMgr
@@ -1162,10 +1165,9 @@ function RenderMgr:onEnterFrame()
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type SceneMgr
+-- 
 -- This is a singleton class to manage the scene object.
---
--- @class table
--- @name SceneMgr
 ----------------------------------------------------------------------------------------------------
 SceneMgr = EventDispatcher()
 M.SceneMgr = SceneMgr
@@ -1396,11 +1398,9 @@ function SceneMgr:onEnterFrame(e)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type DisplayObject
+-- 
 -- The base class of the display object, adding several useful methods.
---
--- @author Makoto
--- @class table
--- @name DisplayObject
 ----------------------------------------------------------------------------------------------------
 DisplayObject = class(EventDispatcher)
 DisplayObject.__factory = MOAIProp
@@ -1438,7 +1438,7 @@ end
 --------------------------------------------------------------------------------
 -- Sets the position.
 -- @param left Left position
--- @param left Top position
+-- @param top Top position
 --------------------------------------------------------------------------------
 function DisplayObject:setPos(left, top)
     local xMin, yMin, zMin, xMax, yMax, zMax = self:getBounds()
@@ -1452,7 +1452,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the position.
--- @return Left, Top.
+-- @return Left
+-- @return Top
 --------------------------------------------------------------------------------
 function DisplayObject:getPos()
     local xMin, yMin, zMin, xMax, yMax, zMax = self:getBounds()
@@ -1568,11 +1569,9 @@ function DisplayObject:setLayer(layer)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Layer
+-- 
 -- This is flower's idea of a Layer, which is a superclass of the MOAI concept of Layer.
---
--- @author Makoto
--- @class table
--- @name Layer
 ----------------------------------------------------------------------------------------------------
 Layer = class(DisplayObject)
 Layer.__factory = MOAILayer
@@ -1635,11 +1634,9 @@ function Layer:setLayer(layer)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Camera
+-- 
 -- flower's idea of a Camera, which is a superclass of the Moai Camera.
---
--- @author Makoto
--- @class table
--- @name Camera
 ----------------------------------------------------------------------------------------------------
 Camera = class()
 Camera.__factory = MOAICamera
@@ -1662,11 +1659,9 @@ function Camera:init(ortho, near, far)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Group
+-- 
 -- A class to manage and control sets of DisplayObjects.
---
--- @author Makoto
--- @class table
--- @name Group
 ----------------------------------------------------------------------------------------------------
 Group = class(DisplayObject)
 M.Group = Group
@@ -1838,13 +1833,10 @@ function Group:setPriority(value)
 end
 
 ----------------------------------------------------------------------------------------------------
--- A scene class, handling display on one or more layers and receiving events from the EventMgr.
---
--- Object is controlled by SceneMgr; use that class to manipulate scenes.
+-- @type Scene
 -- 
--- @author Makoto
--- @class table
--- @name Scene
+-- A scene class, handling display on one or more layers and receiving events from the EventMgr.
+-- Object is controlled by SceneMgr; use that class to manipulate scenes.
 ----------------------------------------------------------------------------------------------------
 Scene = class(Group)
 M.Scene = Scene
@@ -1991,10 +1983,8 @@ function Scene:getRenderTable()
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type SceneAnimations
 -- A class to handle transitions between scenes and defining various animations for those transitions.
--- 
--- @class table
--- @name SceneAnimations
 ----------------------------------------------------------------------------------------------------
 SceneAnimations = {}
 
@@ -2120,10 +2110,8 @@ function SceneAnimations.slideBottom(currentScene, nextScene, params)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Image
 -- Class to display a simple texture.
--- 
--- @class table
--- @name Image
 ----------------------------------------------------------------------------------------------------
 Image = class(DisplayObject)
 M.Image = Image
@@ -2177,10 +2165,9 @@ function Image:setTexture(texture)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Class that displays an image from a sheet of images, supporting TexturePacker's format.
+-- @type SheetImage
 -- 
--- @class table
--- @name SheetImage
+-- Class that displays an image from a sheet of images, supporting TexturePacker's format.
 ----------------------------------------------------------------------------------------------------
 SheetImage = class(DisplayObject)
 M.SheetImage = SheetImage
@@ -2302,10 +2289,9 @@ function SheetImage:setIndexByName(name)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Class that loads a tiled map of images (see MOAIGrid).
+-- @type MapImage
 -- 
--- @class table
--- @name MapImage
+-- Class that loads a tiled map of images (see MOAIGrid).
 ----------------------------------------------------------------------------------------------------
 MapImage = class(SheetImage)
 M.MapImage = MapImage
@@ -2333,10 +2319,10 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the size of the map grid.
--- @param gridWidth (option) The size of the grid
--- @param gridHeight (option) The size of the grid
--- @param tileWidth (option) The size of the tile
--- @param tileHeight (option) The size of the tile
+-- @param gridWidth The size of the grid
+-- @param gridHeight The size of the grid
+-- @param tileWidth The size of the tile
+-- @param tileHeight The size of the tile
 -- @param spacing (option) The spacing of the tile
 -- @param margin (option) The margin of the tile
 --------------------------------------------------------------------------------
@@ -2357,7 +2343,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the map row data.
--- @params ... rows of data.
+-- @param ... rows of data.
 --------------------------------------------------------------------------------
 function MapImage:setRow(...)
     self.grid:setRow(...)
@@ -2365,9 +2351,9 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the map value.
--- @params tile x.
--- @params tile y.
--- @params tile value.
+-- @param x x position of the grid
+-- @param y y position of the grid
+-- @param value tile value.
 --------------------------------------------------------------------------------
 function MapImage:setTile(x, y, value)
     self.grid:setTile(x, y, value)
@@ -2375,8 +2361,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the map value.
--- @params tile x.
--- @params tile y.
+-- @param x x position of the grid
+-- @param y y position of the grid
 -- @return tile value.
 --------------------------------------------------------------------------------
 function MapImage:getTile(x, y)
@@ -2393,10 +2379,8 @@ function MapImage:setRepeat(repeatX, repeatY)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type MovieClip
 -- Class for animated texture atlases ('MovieClip' is the Adobe Flash terminology)
---
--- @class table
--- @name MapImage
 ----------------------------------------------------------------------------------------------------
 MovieClip = class(SheetImage)
 M.MovieClip = MovieClip
@@ -2415,8 +2399,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the custom animation.
--- @params name Name of anim
--- @params anim Anim object
+-- @param name Name of anim
+-- @param anim Anim object
 --------------------------------------------------------------------------------
 function MovieClip:setAnim(name, anim)
     self.animTable[name] = anim
@@ -2507,21 +2491,23 @@ end
 
 
 ----------------------------------------------------------------------------------------------------
+-- @type NineImage
+-- 
 -- This class displays the NinePatch of Android.
 -- The following restrictions exist.
 -- In many cases, to solve by wrapping it in Group class.
--- 1) setPiv function does not work.
--- 2) Scale should not be set directly.
 -- 
--- @class table
--- @name NineImage
+-- <ol>
+--   <li>setPiv function does not work.</li>
+--   <li>Scale should not be set directly.<li>
+-- </ol>
 ----------------------------------------------------------------------------------------------------
 NineImage = class(DisplayObject)
 M.NineImage = NineImage
 
 --------------------------------------------------------------------------------
 -- Constructor.
--- @param texture Texture path, or texture.
+-- @param imagePath File path NinePach.
 -- @param width (option) Width of image.
 -- @param height (option) Height of image.
 --------------------------------------------------------------------------------
@@ -2566,7 +2552,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the stretch rows.
--- @param columns stretch rows data.
+-- @param rows stretch rows data.
 --------------------------------------------------------------------------------
 function NineImage:setStretchRows(rows)
     self.deck:reserveRows(#rows)
@@ -2628,11 +2614,10 @@ end
 
 
 ----------------------------------------------------------------------------------------------------
+-- @type Label
+-- 
 -- Label for text display.
 -- Based on MOAITextBox.
--- 
--- @class table
--- @name Label
 ----------------------------------------------------------------------------------------------------
 Label = class(DisplayObject)
 Label.__factory = MOAITextBox
@@ -2659,21 +2644,20 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the size.
--- @params width Width
--- @params height Height
+-- @param width Width
+-- @param height Height
 --------------------------------------------------------------------------------
 function Label:setSize(width, height)
     self:setRect(0, 0, width, height)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Class to fill a rectangle.
+-- @type Rect
+-- 
+-- Class to fill a rectangle. <br>
 -- NOTE: This uses immediate mode drawing and so has a high performance impact when
 -- used on mobile devices.  You may wish to use a 1-pixel high Image instead if you
 -- wish to minimize draw calls.
--- 
--- @class table
--- @name Rect
 ----------------------------------------------------------------------------------------------------
 Rect = class(DisplayObject)
 M.Rect = Rect
@@ -2704,18 +2688,17 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the size.
--- @params width Width
--- @params height Height
+-- @param width Width
+-- @param height Height
 --------------------------------------------------------------------------------
 function Rect:setSize(width, height)
     self.deck:setRect(0, 0, width, height)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Texture class.
+-- @type Texture
 -- 
--- @class table
--- @name Texture
+-- Texture class.
 ----------------------------------------------------------------------------------------------------
 Texture = class()
 Texture.__factory = MOAITexture
@@ -2731,10 +2714,9 @@ function Texture:init(path)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Font class.
+-- @type Font
 -- 
--- @class table
--- @name Font
+-- Font class.
 ----------------------------------------------------------------------------------------------------
 Font = class()
 Font.__factory = MOAIFont
@@ -2768,10 +2750,9 @@ function Font:init(path, charcodes, points, dpi)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type TouchHandler
+-- 
 -- Class to perform the handling of touch events emitted from a layer.
---
--- @class table
--- @name TouchHandler
 ----------------------------------------------------------------------------------------------------
 TouchHandler = class()
 M.TouchHandler = TouchHandler
