@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 -- It is a library to display Tiled Map Editor.
 --
--- @module flower-tiled
 -- @author Makoto
 ----------------------------------------------------------------------------------------------------
 
@@ -32,9 +31,9 @@ local TileObjectRendererFactory
 local TMXReader
 
 ----------------------------------------------------------------------------------------------------
+-- @type TileMap
+-- 
 -- Class that displays the map data created by Tiled Map Editor.
---
--- @module TileMap
 ----------------------------------------------------------------------------------------------------
 TileMap = class(Group)
 M.TileMap = TileMap
@@ -221,7 +220,11 @@ end
 -- Remove all the layers.
 --------------------------------------------------------------------------------
 function TileMap:removeMapLayers()
-
+    local mapLayer = self.mapLayers[1]
+    while mapLayer do
+        self.removeMapLayer(mapLayer)
+        mapLayer = self.mapLayers[1]
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -254,9 +257,10 @@ end
 
 --------------------------------------------------------------------------------
 -- Remove the tileset.
+-- @param tileset Tileset
 --------------------------------------------------------------------------------
 function TileMap:removeTileset(tileset)
-    return table.removeElement(self.tilesets, tileset)
+    table.removeElement(self.tilesets, tileset)
 end
 
 --------------------------------------------------------------------------------
@@ -304,6 +308,7 @@ end
 ----------------------------------------------------------------------------------------------------
 -- This class to display a tile layer.
 -- Inherit from the Group class is the name of a class that layer.
+-- You can also be dynamically added to create a TileLayer.
 --
 -- @class table
 -- @name TileLayer
@@ -313,6 +318,7 @@ M.TileLayer = TileLayer
 
 --------------------------------------------------------------------------------
 -- The constructor.
+-- @param tileMap TileMap
 --------------------------------------------------------------------------------
 function TileLayer:init(tileMap)
     Group.init(self)
@@ -329,6 +335,10 @@ function TileLayer:init(tileMap)
     self.rendererFactory = tileMap.layerRendererFactory
 end
 
+--------------------------------------------------------------------------------
+-- Load the layer data.
+-- @param data layer data
+--------------------------------------------------------------------------------
 function TileLayer:loadData(data)
     self.data = data
     self.name = data.name
@@ -344,6 +354,10 @@ function TileLayer:loadData(data)
     self:createRenderer()
 end
 
+--------------------------------------------------------------------------------
+-- Save the layer data.
+-- @return layer data
+--------------------------------------------------------------------------------
 function TileLayer:saveData()
     local data = self.data or {}
     self.data = data
@@ -361,10 +375,16 @@ function TileLayer:saveData()
     return data
 end
 
+--------------------------------------------------------------------------------
+-- Create a renderer.
+-- There is no need to call directly basically.
+-- @return layer data
+--------------------------------------------------------------------------------
 function TileLayer:createRenderer()
     if not self.renderer then
         self.renderer = self.rendererFactory:newInstance(self)
         self:addChild(self.renderer)
+        return self.renderer
     end
 end
 
@@ -425,15 +445,16 @@ function TileLayer:checkBounds(x, y)
 end
 
 ----------------------------------------------------------------------------------------------------
--- Tileset
--- @class table
--- @name Tileset
+-- @type Tileset
+-- 
+-- This class holds information about the tile set.
 ----------------------------------------------------------------------------------------------------
 Tileset = class()
 M.Tileset = Tileset
 
 --------------------------------------------------------------------------------
 -- The constructor.
+-- @param tileMap TileMap
 --------------------------------------------------------------------------------
 function Tileset:init(tileMap)
     self.tileMap = assert(tileMap)
@@ -450,6 +471,10 @@ function Tileset:init(tileMap)
     self.properties = {}
 end
 
+--------------------------------------------------------------------------------
+-- Load the tileset data.
+-- @param data tileset data
+--------------------------------------------------------------------------------
 function Tileset:loadData(data)
     self.name = data.name
     self.firstgid = data.firstgid
@@ -464,6 +489,10 @@ function Tileset:loadData(data)
     self.properties = data.properties
 end
 
+--------------------------------------------------------------------------------
+-- Save the tileset data.
+-- @return tileset data
+--------------------------------------------------------------------------------
 function Tileset:saveData()
     local data = self.data or {}
     self.data = data
@@ -483,7 +512,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Load the texture of the tile set that is specified.
--- Because of inheritance has been left for, please do not call from the outside.
+-- @return texture
 --------------------------------------------------------------------------------
 function Tileset:loadTexture()
     if not self.texture then
@@ -494,9 +523,9 @@ function Tileset:loadTexture()
 end
 
 --------------------------------------------------------------------------------
--- Returns the tile-index of the specified gid <br>
+-- Returns the tile index of the specified gid.
 -- @param gid gid.
--- @return tile-index.
+-- @return tile index.
 --------------------------------------------------------------------------------
 function Tileset:getTileIndexByGid(gid)
     return gid == 0 and 0 or gid - self.firstgid + 1
@@ -504,15 +533,17 @@ end
 
 
 ----------------------------------------------------------------------------------------------------
--- TileObject
--- @class table
--- @name TileObject
+-- @type TileObject
+-- 
+-- This class holds information TileObject.
+-- If you can see the tile, creating and showing a renderer.
 ----------------------------------------------------------------------------------------------------
 TileObject = class(Group)
 M.TileObject = TileObject
 
 --------------------------------------------------------------------------------
 -- The constructor.
+-- @param tileMap TileMap
 --------------------------------------------------------------------------------
 function TileObject:init(tileMap)
     Group.init(self)
@@ -526,6 +557,10 @@ function TileObject:init(tileMap)
     self.rendererFactory = tileMap.objectRendererFactory
 end
 
+--------------------------------------------------------------------------------
+-- Load the tile object data.
+-- @param data tile object data
+--------------------------------------------------------------------------------
 function TileObject:loadData(data)
     self.data = data
     self.name = data.name
@@ -539,6 +574,10 @@ function TileObject:loadData(data)
     self:createRenderer()
 end
 
+--------------------------------------------------------------------------------
+-- Save the tile object data.
+-- @return tile object data
+--------------------------------------------------------------------------------
 function TileObject:saveData()
     local data = self.data or {}
     seld.data = data
@@ -555,6 +594,11 @@ function TileObject:saveData()
     return data
 end
 
+--------------------------------------------------------------------------------
+-- Create a renderer.
+-- There is no need to call directly basically.
+-- @return Tile object renderer
+--------------------------------------------------------------------------------
 function TileObject:createRenderer()
     if self.renderer then
         self:removeChild(self.renderer)
@@ -589,15 +633,16 @@ function TileObject:setIsometricPos(x, y)
 end
 
 ----------------------------------------------------------------------------------------------------
--- TileObjectGroup
--- @class table
--- @name TileObjectGroup
+-- @type TileObjectGroup
+-- 
+-- This class manages the TileObject.
 ----------------------------------------------------------------------------------------------------
 TileObjectGroup = class(Group)
 M.TileObjectGroup = TileObjectGroup
 
 --------------------------------------------------------------------------------
 -- The constructor.
+-- @param tileMap TileMap
 --------------------------------------------------------------------------------
 function TileObjectGroup:init(tileMap)
     Group.init(self)
@@ -609,6 +654,10 @@ function TileObjectGroup:init(tileMap)
     self.objectFactory = tileMap.objectFactory
 end
 
+--------------------------------------------------------------------------------
+-- Load the objectgroup data.
+-- @param data objectgroup data
+--------------------------------------------------------------------------------
 function TileObjectGroup:loadData(data)
     self.name = data.name
     self.opacity = data.opacity
@@ -619,6 +668,10 @@ function TileObjectGroup:loadData(data)
     self:createObjects(data.objects)
 end
 
+--------------------------------------------------------------------------------
+-- Save the objectgroup data.
+-- @return objectgroup data
+--------------------------------------------------------------------------------
 function TileObjectGroup:saveData()
     local data = self.data
     data.type = self.type
@@ -633,6 +686,11 @@ function TileObjectGroup:saveData()
     return data
 end
 
+--------------------------------------------------------------------------------
+-- Create a TileObjects from the data.
+-- @param objectDatas object datas
+-- @return TileObject list
+--------------------------------------------------------------------------------
 function TileObjectGroup:createObjects(objectDatas)
     local objects = {}
     for i, objectData in ipairs(objectDatas) do
@@ -641,6 +699,11 @@ function TileObjectGroup:createObjects(objectDatas)
     return objects
 end
 
+--------------------------------------------------------------------------------
+-- Create a TileObject from the data.
+-- @param objectData object data
+-- @return TileObject
+--------------------------------------------------------------------------------
 function TileObjectGroup:createObject(objectData)
     local tileObject = self.objectFactory:newInstance(self.tileMap)
     tileObject:loadData(objectData)
@@ -649,7 +712,8 @@ function TileObjectGroup:createObject(objectData)
 end
 
 --------------------------------------------------------------------------------
--- Add the object.
+-- Add a TileObject.
+-- @param object TileObject
 --------------------------------------------------------------------------------
 function TileObjectGroup:addObject(object)
     if self:addChild(object) then
@@ -658,7 +722,8 @@ function TileObjectGroup:addObject(object)
 end
 
 --------------------------------------------------------------------------------
--- Remove the object.
+-- Remove a TileObject.
+-- @param object TileObject
 --------------------------------------------------------------------------------
 function TileObjectGroup:removeObject(object)
     table.removeElement(self.objects, object)
@@ -675,9 +740,10 @@ function TileObjectGroup:getProperty(key)
 end
 
 ----------------------------------------------------------------------------------------------------
--- TileLayerRenderer
--- @class table
--- @name TileObjectRendererFactory
+-- @type TileLayerRenderer
+-- 
+-- Renderer class is used to draw a tile layer.
+-- Generated through the TileLayerRendererFactory.
 ----------------------------------------------------------------------------------------------------
 TileLayerRenderer = class(Group)
 M.TileLayerRenderer = TileLayerRenderer
@@ -690,6 +756,7 @@ function TileLayerRenderer:init(tileLayer)
     Group.init(self)
     self.tileLayer = assert(tileLayer)
     self.tileMap = tileLayer.tileMap
+    self.tilesetToRendererMap = {}
 
     self:createRenderers()
 end
@@ -702,8 +769,7 @@ function TileLayerRenderer:createRenderers()
 
     for key, tileset in pairs(tilesets) do
         if tileset.texture then
-            local renderer = self:createRenderer(tileset)
-            self:addChild(renderer)
+            self:createRenderer(tileset)
         end
     end
 end
@@ -711,8 +777,13 @@ end
 --------------------------------------------------------------------------------
 -- Create the tileset renderer.
 -- @param tileset tileset
+-- @return tileset renderer
 --------------------------------------------------------------------------------
 function TileLayerRenderer:createRenderer(tileset)
+    if self.tilesetToRendererMap[tileset] then
+        return
+    end
+    
     local texture = tileset.texture
     local tw, th = texture:getSize()
 
@@ -721,10 +792,11 @@ function TileLayerRenderer:createRenderer(tileset)
     local tileWidth, tileHeight = tileset.tileWidth, tileset.tileHeight
     local spacing, margin = tileset.spacing, tileset.margin
 
-    local mapImage = MapImage(texture, mapWidth, mapHeight, tileWidth, tileHeight, spacing, margin)
-    mapImage.tileset = tileset
+    local renderer = MapImage(texture, mapWidth, mapHeight, tileWidth, tileHeight, spacing, margin)
+    renderer.tileset = tileset
+    self.tilesetToRendererMap[tileset] = renderer
 
-    local tileSize = mapImage.sheetSize
+    local tileSize = renderer.sheetSize
     local tiles = tileLayer.tiles
 
     for y = 1, mapHeight do
@@ -735,9 +807,22 @@ function TileLayerRenderer:createRenderer(tileset)
             tileNo = tileNo > tileSize and 0 or tileNo
             table.insertElement(rowData, tileNo)
         end
-        mapImage:setRow(y, unpack(rowData))
+        renderer:setRow(y, unpack(rowData))
     end
-    return mapImage
+    
+    self:addChild(renderer)
+    return renderer
+end
+
+--------------------------------------------------------------------------------
+-- Remove the tileset renderer.
+-- @param renderer renderer
+--------------------------------------------------------------------------------
+function TileLayerRenderer:removeRenderer(renderer)
+    if self.tilesetToRendererMap[renderer.tileset] then
+        self:removeChild(renderer)
+        self.tilesetToRendererMap[renderer.tileset] = nil
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -768,7 +853,7 @@ end
 function TileLayerRenderer:setGid(x, y, gid)
     local tileset = self.tileMap:findTilesetByGid(gid)
     local tileNo = tileset:getTileIndexByGid(gid)
-    local renderer = self:findRendererByTileset(tileset) or self:createRenderer(tileset)
+    local renderer = self:getRendererByTileset(tileset) or self:createRenderer(tileset)
     renderer:setTile(x, y, tileNo)
     self:addChild(renderer)
 end
@@ -778,19 +863,15 @@ end
 -- @param tileset tileset
 -- @return renderer
 --------------------------------------------------------------------------------
-function TileLayerRenderer:findRendererByTileset(tileset)
-    for i, renderer in ipairs(self.children) do
-        if renderer.tileset == tileset then
-            return rendrer
-        end
-    end
+function TileLayerRenderer:getRendererByTileset(tileset)
+    return self.tilesetToRendererMap[tileset]
 end
 
 
 ----------------------------------------------------------------------------------------------------
--- IsometricLayerRenderer
--- @class table
--- @name TileObjectRendererFactory
+-- @type IsometricLayerRenderer
+-- 
+-- This class is the renderer to draw Isometric view.
 ----------------------------------------------------------------------------------------------------
 IsometricLayerRenderer = class(Group)
 M.IsometricLayerRenderer = IsometricLayerRenderer
@@ -842,23 +923,25 @@ function IsometricLayerRenderer:createRenderer(x, y, gid)
     local tileWidth, tileHeight = tileset.tileWidth, tileset.tileHeight
     local spacing, margin = tileset.spacing, tileset.margin
 
-    local image = SheetImage(texture)
-    image:setIndex(tileNo)
+    local renderer = SheetImage(texture)
+    renderer:setIndex(tileNo)
 
     local deck = self.deckCache[tileset]
     if not deck then
-        image:setTileSize(tileWidth, tileHeight, spacing, margin)
-        deck = image.deck
+        renderer:setTileSize(tileWidth, tileHeight, spacing, margin)
+        deck = renderer.deck
         self.deckCache[tileset] = deck
     end
-    image:setDeck(deck)
+    renderer:setDeck(deck)
 
-    posX = (x - 1) * (tileMap.tileWidth / 2) - (y - 1) * (tileMap.tileWidth / 2)
-    posY = (x - 1) * (tileMap.tileHeight / 2) + (y - 1) * (tileMap.tileHeight / 2)
-    image:setPos(posX, posY)
+    local posX = (x - 1) * (tileMap.tileWidth / 2) - (y - 1) * (tileMap.tileWidth / 2)
+    local posY = (x - 1) * (tileMap.tileHeight / 2) + (y - 1) * (tileMap.tileHeight / 2)
+    renderer:setPos(posX, posY)
 
-    self:addChild(image)
-    self.renderers[(y - 1) * mapWidth + x] = image
+    self:addChild(renderer)
+    self.renderers[(y - 1) * mapWidth + x] = renderer
+    
+    return renderer
 end
 
 --------------------------------------------------------------------------------
@@ -879,8 +962,9 @@ function IsometricLayerRenderer:setGid(x, y, gid)
 end
 
 --------------------------------------------------------------------------------
--- Returns the renderer for the tileset.
--- @param tileset tileset
+-- Returns the renderer for the position.
+-- @param x x position
+-- @param y y position
 -- @return renderer
 --------------------------------------------------------------------------------
 function IsometricLayerRenderer:getRenderer(x, y)
@@ -888,13 +972,19 @@ function IsometricLayerRenderer:getRenderer(x, y)
 end
 
 ----------------------------------------------------------------------------------------------------
--- TileLayerRendererFactory
--- @class table
--- @name TileLayerRendererFactory
+-- @type TileLayerRendererFactory
+-- 
+-- It is a factory class for creating a renderer TileLayer.
+-- Switch the class generated by the orientation.
 ----------------------------------------------------------------------------------------------------
 TileLayerRendererFactory = class()
 M.TileLayerRendererFactory = TileLayerRendererFactory
 
+--------------------------------------------------------------------------------
+-- Generate a renderer for the TileLayer.
+-- @param layer TileLayer
+-- @return TileLayerRenderer or IsometricLayerRenderer
+--------------------------------------------------------------------------------
 function TileLayerRendererFactory:newInstance(layer)
     local tileMap = layer.tileMap
 
@@ -908,13 +998,16 @@ function TileLayerRendererFactory:newInstance(layer)
 end
 
 ----------------------------------------------------------------------------------------------------
--- TileObjectRenderer
--- @class table
--- @name TileObjectRenderer
+-- @type TileObjectRenderer
+-- This class is the renderer to draw TileObject.
 ----------------------------------------------------------------------------------------------------
 TileObjectRenderer = class(MovieClip)
 M.TileObjectRenderer = TileObjectRenderer
 
+--------------------------------------------------------------------------------
+-- Constructor.
+-- @param tileObject TileObject
+--------------------------------------------------------------------------------
 function TileObjectRenderer:init(tileObject)
     local tileMap = tileObject.tileMap
     local tileset = tileMap:findTilesetByGid(tileObject.gid)
@@ -933,6 +1026,11 @@ function TileObjectRenderer:init(tileObject)
     self:setPos(0, -self:getHeight())
 end
 
+--------------------------------------------------------------------------------
+-- Set the gid.
+-- Draw a tile corresponding to the gid.
+-- @param gid gid
+--------------------------------------------------------------------------------
 function TileObjectRenderer:setGid(gid)
     if self.gid == gid then
         return
@@ -951,18 +1049,28 @@ function TileObjectRenderer:setGid(gid)
     self:setIndex(tileset:getTileIndexByGid(gid))
 end
 
+--------------------------------------------------------------------------------
+-- Returns the gid.
+-- @return gid
+--------------------------------------------------------------------------------
 function TileObjectRenderer:getGid()
     return self.gid
 end
 
 ----------------------------------------------------------------------------------------------------
--- TileObjectRendererFactory
--- @class table
--- @name TileObjectRendererFactory
+-- @type TileObjectRendererFactory
+-- 
+-- This class is a factory for generating TileObjectRenderer.
 ----------------------------------------------------------------------------------------------------
 TileObjectRendererFactory = class()
 M.TileObjectRendererFactory = TileObjectRendererFactory
 
+--------------------------------------------------------------------------------
+-- Generate the renderer to draw the TileObject.
+-- If there is no gid, objects is not generated.
+-- @param tileObject TileObject
+-- @return TileObjectRenderer
+--------------------------------------------------------------------------------
 function TileObjectRendererFactory:newInstance(tileObject)
     if not tileObject.gid or tileObject.gid == 0 then
         return
