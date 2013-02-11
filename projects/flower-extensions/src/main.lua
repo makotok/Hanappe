@@ -6,4 +6,4 @@ tiled  = require "flower-tiled"
 flower.openWindow("Flower extensions", 320, 480)
 
 -- open scene
-flower.openScene("samples/main_scene")
+flower.openScene("main_scene")
