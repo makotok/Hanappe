@@ -2,11 +2,11 @@
 cd `dirname $0`
 
 # setting
-SRC_DIR="./src"
+SRC_DIR=`pwd`"/src"
 DOC_DIR=`pwd`"/doc"
 
 # build
 rm -rf $DOC_DIR/*
 
 cd $SRC_DIR
-luadoc -d $DOC_DIR */*/*.lua */*/*/*.lua
+ldoc -d $DOC_DIR $SRC_DIR
