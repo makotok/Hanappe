@@ -45,5 +45,5 @@ This is a sample code of the Flower Library.
 This project will extend the Flower Library.
 
 ## Contact
-If there is a demand of bug fixes and feature improvements, please register to Github.
+If there is a demand of bug fixes and feature improvements, please register to Github.  
 If you want to exchange mail directly, please check my profile.
