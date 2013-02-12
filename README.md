@@ -27,19 +27,19 @@ I want you to tell me if there is a terminal that worked also.
 
 ## Projects
 
-* [hanappe-framework](/projects/hanappe-framework)
+* [hanappe-framework](/projects/hanappe-framework)  
 Source code of Hanappe framework.
 Offers many features.
 
-* [hanappe-samples](/projects/hanappe-samples)
+* [hanappe-samples](/projects/hanappe-samples)  
 Sample code Hanappe.
 
-* [flower-library](/projects/flower-library)
+* [flower-library](/projects/flower-library)  
 Source code of Flower library.
-Lightweight library.
+This library has an easy to use lightweight go hanappe-framework.
 
-* [flower-samples](/projects/flower-samples)
+* [flower-samples](/projects/flower-samples)  
 Sample code Flower.
 
-* [flower-extensions](/projects/flower-extensions)
+* [flower-extensions](/projects/flower-extensions)  
 This project will extend the flower-library.
