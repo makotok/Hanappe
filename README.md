@@ -1,77 +1,45 @@
---------------------------------------------------------------------------------
--- Hanappe
--- Copyright 2012 Makoto
--- https://github.com/makotok/Hanappe
---------------------------------------------------------------------------------
+# Hanappe Projects
 
-----------------------------------------
--- Description
-----------------------------------------
+![Flower logo](/logo_flower.png)
 
+## Introduction
 Open source framework for Moai SDK.(http://getmoai.com)
 
-----------------------------------------
--- Projects
-----------------------------------------
+## SDK Version
+I have been tested on the following versions.
 
-1. hanappe-framework
+* Moai SDK Version 1.3 (Build 160)
+
+## Tools Version
+Tool version being used by the Flower is as follows.
+
+* Lua Development Tools 0.9 (http://www.eclipse.org/koneki/ldt/)
+* Apache Ant version 1.8.2 (http://ant.apache.org/)
+* LDoc version 1.3.3 (https://github.com/stevedonovan/LDoc)
+
+## Test environment
+The terminal work as follows.
+I want you to tell me if there is a terminal that worked also.
+
+* Mac OSX 10.8.2
+* Windows 7
+* Android 4.1 (Nexus 7)
+
+## Projects
+
+* [hanappe-framework](/projects/hanappe-framework)
 Source code of Hanappe framework.
 Offers many features.
 
-2. hanappe-samples
+* [hanappe-samples](/projects/hanappe-samples)
 Sample code Hanappe.
 
-3. flower-library
+* [flower-library](/projects/flower-library)
 Source code of Flower library.
 Lightweight library.
 
-4. flower-samples
+* [flower-samples](/projects/flower-samples)
 Sample code Flower.
 
-----------------------------------------
--- Introduction
-----------------------------------------
-
-I'm using the following tools in Hanappe.
-Even if you do not use, you can run if you have MoaiSDK.
-
-1. Moai SDK
-The framework runs on the Moai SDK.
-Please install the.
-
-http://getmoai.com/
-
-2. Eclipse(LDT)
-You can import as a project of the Eclipse.
-It is okay with your favorite editor.
-
-http://www.eclipse.org/koneki/ldt/
-
-3. Apache Ant
-In order to copy the library that is located in a different directory, I use ant.
-If you do not want to use the ant, it can be done by copying the source to be used in a single directory.
-
-http://ant.apache.org/
-
-----------------------------------------
--- Moai SDK version.
-----------------------------------------
-
-I will support the latest version as far as possible.
-The version I tested, please refer to the NOTES.txt.
-
-----------------------------------------
--- Run samples
-----------------------------------------
-
-Notes when running the sample.
-
-It is making a run to copy the source to a temporary directory.
-Automatically copied to the shell.
-You can also be performed manually copy all the sources.
-
-----------------------------------------
--- Memo
-----------------------------------------
-We are looking for someone to write an easy-to-read Readme.
-
+* [flower-extensions](/projects/flower-extensions)
+This project will extend the flower-library.
