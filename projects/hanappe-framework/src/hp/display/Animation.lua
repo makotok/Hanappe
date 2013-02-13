@@ -416,7 +416,6 @@ function M:moveIndex(indexes, sec, mode)
     end
     
     local command = self:newCommand(playFunc, stopFunc)
-    command.action = anim
     self:addCommand(command)
     return self
 end
@@ -673,7 +672,6 @@ function M:wait(sec)
         end
     )
     
-    command.action = timer
     self:addCommand(command)
     return self
 end
@@ -821,7 +819,6 @@ function M:newActionCommand(actionFunc, sec, mode)
             actionGroup:stop()
         end
     )
-    command.action = actionGroup
     return command
 end
 
