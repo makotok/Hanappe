@@ -509,13 +509,9 @@ end
 -- コンポーネントのスタイルを設定します.
 --------------------------------------------------------------------------------
 function M:setStyle(state, name, value)
-    --[[
-    -- Removing the condition check allows text size change for MessageBox
-    -- post-initialization
-    --]]
-    -- if self._styles[state] then
+    if self._styles[state] then
         self._styles[state] = {}
-    -- end
+    end
     local stateStyles = self._styles[state]
     stateStyles[name] = value
     
