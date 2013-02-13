@@ -20,11 +20,15 @@ function onCreate(params)
     sprite4:setIndex(2)
     sprite4:setLeft(sprite3:getRight() + sprite3:getWidth())
     sprite4:setTop(sprite3:getTop())
+
+    local cf = function(caller)
+        print(caller)
+    end
     
     anim1 = Animation({sprite1, sprite2}, 1)
         :moveLoc(50, 50, 0)
         :moveRot(0, 0, 180)
-        :moveScl(1, 1, 0)
+        :moveScl(1, 1, 0):callFunc(cf)
         :wait(3)
         :sequence(
             Animation(sprite1, 1):moveScl(-1, -1, 0):moveRot(0, 0, -180):moveLoc(-50, -50, 0),
@@ -49,4 +53,12 @@ end
 function onStart()
     anim1:play({onComplete = completeHandler})
     anim2:play()
+
+    -- Change animation speed midway
+    local timer = MOAITimer.new()
+    timer:setSpan(3)
+    timer:start()
+    MOAICoroutine.blockOnAction(timer)
+    anim2:setThrottle(2)
+
 end
