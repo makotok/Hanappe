@@ -509,9 +509,7 @@ end
 -- コンポーネントのスタイルを設定します.
 --------------------------------------------------------------------------------
 function M:setStyle(state, name, value)
-    if self._styles[state] then
-        self._styles[state] = {}
-    end
+   self._styles[state] = self._styles[state] or {}
     local stateStyles = self._styles[state]
     stateStyles[name] = value
     
