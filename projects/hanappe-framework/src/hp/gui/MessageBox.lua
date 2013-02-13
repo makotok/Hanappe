@@ -192,8 +192,7 @@ end
 --------------------------------------------------------------------------------
 function M:touchDownHandler(e)
     if self:isBusy() then
-        self._textLabel:stop()
-        self._textLabel:revealAll()
+        -- TODO:スプール中のメッセージを全て
     elseif self:more() then
         self:nextPage()
         self:spool()
