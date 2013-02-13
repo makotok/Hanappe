@@ -28,7 +28,6 @@ local IsometricLayerRenderer
 local TileObjectRenderer
 local TileLayerRendererFactory
 local TileObjectRendererFactory
-local TMXReader
 
 ----------------------------------------------------------------------------------------------------
 -- @type TileMap
@@ -37,6 +36,10 @@ local TMXReader
 ----------------------------------------------------------------------------------------------------
 TileMap = class(Group)
 M.TileMap = TileMap
+
+-- Events
+TileMap.EVENT_LOADED_DATA = "loadedData"
+TileMap.EVENT_SAVED_DATA = "savedData"
 
 --------------------------------------------------------------------------------
 -- The constructor.
@@ -87,6 +90,8 @@ function TileMap:loadMapData(data)
     self:setSize(self.mapWidth * self.tileWidth, self.mapHeight * self.tileHeight)
     self:createTilesets(data.tilesets)
     self:createMapLayers(data.layers)
+    
+    self:dispatchEvent(TileMap.EVENT_LOADED_DATA, data)
 end
 
 --------------------------------------------------------------------------------
@@ -113,6 +118,8 @@ function TileMap:saveMapData()
     for i, layer in ipairs(self.mapLayers) do
         table.insertElement(data.layers, layer:saveData())
     end
+
+    self:dispatchEvent(TileMap.EVENT_SAVED_DATA, data)
 
     return data
 end
@@ -400,8 +407,8 @@ end
 --------------------------------------------------------------------------------
 -- Returns the gid of the specified position.
 -- If is out of range, return nil.
--- @param x potision of x.
--- @param y potision of y.
+-- @param x potision of x (1 ... mapWidth)
+-- @param y potision of y (1 ... mapHeight)
 -- @return gid.
 --------------------------------------------------------------------------------
 function TileLayer:getGid(x, y)
@@ -414,8 +421,8 @@ end
 --------------------------------------------------------------------------------
 -- Sets gid of the specified position.
 -- If you set the position is out of range to error.
--- @param x potision of x.
--- @param y potision of y.
+-- @param x potision of x (1 ... mapWidth)
+-- @param y potision of y (1 ... mapHeight)
 -- @param gid global id.
 --------------------------------------------------------------------------------
 function TileLayer:setGid(x, y, gid)
@@ -430,8 +437,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Tests whether the position is within the range specified.
--- @param x potision of x.
--- @param y potision of y.
+-- @param x potision of x (1 ... mapWidth)
+-- @param y potision of y (1 ... mapHeight)
 -- @return True if in the range.
 --------------------------------------------------------------------------------
 function TileLayer:checkBounds(x, y)
@@ -569,7 +576,7 @@ function TileObject:loadData(data)
     self.gid = data.gid
     self.properties = data.properties
 
-    self:setMapPos(data.x, data.y)
+    self:setPosByAuto(data.x, data.y)
     self:setSize(data.width, data.height)
     self:createRenderer()
 end
@@ -612,24 +619,31 @@ function TileObject:createRenderer()
     end
 end
 
-function TileObject:setMapPos(x, y)
+function TileObject:setPosByAuto(x, y)
     local tileMap = self.tileMap
 
     if tileMap:isOrthogonal() then
-        self:setOrhogonalPos(x, y)
+        self:setPos(x, y)
     elseif tileMap:isIsometric() then
-        self:setIsometricPos(x, y)
+        self:setIsoPos(x, y)
     end
 end
 
-function TileObject:setOrhogonalPos(x, y)
-    self:setPos(x, y)
-end
-
-function TileObject:setIsometricPos(x, y)
+function TileObject:setIsoPos(x, y)
     local posX = x - y
     local posY = (x + y) / 2
     self:setPos(posX, posY)
+end
+
+function TileObject:getIsoPos()
+    local posX, posY = self:getPos()
+    local y = posY - posX / 2
+    local x = posX + y
+    return x, y
+end
+
+function TileObject:getProperty(key)
+    return self.properties[key]
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -718,6 +732,26 @@ end
 function TileObjectGroup:addObject(object)
     if self:addChild(object) then
         table.insertElement(self.objects, object)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Returns a TileObjects.
+-- @return objects
+--------------------------------------------------------------------------------
+function TileObjectGroup:getObjects()
+    return self.objects
+end
+
+--------------------------------------------------------------------------------
+-- Find a TileObjects.
+-- @return objects
+--------------------------------------------------------------------------------
+function TileObjectGroup:findObjectByName(name)
+    for i, object in ipairs(self.objects) do
+        if object.name == name then
+            return object
+        end
     end
 end
 
@@ -846,8 +880,8 @@ end
 --------------------------------------------------------------------------------
 -- Sets gid of the specified position.
 -- If you set the position is out of range to error.
--- @param x potision of x.
--- @param y potision of y.
+-- @param x potision of x (1 ... mapWidth)
+-- @param y potision of y (1 ... mapHeight)
 -- @param gid global id.
 --------------------------------------------------------------------------------
 function TileLayerRenderer:setGid(x, y, gid)
@@ -947,8 +981,8 @@ end
 --------------------------------------------------------------------------------
 -- Sets gid of the specified position.
 -- If you set the position is out of range to error.
--- @param x potision of x.
--- @param y potision of y.
+-- @param x potision of x (1 ... mapWidth)
+-- @param y potision of y (1 ... mapHeight)
 -- @param gid global id.
 --------------------------------------------------------------------------------
 function IsometricLayerRenderer:setGid(x, y, gid)

@@ -12,7 +12,9 @@ local M = {}
 local flower = require "flower"
 local class = flower.class
 local table = flower.table
+local Event = flower.Event
 local Image = flower.Image
+local Group = flower.Group
 
 -- class
 local ImageButton
@@ -20,12 +22,20 @@ local Joystick
 local ListView
 
 ----------------------------------------------------------------------------------------------------
--- Button
--- @class table
--- @name Button
+-- @type ImageButton
+-- ImageButton
 ----------------------------------------------------------------------------------------------------
 ImageButton = class(Image)
+M.ImageButton = ImageButton
+
+--- Click Event
 ImageButton.EVENT_CLICK = "click"
+
+--- Button down Event
+ImageButton.EVENT_BUTTON_DOWN = "buttonDown"
+
+--- Button up Event
+ImageButton.EVENT_BUTTON_UP = "buttonUp"
 
 function ImageButton:init(texture)
     Image.init(self, texture)
@@ -42,28 +52,32 @@ function ImageButton:isButtonDown()
     return self.touchDownIdx ~= nil
 end
 
-function ImageButton:setButtonDown(idx)
+function ImageButton:doButtonDown(idx)
     self.touchDownIdx = idx
     self:setScl(1.2, 1.2, 1)
+    
+    self:dispatchEvent(ImageButton.EVENT_BUTTON_DOWN)
 end
 
-function ImageButton:setButtonUp()
+function ImageButton:doButtonUp()
     self.touchDownIdx = nil
     self:setScl(1, 1, 1)
+    
+    self:dispatchEvent(ImageButton.EVENT_BUTTON_UP)
 end
 
 function ImageButton:onTouchDown(e)
     if self:isButtonDown() then
         return
     end
-    self:setButtonDown(e.idx)
+    self:doButtonDown(e.idx)
 end
 
 function ImageButton:onTouchUp(e)
     if self.touchDownIdx ~= e.idx then
         return
     end
-    self:setButtonUp()
+    self:doButtonUp()
     self:dispatchEvent(ImageButton.EVENT_CLICK)
 end
 
@@ -72,7 +86,7 @@ function ImageButton:onTouchMove(e)
         return
     end
     if not self:inside(e.wx, e.wy, 0) then
-        self:setButtonUp()
+        self:doButtonUp()
     end
 end
 
@@ -80,14 +94,13 @@ function ImageButton:onTouchCancel(e)
     if self.touchDownIdx ~= e.idx then
         return
     end
-    self:setButtonUp()
+    self:doButtonUp()
 end
 
 
 ----------------------------------------------------------------------------------------------------
+-- @type Joystick
 -- Joystick
--- @class table
--- @name Joystick
 ----------------------------------------------------------------------------------------------------
 Joystick = class(Group)
 M.Joystick = Joystick
@@ -104,62 +117,60 @@ Joystick.STICK_BOTTOM          = "bottom"
 Joystick.MODE_ANALOG           = "analog"
 Joystick.MODE_DIGITAL          = "digital"
 Joystick.RANGE_OF_CENTER_RATE  = 0.5
+Joystick.DEFAULT_BASE_TEXTURE  = "gui/joystick_base.png"
+Joystick.DEFAULT_KNOB_TEXTURE  = "gui/joystick_knob.png"
 
 
-function Joystick:init()
+function Joystick:init(baseTexture, knobTexture)
     Group.init(self)
     self._touchDownFlag = false
-    self._rangeOfCenterRate = M.RANGE_OF_CENTER_RATE
-    self._stickMode = M.MODE_ANALOG
-    self._changedEvent = Event(M.EVENT_STICK_CHANGED)
-    self._themeName = "Joystick"
+    self._rangeOfCenterRate = Joystick.RANGE_OF_CENTER_RATE
+    self._stickMode = Joystick.MODE_ANALOG
+    self._changedEvent = Event(Joystick.EVENT_STICK_CHANGED)
+    self._baseTexture = baseTexture or Joystick.DEFAULT_BASE_TEXTURE
+    self._knobTexture = knobTexture or Joystick.DEFAULT_KNOB_TEXTURE
+    
+    self:initChildren()
+    self:initEventListeners()
 end
 
-function Joystick:createChildren()
-    local baseSkin = self:getStyle("baseSkin")
-    local knobSkin = self:getStyle("knobSkin")
+function Joystick:initChildren()
+    self._baseImage = Image(self._baseTexture)
+    self._knobImage = Image(self._knobTexture)
     
-    self._baseSprite = Sprite {texture = baseSkin, left = 0, top = 0}
-    self._knobSprite = Sprite {texture = knobSkin, left = 0, top = 0}
-    
-    self:addChild(self._baseSprite)
-    self:addChild(self._knobSprite)
+    self:addChild(self._baseImage)
+    self:addChild(self._knobImage)
 
-    self:setSize(self._baseSprite:getSize())
+    self:setSize(self._baseImage:getSize())
     self:setCenterKnob()
 end
 
-function Joystick:updateDisplay()
-
-    self._baseSprite:setColor(unpack(self:getStyle("baseColor")))
-    self._baseSprite:setTexture(self:getStyle("baseSkin"))
-
-    self._knobSprite:setColor(unpack(self:getStyle("knobColor")))
-    self._knobSprite:setTexture(self:getStyle("knobSkin"))
-    
-    self:setSize(self._baseSprite:getSize())
+function Joystick:initEventListeners()
+    self:addEventListener("touchDown", self.onTouchDown, self)
+    self:addEventListener("touchUp", self.onTouchUp, self)
+    self:addEventListener("touchMove", self.onTouchMove, self)
+    self:addEventListener("touchCancel", self.onTouchCancel, self)
 end
 
 function Joystick:updateKnob(x, y)
-    local oldX, oldY = self._knobSprite:getLoc()
+    local oldX, oldY = self._knobImage:getLoc()
     local newX, newY = self:getKnobNewLoc(x, y)
 
-    -- change loc
     if oldX ~= newX or oldY ~= newY then
-        self._knobSprite:setLoc(newX, newY, 0)
+        self._knobImage:setLoc(newX, newY, 0)
     
-        local event = self._changedEvent
-        event.oldX, event.oldY = self:getKnobInputRate(oldX, oldY)
-        event.newX, event.newY = self:getKnobInputRate(newX, newY)
-        event.direction = self:getStickDirection()
-        event.down = self._touchDownFlag
-        self:dispatchEvent(event)
+        local e = self._changedEvent
+        e.oldX, e.oldY = self:getKnobInputRate(oldX, oldY)
+        e.newX, e.newY = self:getKnobInputRate(newX, newY)
+        e.direction = self:getStickDirection()
+        e.down = self._touchDownFlag
+        self:dispatchEvent(e)
     end
 end
 
 function Joystick:setCenterKnob()
     local cx, cy = self:getWidth() / 2, self:getHeight() / 2
-    self._knobSprite:setLoc(cx, cy, 0)
+    self._knobImage:setLoc(cx, cy, 0)
 end
 
 function Joystick:getCenterLoc()
@@ -167,7 +178,7 @@ function Joystick:getCenterLoc()
 end
 
 function Joystick:getKnobNewLoc(x, y)
-    if self:getStickMode() == M.MODE_ANALOG then
+    if self:getStickMode() == Joystick.MODE_ANALOG then
         return self:getKnobNewLocForAnalog(x, y)
     else
         return self:getKnobNewLocForDigital(x, y)
@@ -194,7 +205,7 @@ function Joystick:getKnobNewLocForDigital(x, y)
     local rx, ry = (x - cx), (y - cy)
     local radian = math.atan2(math.abs(ry), math.abs(rx))
     local minX, minY = 0, 0
-    local maxX, maxY = self:getWidth(), self:getHeight()
+    local maxX, maxY = self:getSize()
     local cRate = self._rangeOfCenterRate
     local cMinX, cMinY = cx - cx * cRate, cy - cy * cRate
     local cMaxX, cMaxY = cx + cx * cRate, cy + cy * cRate
@@ -219,7 +230,7 @@ function Joystick:getKnobInputRate(x, y)
 end
 
 function Joystick:getStickDirection()
-    local x, y = self._knobSprite:getLoc()
+    local x, y = self._knobImage:getLoc()
     local cx, cy = self:getCenterLoc()
     local radian = math.atan2(math.abs(x - cx), math.abs(y - cy))
 
@@ -242,16 +253,12 @@ function Joystick:setStickMode(value)
     self._stickMode = value
 end
 
-function Joystick:setOnStickChanged(func)
-    self:setEventListener(M.EVENT_STICK_CHANGED, func)
-end
-
 function Joystick:onTouchDown(e)
     if self._touchDownFlag then
         return
     end
 
-    local mx, my = self:worldToModel(e.x, e.y, 0)
+    local mx, my = self:worldToModel(e.wx, e.wy, 0)
     self._touchDownFlag = true
     self._touchIndex = e.idx
     self:updateKnob(mx, my)
@@ -278,8 +285,7 @@ function Joystick:onTouchMove(e)
         return
     end
     
-    local wx, wy = e.x, e.y
-    local mx, my = self:worldToModel(wx, wy, 0)
+    local mx, my = self:worldToModel(e.wx, e.wy, 0)
     self:updateKnob(mx, my)
 end
 
