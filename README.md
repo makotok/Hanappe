@@ -29,7 +29,7 @@ The terminal work as follows.
 * [Hanappe Framework](/projects/hanappe-framework)  
 This project is a framework for MoaiSDK.
 I have developed to many features.
-However, the main bug fixes done in the future.
+However, the future would be the main bug fixes too.
 
 * [Hanappe Samples](/projects/hanappe-samples)  
 This is a sample code of the Hanappe Framework.

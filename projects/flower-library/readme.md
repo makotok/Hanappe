@@ -5,18 +5,8 @@ Flower is a simple, lightweight library for MoaiSDK.
 
 http://getmoai.com/
 
-## Starting window
-In MoaiSDK, start by creating a first window and viewport.
-
-```Lua
-MOAISim.openWindow("window tile", 320, 480)
-
-viewport = MOAIViewport.new()
-viewport:setSize(320, 480)
-viewport:setScale(320, 480)
-```
-
-Create a window in the same way Flower.
+## Open window
+Open a window in the same way Flower.
 It also creates a scene in Flower.
 
 ```Lua
