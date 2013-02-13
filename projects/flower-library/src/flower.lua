@@ -550,11 +550,10 @@ function Resources.getTextureAtlas(luaFilePath, texture)
         local dataFrame = data.frames[i]
         if frame.textureRotated then
             dataFrame.quad = {uv.u0, uv.v0, uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0}
-            dataFrame.rect = {0, 0, r.width, r.height}
         else
             dataFrame.quad = {uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0, uv.u0, uv.v0}
-            dataFrame.rect = {0, 0, r.width, r.height}
         end
+        dataFrame.rect = {r.x, r.y, r.x + r.width, r.y + r.height}
     end
     cache[luaFilePath] = data
     return data
