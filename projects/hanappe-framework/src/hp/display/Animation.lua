@@ -43,7 +43,6 @@ function M:init(targets, sec, easeType)
     self._second = sec and sec or 1
     self._easeType = easeType
     self._contexts = {}
-    self._throttle = 1
     
 end
 
@@ -532,7 +531,7 @@ end
 --------------------------------------------------------------------------------
 function M:callFunc(func)
     local playFunc = function(self)
-        func(self)
+        func(obj)
     end
     local command = self:newCommand(playFunc)
     self:addCommand(command)
@@ -559,7 +558,6 @@ function M:parallel(...)
             
             -- play animations
             for i, a in ipairs(animations) do
-                a:setThrottle(self._throttle)
                 a:play {onComplete = completeHandler}
             end
             
@@ -593,7 +591,6 @@ function M:sequence(...)
             local max = #animations
             
             for i, animation in ipairs(animations) do
-                animation:setThrottle(self._throttle)
                 animation:play()
                 while animation:isRunning() do
                     coroutine.yield()
@@ -629,7 +626,6 @@ function M:loop(maxCount, animation)
         function(self, context)
             local count = 0
             while true do
-                animation:setThrottle(self._throttle)
                 animation:play()
                 
                 while animation:isRunning() do
@@ -707,9 +703,6 @@ function M:playInternal(context)
     local commands = table.copy(self._commands)
     for i, command in ipairs(commands) do
         context.currentCommand = command
-        if command.action then
-            command.action:throttle(self._throttle)
-        end
         context.currentCommand.play(self, context)
         
         if context.stopped then
@@ -820,21 +813,6 @@ function M:newActionCommand(actionFunc, sec, mode)
         end
     )
     return command
-end
-
---------------------------------------------------------------------------------
--- Change the throttle, as defined by MOAIAction.throttle, of the animation.
--- @param newThrottle Desired new throttle value
--- @return none
---------------------------------------------------------------------------------
-function M:setThrottle(newThrottle)
-    if self:isRunning() then
-        local context = self._contexts[#self._contexts]
-        if context.currentCommand and context.currentCommand.action then
-            context.currentCommand.action:throttle(newThrottle)
-        end
-    end
-    self._throttle = newThrottle
 end
 
 return M
