@@ -430,28 +430,26 @@ function M:touchMoveHandler(e)
     moveX, moveY = self:getScrollingForce()
 
     -- Implements an elastic effect when we're dragging O.B.
-    if self:isHBouncelEnabled() or self:isVBounceEnabled() then
-        local minX, minY, maxX, maxY = self:scrollBoundaries()
-        local left, top = self:getPos()
-        local newLeft = left + moveX
-        local newTop = top + moveY
-        if newLeft < minX or newLeft > maxX then
-            if not self:isHBouncelEnabled() then
-                moveX = 0
-            else
-                local clippedLeft, clippedTop = self:clipScrollPosition(newLeft, newTop)
-                local diff = math.distance(clippedLeft, clippedTop, newLeft, newTop)
-                moveX = attenuation(diff) * moveX
-            end
+    local minX, minY, maxX, maxY = self:scrollBoundaries()
+    local left, top = self:getPos()
+    local newLeft = left + moveX
+    local newTop = top + moveY
+    if newLeft < minX or newLeft > maxX then
+        if not self:isHBouncelEnabled() then
+            moveX = 0
+        else
+            local clippedLeft, clippedTop = self:clipScrollPosition(newLeft, newTop)
+            local diff = math.distance(clippedLeft, clippedTop, newLeft, newTop)
+            moveX = attenuation(diff) * moveX
         end
-        if newTop < minY or newTop > maxY then
-            if not self:isVBounceEnabled() then
-                moveY = 0
-            else
-                local clippedLeft, clippedTop = self:clipScrollPosition(newLeft, newTop)
-                local diff = math.distance(clippedLeft, clippedTop, newLeft, newTop)
-                moveY = attenuation(diff) * moveY
-            end
+    end
+    if newTop < minY or newTop > maxY then
+        if not self:isVBounceEnabled() then
+            moveY = 0
+        else
+            local clippedLeft, clippedTop = self:clipScrollPosition(newLeft, newTop)
+            local diff = math.distance(clippedLeft, clippedTop, newLeft, newTop)
+            moveY = attenuation(diff) * moveY
         end
     end
 
