@@ -99,6 +99,7 @@ function createGuiView()
     scroller = Scroller {
         parent = guiView,
     }
+    scroller:setHBounceEnabled(false)
     
     titleLabel = TextLabel {
         text = "Hanappe Samples",
