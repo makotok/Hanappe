@@ -20,6 +20,19 @@ return {
       imageheight = 384,
       properties = {},
       tiles = {}
+    },
+    {
+      name = "actor",
+      firstgid = 25,
+      tilewidth = 32,
+      tileheight = 32,
+      spacing = 0,
+      margin = 0,
+      image = "actor.png",
+      imagewidth = 96,
+      imageheight = 128,
+      properties = {},
+      tiles = {}
     }
   },
   layers = {
@@ -85,8 +98,8 @@ return {
           name = "",
           type = "",
           shape = "rectangle",
-          x = 32,
-          y = 64,
+          x = 416,
+          y = 384,
           width = 0,
           height = 0,
           gid = 1,
@@ -94,14 +107,14 @@ return {
           properties = {}
         },
         {
-          name = "",
+          name = "Player",
           type = "",
           shape = "rectangle",
-          x = 416,
-          y = 384,
+          x = 32,
+          y = 64,
           width = 0,
           height = 0,
-          gid = 1,
+          gid = 25,
           visible = true,
           properties = {}
         }

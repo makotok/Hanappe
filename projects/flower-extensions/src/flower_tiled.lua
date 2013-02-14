@@ -407,29 +407,29 @@ end
 --------------------------------------------------------------------------------
 -- Returns the gid of the specified position.
 -- If is out of range, return nil.
--- @param x potision of x (1 ... mapWidth)
--- @param y potision of y (1 ... mapHeight)
+-- @param x potision of x (0 <= x && x <= mapWidth)
+-- @param y potision of y (0 <= y && y <= mapHeight)
 -- @return gid.
 --------------------------------------------------------------------------------
 function TileLayer:getGid(x, y)
     if not self:checkBounds(x, y) then
         return nil
     end
-    return self.tiles[(y - 1) * self.mapWidth + x]
+    return self.tiles[y * self.mapWidth + x + 1]
 end
 
 --------------------------------------------------------------------------------
 -- Sets gid of the specified position.
 -- If you set the position is out of range to error.
--- @param x potision of x (1 ... mapWidth)
--- @param y potision of y (1 ... mapHeight)
+-- @param x potision of x (0 <= x && x <= mapWidth)
+-- @param y potision of y (0 <= y && y <= mapHeight)
 -- @param gid global id.
 --------------------------------------------------------------------------------
 function TileLayer:setGid(x, y, gid)
     if not self:checkBounds(x, y) then
         error("Index out of bounds!")
     end
-    self.tiles[(y - 1) * self.mapWidth + x] = gid
+    self.tiles[y * self.mapWidth + x + 1] = gid
 
     self:createRenderer()
     self.renderer:setGid(x, y, gid)
@@ -437,15 +437,15 @@ end
 
 --------------------------------------------------------------------------------
 -- Tests whether the position is within the range specified.
--- @param x potision of x (1 ... mapWidth)
--- @param y potision of y (1 ... mapHeight)
+-- @param x potision of x (0 <= x && x <= mapWidth)
+-- @param y potision of y (0 <= y && y <= mapHeight)
 -- @return True if in the range.
 --------------------------------------------------------------------------------
 function TileLayer:checkBounds(x, y)
-    if x < 1 or self.mapWidth < x then
+    if x < 0 or self.mapWidth <= x then
         return false
     end
-    if y < 1 or self.mapHeight < y then
+    if y < 0 or self.mapHeight <= y then
         return false
     end
     return true
@@ -467,8 +467,10 @@ function Tileset:init(tileMap)
     self.tileMap = assert(tileMap)
     self.name = ""
     self.firstgid = 0
-    self.tilewidth = 0
-    self.tileheight = 0
+    self.tileWidth = 0
+    self.tileHeight = 0
+    self.tileOffsetX = 0
+    self.tileOffsetY = 0
     self.spacing = 0
     self.margin = 0
     self.image = ""
@@ -487,6 +489,8 @@ function Tileset:loadData(data)
     self.firstgid = data.firstgid
     self.tileWidth = data.tilewidth
     self.tileHeight = data.tileheight
+    self.tileOffsetX = data.tileoffsetx or 0 -- TODO: Dummy. Tile Map Editor Bug?
+    self.tileOffsetY = data.tileoffsety or 0 -- TODO: Dummy. Tile Map Editor Bug?
     self.spacing = data.spacing
     self.margin = data.margin
     self.image = data.image
@@ -507,6 +511,8 @@ function Tileset:saveData()
     data.firstgid = self.firstgid
     data.tilewidth = self.tileWidth
     data.tileheight = self.tileHeight
+    data.tileoffsetx = self.tileOffsetX
+    data.tileoffsety = self.tileOffsetY
     data.spacing = self.spacing
     data.margin = self.margin
     data.image = self.image
@@ -578,7 +584,7 @@ function TileObject:loadData(data)
 
     self:setPosByAuto(data.x, data.y)
     self:setSize(data.width, data.height)
-    self:createRenderer()
+    self:createRenderer()    
 end
 
 --------------------------------------------------------------------------------
@@ -593,8 +599,8 @@ function TileObject:saveData()
     data.shape = self.shape
     data.x = self:getLeft()
     data.y = self:getTop()
-    data.width = self.gid and 0 or self:getWidth()
-    data.height = self.gid and 0 or self:getHeight()
+    data.width = self:getWidth()
+    data.height = self:getHeight()
     data.gid = self.gid
     data.visible = self:getVisible()
     data.properties = self.properties
@@ -632,11 +638,15 @@ end
 function TileObject:setIsoPos(x, y)
     local posX = x - y
     local posY = (x + y) / 2
+    posX = posX + self.tileMap.tileWidth / 2
+    posY = posY + self.tileMap.tileHeight / 2
     self:setPos(posX, posY)
 end
 
 function TileObject:getIsoPos()
     local posX, posY = self:getPos()
+    posX = posX - self.tileMap.tileWidth / 2
+    posY = posY -self.tileMap.tileHeight / 2
     local y = posY - posX / 2
     local x = posX + y
     return x, y
@@ -833,9 +843,9 @@ function TileLayerRenderer:createRenderer(tileset)
     local tileSize = renderer.sheetSize
     local tiles = tileLayer.tiles
 
-    for y = 1, mapHeight do
+    for y = 0, mapHeight - 1 do
         local rowData = {}
-        for x = 1, mapWidth do
+        for x = 0, mapWidth - 1 do
             local gid = tileLayer:getGid(x, y)
             local tileNo = tileset:getTileIndexByGid(gid)
             tileNo = tileNo > tileSize and 0 or tileNo
@@ -880,8 +890,8 @@ end
 --------------------------------------------------------------------------------
 -- Sets gid of the specified position.
 -- If you set the position is out of range to error.
--- @param x potision of x (1 ... mapWidth)
--- @param y potision of y (1 ... mapHeight)
+-- @param x potision of x (0 <= x && x <= mapWidth)
+-- @param y potision of y (0 <= y && y <= mapHeight)
 -- @param gid global id.
 --------------------------------------------------------------------------------
 function TileLayerRenderer:setGid(x, y, gid)
@@ -930,8 +940,8 @@ end
 function IsometricLayerRenderer:createRenderers()
     local tileMap = self.tileMap
 
-    for y = 1, tileMap.mapHeight do
-        for x = 1, tileMap.mapWidth do
+    for y = 0, tileMap.mapHeight - 1 do
+        for x = 0, tileMap.mapWidth - 1 do
             local gid = self.tileLayer:getGid(x, y)
             self:createRenderer(x, y, gid)
         end
@@ -939,8 +949,8 @@ function IsometricLayerRenderer:createRenderers()
 end
 
 --------------------------------------------------------------------------------
--- Create the tileset renderer.
--- @param tileset tileset
+-- Create the tile renderer.
+-- @param x x position
 --------------------------------------------------------------------------------
 function IsometricLayerRenderer:createRenderer(x, y, gid)
     if gid == 0 then
@@ -968,12 +978,14 @@ function IsometricLayerRenderer:createRenderer(x, y, gid)
     end
     renderer:setDeck(deck)
 
-    local posX = (x - 1) * (tileMap.tileWidth / 2) - (y - 1) * (tileMap.tileWidth / 2)
-    local posY = (x - 1) * (tileMap.tileHeight / 2) + (y - 1) * (tileMap.tileHeight / 2)
+    local posX = x * (tileMap.tileWidth / 2) - y * (tileMap.tileWidth / 2)
+    local posY = x * (tileMap.tileHeight / 2) + y * (tileMap.tileHeight / 2)
+    posX = posX + tileset.tileOffsetX
+    posY = posY + tileset.tileOffsetY + tileMap.tileHeight - tileHeight
     renderer:setPos(posX, posY)
 
     self:addChild(renderer)
-    self.renderers[(y - 1) * mapWidth + x] = renderer
+    self.renderers[y * mapWidth + x + 1] = renderer
     
     return renderer
 end
@@ -981,15 +993,15 @@ end
 --------------------------------------------------------------------------------
 -- Sets gid of the specified position.
 -- If you set the position is out of range to error.
--- @param x potision of x (1 ... mapWidth)
--- @param y potision of y (1 ... mapHeight)
+-- @param x potision of x (0 ... mapWidth - 1)
+-- @param y potision of y (0 ... mapHeight - 1)
 -- @param gid global id.
 --------------------------------------------------------------------------------
 function IsometricLayerRenderer:setGid(x, y, gid)
     local renderer = self:getRenderer(x, y)
     if renderer then
         self:removeChild(renderer)
-        self.renderers[(y - 1) * self.tileLayer.mapWidth + x] = nil
+        self.renderers[y * self.tileLayer.mapWidth + x + 1] = nil
     end
 
     self:createRenderer(x, y, gid)
@@ -1002,7 +1014,7 @@ end
 -- @return renderer
 --------------------------------------------------------------------------------
 function IsometricLayerRenderer:getRenderer(x, y)
-    return self.renderers[(y - 1) * self.tileLayer.mapWidth + x]
+    return self.renderers[y * self.tileLayer.mapWidth + x + 1]
 end
 
 ----------------------------------------------------------------------------------------------------

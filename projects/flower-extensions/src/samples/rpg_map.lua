@@ -1,7 +1,6 @@
 ----------------------------------------------------------------------------------------------------
--- It is a library to display Tiled Map Editor.
+-- Simple example RPGMap.
 --
--- @author Makoto
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -67,6 +66,11 @@ function RPGMap:initEventListeners()
     self:addEventListener("savedData", self.onSavedData, self)
 end
 
+function RPGMap:isCollison(x, y)
+    local gid = self.collisionLayer:getGid(x, y)
+    return gid > 0
+end
+
 function RPGMap:onLoadedData(e)
     self.collisionLayer = self:findMapLayerByName("Collision")
 end
@@ -81,15 +85,11 @@ function RPGMap:onUpdate(e)
     end
 end
 
-function RPGMap:isCollison(x, y)
-    local gid = self.collisionLayer:getGid(x, y)
-    return gid > 0
-end
-
 ----------------------------------------------------------------------------------------------------
 -- @type RPGObject
 ----------------------------------------------------------------------------------------------------
 RPGObject = class(TileObject)
+M.RPGObject = RPGObject
 
 function RPGObject:init(tileMap)
     TileObject.init(self, tileMap)
@@ -101,14 +101,21 @@ function RPGObject:loadData(data)
     self:createController()
 end
 
-function RPGObject:walk(direction)
-    local animName = "walk" .. direction
+function RPGObject:walk(walkType)
     if self.renderer then
-        self.renderer:playAnim(animName)
+        self.renderer:playAnim(walkType)
     end
     
     
     
+end
+
+function RPGObject:getMapPos()
+
+end
+
+function RPGObject:getMapNextPos()
+
 end
 
 function RPGObject:createController()
