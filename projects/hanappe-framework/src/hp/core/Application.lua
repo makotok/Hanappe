@@ -14,41 +14,6 @@ local InputManager          = require "hp/manager/InputManager"
 local M                     = EventDispatcher()
 local super                 = EventDispatcher
 
--- local functions
-local function getDeviceSize()
-    return MOAIEnvironment.horizontalResolution or 0, MOAIEnvironment.verticalResolution or 0
-end
-
-local function getScreenSize(config)
-    local w, h = getDeviceSize()
-    w = w > 0 and w or config.screenWidth
-    h = h > 0 and h or config.screenHeight
-
-    if config.landscape then
-        if w > h then
-            return w, h
-        end
-        return h, w
-    else
-        if w < h then
-            return w, h
-        end
-        return h, w
-    end
-end
-
-local function getViewSize(config)
-    local w, h = getScreenSize(config)
-
-    local scaleX, scaleY = math.floor(w / config.viewWidth), math.floor(h / config.viewWidth)
-    local scale = math.min(scaleX, scaleY)
-    scale = scale < 1 and 1 or scale
-    scale = scale > 2 and 2 or scale
-
-    w, h  = math.floor(w / scale + 0.5), math.floor(h / scale + 0.5)
-    return w, h, scale
-end
-
 --------------------------------------------------------------------------------
 -- Start the application. <br>
 -- You can specify the behavior of the entire application by the config.
@@ -57,8 +22,11 @@ end
 function M:start(config)
 
     local title = config.title
-    local screenWidth, screenHeight = getScreenSize(config)
-    local viewWidth, viewHeight, viewScale = getViewSize(config)
+    local screenWidth = MOAIEnvironment.horizontalResolution or config.screenWidth
+    local screenHeight = MOAIEnvironment.verticalResolution or config.screenHeight
+    local viewScale = config.viewScale or 1
+    local viewWidth = screenWidth / viewScale
+    local viewHeight = screenHeight / viewScale
 
     self.title = title
     self.screenWidth = screenWidth
@@ -69,10 +37,6 @@ function M:start(config)
 
     MOAISim.openWindow(title, screenWidth, screenHeight)
     InputManager:initialize()
-
-    --
-    print("screenSize:", screenWidth, screenHeight)
-    print("viewSize  :", viewWidth, viewHeight)
 end
 
 --------------------------------------------------------------------------------

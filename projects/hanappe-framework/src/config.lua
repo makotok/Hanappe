@@ -5,8 +5,7 @@ local config = {
     title = "Hanappe",
     screenWidth = 480,
     screenHeight = 320,
-    viewWidth = 320,
-    landscape = true,
+    viewScale = 1,
     mainScene = "main_scene",
 }
 
