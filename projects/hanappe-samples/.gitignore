@@ -1,4 +1,7 @@
 doc/
 bin/
 work/
+customRun.sh
+.gitignore
+
 
