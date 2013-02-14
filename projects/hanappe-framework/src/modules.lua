@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- Global imports
+-- Import module Hanappe.
 --------------------------------------------------------------------------------
 Application             = require "hp/core/Application"
 Layer                   = require "hp/display/Layer"
