@@ -1,5 +1,5 @@
 # Hanappe Projects
-![Flower logo](/logo_flower.png)
+![Hanappe logo](/hanappe_logo.png)
 
 ## Introduction
 Open source framework for [Moai SDK](http://getmoai.com).
