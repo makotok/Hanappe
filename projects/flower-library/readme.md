@@ -17,7 +17,10 @@ You will be easily able to use the Flower.
 * High performance
 * Can mix standard code MoaiSDK
 
-## Open the window
+
+## How to use
+
+### Open the window
 You must first open the window.
 It also creates a scene in Flower.
 
@@ -27,7 +30,7 @@ flower.openWindow("Title", 320, 480)
 flower.openScene("main_scene")
 ```
 
-## Create a Scene
+### Create a Scene
 You implement the code to control the scene.
 The following sources are defined as a scene controller.
 
@@ -54,7 +57,7 @@ Called events are registered automatically when you define the function.
 * onStop ... Called at the stop of the scene
 * onUpdate ... Called at the update of the scene
 
-## Scene transition
+### Scene transition
 Transition between scenes can be done very easily.
 
 ```Lua
@@ -106,7 +109,7 @@ The animation can specify the following parameters.
 * "slideBottom" ... Slide animation
 * custom function ... You can specify a function that defines the scene
 
-## Layer
+### Layer
 Scene is composed of multiple layers.
 After you create a scene, create a layer.
 
@@ -128,7 +131,7 @@ Therefore, you can use all the features of Moai.
 Set the size of the Viewport automatically optimal.
 
 
-## Images
+### Images
 The Image is a class that extends MOAIProp.
 
 
@@ -157,7 +160,7 @@ Following classes can be used.
 * MovieClip ... Inherit the SheetImage. Sheet animation is possible.
 * NineImage ... Displays the NinePatch of Android.
 
-## Label
+### Label
 Label to display the text.
 Inherit the MOAITextBox.
 
@@ -176,7 +179,7 @@ end
 Also cache Font.
 Are devised so that the highest performance.
 
-## Event
+### Event
 Events like Flash can be used.
 
 ```Lua
@@ -221,7 +224,7 @@ function onTouch(e)
 end
 ```
 
-## Class Inheritance
+### Class Inheritance
 Class can be extended.
 Alternatively, you can define a new class.
 
