@@ -267,8 +267,8 @@ player:speak()
 MOAIProp2D is actually MOAIProp.
 It wraps some functions.
 
-Also, MOAIProp2D is not discouraged.
-Furthermore, there is no part of the 2D class.
+MOAIProp2D is deprecated.
+In addition, does not exist MOAITextBox2D.
 
 Therefore, I have not used a 2D interface in Flower.
 
