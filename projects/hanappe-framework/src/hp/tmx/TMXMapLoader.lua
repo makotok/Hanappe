@@ -1,11 +1,7 @@
 --------------------------------------------------------------------------------
--- TMXMapLoader is a class that reads the file format tmx, to create a TMXMap. <br>
--- <br>
--- Some functions, please do not see from the outside. <br>
--- Dare, leaving for the inheritance. <br>
---
--- @class table
--- @name TMXMapLoader
+-- TMXMapLoader is a class that reads the file format tmx, to create a TMXMap.
+-- Some functions, please do not see from the outside.
+-- Dare, leaving for the inheritance.
 --------------------------------------------------------------------------------
 
 local table = require("hp/lang/table")
@@ -56,7 +52,7 @@ end
 --------------------------------------------------------------------------------
 -- Read the string format of TMX. <br>
 -- Returns TMXMap a result of reading.
--- @param filename
+-- @param data string data
 -- @return TMXMap instance.
 --------------------------------------------------------------------------------
 function M:loadString(data)

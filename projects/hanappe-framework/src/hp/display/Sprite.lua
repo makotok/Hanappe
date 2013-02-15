@@ -1,10 +1,6 @@
 --------------------------------------------------------------------------------
 -- This is a class to draw the texture. <br>
 -- Base Classes => DisplayObject, TextureDrawable, Resizable <br>
--- 
--- @auther Makoto
--- @class table
--- @name Sprite
 --------------------------------------------------------------------------------
 
 -- import

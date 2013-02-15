@@ -1,9 +1,6 @@
 --------------------------------------------------------------------------------
 -- This class inherits the MOAILayer. <br>
 -- Simplifies the generation of a set of size and layer. <br>
---
--- @class table
--- @name Layer
 --------------------------------------------------------------------------------
 
 -- import
@@ -279,9 +276,9 @@ end
 
 --------------------------------------------------------------------------------
 -- Create and sets camera.
--- @param ortho
--- @param near
--- @param for
+-- @param ortho ortho
+-- @param near near
+-- @param far far
 --------------------------------------------------------------------------------
 function M:createCamera(ortho, near, far)
     ortho = ortho ~= nil and ortho or true

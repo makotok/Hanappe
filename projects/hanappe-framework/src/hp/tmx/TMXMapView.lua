@@ -2,8 +2,6 @@
 -- View the class is to draw the TMXMap. <br>
 -- You can render TMXMap by the use of this class. <br>
 -- You can add your own processing can be inherited. <br>
--- @class table
--- @name TMXMapView
 --------------------------------------------------------------------------------
 
 local table = require("hp/lang/table")

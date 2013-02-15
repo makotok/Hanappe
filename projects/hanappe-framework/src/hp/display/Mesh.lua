@@ -2,10 +2,6 @@
 -- This is a class to draw a gradient mesh. <br>
 -- This source has been implemented by Nenad Katic. <br>
 -- Has been partially modified. <br>
---
--- @auther Nenad Katic
--- @class table
--- @name Mesh
 --------------------------------------------------------------------------------
 
 local table = require("hp/lang/table")
@@ -161,10 +157,7 @@ end
 --------------------------------------------------------------------------------
 function M.newRect( left, top, width, height, col )
 
-    --------------------------------------------
     -- Check what's sent for colors argument
-    --------------------------------------------
-
     local colors
 
     -- Should we paint every vertice in its own color ?
@@ -230,23 +223,17 @@ end
 --------------------------------------------------------------------------------
 function M.newCircle(left, top, r, col, seg)
 
-    --------------------------------------------
     -- Check if we're skipping col argument
-    --------------------------------------------
     if type(col) == "number" then
         seg = col
         col = nil
     end
 
-    --------------------------------------------
     -- So what do we have here?
-    --------------------------------------------
     local colors = isColorOrGradient( col )
     local isGradient = #colors == 3
 
-    --------------------------------------------
     -- number of segments
-    --------------------------------------------
     if not seg then
         seg = 12 * math.ceil ( r / 20 )
         if seg > 128 then
@@ -254,9 +241,7 @@ function M.newCircle(left, top, r, col, seg)
         end
     end
 
-    --------------------------------------------
     -- coordinates
-    --------------------------------------------
     local vcoords, colorCoords = {}, {}
 
     local vx, vy, angle
@@ -295,20 +280,14 @@ end
 --------------------------------------------------------------------------------
 function M.newPolygon( left, top, vertices, col )
 
-    --------------------------------------------
     -- create gradient if needed
-    --------------------------------------------
     local colors = isColorOrGradient( col )
     local isGradient = #colors == 3
 
-    --------------------------------------------
     -- get triangulated points
-    --------------------------------------------
     local triangulatedPoints = Triangulation.process( vertices ) --delaunay( vertices )
 
-    --------------------------------------------
     -- get color coordinates
-    --------------------------------------------
     local  colorCoords = {}
 
     if isGradient then
@@ -325,11 +304,10 @@ function M.newPolygon( left, top, vertices, col )
 end
 
 --------------------------------------------------------------------------------
--- The constructor.<br>
--- Normally, you do not directly create an instance.<br>
--- Creation function (M.newRect, M.newCircle, M.newPolygon) you can easily create a mesh by using the.
--- @param params (option)Parameter is set to Object.<br>
---      (params:width, height)
+-- The constructor.
+-- @param vcoords vcoords
+-- @param colors colors
+-- @param primType primType
 --------------------------------------------------------------------------------
 function M:init(vcoords, colors, primType)
     DisplayObject.init(self)

@@ -1,8 +1,5 @@
 --------------------------------------------------------------------------------
 -- Class is a objectgroup of TMXMap.
---
--- @class table
--- @name TMXObjectGroup
 --------------------------------------------------------------------------------
 
 local table = require "hp/lang/table"

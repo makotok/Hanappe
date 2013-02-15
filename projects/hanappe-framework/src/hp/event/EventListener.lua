@@ -1,16 +1,16 @@
+--------------------------------------------------------------------------------
+-- This class is an event listener.
+-- Framework will be used internally.
+--------------------------------------------------------------------------------
+
 local class = require("hp/lang/class")
 local Event = require("hp/event/Event")
 
---------------------------------------------------------------------------------
--- This class is an event listener. <br>
--- Framework will be used internally. <br>
---
--- @auther Makoto
--- @class table
--- @name EventListener
---------------------------------------------------------------------------------
 local M = class()
 
+--------------------------------------------------------------------------------
+-- The constructor.
+--------------------------------------------------------------------------------
 function M:init(eventType, callback, source, priority)
     self.type = eventType
     self.callback = callback
@@ -18,6 +18,9 @@ function M:init(eventType, callback, source, priority)
     self.priority = priority and priority or Event.PRIORITY_DEFAULT
 end
 
+--------------------------------------------------------------------------------
+-- Call source function
+--------------------------------------------------------------------------------
 function M:call(event)
     if self.source then
         self.callback(self.source, event)

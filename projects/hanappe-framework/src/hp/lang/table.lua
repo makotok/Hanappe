@@ -1,8 +1,9 @@
 --------------------------------------------------------------------------------
+--
 -- modules that extend functionality of the table.
--- @class table
--- @name table
+--
 --------------------------------------------------------------------------------
+
 local M = {}
 setmetatable(M, {__index = table})
 
@@ -13,11 +14,10 @@ end
 
 --------------------------------------------------------------------------------
 -- Table decorate is useful for decorating objects
--- when using tables as classes.<br>
--- Author:Nenad Katic<br>
--- @param: arg1 - string=new key when string, needs arg2
---              - table=will extend all key/values
---         arg2(optional)        
+-- when using tables as classes.
+-- @param src
+-- @param arg1 - string=new key when string, needs arg2
+-- @param arg2 - table=will extend all key/values     
 --------------------------------------------------------------------------------
 function M.decorate( src, arg1, arg2 )
     if not arg2 then

@@ -1,14 +1,9 @@
-----------------------------------------------------------------
--- This is a class to manage the Texture.<br>
--- 
--- @auther Makoto
--- @class table
--- @name TextureManager
-----------------------------------------------------------------
+---------------------------------------------------------------------------------------------------
+-- This is a class to manage the Texture.
+---------------------------------------------------------------------------------------------------
 
 local ResourceManager = require("hp/manager/ResourceManager")
 local Logger = require("hp/util/Logger")
-
 
 local M = {}
 local cache = {}

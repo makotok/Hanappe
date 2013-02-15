@@ -1,9 +1,5 @@
 ----------------------------------------------------------------
 -- Modules to perform additional functions by delegation. <br>
---
--- @auther Makoto
--- @class table
--- @name delegate
 ----------------------------------------------------------------
 local M = {}
 

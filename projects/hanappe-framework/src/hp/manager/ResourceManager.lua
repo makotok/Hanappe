@@ -1,9 +1,5 @@
 --------------------------------------------------------------------------------
 -- This is a class to manage the resources.<br>
--- 
--- @auther Makoto
--- @class table
--- @name ResourceManager
 --------------------------------------------------------------------------------
 
 local table = require("hp/lang/table")

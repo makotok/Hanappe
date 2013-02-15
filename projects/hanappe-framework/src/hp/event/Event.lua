@@ -1,10 +1,6 @@
 --------------------------------------------------------------------------------
 -- The base class Event. <br>
 -- Holds the data of the Event. <br>
---
--- @auther Makoto
--- @class table
--- @name Event
 --------------------------------------------------------------------------------
 
 local class = require("hp/lang/class")

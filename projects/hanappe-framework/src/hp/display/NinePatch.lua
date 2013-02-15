@@ -3,10 +3,6 @@
 -- When you set the size, scale will be reconfigured dynamically. <br>
 -- Will help you build a widget. <br>
 -- Base Classes => DisplayObject, TextureDrawable, Resizable <br>
---
--- @auther Makoto
--- @class table
--- @name NinePatch
 --------------------------------------------------------------------------------
 
 -- import
@@ -141,9 +137,9 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the ratio of the rows.
--- @param col1 Fixed ratio of the row.
--- @param col2 Dynamic ratio of the row.
--- @param col3 Fixed ratio of the row.
+-- @param row1 Fixed ratio of the row.
+-- @param row2 Dynamic ratio of the row.
+-- @param row3 Fixed ratio of the row.
 --------------------------------------------------------------------------------
 function M:setStretchRows(row1, row2, row3)
     self.deck:setRow ( 1, row1, false )

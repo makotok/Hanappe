@@ -1,12 +1,12 @@
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-
 ----------------------------------------------------------------
 -- RPGSpriteの移動を行う処理の共通クラスです.<br>
 -- このクラス自身は何もしません.
 -- @class table
 -- @name RPGMove
 ----------------------------------------------------------------
+local table = require("hp/lang/table")
+local class = require("hp/lang/class")
+
 local M = class()
 
 ----------------------------------------------------------------

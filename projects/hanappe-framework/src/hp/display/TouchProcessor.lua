@@ -1,10 +1,6 @@
 --------------------------------------------------------------------------------
 -- This class inherits the MOAILayer. <br>
 -- Simplifies the generation of a set of size and layer. <br>
---
--- @auther Makoto
--- @class table
--- @name Layer
 --------------------------------------------------------------------------------
 
 -- import
@@ -72,7 +68,7 @@ end
 
 --------------------------------------------------------------------------------
 -- The constructor.
--- @param params (option)Parameter is set to Object.<br>
+-- @param layer (option)Parameter is set to Object.<br>
 --------------------------------------------------------------------------------
 function M:init(layer)
     self._touchLayer        = assert(layer)

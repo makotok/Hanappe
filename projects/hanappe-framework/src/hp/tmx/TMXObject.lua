@@ -1,8 +1,5 @@
 --------------------------------------------------------------------------------
 -- Class is a object of TMXMap.
--- @auther Makoto
--- @class table
--- @name TMXObject
 --------------------------------------------------------------------------------
 
 local class = require("hp/lang/class")

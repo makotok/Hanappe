@@ -1,11 +1,6 @@
 ----------------------------------------------------------------
--- Widgetを格納するViewコンテナです.<br>
--- 全てのウィジットはViewに追加します.<br>
--- <br>
--- また、ViewにViewを追加する事もできます.<br>
--- その場合、自身の描画後に子のViewが描画されます.<br>
--- @class table
--- @name View
+-- コンポーネントを格納するViewコンテナです.
+-- 全てのコンポーネントはViewに追加します.
 ----------------------------------------------------------------
 
 -- import
@@ -16,7 +11,6 @@ local Layer                 = require "hp/display/Layer"
 local Event                 = require "hp/event/Event"
 local Executors             = require "hp/util/Executors"
 local Component             = require "hp/gui/Component"
-local ViewManager           = require "hp/manager/ViewManager"
 local Executors             = require "hp/util/Executors"
 
 -- class define

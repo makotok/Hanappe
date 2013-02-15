@@ -1,11 +1,7 @@
 --------------------------------------------------------------------------------
--- This is a class to animate the MOAIProp. <br>
--- You can define the animation to flow. <br>
--- If you want to achieve complex animations, will say only this class. <br>
---
--- @auther Makoto
--- @class table
--- @name Animation
+-- This is a class to animate the MOAIProp.
+-- You can define the animation to flow.
+-- If you want to achieve complex animations, will say only this class.
 --------------------------------------------------------------------------------
 
 -- import

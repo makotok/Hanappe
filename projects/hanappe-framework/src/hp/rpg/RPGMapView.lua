@@ -1,14 +1,15 @@
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local TMXMapView = require("hp/tmx/TMXMapView")
-local RPGSprite = require("hp/rpg/RPGSprite")
-
 --------------------------------------------------------------------------------
 -- RPG用のMapViewクラスです.<br>
 -- マップで表示するオブジェクトがRPGSpriteになります.
 -- @class table
 -- @name RPGMapView
 --------------------------------------------------------------------------------
+
+local table = require("hp/lang/table")
+local class = require("hp/lang/class")
+local TMXMapView = require("hp/tmx/TMXMapView")
+local RPGSprite = require("hp/rpg/RPGSprite")
+
 local M = class(TMXMapView)
 
 --------------------------------------------------------------------------------

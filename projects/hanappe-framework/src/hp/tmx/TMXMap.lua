@@ -1,14 +1,13 @@
 --------------------------------------------------------------------------------
--- This class stores data in the form of map tiles. <br>
--- Applies to the Model class. <br>
--- <br>
--- Display function is not held. <br>
--- Use the TMXMapView. <br>
--- <br>
--- For tile map editor, please see below. <br>
--- http://www.mapeditor.org/ <br>
--- @class table
--- @name TMXMap
+-- This class stores data in the form of map tiles.
+-- Applies to the Model class.
+-- 
+-- Display function is not held.
+-- Use the TMXMapView.
+-- 
+-- For tile map editor, please see below.
+-- http://www.mapeditor.org/
+-- 
 --------------------------------------------------------------------------------
 
 local class = require("hp/lang/class")
@@ -64,6 +63,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Remove a layer.
+-- @param layer layer.
 --------------------------------------------------------------------------------
 function M:removeLayer(layer)
     return table.removeElement(self.layers, layer)
@@ -71,6 +71,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Remove a layer.
+-- @param index index.
 --------------------------------------------------------------------------------
 function M:removeLayerAt(index)
     return table.remove(self.layers, index)
@@ -99,6 +100,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Remove the tile set.
+-- @param tileset tileset.
 --------------------------------------------------------------------------------
 function M:removeTileset(tileset)
     return table.removeElement(self.tilesets, tileset)
@@ -106,6 +108,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Remove the tile set.
+-- @param index index
 --------------------------------------------------------------------------------
 function M:removeTilesetAt(index)
     return table.remove(self.tilesets, index)
@@ -113,7 +116,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Finds and returns the tileset from the specified gid.
--- @param gid
+-- @param gid gid
 -- @return TMXTileset
 --------------------------------------------------------------------------------
 function M:findTilesetByGid(gid)
@@ -128,6 +131,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Add the ObjectGroup.
+-- @param objectGroup objectGroup
 --------------------------------------------------------------------------------
 function M:addObjectGroup(objectGroup)
     table.insert(self.objectGroups, objectGroup)
@@ -135,6 +139,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Remove the ObjectGroup.
+-- @param objectGroup objectGroup
 --------------------------------------------------------------------------------
 function M:removeObjectGroup(objectGroup)
     return table.removeElement(self.objectGroups, objectGroup)
@@ -142,6 +147,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Remove the ObjectGroup.
+-- @param index index
 --------------------------------------------------------------------------------
 function M:removeObjectGroupAt(index)
     return table.remove(self.objectGroups, index)
@@ -149,6 +155,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the property with the specified key.
+-- @param key property key
 --------------------------------------------------------------------------------
 function M:getProperty(key)
     return self.properties[key]

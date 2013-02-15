@@ -1,9 +1,6 @@
 --------------------------------------------------------------------------------
 -- Class that inherits from MOAIBox2DWorld. <br>
 -- Has been prepared to create an object, a useful function.
--- @auther Makoto
--- @class table
--- @name PhysicsWorld
 --------------------------------------------------------------------------------
 
 local table = require("hp/lang/table")

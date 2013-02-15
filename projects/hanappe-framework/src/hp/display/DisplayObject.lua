@@ -7,9 +7,6 @@
 -- By changing the M.MOAI_CLASS, you can change to another class. <br>
 -- See MOAIProp.<br>
 -- Base Classes => EventDispatcher, MOAIPropUtil<br>
---
--- @class table
--- @name DisplayObject
 --------------------------------------------------------------------------------
 
 -- import
@@ -85,7 +82,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the parent.
--- @param value parent
+-- @param parent parent
 --------------------------------------------------------------------------------
 function M:setParent(parent)
     if parent == self:getParent() then

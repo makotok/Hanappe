@@ -1,12 +1,10 @@
 --------------------------------------------------------------------------------
--- This is a utility class to execute.<br>
--- @class table
--- @name Executors
+-- This is a utility class to execute.
 --------------------------------------------------------------------------------
 local M = {}
 
 --------------------------------------------------------------------------------
--- Run the specified function looping <br>
+-- Run the specified function looping 
 -- @param func Target function.
 -- @param ... Argument.
 --------------------------------------------------------------------------------

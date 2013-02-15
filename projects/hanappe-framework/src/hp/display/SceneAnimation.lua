@@ -2,10 +2,6 @@
 -- This module to animate the Scene. <br>
 -- You are not required to refer to the function is not available. <br>
 -- Animation is possible with the function name specified in the SceneManager. <br>
---
--- @auther Makoto
--- @class table
--- @name SceneAnimation
 --------------------------------------------------------------------------------
 
 local Animation = require "hp/display/Animation"

@@ -1,9 +1,5 @@
 ----------------------------------------------------------------
--- This is a class to manage the MOAIUntzSound.<br>
--- 
--- @auther Makoto
--- @class table
--- @name SoundManager
+-- This is a class to manage the MOAIUntzSound.
 ----------------------------------------------------------------
 
 local ResourceManager = require("hp/manager/ResourceManager")
@@ -23,6 +19,8 @@ end
 ----------------------------------------------------------------
 -- Returns the untz sound. <br>
 -- @param path path
+-- @param volume volume
+-- @param looping looping
 -- @return MOAIUntzSound instance.
 ----------------------------------------------------------------
 function M:getSound(path, volume, looping)

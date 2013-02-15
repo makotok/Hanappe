@@ -1,9 +1,6 @@
 --------------------------------------------------------------------------------
--- This class is has a function of event notification. <br>
---
--- @auther Makoto
--- @class table
--- @name EventDispatcher
+-- This class is has a function of event notification.
+-- 
 --------------------------------------------------------------------------------
 
 local class = require("hp/lang/class")
@@ -25,7 +22,7 @@ end
 --------------------------------------------------------------------------------
 -- Adds an event listener. <br>
 -- will now catch the events that are sent in the dispatchEvent. <br>
--- @param evenType Target event type.
+-- @param eventType Target event type.
 -- @param callback The callback function.
 -- @param source (option)The first argument passed to the callback function.
 -- @param priority (option)Notification order.

@@ -1,8 +1,6 @@
 ----------------------------------------------------------------
 -- This is a class to manage the Scene. <br>
 -- Order to manage the rendering of the scene and event notification. <br>
--- @class table
--- @name SceneManager
 ----------------------------------------------------------------
 
 -- import
@@ -250,10 +248,10 @@ function M:openScene(sceneName, params)
 end
 
 --------------------------------------------------------------------------------
--- Open to the next scene. <br>
--- The current scene will be closed. <br>
--- See M:openScene(). <br>
--- @param The unique name of the scene. Scene module path.
+-- Open to the next scene.
+-- The current scene will be closed.
+-- See M:openScene().
+-- @param sceneName The unique name of the scene. Scene module path.
 -- @param params (option)Parameters that define the behavior.
 -- @return If you generate a return to the scene.
 --------------------------------------------------------------------------------
@@ -391,7 +389,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Add the background Layer. <br>
--- @params layer.
+-- @param layer layer
 --------------------------------------------------------------------------------
 function M:addBackgroundLayer(layer)
     M:updateRender()
@@ -400,7 +398,7 @@ end
 
 --------------------------------------------------------------------------------
 -- remove the background Layer. <br>
--- @params layer.
+-- @param layer layer
 --------------------------------------------------------------------------------
 function M:removeBackgroundLayer(layer)
     M:updateRender()
@@ -409,7 +407,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the background Layer. <br>
--- @params i Index.
+-- @param i Index.
 -- @return layer.
 --------------------------------------------------------------------------------
 function M:getBackgroundLayerAt(i)
@@ -434,7 +432,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Add the front Layer. <br>
--- @params layer.
+-- @param layer layer
 --------------------------------------------------------------------------------
 function M:addFrontLayer(layer)
     M:updateRender()
@@ -443,7 +441,7 @@ end
 
 --------------------------------------------------------------------------------
 -- remove the front Layer. <br>
--- @params layer.
+-- @param layer layer
 --------------------------------------------------------------------------------
 function M:removeFrontLayer(layer)
     M:updateRender()
@@ -452,7 +450,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the front Layer. <br>
--- @params i Index.
+-- @param i Index.
 -- @return layer.
 --------------------------------------------------------------------------------
 function M:getFrontLayerAt(i)

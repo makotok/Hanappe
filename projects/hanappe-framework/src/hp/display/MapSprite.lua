@@ -2,10 +2,6 @@
 -- This class draws the grid. <br>
 -- Without the use of MOAITileDeck, use the MOAIGfxQuadDeck2D. <br>
 -- Corresponding to the format can be flexibility. <br>
---
--- @auther Makoto
--- @class table
--- @name MapSprite
 --------------------------------------------------------------------------------
 
 -- import
@@ -101,7 +97,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Set the map data.
--- @params ... rows of data.
+-- @param ... rows of data.
 --------------------------------------------------------------------------------
 function M:setRow(...)
     self.grid:setRow(...)
@@ -109,9 +105,9 @@ end
 
 --------------------------------------------------------------------------------
 -- Set the map value.
--- @params tile x.
--- @params tile y.
--- @params tile value.
+-- @param x x.
+-- @param y y.
+-- @param value value.
 --------------------------------------------------------------------------------
 function M:setTile(x, y, value)
     self.grid:setTile(x, y, value)

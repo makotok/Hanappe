@@ -1,7 +1,5 @@
 --------------------------------------------------------------------------------
 -- This is a utility class for MOAIProp.<br>
--- @class table
--- @name MOAIPropUtil
 --------------------------------------------------------------------------------
 local M = {}
 
@@ -129,7 +127,8 @@ end
 --------------------------------------------------------------------------------
 -- Returns the position of the center.
 -- @param prop MOAIProp instance.
--- @return centerX, centerY.
+-- @return centerX
+-- @return centerY
 --------------------------------------------------------------------------------
 function M.getCenterPos(prop)
     local left, top = M.getPos(prop)
@@ -159,7 +158,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the width.
--- @param MOAIProp instance.
+-- @param prop MOAIProp instance.
 -- @return width
 --------------------------------------------------------------------------------
 function M.getWidth(prop)
@@ -169,7 +168,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the height.
--- @param MOAIProp instance.
+-- @param prop MOAIProp instance.
 -- @return height
 --------------------------------------------------------------------------------
 function M.getHeight(prop)
@@ -179,8 +178,9 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the width and height.
--- @param MOAIProp instance.
--- @return width, height
+-- @param prop MOAIProp instance.
+-- @return width
+-- @return height
 --------------------------------------------------------------------------------
 function M.getSize(prop)
     local xMin, yMin, zMin, xMax, yMax, zMax = prop:getBounds()
@@ -189,8 +189,11 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the color.
--- @param MOAIProp instance.
--- @return red, green, blue, alpha
+-- @param prop MOAIProp instance.
+-- @return red
+-- @return green
+-- @return blue
+-- @return alpha
 --------------------------------------------------------------------------------
 function M.getColor(prop)
     local r = prop:getAttr(MOAIColor.ATTR_R_COL)
@@ -202,7 +205,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the red.
--- @param MOAIProp instance.
+-- @param prop MOAIProp instance.
 -- @return red
 --------------------------------------------------------------------------------
 function M.getRed(prop)
@@ -212,8 +215,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the red.
--- @param MOAIProp instance.
--- @param red
+-- @param prop MOAIProp instance.
+-- @param red red value
 --------------------------------------------------------------------------------
 function M.setRed(prop, red)
     prop:setAttr(MOAIColor.ATTR_R_COL, red)
@@ -221,7 +224,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the green.
--- @param MOAIProp instance.
+-- @param prop MOAIProp instance.
 -- @return green
 --------------------------------------------------------------------------------
 function M.getGreen(prop)
@@ -231,8 +234,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the green.
--- @param MOAIProp instance.
--- @param green.
+-- @param prop MOAIProp instance.
+-- @param green green value
 --------------------------------------------------------------------------------
 function M.setGreen(prop, green)
     prop:setAttr(MOAIColor.ATTR_G_COL, green)
@@ -240,7 +243,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the blue.
--- @param MOAIProp instance.
+-- @param prop MOAIProp instance.
 -- @return blue
 --------------------------------------------------------------------------------
 function M.getBlue(prop)
@@ -250,8 +253,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the blue.
--- @param MOAIProp instance.
--- @param blue.
+-- @param prop MOAIProp instance.
+-- @param blue blue value
 --------------------------------------------------------------------------------
 function M.setBlue(prop, blue)
     prop:setAttr(MOAIColor.ATTR_B_COL, blue)
@@ -259,7 +262,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the alpha.
--- @param MOAIProp instance.
+-- @param prop MOAIProp instance.
 -- @return alpha
 --------------------------------------------------------------------------------
 function M.getAlpha(prop)
@@ -269,8 +272,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the alpha.
--- @param MOAIProp instance.
--- @param alpha.
+-- @param prop MOAIProp instance.
+-- @param a alpha value
 --------------------------------------------------------------------------------
 function M.setAlpha(prop, a)
     prop:setAttr(MOAIColor.ATTR_A_COL, a)
@@ -278,7 +281,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the color by RGB255 format.
--- @param MOAIProp instance.
+-- @param prop MOAIProp instance.
 -- @param r Red(0-255).
 -- @param g Green(0-255).
 -- @param b Blue(0-255).
@@ -290,7 +293,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the color by RGBA255 format.
--- @param MOAIProp instance.
+-- @param prop MOAIProp instance.
 -- @param r Red(0-255).
 -- @param g Green(0-255).
 -- @param b Blue(0-255).
@@ -303,7 +306,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the visible.
--- @param MOAIProp instance.
+-- @param prop MOAIProp instance.
 -- @return visible
 --------------------------------------------------------------------------------
 function M.getVisible(prop)

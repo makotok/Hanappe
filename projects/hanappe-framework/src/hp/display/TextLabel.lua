@@ -2,10 +2,6 @@
 -- This is a class to draw the text.<br>
 -- See MOAITextBox.<br>
 -- Base Classes => DisplayObject, Resizable<br>
---
--- @auther Makoto
--- @class table
--- @name TextLabel
 --------------------------------------------------------------------------------
 
 -- import

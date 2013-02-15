@@ -1,8 +1,6 @@
 --------------------------------------------------------------------------------
 -- Is the module object can be resized to be implemented.<br>
 -- TODO:In the future, there is likely to change in order to unify the origin of the position.
--- @class table
--- @name Resizable
 --------------------------------------------------------------------------------
 local M = {}
 

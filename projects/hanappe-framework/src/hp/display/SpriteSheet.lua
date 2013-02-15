@@ -3,10 +3,6 @@
 -- Sheet can be defined in any shape. <br>
 -- <br>
 -- Base Classes => DisplayObject, TextureDrawable<br>
--- 
--- @auther Makoto
--- @class table
--- @name SpriteSheet
 --------------------------------------------------------------------------------
 
 -- import
@@ -149,7 +145,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the animation data with the specified name.
--- @param Animation name.
+-- @param name Animation name.
 -- @return MOAIAnim instance
 --------------------------------------------------------------------------------
 function M:getSheetAnim(name)

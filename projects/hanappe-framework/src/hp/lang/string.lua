@@ -1,8 +1,5 @@
 --------------------------------------------------------------------------------
 -- modules that extend functionality of the string.
--- @author Nenad Katic
--- @class table
--- @name string
 --------------------------------------------------------------------------------
 local M = {}
 setmetatable(M, {__index = string})

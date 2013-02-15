@@ -1,7 +1,5 @@
 --------------------------------------------------------------------------------
 -- Class that inherits from MOAIBox2DBody.<br>
--- @class table
--- @name PhysicsBody
 --------------------------------------------------------------------------------
 
 local table = require("hp/lang/table")
@@ -183,7 +181,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the position x.
--- @parama x position x.
+-- @param x position x.
 --------------------------------------------------------------------------------
 function M:setX(x)
     self:setTransform(x, self:getY(), self:getAngle())
@@ -200,7 +198,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the position y.
--- @parama y position y.
+-- @param y position y.
 --------------------------------------------------------------------------------
 function M:setY(y)
     self:setTransform(self:getX(), y, self:getAngle())
@@ -208,8 +206,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the position.
--- @parama x position x.
--- @parama y position y.
+-- @param x position x.
+-- @param y position y.
 --------------------------------------------------------------------------------
 function M:setPos(x, y)
     self:setTransform(x, y, self:getAngle())
@@ -224,14 +222,16 @@ function M:getPos()
 end
 
 --------------------------------------------------------------------------------
--- 座標を設定します.
+-- Adds the position.
+-- @param x x position
+-- @param x y position
 --------------------------------------------------------------------------------
 function M:addPos(x, y)
     self:setPos(x + self:getX(), y + self:getY())
 end
 
 --------------------------------------------------------------------------------
--- Adds an event listener. <br>
+-- Adds an event listener.
 -- Also responsible for handling of Fixture.
 --------------------------------------------------------------------------------
 function M:addEventListener(eventType, callback, source, priority)

@@ -1,10 +1,6 @@
 --------------------------------------------------------------------------------
 -- This module object on which to draw the texture to be implemented. <br>
 -- This module by itself can not be used.<br>
--- 
--- @auther Makoto
--- @class table
--- @name TextureDrawable
 --------------------------------------------------------------------------------
 
 local TextureManager = require("hp/manager/TextureManager")

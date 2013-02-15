@@ -2,10 +2,6 @@
 -- This is a class to manage the Shader. <br>
 -- This source has been implemented by Nenad Katic. <br>
 -- Has been partially modified. <br>
--- 
--- @auther Nenad Katic
--- @class table
--- @name ShaderManager
 ----------------------------------------------------------------
 
 local ResourceManager = require("hp/manager/ResourceManager")

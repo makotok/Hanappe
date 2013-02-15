@@ -1,11 +1,12 @@
-local Scene = require("hp/display/Scene")
-
 ----------------------------------------------------------------
 -- Sceneを生成するファクトリークラスです.
 -- SceneManagerにより使用されます.
--- @class table
--- @name SceneFactory
 ----------------------------------------------------------------
+
+-- import
+local Scene = require("hp/display/Scene")
+
+-- class
 local M = {}
 
 ---------------------------------------

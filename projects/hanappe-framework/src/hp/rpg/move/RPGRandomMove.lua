@@ -1,13 +1,13 @@
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local RPGMove = require("hp/rpg/move/RPGMove")
-
 ----------------------------------------------------------------
 -- RPGSpriteの移動を行うクラスです.<br>
 -- ランダム移動を行います.<br>
 -- @class table
 -- @name RPGRandomMove
 ----------------------------------------------------------------
+local table = require("hp/lang/table")
+local class = require("hp/lang/class")
+local RPGMove = require("hp/rpg/move/RPGMove")
+
 local M = class(RPGMove)
 
 local super = RPGMove

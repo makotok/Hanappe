@@ -1,9 +1,5 @@
 --------------------------------------------------------------------------------
 -- To catch the operation of the screen, and sends the event. <br>
---
--- @auther Makoto
--- @class table
--- @name InputManager
 --------------------------------------------------------------------------------
 
 local table = require("hp/lang/table")

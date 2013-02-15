@@ -1,9 +1,5 @@
 --------------------------------------------------------------------------------
 -- This is a class to manage the Font.
---
--- @auther Makoto
--- @class table
--- @name FontManager
 --------------------------------------------------------------------------------
 
 -- import
@@ -24,9 +20,12 @@ local function generateUid(fontPath, points, charcodes, dpi)
 end
 
 --------------------------------------------------------------------------------
--- Requests the texture. <br>
+-- Requests the texture.
 -- The textures are cached internally.
 -- @param fontName fontName or fontPath.
+-- @param points Points of the Font.
+-- @param charcodes Charcodes of the Font.
+-- @param dpi dpi of the Font.
 -- @return MOAIFont instance.
 --------------------------------------------------------------------------------
 function M:request(fontName, points, charcodes, dpi)
@@ -44,8 +43,11 @@ function M:request(fontName, points, charcodes, dpi)
 end
 
 --------------------------------------------------------------------------------
--- Return you have generated the font. <br>
+-- Return you have generated the font.
 -- @param fontName fontName or fontPath.
+-- @param points Points of the Font.
+-- @param charcodes Charcodes of the Font.
+-- @param dpi dpi of the Font.
 -- @return MOAIFont instance.
 --------------------------------------------------------------------------------
 function M:newFont(fontName, points, charcodes, dpi)

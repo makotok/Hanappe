@@ -1,7 +1,5 @@
 --------------------------------------------------------------------------------
 -- Class that inherits from MOAIBox2DFixture.<br>
--- @class table
--- @name PhysicsFixture
 --------------------------------------------------------------------------------
 
 local table = require("hp/lang/table")

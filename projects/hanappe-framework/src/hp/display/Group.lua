@@ -2,9 +2,6 @@
 -- This is a class to grouping the DisplayObject. <br>
 -- Will be used as a dummy MOAIProp. <br>
 -- Base Classes => DisplayObject, Resizable <br>
---
--- @class table
--- @name Group
 --------------------------------------------------------------------------------
 
 -- import

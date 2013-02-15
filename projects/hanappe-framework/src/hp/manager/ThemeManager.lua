@@ -1,10 +1,6 @@
-----------------------------------------------------------------
--- This is a class to manage Theme.<br>
---
--- @auther Makoto
--- @class table
--- @name ThemeManager
-----------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+-- This is a class to manage Theme.
+----------------------------------------------------------------------------------------------------
 
 -- import
 local Event             = require "hp/event/Event"
@@ -17,7 +13,7 @@ local theme             = Theme
 
 ----------------------------------------------------------------
 -- Sets the default widget theme to use.
--- @param theme Widget theme.
+-- @param value Widget theme.
 ----------------------------------------------------------------
 function M:setTheme(value)
     value = type(value) == "string" and dofile(value) or value

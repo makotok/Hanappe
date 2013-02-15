@@ -1,13 +1,13 @@
 ----------------------------------------------------------------
--- This class is a top-level container to build a scene graph. <br>
--- Use this class to build a game scene. <br>
+-- This class is a top-level container to build a scene graph.
+-- Use this class to build a game scene.
 -- <br>
--- Scene is managed by the SceneManager. <br>
--- Use by specifying the module from the SceneManager. <br>
--- Scene will be generated internally. <br>
+-- Scene is managed by the SceneManager.
+-- Use by specifying the module from the SceneManager.
+-- Scene will be generated internally.
 -- <br>
--- The Scene is the life cycle exists. <br>
--- It is important to understand the life cycle. <br>
+-- The Scene is the life cycle exists.
+-- It is important to understand the life cycle.
 -- <br>
 -- 1. onCreate(params)<br>
 --   Called when created.<br>
@@ -23,9 +23,6 @@
 --   Called when the stoped.<br>
 -- 6. onDestroy()<br>
 --   Called when destroyed.<br>
---
--- @class table
--- @name Scene
 ----------------------------------------------------------------
 
 -- import
@@ -83,7 +80,7 @@ end
 
 ----------------------------------------------------------------
 -- Add a child object. <br>
--- @param Child to inherit the MOAILayer.
+-- @param child Child to inherit the MOAILayer.
 ----------------------------------------------------------------
 function M:addChild(child)
     Group.addChild(self, child)
@@ -92,7 +89,7 @@ end
 
 ----------------------------------------------------------------
 -- Remove the child object. <br>
--- @param Child to inherit the MOAILayer.
+-- @param child Child to inherit the MOAILayer.
 ----------------------------------------------------------------
 function M:removeChild(child)
     Group.removeChild(self, child)

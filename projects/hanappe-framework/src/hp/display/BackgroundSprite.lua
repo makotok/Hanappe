@@ -2,9 +2,6 @@
 -- This class draws the grid. <br>
 -- Without the use of MOAITileDeck, use the MOAIGfxQuadDeck2D. <br>
 -- Corresponding to the format can be flexibility. <br>
---
--- @class table
--- @name BackgroundSprite
 --------------------------------------------------------------------------------
 
 -- import

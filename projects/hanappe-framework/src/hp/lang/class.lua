@@ -6,10 +6,6 @@
 -- The inheritance by copying it to the table. <br>
 -- Will consume a little more memory,
 -- the performance does not deteriorate if the inheritance is deep. <br>
---
--- @auther Makoto
--- @class table
--- @name class
 --------------------------------------------------------------------------------
 
 local table = require("hp/lang/table")

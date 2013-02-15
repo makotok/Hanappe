@@ -1,12 +1,12 @@
-local table = require("hp/lang/table")
-local class = require("hp/lang/class")
-local RPGRandomMove = require("hp/rpg/move/RPGRandomMove")
-
 ----------------------------------------------------------------
 -- RPGMoveを作成するファクトリークラスです.<br>
 -- @class table
 -- @name RPGMoveFactory
 ----------------------------------------------------------------
+local table = require("hp/lang/table")
+local class = require("hp/lang/class")
+local RPGRandomMove = require("hp/rpg/move/RPGRandomMove")
+
 local M = class()
 
 M.MOVE_CLASSES = {

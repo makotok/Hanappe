@@ -1,6 +1,3 @@
---------------------------------------------------------------------------------
--- Import module Hanappe.
---------------------------------------------------------------------------------
 Application             = require "hp/core/Application"
 Layer                   = require "hp/display/Layer"
 Sprite                  = require "hp/display/Sprite"
@@ -41,4 +38,4 @@ TMXObject               = require "hp/tmx/TMXObject"
 TMXObjectGroup          = require "hp/tmx/TMXObjectGroup"
 TMXTileset              = require "hp/tmx/TMXTileset"
 
-return _G
+return _G -- Dummy module

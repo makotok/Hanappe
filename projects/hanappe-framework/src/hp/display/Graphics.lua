@@ -11,9 +11,6 @@
 -- g:setPenColor(0, 1, 0, 1):fillRect(25, 25, 50, 50):drawRect(25, 25, 50, 50)<br>
 -- g:setLayer(layer)<br>
 -- </code>
---
--- @class table
--- @name Graphics
 --------------------------------------------------------------------------------
 
 -- import

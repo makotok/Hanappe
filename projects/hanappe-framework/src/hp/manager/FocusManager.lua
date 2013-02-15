@@ -1,9 +1,6 @@
 --------------------------------------------------------------------------------
--- This is a class to manage the Font.
---
--- @auther Makoto
--- @class table
--- @name FontManager
+-- This is a class to manage the Component.
+-- TODO: Not used?
 --------------------------------------------------------------------------------
 
 local class = require "hp/lang/class"
