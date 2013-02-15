@@ -8,7 +8,8 @@ http://getmoai.com/
 ## Feature
 MoaiSDK is powerful.
 However, there are many little cumbersome.  
-Flower makes it easy to MoaiSDK.
+
+You will be easily able to use the Flower.
 
 * To simplify the coding
 * There is only one file
@@ -17,12 +18,12 @@ Flower makes it easy to MoaiSDK.
 * Can mix standard code MoaiSDK
 
 ## Open the window
-Open a window in the same way Flower.
+You must first open the window.
 It also creates a scene in Flower.
 
 ```Lua
 flower = require "flower"
-flower.openWindow("Flower samples", 320, 480)
+flower.openWindow("Title", 320, 480)
 flower.openScene("main_scene")
 ```
 
@@ -113,8 +114,11 @@ After you create a scene, create a layer.
 module(..., package.seeall)
 
 function onCreate(e)
-    layer = flower.Layer()
-    layer:setScene(scene)
+    mainLayer = flower.Layer()
+    mainLayer:setScene(scene)
+
+    guiLayer = flower.Layer()
+    guiLayer:setScene(scene)
 end
 ```
 
@@ -152,7 +156,6 @@ Following classes can be used.
 * MapImage ... Inherit the SheetImage. This class displays a grid.
 * MovieClip ... Inherit the SheetImage. Sheet animation is possible.
 * NineImage ... Displays the NinePatch of Android.
-
 
 ## Label
 Label to display the text.
@@ -218,7 +221,20 @@ function onTouch(e)
 end
 ```
 
-## Class Inheritance
+## Tips
+
+### Why it is not MOAIProp2D?
+
+MOAIProp2D is actually MOAIProp.
+It wraps some functions.
+
+Also, MOAIProp2D is not discouraged.
+Furthermore, there is no part of the 2D class.
+
+Therefore, I have not used a 2D interface in Flower.
+
+
+### Class Inheritance
 Class can be extended.
 Alternatively, you can define a new class.
 
