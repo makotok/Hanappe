@@ -221,19 +221,6 @@ function onTouch(e)
 end
 ```
 
-## Tips
-
-### Why it is not MOAIProp2D?
-
-MOAIProp2D is actually MOAIProp.
-It wraps some functions.
-
-Also, MOAIProp2D is not discouraged.
-Furthermore, there is no part of the 2D class.
-
-Therefore, I have not used a 2D interface in Flower.
-
-
 ### Class Inheritance
 Class can be extended.
 Alternatively, you can define a new class.
@@ -272,3 +259,25 @@ actor:speak()
 local player = Player()
 player:speak()
 ```
+
+## Tips
+
+### Why it is not MOAIProp2D?
+
+MOAIProp2D is actually MOAIProp.
+It wraps some functions.
+
+Also, MOAIProp2D is not discouraged.
+Furthermore, there is no part of the 2D class.
+
+Therefore, I have not used a 2D interface in Flower.
+
+### FPS is not stable
+
+May be stabilized by changing the settings of MOAISim.
+
+```Lua
+MOAISim.setStep(1 / 60)MOAISim.clearLoopFlags()MOAISim.setLoopFlags(MOAISim.SIM_LOOP_ALLOW_BOOST)MOAISim.setLoopFlags(MOAISim.SIM_LOOP_LONG_DELAY)MOAISim.setBoostThreshold(0)
+```
+
+
