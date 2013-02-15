@@ -4,7 +4,8 @@
 
 I made ​​a few important fixes.
 
-1. Flower library
+1) Flower library
+
 * Documentation updates. (Thanks Felix Gallo!)
 * Rename the function.  
   table.insertElement to table.insertIfAbsent.
@@ -13,17 +14,18 @@ I made ​​a few important fixes.
 * Improve the Group to be included as a child of the Group.
 * Update event to add the Scene.
 
-2. Hanappe framework
+2) Hanappe framework
+
 * Fixed a bug in the Application:isMobile function.
 
 ## Version 2.0.1 (Update: 2012/12/08, Moai SDK Version 1.3 Build 98)
 
-1. Flower library
+1) Flower library
 
 I've created a lightweight library.
 Flower is a library that can be used by itself.
 
-2. Minor modifications of Hanappe
+2) Minor modifications of Hanappe
 
 I have fixed some small bugs.
 
