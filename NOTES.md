@@ -4,28 +4,28 @@
 
 I made ​​a few important fixes.
 
-1) Flower library
+### Flower library
 
 * Documentation updates. (Thanks Felix Gallo!)
 * Rename the function.  
-  table.insertElement to table.insertIfAbsent.
+  table.insertElement to table.insertIfAbsent.  
   Executors.callLater to Executors.callOnce.
 * Refactoring openWindow.
 * Improve the Group to be included as a child of the Group.
 * Update event to add the Scene.
 
-2) Hanappe framework
+### Hanappe framework
 
 * Fixed a bug in the Application:isMobile function.
 
 ## Version 2.0.1 (Update: 2012/12/08, Moai SDK Version 1.3 Build 98)
 
-1) Flower library
+### Flower library
 
 I've created a lightweight library.
 Flower is a library that can be used by itself.
 
-2) Minor modifications of Hanappe
+### Minor modifications of Hanappe
 
 I have fixed some small bugs.
 
@@ -57,36 +57,33 @@ Has a minor bug fixes.
 In this version, we have a lot of improvements and refactoring.
 Some care must be taken, so compatibility has been lost.
 
-* Change the path of the Application.
-
+* Change the path of the Application.  
+<br>
 Before: require("hp/Application")  
 After : require("hp/core/Application")
 
-* Renaming a Method of Application.
-
+* Renaming a Method of Application.  
+<br>
 Before: Application:appStart()  
 After : Application:start()
 
-* Change on how to import the class.
-
+* Change on how to import the class.  
 Available classes has increased in Hanappe.
-Was changed to the class how to be aware that use the framework to be imported.
-
+Was changed to the class how to be aware that use the framework to be imported.  
+<br>
 Before: Application:import(t, prefix)  
 After : classes.import(t)
 
-* Added ResourceManager.
-
+* Added ResourceManager.  
 Description has become easier by using the ResourceManager.
 Makes it easy to switch over the resource.
 In addition, the conventional method is also possible.
-
+<br>
 Before: Sprite(filePath)  
 After : Sprite(fileName)
 
 * Added SoundManager.
-* Added Particles.
-
+* Added Particles.  
 Add a class for easy use of the Particle.
 However, still many problems.
 In addition, there is a bug in the MOAI SDK.
