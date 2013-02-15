@@ -221,7 +221,7 @@ function onTouch(e)
 end
 ```
 
-### Class Inheritance
+## Class Inheritance
 Class can be extended.
 Alternatively, you can define a new class.
 
