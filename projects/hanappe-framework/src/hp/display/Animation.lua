@@ -24,6 +24,7 @@ local super             = EventDispatcher
 local function createContext(self, params)
     local context = params or {}
     context.stopped = false
+    context.paused = false
     table.insert(self._contexts, context)
     return context
 end
@@ -44,6 +45,7 @@ function M:init(targets, sec, easeType)
     self._easeType = easeType
     self._contexts = {}
     self._throttle = 1
+    self._paused = false
     
 end
 
@@ -53,6 +55,14 @@ end
 --------------------------------------------------------------------------------
 function M:isRunning()
     return self._running
+end
+
+--------------------------------------------------------------------------------
+-- Returns whether the animation is paused.
+-- @return boolean indicating the pause state of the current animation.
+--------------------------------------------------------------------------------
+function M:isPaused()
+    return self._paused
 end
 
 --------------------------------------------------------------------------------
@@ -397,12 +407,12 @@ function M:moveIndex(indexes, sec, mode)
             curve:setKey(i, tSec * (i - 1), indexes[i], MOAIEaseType.FLAT )
         end
     
+        anim:setMode(tMode)
         anim:reserveLinks(#self._targets)
         for i, prop in ipairs(self._targets) do
-            anim:setMode(tMode)
             anim:setLink(i, curve, prop, MOAIProp.ATTR_INDEX )
-            anim:setCurve(curve)
         end
+        anim:setCurve(curve)
         anim:start()
         
         if tMode == MOAITimer.LOOP then
@@ -411,11 +421,20 @@ function M:moveIndex(indexes, sec, mode)
         
         MOAICoroutine.blockOnAction(anim)
     end
+
+    local resumeFunc = function(self, context)
+        anim:pause(false)
+    end
+
+    local pauseFunc = function(self, context)
+        anim:pause(true)
+    end
+
     local stopFunc = function(self, context)
         anim:stop()
     end
     
-    local command = self:newCommand(playFunc, stopFunc)
+    local command = self:newCommand(playFunc, stopFunc, resumeFunc, pauseFunc)
     command.action = anim
     self:addCommand(command)
     return self
@@ -548,7 +567,7 @@ end
 function M:parallel(...)
     local animations = {...}
     local command = self:newCommand(
-        -- start
+        -- play
         function(self, context)
             local count = 0
             local max = #animations
@@ -560,18 +579,45 @@ function M:parallel(...)
             
             -- play animations
             for i, a in ipairs(animations) do
-                a:setThrottle(self._throttle)
+                if self._throttle ~= a:getThrottle() then
+                    a:setThrottle(self._throttle)
+                end
                 a:play {onComplete = completeHandler}
             end
             
             -- wait animations
             while count < max do
                 coroutine.yield()
+                for i, a in ipairs(animations) do
+                    if self._throttle ~= a:getThrottle() then
+                        a:setThrottle(self._throttle)
+                    end
+                end
             end
         end,
+        -- stop
         function(self, context)
             for i, a in ipairs(animations) do
                 a:stop()
+            end
+        end,
+        -- resume
+        function(self, context)
+            for i, a in ipairs(animations) do
+                if a:isRunning() then
+                    if self._throttle ~= a:getThrottle() then
+                        a:setThrottle(self._throttle)
+                    end
+                    a:resume()
+                end
+            end
+        end,
+        -- pause
+        function(self, context)
+            for i, a in ipairs(animations) do
+                if a:isRunning() then
+                    a:pause()
+                end
             end
         end
     )
@@ -588,25 +634,52 @@ function M:sequence(...)
     local animations = {...}
     local currentAnimation = nil
     local command = self:newCommand(
-        -- start
+        -- play
         function(self, context)
             local count = 0
             local max = #animations
             
             for i, animation in ipairs(animations) do
-                animation:setThrottle(self._throttle)
+                if self._throttle ~= animation:getThrottle() then
+                    animation:setThrottle(self._throttle)
+                end
                 animation:play()
+
                 while animation:isRunning() do
                     coroutine.yield()
+                    if self._throttle ~= animation:getThrottle() then
+                        animation:setThrottle(self._throttle)
+                    end
                 end
+
                 if context.stopped then
                     break
                 end
             end
         end,
+        -- stop
         function(self, context)
-            for i, v in ipairs(animations) do
-                v:stop()
+            for i, animation in ipairs(animations) do
+                animation:stop()
+            end
+        end,
+        -- resume
+        function(self, context)
+            for i, animation in ipairs(animations) do
+                if animation:isRunning() then
+                    if self._throttle ~= animation:getThrottle() then
+                        animation:setThrottle(self._throttle)
+                    end
+                    animation:resume()
+                end
+            end
+        end,
+        -- pause
+        function(self, context)
+            for i, animation in ipairs(animations) do
+                if animation:isRunning() then
+                    animation:pause()
+                end
             end
         end
     )
@@ -626,16 +699,22 @@ end
 function M:loop(maxCount, animation)
     local loopFunc = type(maxCount) == "function" and maxCount
     local command = self:newCommand(
-        -- start
+        -- play
         function(self, context)
             local count = 0
             while true do
-                animation:setThrottle(self._throttle)
+                if self._throttle ~= animation:getThrottle() then
+                    animation:setThrottle(self._throttle)
+                end
                 animation:play()
                 
                 while animation:isRunning() do
                     coroutine.yield()
+                    if self._throttle ~= animation:getThrottle() then
+                        animation:setThrottle(self._throttle)
+                    end
                 end
+
                 if context.stopped then
                     break
                 end
@@ -646,8 +725,20 @@ function M:loop(maxCount, animation)
                 end
             end
         end,
-        function(self)
+        -- stop
+        function(self, context)
             animation:stop()
+        end,
+        -- resume
+        function(self, context)
+            if self._throttle ~= animation:getThrottle() then
+                animation:setThrottle(self._throttle)
+            end
+            animation:resume()
+        end,
+        -- pause
+        function(self, context)
+            animation:pause()
         end
     )
     self:addCommand(command)
@@ -664,12 +755,22 @@ function M:wait(sec)
     timer:setSpan(sec)
     
     local command = self:newCommand(
+        -- play
         function(self, context)
             timer:start()
             MOAICoroutine.blockOnAction(timer)
         end,
-        function(self)
+        -- stop
+        function(self, context)
             timer:stop()
+        end,
+        -- resume
+        function(self, context)
+            timer:pause(false)
+        end,
+        -- pause
+        function(self, context)
+            timer:pause(true)
         end
     )
     
@@ -687,13 +788,17 @@ end
 --------------------------------------------------------------------------------
 function M:play(params)
     if self:isRunning() then
-        return self
+        -- resume, instead of to start a new context, if in pause state
+        if self:isPaused() then
+            self:resume()
+        end
+    else
+        self._running = true
+        local context = createContext(self, params)
+
+        Executors.callLater(self.playInternal, self, context)
     end
 
-    self._running = true
-    local context = createContext(self, params)
-    
-    Executors.callLater(self.playInternal, self, context)
     return self
 end
 
@@ -712,10 +817,19 @@ function M:playInternal(context)
         if command.action then
             command.action:throttle(self._throttle)
         end
+
+        while context.paused do
+            -- spinlock until animation is resumed or stopped
+            if context.stopped then
+                return
+            end
+            coroutine.yield()
+        end
+
         context.currentCommand.play(self, context)
         
         if context.stopped then
-            break
+            return
         end
     end
     
@@ -728,6 +842,48 @@ function M:playInternal(context)
     local e = Event(Event.COMPLETE)
     e.context = context
     self:dispatchEvent(e)
+end
+
+
+--------------------------------------------------------------------------------
+-- Resumes the animation if it's running and in pause state.
+-- @return self
+--------------------------------------------------------------------------------
+function M:resume()
+    if self:isRunning() and self:isPaused() then
+        self._paused = false
+
+        for _, context in ipairs(self._contexts) do
+            context.paused = false
+        end
+        for _, command in ipairs(self._commands) do
+            if command.action then
+                command.action:throttle(self._throttle)
+            end
+            command.resume(self, context)
+        end
+    end
+
+    return self
+end
+
+--------------------------------------------------------------------------------
+-- Pauses the animation if it's running and not in pause state.
+-- @return self
+--------------------------------------------------------------------------------
+function M:pause()
+    if self:isRunning() and not self:isPaused() then
+        self._paused = true
+
+        for _, context in ipairs(self._contexts) do
+            context.paused = true
+        end
+        for _, command in ipairs(self._commands) do
+            command.pause(self, context)
+        end
+    end
+
+    return self
 end
 
 --------------------------------------------------------------------------------
@@ -743,10 +899,12 @@ function M:stop()
     -- clear contexts
     for i, context in ipairs(self._contexts) do
         context.stopped = true
-        if context.currentCommand then
-            context.currentCommand.stop(self, context)
-        end
     end
+
+    for _, command in ipairs(self._commands) do
+        command.stop(self)
+    end
+
     self._contexts = {}
     
     return self
@@ -778,14 +936,18 @@ end
 -- Command to generate the animation.<br>
 -- @param playFunc playFunc(callback)
 -- @param stopFunc stopFunc()
+-- @param resumeFunc resumeFunc()
+-- @param pauseFunc pauseFunc()
 -- @return command
 --------------------------------------------------------------------------------
-function M:newCommand(playFunc, stopFunc)
+function M:newCommand(playFunc, stopFunc, resumeFunc, pauseFunc)
     local emptyFunc = function(obj, callback) end
     playFunc = playFunc
     stopFunc = stopFunc and stopFunc or emptyFunc
+    resumeFunc = resumeFunc and resumeFunc or emptyFunc
+    pauseFunc = pauseFunc and pauseFunc or emptyFunc
     
-    local command = {play = playFunc, stop = stopFunc}
+    local command = {play = playFunc, stop = stopFunc, resume = resumeFunc, pause = pauseFunc}
     return command
 end
 
@@ -800,7 +962,7 @@ function M:newActionCommand(actionFunc, sec, mode)
     local actionGroup = MOAIAction.new()
     local command = self:newCommand(
         -- play
-        function(self)
+        function(self, context)
             if #self._targets == 0 then
                 return
             end
@@ -817,8 +979,16 @@ function M:newActionCommand(actionFunc, sec, mode)
             MOAICoroutine.blockOnAction(actionGroup)
         end,
         -- stop
-        function(self)
+        function(self, context)
             actionGroup:stop()
+        end,
+        -- resume
+        function(self, context)
+            actionGroup:pause(false)
+        end,
+        -- pause
+        function(self, context)
+            actionGroup:pause(true)
         end
     )
     command.action = actionGroup
@@ -826,18 +996,28 @@ function M:newActionCommand(actionFunc, sec, mode)
 end
 
 --------------------------------------------------------------------------------
--- Change the throttle, as defined by MOAIAction.throttle, of the animation.
+-- Changes the throttle, as defined by MOAIAction.throttle, of the animation.
+-- If the animation is already running, update throttle on all commands.
 -- @param newThrottle Desired new throttle value
 -- @return none
 --------------------------------------------------------------------------------
 function M:setThrottle(newThrottle)
     if self:isRunning() then
-        local context = self._contexts[#self._contexts]
-        if context.currentCommand and context.currentCommand.action then
-            context.currentCommand.action:throttle(newThrottle)
+        for _, command in ipairs(self._commands) do
+            if command.action then
+                command.action:throttle(newThrottle)
+            end
         end
     end
     self._throttle = newThrottle
+end
+
+--------------------------------------------------------------------------------
+-- Returns the current throttle value
+-- @return throttle
+--------------------------------------------------------------------------------
+function M:getThrottle()
+    return self._throttle
 end
 
 return M

@@ -4,6 +4,17 @@ local completeHandler = function(self)
     print("animation complete!")
 end    
 
+local function throttleAnimation()
+    local timer = MOAITimer.new()
+    timer:setSpan(2)
+    timer:start()
+    MOAICoroutine.blockOnAction(timer)
+    anim2:setThrottle(4)
+    -- timer:start()
+    -- MOAICoroutine.blockOnAction(timer)
+    -- anim2:stop()
+end
+
 function onCreate(params)
     layer = Layer {scene = scene}
     
@@ -21,14 +32,10 @@ function onCreate(params)
     sprite4:setLeft(sprite3:getRight() + sprite3:getWidth())
     sprite4:setTop(sprite3:getTop())
 
-    local cf = function(caller)
-        print(caller)
-    end
-    
     anim1 = Animation({sprite1, sprite2}, 1)
         :moveLoc(50, 50, 0)
         :moveRot(0, 0, 180)
-        :moveScl(1, 1, 0):callFunc(cf)
+        :moveScl(1, 1, 0)
         :wait(3)
         :sequence(
             Animation(sprite1, 1):moveScl(-1, -1, 0):moveRot(0, 0, -180):moveLoc(-50, -50, 0),
@@ -55,10 +62,28 @@ function onStart()
     anim2:play()
 
     -- Change animation speed midway
-    local timer = MOAITimer.new()
-    timer:setSpan(3)
-    timer:start()
-    MOAICoroutine.blockOnAction(timer)
-    anim2:setThrottle(2)
+    local thread = MOAICoroutine.new()
+    thread:run(throttleAnimation)
 
+end
+
+function onTouchDown(e)
+    -- if anim1:isRunning() then
+    --     if anim1:isPaused() then
+    --         print('resume')
+    --         anim1:resume()
+    --     else
+    --         print('pause')
+    --         anim1:pause()
+    --     end
+    -- end
+    if anim2:isRunning() then
+        if anim2:isPaused() then
+            print('resume')
+            anim2:resume()
+        else
+            print('pause')
+            anim2:pause()
+        end
+    end
 end
