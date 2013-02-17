@@ -19,3 +19,11 @@ function onCreate(params)
         }
     end
 end
+
+function onDestroy()
+  scroller:dispose()
+  scroller = nil
+
+  view:dispose()
+  view = nil
+end
