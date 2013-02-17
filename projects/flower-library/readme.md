@@ -17,6 +17,57 @@ You will be easily able to use the Flower.
 * High performance
 * Can mix standard code MoaiSDK
 
+## Difference with Hanappe
+
+Flower is improved Hanappe.
+I is common in many parts of the Hanappe.
+
+Hanappe can implement very interesting.
+
+```Lua
+-- Hanappe Code
+module(..., package.seeall)
+
+function onCreate(params)
+    layer = Layer {
+        scene = scene,
+    }
+    group = Group {
+        layer = layer,
+        color = {0.5, 0.5, 0.5, 1},
+        scl = {2, 2, 1},
+    }
+    sprite = Sprite {
+        texture = "cathead.png",
+        pos = {0, 0},
+        parent = group,
+    }
+end
+```
+
+But you hardly notice the typo.
+In addition, too many features.
+
+Flower was reduced features.
+I was easy to understand instead.
+
+```Lua
+-- Flower Code
+module(..., package.seeall)
+
+function onCreate(e)
+    layer = flower.Layer()
+    layer:setScene(scene)
+    
+    group = flower.Group(layer)
+    group:setColor(0.5, 0.5, 0.5, 1)
+    group:setScl(2, 2, 1)
+
+    image = flower.Image("cathead.png")
+    image:setPos(0, 0)
+    group:addChild(image)
+end
+```
 
 ## How to use
 
@@ -283,4 +334,5 @@ May be stabilized by changing the settings of MOAISim.
 MOAISim.setStep(1 / 60)MOAISim.clearLoopFlags()MOAISim.setLoopFlags(MOAISim.SIM_LOOP_ALLOW_BOOST)MOAISim.setLoopFlags(MOAISim.SIM_LOOP_LONG_DELAY)MOAISim.setBoostThreshold(0)
 ```
 
-
+In addition, to reduce the switching of the texture.
+For example, you can use only one piece of tile map images.
