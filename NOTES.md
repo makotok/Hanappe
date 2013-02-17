@@ -33,6 +33,10 @@ Please use caution this extension.
 * LDoc changed from LuaDoc.
 * Improve the Readme.
 * Documentation updates.
+* I've changed the structure of the main.lua.  
+  Compatibility This fix is lost a little.
+  (global.lua -> modules.lua, deleted init.lua, config.lua)
+* Fixed a bug in the drawing order of TMXMapView.
 * Work better when you select the MessageBox. (Thank you, Eric)
 * Scroller modified so that the bound. (Thank you, Eric)
 * Add some features to Animation. (Thank you, Eric)
