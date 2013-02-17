@@ -52,7 +52,7 @@ Has a minor bug fixes.
 * Add functions to the Group.
 * Others, such as bug fixes.
 
-## Hanappe Version 1.5.0 (Update: 2012/07/01, Moai SDK Version 1.2 Build 56)
+## Version 1.5.0 (Update: 2012/07/01, Moai SDK Version 1.2 Build 56)
 
 In this version, we have a lot of improvements and refactoring.
 Some care must be taken, so compatibility has been lost.

@@ -12,6 +12,7 @@ However, it supports the latest version basically.
 
 ## Tools Version
 Tool version being used by the Hanappe is as follows.
+You are not necessarily required.
 
 * [Lua Development Tools 0.9](http://www.eclipse.org/koneki/ldt/)
 * [Apache Ant version 1.8.2](http://ant.apache.org/)
@@ -29,7 +30,6 @@ The terminal work as follows.
 * [Hanappe Framework](/projects/hanappe-framework)  
 This project is a framework for MoaiSDK.
 I have developed to many features.
-However, the future would be the main bug fixes too.
 
 * [Hanappe Samples](/projects/hanappe-samples)  
 This is a sample code of the Hanappe Framework.
@@ -47,3 +47,7 @@ This project will extend the Flower Library.
 ## Contact
 If there is a demand of bug fixes and feature improvements, please register to Github.  
 If you want to exchange mail directly, please check my profile.
+
+## Memo
+I my English is not good.
+Study.

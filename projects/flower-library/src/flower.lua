@@ -510,7 +510,7 @@ Resources.resourceDirectories = {}
 Resources.textureCache = setmetatable({}, {__mode = "v"})
 Resources.fontCache = {}
 Resources.atlasCache = {}
-Resources.ninePatchCache = {}
+Resources.nineImageDeckCache = {}
 
 --------------------------------------------------------------------------------
 -- Add the resource directory path.
@@ -627,59 +627,83 @@ function Resources.getTextureAtlas(luaFilePath, texture)
 end
 
 --------------------------------------------------------------------------------
--- Returns the file data.
+-- Returns the Deck to draw NineImage.
+-- For caching, you must not change the Deck.
 -- @param fileName fileName
--- @return file data
+-- @return MOAIStretchPatch2D instance
 --------------------------------------------------------------------------------
-function Resources.getNineImageData(fileName)
+function Resources.getNineImageDeck(fileName)
     local filePath = Resources.getResourceFilePath(fileName)
-    local cache = Resources.ninePatchCache
-    if cache[filePath] then
-        return cache[filePath]
+    local cache = Resources.nineImageDeckCache
+
+    if not cache[filePath] then
+        cache[filePath] = Resources.createNineImageDeck(filePath)
     end
-    
-    local function createStretchRowsOrColumns(image, isRow)
-        local stretchs = {}
-        local imageWidth, imageHeight = image:getSize()
-        local targetSize = isRow and imageHeight or imageWidth
-        local stretchSize = 0
-        local pr, pg, pb, pa = image:getRGBA(0, 1)
-        
-        for i = 1, targetSize - 1 do
-            local r, g, b, a = image:getRGBA(isRow and 0 or i, isRow and i or 0)
-            stretchSize = stretchSize + 1
-            
-            if pa ~= a then
-                table.insert(stretchs, {weight = stretchSize / (targetSize - 2), stretch = pa > 0})
-                pa, stretchSize = a, 0
-            end
-        end
-        if stretchSize > 0 then
-            table.insert(stretchs, {weight = stretchSize / (targetSize - 2), stretch = pa > 0})
-        end
-        
-        return stretchs
-    end
-    
+
+    return cache[filePath]
+end
+
+--------------------------------------------------------------------------------
+-- Create the Deck to draw NineImage.
+-- @param fileName fileName
+-- @return MOAIStretchPatch2D instance
+--------------------------------------------------------------------------------
+function Resources.createNineImageDeck(fileName)
+    local filePath = Resources.getResourceFilePath(fileName)
+
     local image = MOAIImage.new()
     image:load(filePath)
     
     local imageWidth, imageHeight = image:getSize()
     local displayWidth, displayHeight = imageWidth - 2, imageHeight - 2
-    local stretchRows = createStretchRowsOrColumns(image, true)
-    local stretchColumns = createStretchRowsOrColumns(image, false)
+    local stretchRows = Resources.createStretchRowsOrColumns(image, true)
+    local stretchColumns = Resources.createStretchRowsOrColumns(image, false)
     local texture = Resources.getTexture(filePath)
+    local uvRect = {1 / imageWidth, 1 / imageHeight, (imageWidth - 1) / imageWidth, (imageHeight - 1) / imageHeight}
+
+    local deck = MOAIStretchPatch2D.new()
+    deck.imageWidth = imageWidth
+    deck.imageHeight = imageHeight
+    deck.displayWidth = displayWidth
+    deck.displayHeight = displayHeight
+    deck:reserveUVRects(1)
+    deck:setTexture(texture)
+    deck:setRect(0, 0, displayWidth, displayHeight)
+    deck:setUVRect(1, unpack(uvRect))
+    deck:reserveRows(#stretchRows)
+    deck:reserveColumns(#stretchColumns)
     
-    cache[filePath] = {
-        texture = texture,
-        width = displayWidth,
-        height = displayHeight,
-        stretchRows = stretchRows,
-        stretchColumns = stretchColumns,
-        rect = {0, 0, displayWidth, displayHeight},
-        uvRect = {1 / imageWidth, 1 / imageHeight, (imageWidth - 1) / imageWidth, (imageHeight - 1) / imageHeight},
-    }
-    return cache[filePath]
+    for i, row in ipairs(stretchRows) do
+        deck:setRow(i, row.weight, row.stretch)
+    end
+    for i, column in ipairs(stretchColumns) do
+        deck:setColumn(i, column.weight, column.stretch)
+    end
+    
+    return deck
+end
+
+function Resources.createStretchRowsOrColumns(image, isRow)
+    local stretchs = {}
+    local imageWidth, imageHeight = image:getSize()
+    local targetSize = isRow and imageHeight or imageWidth
+    local stretchSize = 0
+    local pr, pg, pb, pa = image:getRGBA(0, 1)
+    
+    for i = 1, targetSize - 1 do
+        local r, g, b, a = image:getRGBA(isRow and 0 or i, isRow and i or 0)
+        stretchSize = stretchSize + 1
+        
+        if pa ~= a then
+            table.insert(stretchs, {weight = stretchSize / (targetSize - 2), stretch = pa > 0})
+            pa, stretchSize = a, 0
+        end
+    end
+    if stretchSize > 0 then
+        table.insert(stretchs, {weight = stretchSize / (targetSize - 2), stretch = pa > 0})
+    end
+    
+    return stretchs
 end
 
 --------------------------------------------------------------------------------
@@ -2513,62 +2537,9 @@ M.NineImage = NineImage
 function NineImage:init(imagePath, width, height)
     DisplayObject.init(self)
     
-    local imageData = Resources.getNineImageData(imagePath)
-
-    width = width or imageData.width
-    height = height or imageData.height
-    
-    local deck = MOAIStretchPatch2D.new()
-    deck:reserveUVRects(1)
-    deck:setTexture(imageData.texture)
-    deck:setRect(unpack(imageData.rect))
-    deck:setUVRect(1, unpack(imageData.uvRect))
-    
-    self.imageData = imageData
-    self.deck = deck
-    self:setDeck(deck)
-    self:setStretchRows(imageData.stretchRows)
-    self:setStretchColumns(imageData.stretchColumns)
-    self:setSize(width, height)
-end
-
---------------------------------------------------------------------------------
--- Sets the image data.
--- @param imageData NinePatch image data
---------------------------------------------------------------------------------
-function NineImage:setImageData(imageData)
-    if type(imageData) == "string" then
-        imageData = Resources.getNineImageData(imageData)
-    end
-    
-    self.imageData = imageData
-    self.deck:setTexture(imageData.texture)
-    self.deck:setRect(unpack(imageData.rect))
-    self.deck:setUVRect(1, unpack(imageData.uvRect))
-    self:setStretchRows(imageData.stretchRows)
-    self:setStretchColumns(imageData.stretchColumns)
-end
-
---------------------------------------------------------------------------------
--- Sets the stretch rows.
--- @param rows stretch rows data.
---------------------------------------------------------------------------------
-function NineImage:setStretchRows(rows)
-    self.deck:reserveRows(#rows)
-    for i, row in ipairs(rows) do
-        self.deck:setRow(i, row.weight, row.stretch)
-    end
-end
-
---------------------------------------------------------------------------------
--- Sets the stretch columns.
--- @param columns stretch columns data.
---------------------------------------------------------------------------------
-function NineImage:setStretchColumns(columns)
-    self.deck:reserveColumns(#columns)
-    for i, column in ipairs(columns) do
-        self.deck:setColumn(i, column.weight, column.stretch)
-    end
+    self.deck = Resources.getNineImageDeck(imagePath)
+    self:setDeck(self.deck)
+    self:setSize(width or self.deck.displayWidth, height or self.deck.displayHeight)
 end
 
 --------------------------------------------------------------------------------
@@ -2578,7 +2549,7 @@ end
 -- @param height Height of image.
 --------------------------------------------------------------------------------
 function NineImage:setSize(width, height)
-    local iw, ih = self.imageData.width, self.imageData.height
+    local iw, ih = self.deck.displayWidth, self.deck.displayHeight
     local left, top = self:getPos()
     local sclX, sclY, sclZ = width / iw, height / ih, 1
     
