@@ -583,7 +583,7 @@ function TileObject:loadData(data)
 
     self:setPosByAuto(data.x, data.y)
     self:setSize(data.width, data.height)
-    self:createRenderer()    
+    self:createRenderer()
 end
 
 --------------------------------------------------------------------------------
@@ -850,7 +850,7 @@ function TileLayerRenderer:createRenderer(tileset)
             tileNo = tileNo > tileSize and 0 or tileNo
             table.insertElement(rowData, tileNo)
         end
-        renderer:setRow(y, unpack(rowData))
+        renderer:setRow(y + 1, unpack(rowData))
     end
     
     self:addChild(renderer)
@@ -897,7 +897,7 @@ function TileLayerRenderer:setGid(x, y, gid)
     local tileset = self.tileMap:findTilesetByGid(gid)
     local tileNo = tileset:getTileIndexByGid(gid)
     local renderer = self:getRendererByTileset(tileset) or self:createRenderer(tileset)
-    renderer:setTile(x, y, tileNo)
+    renderer:setTile(x + 1, y + 1, tileNo)
     self:addChild(renderer)
 end
 
