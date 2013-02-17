@@ -1,5 +1,6 @@
-# Hanappe Projects
 ![Hanappe logo](/hanappe_logo.png)
+
+# Hanappe Projects
 
 ## Introduction
 Open source framework for [Moai SDK](http://getmoai.com).
@@ -18,7 +19,7 @@ You are not necessarily required.
 * [Apache Ant version 1.8.2](http://ant.apache.org/)
 * [LDoc version 1.3.3](https://github.com/stevedonovan/LDoc)
 
-## Test environment
+## Tests
 The terminal work as follows.
 
 * Mac OSX 10.8.2
@@ -43,6 +44,15 @@ This is a sample code of the Flower Library.
 
 * [Flower Extensions](/projects/flower-extensions)  
 This project will extend the Flower Library.
+
+## Branch
+
+Hanappe branches are there are the following.
+If you want to pull requests, please request to the master branch at the moment.
+
+* master ... Master branch. Stable.
+* dev ... Development branch. Unstable.
+* version1.x ... Version1. May be deleted.
 
 ## Contact
 If there is a demand of bug fixes and feature improvements, please register to Github.  

@@ -1,10 +1,49 @@
 # Release notes
 
+## Version 2.1.0 (Update: 2013/02/017, Moai SDK Version 1.3 Build 160)
+
+I made ​​a lot of improvements.
+I also improved the document.
+
+### Flower Library
+
+* LDoc changed from LuaDoc.
+* Improve the Readme.
+* Documentation updates.
+* Viewport has been modified to be resized when the Window is resized.
+* Add a NineImage. Displays the NinePatch of Android.
+* GetSize function to add a DisplayObject.  
+  This was added to no longer work when getDims returns a negative value.
+* Fixed bug when TexturePacker trim options have been set. (Thank you, superquadratic)
+* Fixed a bug that can not change the size of the Image. (Thank you, Quad)
+* Other small fixes.
+
+### Flower Extensions
+
+I added the extension of Flower Library.
+However, this feature is not stable.  
+Please use caution this extension.
+
+* Add a class for TileMapEditor.
+* Add a small GUI library.
+* Other, there are still some debris.
+
+### Hanappe Framework
+
+* LDoc changed from LuaDoc.
+* Improve the Readme.
+* Documentation updates.
+* Work better when you select the MessageBox. (Thank you, Eric)
+* Scroller modified so that the bound. (Thank you, Eric)
+* Add some features to Animation. (Thank you, Eric)
+* Other small fixes.
+
+
 ## Version 2.0.2 (Update: 2013/01/02, Moai SDK Version 1.3 Build 160)
 
 I made ​​a few important fixes.
 
-### Flower library
+### Flower Library
 
 * Documentation updates. (Thanks Felix Gallo!)
 * Rename the function.  
@@ -14,18 +53,18 @@ I made ​​a few important fixes.
 * Improve the Group to be included as a child of the Group.
 * Update event to add the Scene.
 
-### Hanappe framework
+### Hanappe Framework
 
 * Fixed a bug in the Application:isMobile function.
 
 ## Version 2.0.1 (Update: 2012/12/08, Moai SDK Version 1.3 Build 98)
 
-### Flower library
+### Flower Library
 
 I've created a lightweight library.
 Flower is a library that can be used by itself.
 
-### Minor modifications of Hanappe
+### Hanappe Framework
 
 I have fixed some small bugs.
 
