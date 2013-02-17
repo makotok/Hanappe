@@ -313,12 +313,11 @@ function TileMap:isIsometric()
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type TileLayer
+-- 
 -- This class to display a tile layer.
 -- Inherit from the Group class is the name of a class that layer.
 -- You can also be dynamically added to create a TileLayer.
---
--- @class table
--- @name TileLayer
 ----------------------------------------------------------------------------------------------------
 TileLayer = class(Group)
 M.TileLayer = TileLayer

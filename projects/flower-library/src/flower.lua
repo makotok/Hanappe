@@ -6,7 +6,7 @@
 -- issues, questions, or problems regarding the documentation.
 --
 -- @author Makoto
--- @release V1.1
+-- @release V1.2
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -114,6 +114,15 @@ end
 --------------------------------------------------------------------------------
 function M.getViewSize()
     return M.viewWidth, M.viewHeight
+end
+
+--------------------------------------------------------------------------------
+-- Returns the Viewport to be used in layers.
+-- If you change the Viewport, it affects all layers.
+-- @return width, height
+--------------------------------------------------------------------------------
+function M.getViewport()
+    return M.viewport
 end
 
 --------------------------------------------------------------------------------
