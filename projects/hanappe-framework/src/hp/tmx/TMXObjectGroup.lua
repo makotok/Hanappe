@@ -11,6 +11,7 @@ local M = class()
 -- The constructor.
 --------------------------------------------------------------------------------
 function M:init(tmxMap)
+    self.type = "objectgroup"
     self.name = ""
     self.width = 0
     self.height = 0

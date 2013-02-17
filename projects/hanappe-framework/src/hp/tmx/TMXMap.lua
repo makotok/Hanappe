@@ -30,6 +30,7 @@ function M:init()
     self.height = 0
     self.tilewidth = 0
     self.tileheight = 0
+    self.allLayers = {}
     self.layers = {}
     self.tilesets = {}
     self.objectGroups = {}
@@ -58,6 +59,7 @@ end
 -- @param layer layer.
 --------------------------------------------------------------------------------
 function M:addLayer(layer)
+    table.insert(self.allLayers, layer)
     table.insert(self.layers, layer)
 end
 
@@ -66,6 +68,7 @@ end
 -- @param layer layer.
 --------------------------------------------------------------------------------
 function M:removeLayer(layer)
+    table.removeElement(self.allLayers, layer)
     return table.removeElement(self.layers, layer)
 end
 
@@ -74,6 +77,7 @@ end
 -- @param index index.
 --------------------------------------------------------------------------------
 function M:removeLayerAt(index)
+    table.removeElement(self.allLayers, self.layers[index])
     return table.remove(self.layers, index)
 end
 
@@ -134,6 +138,7 @@ end
 -- @param objectGroup objectGroup
 --------------------------------------------------------------------------------
 function M:addObjectGroup(objectGroup)
+    table.insert(self.allLayers, objectGroup)
     table.insert(self.objectGroups, objectGroup)
 end
 
@@ -142,6 +147,7 @@ end
 -- @param objectGroup objectGroup
 --------------------------------------------------------------------------------
 function M:removeObjectGroup(objectGroup)
+    table.removeElement(self.allLayers, objectGroup)
     return table.removeElement(self.objectGroups, objectGroup)
 end
 
@@ -150,6 +156,7 @@ end
 -- @param index index
 --------------------------------------------------------------------------------
 function M:removeObjectGroupAt(index)
+    table.removeElement(self.allLayers, self.objectGroups[index])
     return table.remove(self.objectGroups, index)
 end
 

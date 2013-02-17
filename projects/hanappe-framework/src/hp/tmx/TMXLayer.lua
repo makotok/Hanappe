@@ -11,6 +11,7 @@ local M = class()
 --------------------------------------------------------------------------------
 function M:init(tmxMap)
     self.tmxMap = tmxMap
+    self.type = "tilelayer"
     self.name = ""
     self.x = 0
     self.y = 0

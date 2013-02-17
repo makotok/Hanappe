@@ -29,13 +29,9 @@ end
 function M:loadMap(tmxMap)
     self.tmxMap = tmxMap
     self.camera = self:createCamera()
-    self.layers = self:createDisplayLayers()
-    self.objectLayers = self:createDisplayObjectLayers()
+    self:createDisplayMapLayers()
     
-    for i, layer in ipairs(self.layers) do
-        layer:setCamera(self.camera)
-    end
-    for i, layer in ipairs(self.objectLayers) do
+    for i, layer in ipairs(self.mapLayers) do
         layer:setCamera(self.camera)
     end
 end
@@ -55,6 +51,31 @@ function M:loadTexture(tileset)
 end
 
 --------------------------------------------------------------------------------
+-- Display to generate a map layers.
+-- Because of inheritance has been left for, please do not call from the outside.
+--------------------------------------------------------------------------------
+function M:createDisplayMapLayers()
+    local tmxMap = self.tmxMap
+    self.mapLayers = {}
+    self.layers = {}
+    self.objectLayers = {}
+    
+    for i, layerData in ipairs(tmxMap.allLayers) do
+        if layerData.type == "tilelayer" then
+            if layerData.visible ~= 0 and layerData.properties.visible ~= "false" then
+                local tileLayer = self:createDisplayLayer(layerData)
+                table.insert(self.mapLayers, tileLayer)
+                table.insert(self.layers, tileLayer)
+            end
+        else
+            local objectLayer = self:createDisplayObjectLayer(layerData)
+            table.insert(self.mapLayers, objectLayer)
+            table.insert(self.objectLayers, objectLayer)
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
 -- To generate a 2D camera.
 -- Because of inheritance has been left for, please do not call from the outside.
 --------------------------------------------------------------------------------
@@ -64,22 +85,6 @@ function M:createCamera()
     camera:setNearPlane(1)
     camera:setFarPlane(-1)
     return camera
-end
-
-
---------------------------------------------------------------------------------
--- Display to generate a tile layer.
--- Because of inheritance has been left for, please do not call from the outside.
---------------------------------------------------------------------------------
-function M:createDisplayLayers()
-    local tmxMap = self.tmxMap
-    local displayLayers = {}
-    for i, layer in ipairs(tmxMap.layers) do
-        if layer.visible ~= 0 and layer.properties.visible ~= "false" then
-            table.insert(displayLayers, self:createDisplayLayer(layer))
-        end
-    end
-    return displayLayers
 end
 
 --------------------------------------------------------------------------------
@@ -158,19 +163,6 @@ function M:createDisplayTilesets(layer)
 end
 
 --------------------------------------------------------------------------------
--- To generate the object layer.
--- Because of inheritance has been left for, please do not call from the outside.
---------------------------------------------------------------------------------
-function M:createDisplayObjectLayers()
-    local objectLayers = {}
-    for i, objectGroup in ipairs(self.tmxMap.objectGroups) do
-        local objectLayer = self:createDisplayObjectLayer(objectGroup)
-        table.insert(objectLayers, objectLayer)
-    end
-    return objectLayers
-end
-
---------------------------------------------------------------------------------
 -- Layer to generate a display object from the object group.
 -- Because of inheritance has been left for, please do not call from the outside.
 --------------------------------------------------------------------------------
@@ -231,10 +223,7 @@ end
 --------------------------------------------------------------------------------
 function M:setScene(scene)
     self.scene = scene
-    for i, layer in ipairs(self.layers) do
-        scene:addChild(layer)
-    end
-    for i, layer in ipairs(self.objectLayers) do
+    for i, layer in ipairs(self.mapLayers) do
         scene:addChild(layer)
     end
 end
