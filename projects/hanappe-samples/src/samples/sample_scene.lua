@@ -55,12 +55,17 @@ local fpsMonitor = FpsMonitor(10)
 --------------------------------------------------------------------------------
 
 function onCreate(params)
+    MOAISim.setHistogramEnabled(true)
+
     createBackgroundLayer()
     createGuiView()
     fpsMonitor:play()
 end
 
 function onButtonClick(e)
+    MOAISim.forceGarbageCollection()
+    MOAISim.reportHistogram()
+
     local target = e.target
     local item = target and target.item or nil
     if item then
@@ -71,6 +76,9 @@ end
 
 function onBackButtonClick(e)
     SceneManager:closeScene({animation = "slideToRight"})
+
+    MOAISim.forceGarbageCollection()
+    MOAISim.reportHistogram()
 end
 
 function onExitButtonClick(e)
