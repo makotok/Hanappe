@@ -19,8 +19,10 @@ local TileObject = tiled.TileObject
 -- class
 local RPGMap
 local RPGObject
+local UpdatingSystem
 local MovementSystem
 local CameraSystem
+local RenderSystem
 local ActorController
 local PlayerController
 
@@ -30,6 +32,12 @@ local ACTOR_ANIM_DATAS = {
     {name = "walkLeft", frames = {5, 4, 5, 6, 5}, sec = 0.25},
     {name = "walkRight", frames = {8, 7, 8, 9, 8}, sec = 0.25},
     {name = "walkUp", frames = {11, 10, 11, 12, 11}, sec = 0.25},
+}
+local ACTOR_VELOCITY_DATAS = {
+    walkDown = {x = 0, y = 2},
+    walkLeft = {x = -2, y = 0},
+    walkRight = {x = 2, y = 0},
+    walkUp = {x = 0, y = -2},
 }
 
 ----------------------------------------------------------------------------------------------------
@@ -56,8 +64,10 @@ end
 
 function RPGMap:initSystems()
     self.systems = {
+        UpdatingSystem(self),
         MovementSystem(self),
         CameraSystem(self),
+        RenderSystem(self),
     }
 end
 
@@ -72,7 +82,11 @@ function RPGMap:isCollison(x, y)
 end
 
 function RPGMap:onLoadedData(e)
+    self.objectLayer = self:findMapLayerByName("Object")
     self.collisionLayer = self:findMapLayerByName("Collision")
+    if self.collisionLayer then
+        self.collisionLayer:setVisible(false)
+    end
 end
 
 function RPGMap:onSavedData(e)
@@ -93,7 +107,6 @@ M.RPGObject = RPGObject
 
 function RPGObject:init(tileMap)
     TileObject.init(self, tileMap)
-    self.linerVelocity = {x = 0, y = 0}
 end
 
 function RPGObject:loadData(data)
@@ -101,17 +114,8 @@ function RPGObject:loadData(data)
     self:createController()
 end
 
-function RPGObject:walk(walkType)
-    if self.renderer then
-        self.renderer:playAnim(walkType)
-    end
-    
-    
-    
-end
-
 function RPGObject:getMapPos()
-
+   
 end
 
 function RPGObject:getMapNextPos()
@@ -126,6 +130,29 @@ function RPGObject:createController()
         self.controller = controllerClass(self)
     end
 end
+
+function RPGObject:getController()
+    return self.controller
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type UpdatingSystem
+----------------------------------------------------------------------------------------------------
+UpdatingSystem = class()
+
+function UpdatingSystem:init(tileMap)
+    self.tileMap = tileMap
+end
+
+function UpdatingSystem:onUpdate()
+    local objectLayer = self.tileMap.objectLayer
+    for i, object in ipairs(objectLayer:getObjects()) do
+        if object.controller then
+            object:onUpdate()
+        end
+    end
+end
+
 
 ----------------------------------------------------------------------------------------------------
 -- @type MovementSystem
@@ -144,26 +171,21 @@ function MovementSystem:onUpdate()
 end
 
 function MovementSystem:moveObject(object)
-    if not object.linerVelocity then
+    if not object.controller or not object.controller.linerVelocity then
         return
     end
     
-    local velocity = object.linerVelocity
+    local velocity = object.controller.linerVelocity
     object:addLoc(velocity.x, velocity.y)
     velocity.count = velocity.count - 1
     
     if velocity.count <= 0 then
+        velocity.x = 0
+        velocity.y = 0
     end
 end
 
-function MovementSystem:isCollisionForMap(mapX, mapY)
-    if self.collisionLayer then
-        local gid = self.collisionLayer:getGid(mapX, mapY)
-        return gid > 0
-    end
-end
-
-function MovementSystem:isCollisionForMap(mapX, mapY)
+function MovementSystem:isCollisionFoObjects(mapX, mapY)
     local gid = self.collisionLayer:getGid(mapX, mapY)
     return gid > 0
 end
@@ -182,6 +204,7 @@ ActorController = class()
 function ActorController:init(tileObject)
     self.tileObject = assert(tileObject)
     self.renderer = tileObject.renderer
+    self.linerVelocity = {}
     
     if self.renderer then
         self.renderer:setAnimDatas(ACTOR_ANIM_DATAS)
@@ -192,7 +215,25 @@ function ActorController:onUpdate(e)
     
 end
 
-function ActorController:moveMap(direction)
+function ActorController:walk(direction)
+    self.renderer:playAnim(direction)
+    
+end
+
+function ActorController:walkLeft()
+    self:walk("walkLeft")
+end
+
+function ActorController:walkUp()
+    self:walk("walkUp")
+end
+
+function ActorController:walkRight()
+    self:walk("walkRight")
+end
+
+function ActorController:walkDown()
+    self:walk("walkDown")
 end
 
 ----------------------------------------------------------------------------------------------------

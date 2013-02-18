@@ -286,6 +286,8 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the property with the specified key.
+-- @param key property key
+-- @return property value
 --------------------------------------------------------------------------------
 function TileMap:getProperty(key)
     return self.properties[key]
@@ -293,9 +295,28 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the tile property with the specified gid.
+-- @param gid tile gid
+-- @return tile property value
 --------------------------------------------------------------------------------
-function TileMap:getTileProperty(gid)
--- TODO
+function TileMap:getTileProperty(gid, key)
+    local tileset = self:findTilesetByGid(gid)
+    local tileId = tileset:getTileIdByGid(gid)
+    if tileset and tileId then
+        return tileset:getTileProperty(tileId, key)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Returns the tile properties with the specified gid.
+-- @param gid tile gid
+-- @return tile property value
+--------------------------------------------------------------------------------
+function TileMap:getTileProperties(gid)
+    local tileset = self:findTilesetByGid(gid)
+    local tileId = tileset:getTileIdByGid(gid)
+    if tileset and tileId then
+        return tileset:getTileProperties(tileId)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -543,6 +564,51 @@ function Tileset:getTileIndexByGid(gid)
     return gid == 0 and 0 or gid - self.firstgid + 1
 end
 
+--------------------------------------------------------------------------------
+-- Returns the tile id of the specified gid.
+-- @param gid gid.
+-- @return tile id.
+--------------------------------------------------------------------------------
+function Tileset:getTileIdByGid(gid)
+    return gid == 0 and -1 or gid - self.firstgid
+end
+
+--------------------------------------------------------------------------------
+-- Returns the tile of the specified id.(0 <= id <= max)
+-- @param id tile id (0 <= id <= max)
+-- @return tile
+--------------------------------------------------------------------------------
+function Tileset:getTileById(id)
+    for i, tile in ipairs(self.tiles) do
+        if tile.id == id then
+            return tile
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Returns the tile property of the specified id.(0 <= id <= tileid max)
+-- @param id tile id (0 <= id <= tileid max)
+-- @return tile
+--------------------------------------------------------------------------------
+function Tileset:getTileProperties(id)
+    local tile = self:getTileById(id)
+    if tile then
+        return tile.properties
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Returns the tile property of the specified id.(0 <= id <= tileid max)
+-- @param id tile id (0 <= id <= tileid max)
+-- @return tile
+--------------------------------------------------------------------------------
+function Tileset:getTileProperty(id, key)
+    local tile = self:getTileById(id)
+    if tile and tile.properties then
+        return tile.properties[key]
+    end
+end
 
 ----------------------------------------------------------------------------------------------------
 -- @type TileObject
