@@ -33,6 +33,7 @@ function M:initInternal(params)
     self._touchDownFlag = false
     self._touchDownIndex = nil
     self._themeName = "Scroller"
+    self._disposed = false
 
     self._scrollToAnimation = nil
     self._hBounceEnabled = true
@@ -45,6 +46,9 @@ end
 -- スクロール更新処理を行います.
 --------------------------------------------------------------------------------
 function M:enterFrame()
+    if self._disposed then
+        return true
+    end
     self:updateScroll()
 end
 
@@ -265,7 +269,6 @@ end
 
 --------------------------------------------------------------------------------
 -- スクロールがView内に収まるようにします.
--- TODO:範囲外に飛び出たときにスクロールが戻るアニメーションがほしい
 --------------------------------------------------------------------------------
 function M:ajustScrollPosition()
     local left, top = self:getPos()
@@ -373,6 +376,14 @@ end
 function M:setParent(value)
     super.setParent(self, value)
     self:ajustScrollSize()
+end
+
+--------------------------------------------------------------------------------
+-- Dispose resourece.
+--------------------------------------------------------------------------------
+function M:dispose()
+    super.dispose(self)
+    self._disposed = true
 end
 
 --------------------------------------------------------------------------------

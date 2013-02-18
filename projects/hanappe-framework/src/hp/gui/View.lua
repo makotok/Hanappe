@@ -60,10 +60,35 @@ function M:initLayer()
 end
 
 --------------------------------------------------------------------------------
--- シーンを設定します.
+-- Sets the scene.
+-- @param scene scene
 --------------------------------------------------------------------------------
 function M:setScene(scene)
+    local currentScene = self:getScene()
+    if currentScene == scene then
+        return
+    end
+
+    if currentScene then
+        currentScene:removeEventListener("destroy", self.sceneDestroyHandler, self)
+    end
+
     self:getLayer():setScene(scene)
+    
+    if scene then
+        scene:addEventListener("destroy", self.sceneDestroyHandler, self)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Returns the scene.
+-- @return scene
+--------------------------------------------------------------------------------
+function M:getScene()
+    local layer = self:getLayer()
+    if layer then
+        return layer:getScene()
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -83,6 +108,14 @@ end
 --------------------------------------------------------------------------------
 function M:setPriorityUpdateEnabled(value)
     self._priorityUpdateEnabled = value
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when scene destroyed.
+-- @param e Touch Event
+--------------------------------------------------------------------------------
+function M:sceneDestroyHandler(e)
+    self:dispose()
 end
 
 return M
