@@ -79,7 +79,6 @@ end
 --------------------------------------------------------------------------------
 -- Up the button.
 -- There is no need to call directly to the basic.
--- @param idx Touch index
 --------------------------------------------------------------------------------
 function ImageButton:doButtonUp()
     if not self:isButtonDown() then
