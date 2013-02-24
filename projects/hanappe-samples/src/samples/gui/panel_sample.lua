@@ -7,7 +7,7 @@ function onCreate(params)
 
     panel = Panel {
         name = "panel",
-        size = {460, 300},
+        size = {view:getWidth() - 20, view:getHeight() - 20},
         pos = {10, 10},
         parent = view,
     }
