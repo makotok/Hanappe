@@ -13,7 +13,7 @@ function onCreate(e)
     layer:setCamera(camera)
     
     -- TODO: Tile Map Editor 0.9 Bug
-    mapData = dofile("isometric_grass_and_water2.lue")
+    mapData = dofile("assets/isometric_grass_and_water2.lue")
     mapData.tilesets[1].tileoffsetx = 0
     mapData.tilesets[1].tileoffsety = 16
     
