@@ -9,7 +9,6 @@ local array                 = require "hp/lang/array"
 local class                 = require "hp/lang/class"
 local Layer                 = require "hp/display/Layer"
 local Event                 = require "hp/event/Event"
-local Executors             = require "hp/util/Executors"
 local Component             = require "hp/gui/Component"
 local Executors             = require "hp/util/Executors"
 
