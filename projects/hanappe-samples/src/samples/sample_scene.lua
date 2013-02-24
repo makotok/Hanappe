@@ -5,6 +5,7 @@ module(..., package.seeall)
 --------------------------------------------------------------------------------
 
 local FpsMonitor = require "hp/util/FpsMonitor"
+local Component = require "hp/gui/Component"
 
 --------------------------------------------------------------------------------
 -- Constraints
@@ -107,32 +108,34 @@ function createGuiView()
     
     scroller = Scroller {
         parent = guiView,
+        hBounceEnabled = false,
+        layout = VBoxLayout {
+            align = {"center", "center"},
+            padding = {10, 10, 10, 10},
+            gap = {10, 10},
+        },
     }
-    scroller:setHBounceEnabled(false)
     
     titleLabel = TextLabel {
         text = "Hanappe Samples",
         size = {guiView:getWidth(), 50},
-        textSize = 32,
         color = {0, 0, 0},
-        align = {"center", "center"},
         parent = scroller,
+        align = {"center", "center"},
     }
-    
-    local HALF_WIDTH = guiView:getWidth() / 2
-    for i, item in ipairs(SCENE_ITEMS) do
-        local button = createButton(item.text, scroller)
-        button.item = item
-        button:setPos((HALF_WIDTH - button:getWidth()) / 2 + ((i - 1) % 2 * HALF_WIDTH), 70 + math.floor((i - 1) / 2) * 60)
-    end
-    
+
     exitButton = Button {
         text = "Exit",
         size = {100, 50},
-        pos = {0, 0},
         parent = scroller,
         onClick = onExitButtonClick,
     }
+    
+    for i, item in ipairs(SCENE_ITEMS) do
+        local button = createButton(item.text, scroller)
+        button.item = item
+    end
+    
 end
 
 function createButton(text, parent)
