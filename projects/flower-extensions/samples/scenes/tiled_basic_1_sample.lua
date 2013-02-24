@@ -7,6 +7,7 @@ module(..., package.seeall)
 function onCreate(e)
     layer = flower.Layer()
     layer:setScene(scene)
+    layer:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
     layer:setTouchEnabled(true)
     
     tileMap = tiled.TileMap()

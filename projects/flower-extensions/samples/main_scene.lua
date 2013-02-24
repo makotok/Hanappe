@@ -4,7 +4,7 @@ module(..., package.seeall)
 -- Constraints
 --------------------------------------------------------------------------------
 
-SAMPLES = require "samples/scene_list"
+SAMPLES = require "scene_list"
 
 --------------------------------------------------------------------------------
 -- Variables

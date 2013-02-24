@@ -11,6 +11,8 @@ local M = {}
 local flower = require "flower"
 local class = flower.class
 local table = flower.table
+local Resources = flower.Resources
+local Layer = flower.Layer
 local Group = flower.Group
 local SheetImage = flower.SheetImage
 local MapImage = flower.MapImage
@@ -29,6 +31,10 @@ local TileObjectRenderer
 local TileLayerRendererFactory
 local TileObjectRendererFactory
 
+-- variables
+local MOAIPropInterface = MOAIProp.getInterfaceTable()
+
+
 ----------------------------------------------------------------------------------------------------
 -- @type TileMap
 -- 
@@ -40,6 +46,9 @@ M.TileMap = TileMap
 -- Events
 TileMap.EVENT_LOADED_DATA = "loadedData"
 TileMap.EVENT_SAVED_DATA = "savedData"
+
+-- Priority Margin
+TileMap.PRIORITY_MARGIN = 10000
 
 --------------------------------------------------------------------------------
 -- The constructor.
@@ -69,7 +78,7 @@ end
 -- @param luefile path.
 --------------------------------------------------------------------------------
 function TileMap:loadLueFile(luefile)
-    self:loadMapData(dofile(luefile))
+    self:loadMapData(Resources.dofile(luefile))
 end
 
 --------------------------------------------------------------------------------
@@ -92,6 +101,8 @@ function TileMap:loadMapData(data)
     self:createMapLayers(data.layers)
     
     self:dispatchEvent(TileMap.EVENT_LOADED_DATA, data)
+    
+    self:updateRenderOrder()
 end
 
 --------------------------------------------------------------------------------
@@ -129,16 +140,18 @@ end
 -- If you are using a single layer,
 -- you should update the drawing order in a timely manner.
 -- @param priority Priority of start
+-- @param margin Priority margin
 --------------------------------------------------------------------------------
-function TileMap:updateRenderOrder(priority)
+function TileMap:updateRenderOrder(priority, margin)
     priority = priority or 1
+    margin = margin or TileMap.PRIORITY_MARGIN
     for i, child in ipairs(self.children) do
         if child.updateRenderOrder then
-            priority = child:updateRenderOrder(priority) + 1
+            child:updateRenderOrder(priority)
         else
             child:setPriority(priority)
-            priority = priority + 1
         end
+        priority = priority + margin
     end
 end
 
@@ -690,6 +703,21 @@ function TileObject:createRenderer()
     end
 end
 
+--------------------------------------------------------------------------------
+-- Update a priority.
+--------------------------------------------------------------------------------
+function TileObject:updatePriority()
+    if self.parent then
+        local parentPriority = self.parent:getPriority()
+        self:setPriority(parentPriority + self:getTop())
+    end    
+end
+
+--------------------------------------------------------------------------------
+-- Sets a position.
+-- @param x x-position
+-- @param y y-position
+--------------------------------------------------------------------------------
 function TileObject:setPosByAuto(x, y)
     local tileMap = self.tileMap
 
@@ -700,6 +728,22 @@ function TileObject:setPosByAuto(x, y)
     end
 end
 
+--------------------------------------------------------------------------------
+-- Sets a position and update render priority.
+-- @param x x-position
+-- @param y y-position
+-- @param z z-position.
+--------------------------------------------------------------------------------
+function TileObject:setLoc(x, y, z)
+    MOAIPropInterface.setLoc(self, x, y, z)
+    self:updatePriority()
+end
+
+--------------------------------------------------------------------------------
+-- Sets a position for isometric.
+-- @param x x-position
+-- @param y y-position
+--------------------------------------------------------------------------------
 function TileObject:setIsoPos(x, y)
     local posX = x - y
     local posY = (x + y) / 2
@@ -708,6 +752,11 @@ function TileObject:setIsoPos(x, y)
     self:setPos(posX, posY)
 end
 
+--------------------------------------------------------------------------------
+-- Returns a position for isometric.
+-- @param x x-position
+-- @param y y-position
+--------------------------------------------------------------------------------
 function TileObject:getIsoPos()
     local posX, posY = self:getPos()
     posX = posX - self.tileMap.tileWidth / 2

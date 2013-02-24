@@ -21,6 +21,7 @@
     </copy>
     <copy todir="${bin.dir}" overwrite="true">
       <fileset dir="assets"/>
+      <fileset dir="samples"/>
       <fileset dir="src"/>
     </copy>
   </target>
