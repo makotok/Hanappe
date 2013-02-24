@@ -22,8 +22,8 @@ local super                 = EventDispatcher
 function M:start(config)
 
     local title = config.title
-    local screenWidth = MOAIEnvironment.horizontalResolution or config.screenWidth
-    local screenHeight = MOAIEnvironment.verticalResolution or config.screenHeight
+    local screenWidth = config.screenWidth or MOAIEnvironment.horizontalResolution
+    local screenHeight = config.screenHeight or MOAIEnvironment.verticalResolution 
     local viewScale = config.viewScale or 1
     local viewWidth = screenWidth / viewScale
     local viewHeight = screenHeight / viewScale

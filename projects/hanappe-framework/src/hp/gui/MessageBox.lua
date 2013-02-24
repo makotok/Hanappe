@@ -29,6 +29,7 @@ function M:initInternal()
     
     self._themeName = "MessageBox"
     self._messageHideEnabled = true
+    self._spoolingEnabled = true
     
     self._popInAnimation = Animation():parallel(
         Animation(self, 0.5):setScl(0.8, 0.8, 1):seekScl(1, 1, 1),
@@ -72,16 +73,36 @@ function M:updateDisplay()
 end
 
 --------------------------------------------------------------------------------
+-- Turns spooling ON or OFF.
+-- If self is currently spooling and enable is false, stop spooling and reveal 
+-- entire page. 
+-- @param enable Boolean for new state
+-- @return none
+-------------------------------------------------------------------------------
+function M:spoolingEnabled(enable)
+    self._spoolingEnabled = enable and true or false
+    if self._spoolingEnabled == false and self:isBusy() then
+        self._textLabel:stop()
+        self._textLabel:revealAll()
+    end
+end
+
+--------------------------------------------------------------------------------
 -- ポップアップエフェクトでメッセージボックスを表示します.
 --------------------------------------------------------------------------------
 function M:show()
     self:setVisible(true)
     self:setCenterPiv()
     self:setText(self:getText())
-    self._textLabel:setReveal(0)
+
+    if self._spoolingEnabled then
+        self._textLabel:setReveal(0)
+    end
     self._popInAnimation:play {onComplete =
         function()
-            self:spool()
+            if self._spoolingEnabled then
+                self:spool()
+            end
             self:dispatchEvent(M.EVENT_MESSAGE_SHOW)
         end
     }
@@ -107,6 +128,7 @@ end
 -- テキストをスプールします.
 --------------------------------------------------------------------------------
 function M:spool()
+    self:spoolingEnabled(true)
     return self._textLabel:spool()
 end
 
@@ -194,7 +216,9 @@ function M:touchDownHandler(e)
         self._textLabel:revealAll()
     elseif self:more() then
         self:nextPage()
-        self:spool()
+        if self._spoolingEnabled then
+            self:spool()
+        end
     else
         self:enterMessageEnd()
     end
