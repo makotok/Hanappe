@@ -32,6 +32,7 @@ function M:initInternal(params)
     self._minScrollingForceY = 0.1
     self._touchDownFlag = false
     self._touchDownIndex = nil
+    self._touchMoved = false
     self._themeName = "Scroller"
     self._disposed = false
 
@@ -56,6 +57,7 @@ end
 -- スクロール更新処理を行います.
 --------------------------------------------------------------------------------
 function M:updateScroll()
+    self._touchMoved = false
     if self:isTouching() then
         return
     end
@@ -431,6 +433,9 @@ function M:touchMoveHandler(e)
     if self._touchDownIndex ~= e.idx then
         return
     end
+    if self._touchMoved then
+        return
+    end
     
     local scale = self:getLayer():getViewScale()
     local moveX, moveY = e.moveX, e.moveY
@@ -463,6 +468,7 @@ function M:touchMoveHandler(e)
     end
 
     self:addLoc(moveX, moveY, 0)
+    self._touchMoved = true
 end
 
 --------------------------------------------------------------------------------
