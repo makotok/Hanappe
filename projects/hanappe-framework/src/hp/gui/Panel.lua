@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- パネルクラスです.<br>
+-- This is a simple panel.
 --------------------------------------------------------------------------------
 
 -- import
@@ -15,16 +15,16 @@ local M                 = class(Component)
 local super             = Component
 
 --------------------------------------------------------------------------------
--- 内部変数の初期化処理を行います.
+-- Initializes the internal variables.
 --------------------------------------------------------------------------------
 function M:initInternal()
     super.initInternal(self)
     self._themeName = "Panel"
 end
 
-----------------------------------------------------------------
--- 子コンポーネントを生成します.
-----------------------------------------------------------------
+--------------------------------------------------------------------------------
+-- Create a child objects.
+--------------------------------------------------------------------------------
 function M:createChildren()
     local backgroundSkinClass = self:getStyle("backgroundSkinClass")
     self._background = backgroundSkinClass()
@@ -33,7 +33,7 @@ function M:createChildren()
 end
 
 --------------------------------------------------------------------------------
--- 表示の更新を行います.
+-- Update the display.
 --------------------------------------------------------------------------------
 function M:updateDisplay()
     local background = self._background
@@ -42,7 +42,8 @@ function M:updateDisplay()
 end
 
 --------------------------------------------------------------------------------
--- サイズ変更時に子の大きさも変更します.
+-- This event handler is called when resizing.
+-- @param e resize event
 --------------------------------------------------------------------------------
 function M:resizeHandler(e)
     self._background:setSize(e.newWidth, e.newHeight)

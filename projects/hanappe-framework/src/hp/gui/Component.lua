@@ -1,7 +1,6 @@
---------------------------------------------------------------------------------
--- 全てのGUIコンポーネントが継承すべきベースクラスです. <br>
--- GUIの基本となる機能を提供します. <br>
---------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
+-- This class defines the common behavior of the GUI.
+----------------------------------------------------------------------------------------------------
 
 -- imports
 local table             = require "hp/lang/table"
@@ -41,9 +40,10 @@ M.STATE_DISABLED        = "disabled"
 local function dummeyIsIncludeLayout() return false end
 
 --------------------------------------------------------------------------------
--- コンストラクタです.
--- コンストラクタは継承しないでください.
--- 代わりに、initから始まる関数を継承してください.
+-- Constructor.
+-- Please do not inherit this constructor.
+-- Please have some template functions are inherited.
+-- @param params Parameter table
 --------------------------------------------------------------------------------
 function M:init(params)
     super.init(self)
@@ -53,7 +53,8 @@ function M:init(params)
 end
 
 --------------------------------------------------------------------------------
--- 内部変数の初期化処理です.
+-- Initialization is the process of internal variables.
+-- Please to inherit this function if the definition of the variable.
 --------------------------------------------------------------------------------
 function M:initInternal()
     self._enabled = true
@@ -71,7 +72,8 @@ function M:initInternal()
 end
 
 --------------------------------------------------------------------------------
--- イベントリスナの初期化処理を行います.
+-- Performing the initialization processing of the event listener.
+-- Please to inherit this function if you want to initialize the event listener.
 --------------------------------------------------------------------------------
 function M:initEventListeners()
     self:addEventListener(M.EVENT_TOUCH_DOWN, self.touchDownHandler, self)
@@ -84,7 +86,9 @@ function M:initEventListeners()
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントの初期化処理を行います.
+-- Performing the initialization processing of the component.
+-- Please to inherit this function if you want to change the behavior of the component.
+-- @param params Parameter table
 --------------------------------------------------------------------------------
 function M:initComponent(params)
     if self._initialized then
@@ -101,7 +105,8 @@ function M:initComponent(params)
 end
 
 --------------------------------------------------------------------------------
--- テーマの初期化処理です.
+-- Theme initialization process is performed.
+-- @param params Parameter table
 --------------------------------------------------------------------------------
 function M:initTheme(params)
     if params and params.themeName then
@@ -116,7 +121,8 @@ function M:initTheme(params)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネント固有のスタイル初期化処理です.
+-- It is a component-specific style initialization process.
+-- @param params Parameter table
 --------------------------------------------------------------------------------
 function M:initStyles(params)
     if params and params.styles then
@@ -129,14 +135,14 @@ function M:initStyles(params)
 end
 
 --------------------------------------------------------------------------------
--- 子コンポーネントの生成処理を行います.
--- コンポーネントを実装するクラスは必要に応じてオーバーライドしてください.
+-- To create a child components.
+-- Please be inherited as necessary.
 --------------------------------------------------------------------------------
 function M:createChildren()
 end
 
 --------------------------------------------------------------------------------
--- レイアウトの更新処理をスケジューリングします.
+-- Scheduling the update process of the component.
 --------------------------------------------------------------------------------
 function M:invalidateAll()
     self:invalidateDisplay()
@@ -144,7 +150,7 @@ function M:invalidateAll()
 end
 
 --------------------------------------------------------------------------------
--- 表示の更新処理をスケジューリングします.
+-- Scheduling the process of updating the display.
 --------------------------------------------------------------------------------
 function M:invalidateDisplay()
     self._invalidDisplayFlag = true
@@ -152,7 +158,7 @@ function M:invalidateDisplay()
 end
 
 --------------------------------------------------------------------------------
--- 表示、レイアウトの更新処理をスケジューリングします.
+-- Scheduling the process of updating the layout.
 --------------------------------------------------------------------------------
 function M:invalidateLayout()
     local parent = self:getParent()
@@ -166,7 +172,9 @@ function M:invalidateLayout()
 end
 
 --------------------------------------------------------------------------------
--- 表示、レイアウトの検証を行います.
+-- Validation of the component.
+-- This process is heavy.
+-- Use when you want to determine the size and layout of the component.
 --------------------------------------------------------------------------------
 function M:validateAll()
     self:validateDisplay()
@@ -174,7 +182,9 @@ function M:validateAll()
 end
 
 --------------------------------------------------------------------------------
--- 表示の検証を行います.
+-- Validation of the display.
+-- This process is heavy.
+-- Use when you want to determine the size and layout of the component.
 --------------------------------------------------------------------------------
 function M:validateDisplay(updateChildrenFlag)
     if updateChildrenFlag then
@@ -192,7 +202,10 @@ function M:validateDisplay(updateChildrenFlag)
 end
 
 --------------------------------------------------------------------------------
--- レイアウトの検証を行います.
+-- Validation of the layout.
+-- This process is heavy.
+-- Use when you want to determine the size and layout of the component.
+-- @param updateChildrenFlag Children are also updated
 --------------------------------------------------------------------------------
 function M:validateLayout(updateChildrenFlag)
     if updateChildrenFlag then
@@ -209,8 +222,8 @@ function M:validateLayout(updateChildrenFlag)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントの全ての状態を更新します.
--- この処理はコストが高い場合が多いので、できるだけ呼ばないようにしてください.
+-- Update the component.
+-- You do not need to be called directly update process.
 --------------------------------------------------------------------------------
 function M:updateComponent()
     self:updateDisplay()
@@ -218,15 +231,15 @@ function M:updateComponent()
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントの表示を更新します.
--- コンポーネントの実装者は、このメソッドで表示の更新処理を実装してください.
+-- Update the display.
+-- This method is called at the time you need to update the display.
 --------------------------------------------------------------------------------
 function M:updateDisplay()
 
 end
 
 --------------------------------------------------------------------------------
--- レイアウトを更新します.
+-- Update the layout.
 --------------------------------------------------------------------------------
 function M:updateLayout()
     if self._layout then
@@ -235,7 +248,9 @@ function M:updateLayout()
 end
 
 --------------------------------------------------------------------------------
--- 子コンポーネントを追加します.
+-- Add the child component.
+-- After adding performs scheduling of the layout.
+-- @param child the child component
 --------------------------------------------------------------------------------
 function M:addChild(child)
     if super.addChild(self, child) then
@@ -248,8 +263,8 @@ function M:addChild(child)
 end
 
 --------------------------------------------------------------------------------
--- 子コンポーネントを追加します.
--- Componentだけが追加できるようにします.
+-- Remove the child component.
+-- @param child the child component
 --------------------------------------------------------------------------------
 function M:removeChild(child)
     if child == self._graphics then
@@ -266,7 +281,9 @@ function M:removeChild(child)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントの状態を設定します.
+-- Sets the state of the component.
+-- To update the display by the state.
+-- @param state state
 --------------------------------------------------------------------------------
 function M:setCurrentState(state)
     if self:getCurrentState() ~= state then
@@ -281,26 +298,29 @@ function M:setCurrentState(state)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントの状態を返します.
+-- Returns the state of the component.
+-- @return state
 --------------------------------------------------------------------------------
 function M:getCurrentState()
     return self._currentState
 end
 
 --------------------------------------------------------------------------------
--- 関数の遅延コールを行います.
--- 内部的にはExecutors.callLater関数を呼び出すだけです.
+-- The function to be performed asynchronously.
+-- @param func function
+-- @param ... args
 --------------------------------------------------------------------------------
 function M:callLater(func, ...)
     Executors.callLater(func, ...)
 end
 
---------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 -- Properties
---------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- 有効かどうか設定します.
+-- Set the enabled state.
+-- @param value enabled
 --------------------------------------------------------------------------------
 function M:setEnabled(value)
     if self:isEnabled() ~= value then
@@ -318,21 +338,24 @@ function M:setEnabled(value)
 end
 
 --------------------------------------------------------------------------------
--- 有効かどうか返します.
+-- Returns the enabled.
+-- @return enabled
 --------------------------------------------------------------------------------
 function M:isEnabled()
     return self._enabled
 end
 
 --------------------------------------------------------------------------------
--- タッチ処理が有効かどうか返します.
+-- Returns whether the component can touch.
 --------------------------------------------------------------------------------
 function M:isTouchEnabled()
     return self._touchEnabled and self._enabled
 end
 
 --------------------------------------------------------------------------------
--- フォーカスをセットします.
+-- To set the focus.
+-- TODO:Focus does not function.
+-- @param value focus
 --------------------------------------------------------------------------------
 function M:setFocus(value)
     value = value or true
@@ -344,7 +367,9 @@ function M:setFocus(value)
 end
 
 --------------------------------------------------------------------------------
--- フォーカスがあたっているか返します.
+-- If the component has the focus, returns true.
+-- TODO:Focus does not function.
+-- @return focus
 --------------------------------------------------------------------------------
 function M:isFocus()
     local focusManager = self:getFocusManager()
@@ -355,22 +380,25 @@ function M:isFocus()
 end
 
 --------------------------------------------------------------------------------
--- FocusManagerを返します.
--- 基本的にUILayerに紐付くマネージャを返されます.
+-- Returns the FocusManager
+-- TODO:Focus does not function.
 --------------------------------------------------------------------------------
 function M:getFocusManager()
     return FocusManager
 end
 
 --------------------------------------------------------------------------------
--- フォーカスがセットできるか返します.
+-- Returns the focus enabled.
+-- TODO:Focus does not function.
+-- @return focus enabled
 --------------------------------------------------------------------------------
 function M:isFocusEnabled()
     return self._focusEnabled
 end
 
 --------------------------------------------------------------------------------
--- フォーカスがセットできるか設定します.
+-- Set whether you can set focus.
+-- @param Whether you can set focus
 --------------------------------------------------------------------------------
 function M:setFocusEnabled(value)
     self._focusEnabled = value
@@ -381,9 +409,10 @@ function M:setFocusEnabled(value)
 end
 
 --------------------------------------------------------------------------------
--- レイアウトを設定します.
--- レイアウトを設定すると、サイズ変更時にレイアウトクラスの更新処理が呼ばれて、
--- 自動的にコンポーネントの座標を設定されるようになります.
+-- Set the layout.
+-- When you set the layout, the update process of layout class is called when resizing.
+-- The position of the component is automatically updated.
+-- @param value layout object
 --------------------------------------------------------------------------------
 function M:setLayout(value)
     self._layout = value
@@ -391,14 +420,15 @@ function M:setLayout(value)
 end
 
 --------------------------------------------------------------------------------
--- レイアウトを返します.
+-- Returns a layout.
+-- @return layout object
 --------------------------------------------------------------------------------
 function M:getLayout()
     return self._layout
 end
 
 --------------------------------------------------------------------------------
--- レイアウトクラスによってレイアウトがセットされるかどうか設定します.
+-- Set whether you want to update the position by the layout class.
 --------------------------------------------------------------------------------
 function M:setIncludeLayout(value)
     self._includeLayout = value
@@ -406,16 +436,18 @@ function M:setIncludeLayout(value)
 end
 
 --------------------------------------------------------------------------------
--- 自動的にレイアウトを設定するかどうか返します.
+-- Return whether or not to set the layout automatically.
 --------------------------------------------------------------------------------
 function M:isIncludeLayout()
     return self._includeLayout
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントのサイズを変更します.
--- 変更した直後に全てのオブジェクトに反映されるわけではなく、updateSize関数で反映されます.
--- また、最小、最大サイズの範囲外を指定した場合は、その時点でサイズが調整されます.
+-- Change the size of the component.
+-- Not be reflected in all objects immediately after the change.
+-- be reflected to call updateSize.
+-- @param width width
+-- @param height height
 --------------------------------------------------------------------------------
 function M:setSize(width, height)
     width  = width  < 0 and 0 or width
@@ -438,15 +470,16 @@ function M:setSize(width, height)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントのテーマを返します.
+-- Returns the theme of the component.
+-- @return theme
 --------------------------------------------------------------------------------
 function M:getTheme()
     return self._theme
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントのテーマを設定します.
--- ThemeManagerによってデフォルトのテーマが設定されています.
+-- Sets the theme of the component.
+-- @param value theme
 --------------------------------------------------------------------------------
 function M:setTheme(value)
     if self._theme ~= value then
@@ -456,14 +489,16 @@ function M:setTheme(value)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントのテーマ名を返します.
+-- Returns the name of the theme of the component.
+-- @return theme name
 --------------------------------------------------------------------------------
 function M:getThemeName()
     return self._themeName
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントのテーマ名を設定します.
+-- Sets the name of the theme of the component.
+-- @param value theme name
 --------------------------------------------------------------------------------
 function M:setThemeName(value)
     if self._themeName ~= value then
@@ -472,7 +507,8 @@ function M:setThemeName(value)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントが持つ全スタイルを設定します.
+-- Set the component has all the styles.
+-- @param styles styles
 --------------------------------------------------------------------------------
 function M:setStyles(styles)
     if self._styles ~= styles then
@@ -482,7 +518,9 @@ function M:setStyles(styles)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントの現在のステートスタイルを返します.
+-- Returns the style of the current state.
+-- @param name style name
+-- @param state (option)state name
 --------------------------------------------------------------------------------
 function M:getStyle(name, state)
     state = state or self:getCurrentState()
@@ -504,7 +542,10 @@ function M:getStyle(name, state)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントのスタイルを設定します.
+-- Sets the style of the component.
+-- @param state state name
+-- @param name style name
+-- @param value style value
 --------------------------------------------------------------------------------
 function M:setStyle(state, name, value)
    self._styles[state] = self._styles[state] or {}
@@ -515,7 +556,10 @@ function M:setStyle(state, name, value)
 end
 
 --------------------------------------------------------------------------------
--- ボタンを押下したときのイベントリスナを設定します.
+-- Set the event listener.
+-- Event listener that you set in this function is one.
+-- @param eventName event name
+-- @param func event listener
 --------------------------------------------------------------------------------
 function M:setEventListener(eventName, func)
     local propertyName = "_event_" .. eventName
@@ -536,55 +580,62 @@ function M:setEventListener(eventName, func)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントかどうか返します.
--- 基本的に必ずtrueを返します.
+-- It is a function to determine whether the component.
+-- @return true
 --------------------------------------------------------------------------------
 function M:isComponent()
     return true
 end
 
---------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 -- Event Handler
---------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- コンポーネントをタッチした時のイベントリスナです.
+-- This event handler is called when you touch the component.
+-- @param e touch event
 --------------------------------------------------------------------------------
 function M:touchDownHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントをタッチした時のイベントリスナです.
+-- This event handler is called when you touch the component.
+-- @param e touch event
 --------------------------------------------------------------------------------
 function M:touchUpHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントをタッチした時のイベントリスナです.
+-- This event handler is called when you touch the component.
+-- @param e touch event
 --------------------------------------------------------------------------------
 function M:touchMoveHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントをタッチした時のイベントリスナです.
+-- This event handler is called when you touch the component.
+-- @param e touch event
 --------------------------------------------------------------------------------
 function M:touchCancelHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- リサイズ時のイベントハンドラです.
+-- This event handler is called when resizing.
+-- @param e resize event
 --------------------------------------------------------------------------------
 function M:resizeHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- ステート変更時のイベントハンドラです.
+-- This event handler is called when the state changes.
+-- @param e event
 --------------------------------------------------------------------------------
 function M:stateChangedHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントの有効状態変更時のイベントハンドラです.
+-- This event handler is called when the enabled state changes.
+-- @param e event
 --------------------------------------------------------------------------------
 function M:enabledChangedHandler(e)
 end

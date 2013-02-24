@@ -1,6 +1,6 @@
 ----------------------------------------------------------------
--- コンポーネントを格納するViewコンテナです.
--- 全てのコンポーネントはViewに追加します.
+-- This is the root class for adding components.
+-- View parent can not be set.
 ----------------------------------------------------------------
 
 -- import
@@ -31,7 +31,7 @@ local function internalUpdateRenderPriority(obj, priority)
 end
 
 --------------------------------------------------------------------------------
--- 内部変数の初期化を行います.
+-- Initializes the internal variables.
 --------------------------------------------------------------------------------
 function M:initInternal()
     super.initInternal(self)
@@ -39,7 +39,8 @@ function M:initInternal()
 end
 
 --------------------------------------------------------------------------------
--- Viewの初期化処理を行います.
+-- Performing the initialization processing of the component.
+-- @param params Parameter table
 --------------------------------------------------------------------------------
 function M:initComponent(params)
     self:initLayer()
@@ -47,7 +48,7 @@ function M:initComponent(params)
 end
 
 --------------------------------------------------------------------------------
--- View自身が元レイヤーを初期化します.
+-- Initialize the layer of View.
 --------------------------------------------------------------------------------
 function M:initLayer()
     local layer = Layer()
@@ -91,7 +92,7 @@ function M:getScene()
 end
 
 --------------------------------------------------------------------------------
--- 描画順序を順番に行うように更新します.
+-- Automatically updates the drawing order.
 --------------------------------------------------------------------------------
 function M:updateLayout()
     super.updateLayout(self)
@@ -101,9 +102,7 @@ function M:updateLayout()
 end
 
 --------------------------------------------------------------------------------
--- 描画順序のプライオリティを自動的に更新するかどうか設定します.
--- パフォーマンスが問題になる場合に、手動でプライオリティを設定する事で、
--- パフォーマンスを向上させる事ができます.
+-- Set whether to automatically update the drawing order of priority.
 --------------------------------------------------------------------------------
 function M:setPriorityUpdateEnabled(value)
     self._priorityUpdateEnabled = value

@@ -1,5 +1,7 @@
 ----------------------------------------------------------------
--- 親のサイズに合わせてスクロールするクラスです.<br>
+-- This class will scroll according to the size of the parent.
+-- By a parent View, and typically in the range can scroll the screen.
+-- TODO:I moved just by touch. It is necessary to have a little margin.
 ----------------------------------------------------------------
 
 -- import
@@ -15,9 +17,17 @@ local math              = require "hp/lang/math"
 local super             = Component
 local M                 = class(Component)
 
-----------------------------------------------------------------
--- コンストラクタです.
-----------------------------------------------------------------
+-- Computes attenuation as a function of distance.
+-- @param distance Distance
+-- @return distance^(-2/3)
+local function attenuation(distance)
+    distance = distance == 0 and 1 or math.pow(distance, 0.667)
+    return 1 / distance
+end
+
+--------------------------------------------------------------------------------
+-- Initializes the internal variables.
+--------------------------------------------------------------------------------
 function M:initInternal(params)
     super.initInternal(self, params)
     self._autoResizing = true
@@ -44,7 +54,7 @@ function M:initInternal(params)
 end
 
 --------------------------------------------------------------------------------
--- スクロール更新処理を行います.
+-- Update frame.
 --------------------------------------------------------------------------------
 function M:enterFrame()
     if self._disposed then
@@ -54,7 +64,7 @@ function M:enterFrame()
 end
 
 --------------------------------------------------------------------------------
--- スクロール更新処理を行います.
+-- Update of the scroll processing.
 --------------------------------------------------------------------------------
 function M:updateScroll()
     self._touchMoved = false
@@ -90,7 +100,7 @@ function M:updateScroll()
 end
 
 --------------------------------------------------------------------------------
--- レイアウト更新時にスクロールコンテナのサイズも変更します.
+-- Also changes the size of the scroll container when layout update.
 --------------------------------------------------------------------------------
 function M:updateLayout()
     super.updateLayout(self)
@@ -98,42 +108,48 @@ function M:updateLayout()
 end
 
 --------------------------------------------------------------------------------
--- スクロールサイズをchildrenの範囲に自動的に調整するか設定します.
+-- Sets whether to automatically update the scroll range.
+-- @param value auto resizing
 --------------------------------------------------------------------------------
 function M:setAutoResizing(value)
     self._autoResizing = value
 end
 
 --------------------------------------------------------------------------------
--- スクロールサイズをchildrenの範囲に自動的に調整するか返します.
+-- Returns whether to automatically update the scroll range.
+-- @return auto resizing
 --------------------------------------------------------------------------------
 function M:isAutoResizing()
     return self._autoResizing
 end
 
 --------------------------------------------------------------------------------
--- 水平方向のスクロールが行えるかどうか設定します.
+-- Sets whether the horizontal scroll is enabled.
+-- @param value horizontal scroll enabled
 --------------------------------------------------------------------------------
 function M:setHScrollEnabled(value)
     self._hScrollEnabled = value
 end
 
 --------------------------------------------------------------------------------
--- 水平方向のスクロールが行えるかどうか設定します.
+-- Returns whether the horizontal scroll is enabled.
+-- @return horizontal scroll enabled
 --------------------------------------------------------------------------------
 function M:isHScrollEnabled()
     return self._hScrollEnabled
 end
 
 --------------------------------------------------------------------------------
--- 垂直方向のスクロールが行えるかどうか設定します.
+-- Sets whether the vertical scroll is enabled.
+-- @param value vertical scroll enabled
 --------------------------------------------------------------------------------
 function M:setVScrollEnabled(value)
     self._vScrollEnabled = value
 end
 
 --------------------------------------------------------------------------------
--- 垂直方向のスクロールが行えるかどうか返します.
+-- Returns whether the vertical scroll is enabled.
+-- @return vertical scroll enabled
 --------------------------------------------------------------------------------
 function M:isVScrollEnabled()
     return self._vScrollEnabled
@@ -141,6 +157,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the ability to bounce horizontally.
+-- @param value horizontal bouncing enabled
 --------------------------------------------------------------------------------
 function M:setHBounceEnabled(value)
     self._hBounceEnabled = value
@@ -148,13 +165,15 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns whether horizontal bouncing is enabled.
+-- @return horizontal bouncing enabled
 --------------------------------------------------------------------------------
 function M:isHBouncelEnabled()
     return self._hBounceEnabled
 end
 
 --------------------------------------------------------------------------------
--- Sets the ability to bounce vertically .
+-- Sets the ability to bounce vertically.
+-- @param value vertical bouncing enabled
 --------------------------------------------------------------------------------
 function M:setVBounceEnabled(value)
     self._vBounceEnabled = value
@@ -162,35 +181,41 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns whether vertical bouncing is enabled.
+-- @return vertical bouncing enabled
 --------------------------------------------------------------------------------
 function M:isVBounceEnabled()
     return self._vBounceEnabled
 end
 
 --------------------------------------------------------------------------------
--- スクロール時の摩擦係数を設定します.
+-- Set the coefficient of friction at the time of scrolling.
+-- @param value friction
 --------------------------------------------------------------------------------
 function M:setFriction(value)
     self._friction = value
 end
 
 --------------------------------------------------------------------------------
--- スクロール時の摩擦係数を返します.
+-- Returns the coefficient of friction at the time of scrolling.
+-- @return friction
 --------------------------------------------------------------------------------
 function M:getFriction()
     return self._friction
 end
 
 --------------------------------------------------------------------------------
--- スクロール中かどうか返します.
+-- If this component is scrolling returns true.
+-- @return scrolling
 --------------------------------------------------------------------------------
 function M:isScrolling()
     return self._scrollingForceX ~= 0 or self._scrollingForceY ~= 0
 end
 
 --------------------------------------------------------------------------------
--- 1フレームでスクロールする量を設定します.
--- タッチ中の場合は無視されます.
+-- Sets the force to scroll in one frame.
+-- It does not make sense if you're touch.
+-- @param x x force
+-- @param y y force
 --------------------------------------------------------------------------------
 function M:setScrollingForce(x, y)
     self._scrollingForceX = self:isHScrollEnabled() and x or 0
@@ -212,14 +237,18 @@ function M:setScrollingForce(x, y)
 end
 
 --------------------------------------------------------------------------------
--- 1フレームでスクロールする量を返します.
+-- Returns the force to scroll in one frame.
+-- @return x force
+-- @return y force
 --------------------------------------------------------------------------------
 function M:getScrollingForce()
     return self._scrollingForceX, self._scrollingForceY
 end
 
 --------------------------------------------------------------------------------
--- 1フレームでスクロール可能な最大量を設定します.
+-- Sets the maximum force in one frame.
+-- @param x x force
+-- @param y y force
 --------------------------------------------------------------------------------
 function M:setMaxScrollingForce(x, y)
     self._maxScrollingForceX = x
@@ -227,14 +256,18 @@ function M:setMaxScrollingForce(x, y)
 end
 
 --------------------------------------------------------------------------------
--- 1フレームでスクロール可能な最大量を返します.
+-- Returns the maximum force in one frame.
+-- @param x force
+-- @param y force
 --------------------------------------------------------------------------------
 function M:getMaxScrollingForce()
     return self._maxScrollingForceX, self._maxScrollingForceY
 end
 
 --------------------------------------------------------------------------------
--- 1フレームでスクロール可能な最小量を設定します.
+-- Sets the minimum force in one frame.
+-- @param x x force
+-- @param y y force
 --------------------------------------------------------------------------------
 function M:setMinScrollingForce(x, y)
     self._minScrollingForceX = x
@@ -242,24 +275,29 @@ function M:setMinScrollingForce(x, y)
 end
 
 --------------------------------------------------------------------------------
--- 1フレームでスクロール可能な最小量を返します.
+-- Returns the minimum force in one frame.
+-- @param x force
+-- @param y force
 --------------------------------------------------------------------------------
 function M:getMinScrollingForce()
     return self._minScrollingForceX, self._minScrollingForceY
 end
 
 --------------------------------------------------------------------------------
--- タッチ中かどうか返します.
+-- If the user has touched returns true.
+-- @return If the user has touched returns true.
 --------------------------------------------------------------------------------
 function M:isTouching()
     return self._touchDownFlag
 end
 
 --------------------------------------------------------------------------------
--- 指定した座標だけ、指定した時間で移動します.
--- 移動のロジックはmodeで指定できます.
--- modeには、MOAIEaseTypeの値を指定します.
--- callback (optional) allows callback notification when animation completes.
+-- Scroll to the specified location.
+-- @param x position of the x
+-- @param y position of the x
+-- @param sec second
+-- @param mode EaseType
+-- @param callback (optional) allows callback notification when animation completes.
 --------------------------------------------------------------------------------
 function M:scrollTo(x, y, sec, mode, callback)
     mode = mode or MOAIEaseType.SHARP_EASE_IN
@@ -270,7 +308,7 @@ function M:scrollTo(x, y, sec, mode, callback)
 end
 
 --------------------------------------------------------------------------------
--- スクロールがView内に収まるようにします.
+-- Adjusted so as to fall within the scope of the scroll.
 --------------------------------------------------------------------------------
 function M:ajustScrollPosition()
     local left, top = self:getPos()
@@ -289,7 +327,7 @@ function M:ajustScrollPosition()
 end
 
 --------------------------------------------------------------------------------
--- スクロールコンテナを適切なサイズに変更します.
+-- Adjust the scroll size.
 --------------------------------------------------------------------------------
 function M:ajustScrollSize()
     if not self._autoResizing then
@@ -310,7 +348,6 @@ function M:ajustScrollSize()
     
     self:setSize(width, height)
 end
-
 
 --------------------------------------------------------------------------------
 -- Computes the boundaries of the scroll area.
@@ -373,7 +410,8 @@ function M:stopAnimation()
 end
 
 --------------------------------------------------------------------------------
--- 親を設定した際、スクロールサイズも変更するようにします.
+-- If you set a parent, you also change the scroll size.
+-- @param value parent
 --------------------------------------------------------------------------------
 function M:setParent(value)
     super.setParent(self, value)
@@ -389,7 +427,8 @@ function M:dispose()
 end
 
 --------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- This event handler is called when you touch the component.
+-- @param e touch event
 --------------------------------------------------------------------------------
 function M:touchDownHandler(e)
     if self._touchDownFlag then
@@ -406,7 +445,8 @@ function M:touchDownHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- This event handler is called when you touch the component.
+-- @param e touch event
 --------------------------------------------------------------------------------
 function M:touchUpHandler(e)
     if self._touchDownIndex ~= e.idx then
@@ -417,17 +457,8 @@ function M:touchUpHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- Computes attenuation as a function of distance.
--- @param distance Distance
--- @return distance^(-2/3)
---------------------------------------------------------------------------------
-local function attenuation(distance)
-    distance = distance == 0 and 1 or math.pow(distance, 0.667)
-    return 1 / distance
-end
-
---------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- This event handler is called when you touch the component.
+-- @param e touch event
 --------------------------------------------------------------------------------
 function M:touchMoveHandler(e)
     if self._touchDownIndex ~= e.idx then
@@ -472,7 +503,8 @@ function M:touchMoveHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- This event handler is called when you touch the component.
+-- @param e touch event
 --------------------------------------------------------------------------------
 function M:touchCancelHandler(e)
     if self._touchDownIndex ~= e.idx then

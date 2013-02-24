@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- ゲームの仮想ジョイスティックのウィジットクラスです.<br>
+-- Joystick is a virtual controller.
 --------------------------------------------------------------------------------
 
 -- import
@@ -29,9 +29,8 @@ M.MODE_DIGITAL          = "digital"
 
 M.RANGE_OF_CENTER_RATE  = 0.5
 
-
 --------------------------------------------------------------------------------
--- 内部変数の初期化処理を行います.
+-- Initializes the internal variables.
 --------------------------------------------------------------------------------
 function M:initInternal()
     super.initInternal(self)
@@ -43,7 +42,7 @@ function M:initInternal()
 end
 
 --------------------------------------------------------------------------------
--- 子オブジェクトの生成を行います.
+-- Create a child objects.
 --------------------------------------------------------------------------------
 function M:createChildren()
     local baseSkin = self:getStyle("baseSkin")
@@ -60,7 +59,7 @@ function M:createChildren()
 end
 
 --------------------------------------------------------------------------------
--- コンポーネントの表示を更新します.
+-- Update the display.
 --------------------------------------------------------------------------------
 function M:updateDisplay()
 
@@ -74,7 +73,9 @@ function M:updateDisplay()
 end
 
 --------------------------------------------------------------------------------
--- knobSpriteの更新処理を行います.
+-- To update the position of the knob.
+-- @param x The x-position of the knob
+-- @param y The y-position of the knob
 --------------------------------------------------------------------------------
 function M:updateKnob(x, y)
     local oldX, oldY = self._knobSprite:getLoc()
@@ -94,7 +95,7 @@ function M:updateKnob(x, y)
 end
 
 --------------------------------------------------------------------------------
--- knobSpriteの座標を中心点に設定します.
+-- Set the position of the center of the knob.
 --------------------------------------------------------------------------------
 function M:setCenterKnob()
     local cx, cy = self:getWidth() / 2, self:getHeight() / 2
@@ -102,14 +103,21 @@ function M:setCenterKnob()
 end
 
 --------------------------------------------------------------------------------
--- Joystickの中心座標を計算して返します.
+-- Returns the position of the center of the whole.
+-- Does not depend on the Pivot.
+-- @return Center x-position
+-- @return Center y-position
 --------------------------------------------------------------------------------
 function M:getCenterLoc()
     return self:getWidth() / 2, self:getHeight() / 2
 end
 
 --------------------------------------------------------------------------------
--- モード判定を行い、モードにあわせたknobのx, y座標を計算して返します.
+-- Returns the position that matches the mode of the stick.
+-- @param x X-position of the model
+-- @param y Y-position of the model
+-- @return adjusted x-position
+-- @return adjusted y-position
 --------------------------------------------------------------------------------
 function M:getKnobNewLoc(x, y)
     if self:getStickMode() == M.MODE_ANALOG then
@@ -120,7 +128,11 @@ function M:getKnobNewLoc(x, y)
 end
 
 --------------------------------------------------------------------------------
--- ANALOGモードのknobのx, y座標を計算して返します.
+-- Returns the position to match the analog mode.
+-- @param x X-position of the model
+-- @param y Y-position of the model
+-- @return adjusted x-position
+-- @return adjusted y-position
 --------------------------------------------------------------------------------
 function M:getKnobNewLocForAnalog(x, y)
     local cx, cy = self:getCenterLoc()
@@ -138,7 +150,11 @@ function M:getKnobNewLocForAnalog(x, y)
 end
 
 --------------------------------------------------------------------------------
--- DIGITALモードのknobのx, y座標を計算して返します.
+-- Returns the position to match the digital mode.
+-- @param x X-position of the model
+-- @param y Y-position of the model
+-- @return adjusted x-position
+-- @return adjusted y-position
 --------------------------------------------------------------------------------
 function M:getKnobNewLocForDigital(x, y)
     local cx, cy = self:getCenterLoc()
@@ -164,7 +180,11 @@ function M:getKnobNewLocForDigital(x, y)
 end
 
 --------------------------------------------------------------------------------
--- Knobの入力の比を返します.
+-- Returns the percentage of input.
+-- @param x X-position
+-- @param y Y-position
+-- @return X-ratio(-1 <= x <= 1)
+-- @return Y-ratio(-1 <= y <= 1)
 --------------------------------------------------------------------------------
 function M:getKnobInputRate(x, y)
     local cx, cy = self:getCenterLoc()
@@ -173,7 +193,8 @@ function M:getKnobInputRate(x, y)
 end
 
 --------------------------------------------------------------------------------
--- Knobの入力の比を返します.
+-- Returns the direction of the stick.
+-- @return direction
 --------------------------------------------------------------------------------
 function M:getStickDirection()
     local x, y = self._knobSprite:getLoc()
@@ -192,21 +213,24 @@ function M:getStickDirection()
 end
  
 --------------------------------------------------------------------------------
--- スティックの操作モードを返します.
+-- Returns the stick mode
+-- @return stick mode
 --------------------------------------------------------------------------------
 function M:getStickMode()
     return self._stickMode
 end
 
 --------------------------------------------------------------------------------
--- スティックの操作モードを設定します.
+-- Set the mode of the stick.
+-- @param mode mode("analog" or "digital")
 --------------------------------------------------------------------------------
 function M:setStickMode(value)
     self._stickMode = value
 end
 
 --------------------------------------------------------------------------------
--- スティック変更時のイベントリスナを設定します.
+-- This event handler is called when touched.
+-- @param e Touch Event
 --------------------------------------------------------------------------------
 function M:setOnStickChanged(func)
     self:setEventListener(M.EVENT_STICK_CHANGED, func)
@@ -217,7 +241,8 @@ end
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- This event handler is called when touched.
+-- @param e Touch Event
 --------------------------------------------------------------------------------
 function M:touchDownHandler(e)
     if self._touchDownFlag then
@@ -231,7 +256,8 @@ function M:touchDownHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- シーンをタッチした時のイベントリスナです.
+-- This event handler is called when the button is released.
+-- @param e Touch Event
 --------------------------------------------------------------------------------
 function M:touchUpHandler(e)
     if not self._touchDownFlag then
@@ -247,7 +273,8 @@ function M:touchUpHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- シーンをタッチした時のイベントリスナです.
+-- This event handler is called when you move on the button.
+-- @param e Touch Event
 --------------------------------------------------------------------------------
 function M:touchMoveHandler(e)
     if not self._touchDownFlag then
@@ -263,12 +290,12 @@ function M:touchMoveHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- シーンをタッチした時のイベントリスナです.
+-- This event handler is called when you move on the button.
+-- @param e Touch Event
 --------------------------------------------------------------------------------
 function M:touchCancelHandler(e)
     self._touchDownFlag = false
     self:setCenterKnob()
 end
-
    
 return M

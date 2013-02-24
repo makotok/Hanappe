@@ -25,7 +25,7 @@ M.EVENT_BUTTON_UP       = "buttonUp"
 M.EVENT_BUTTON_DOWN     = "buttonDown"
 
 --------------------------------------------------------------------------------
--- 内部変数の初期化処理を行います.
+-- Initializes the internal variables.
 --------------------------------------------------------------------------------
 function M:initInternal()
     super.initInternal(self)
@@ -39,7 +39,7 @@ function M:initInternal()
 end
 
 --------------------------------------------------------------------------------
--- 子オブジェクトの生成処理を行います.
+-- Create a child objects.
 --------------------------------------------------------------------------------
 function M:createChildren()
     local skinClass = self:getStyle("skinClass")
@@ -57,7 +57,7 @@ function M:createChildren()
 end
 
 --------------------------------------------------------------------------------
--- 表示の更新を行います.
+-- Update the display.
 --------------------------------------------------------------------------------
 function M:updateDisplay()
     local background = self._background
@@ -76,7 +76,9 @@ function M:updateDisplay()
 end
 
 --------------------------------------------------------------------------------
--- ボタンの押下前の状態を設定します.
+-- Up the button.
+-- There is no need to call directly to the basic.
+-- @param idx Touch index
 --------------------------------------------------------------------------------
 function M:doUpButton()
     if not self:isSelected() then
@@ -89,7 +91,8 @@ function M:doUpButton()
 end
 
 --------------------------------------------------------------------------------
--- ボタンの押下後の状態を設定します.
+-- Down the button.
+-- There is no need to call directly to the basic.
 --------------------------------------------------------------------------------
 function M:doDownButton()
     if self:isSelected() then
@@ -102,7 +105,8 @@ function M:doDownButton()
 end
 
 --------------------------------------------------------------------------------
--- テキストを設定します.
+-- Sets the text.
+-- @param text text
 --------------------------------------------------------------------------------
 function M:setText(text)
     self._text = text
@@ -110,36 +114,39 @@ function M:setText(text)
 end
 
 --------------------------------------------------------------------------------
--- テキストを返します.
+-- Returns the text.
+-- @param text text
 --------------------------------------------------------------------------------
 function M:getText()
     return self._text
 end
 
 --------------------------------------------------------------------------------
--- トグルボタンかどうか設定します.
+-- Sets whether a toggle button.
+-- @param value toggle
 --------------------------------------------------------------------------------
 function M:setToggle(value)
     self._toggle = value
 end
 
 --------------------------------------------------------------------------------
--- トグルボタンかどうか返します.
+-- Returns whether a toggle button.
+-- @return toggle
 --------------------------------------------------------------------------------
 function M:isToggle()
     return self._toggle
 end
 
 --------------------------------------------------------------------------------
--- ボタンを押下しているか返します.
+-- Returns whether the button is selected.
+-- @return selected
 --------------------------------------------------------------------------------
 function M:isSelected()
     return self._selected
 end
 
 --------------------------------------------------------------------------------
--- スキンがリサイズ可能かどうか設定します.
--- falseに設定した場合、スキンテクスチャのサイズがそのままボタンのサイズに設定されます.
+-- Set skin whether you can resize.
 --------------------------------------------------------------------------------
 function M:setSkinResizable(value)
     self._skinResizable = value
@@ -149,21 +156,24 @@ function M:setSkinResizable(value)
 end
 
 --------------------------------------------------------------------------------
--- ボタンを押下したときのイベントリスナを設定します.
+-- Set the event listener that is called when the user click the button.
+-- @param func click event handler
 --------------------------------------------------------------------------------
 function M:setOnClick(func)
     self:setEventListener(M.EVENT_CLICK, func)
 end
 
 --------------------------------------------------------------------------------
--- ボタンを押下した直後のイベントリスナを設定します.
+-- Set the event listener that is called when the user pressed the button.
+-- @param func button down event handler
 --------------------------------------------------------------------------------
 function M:setOnButtonDown(func)
     self:setEventListener(M.EVENT_BUTTON_DOWN, func)
 end
 
 --------------------------------------------------------------------------------
--- ボタンを押下した直後のイベントリスナを設定します.
+-- Set the event listener that is called when the user released the button.
+-- @param func button up event handler
 --------------------------------------------------------------------------------
 function M:setOnButtonUp(func)
     self:setEventListener(M.EVENT_BUTTON_UP, func)
@@ -174,7 +184,8 @@ end
 --------------------------------------------------------------------------------
 
 --------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- This event handler is called when touched.
+-- @param e Touch Event
 --------------------------------------------------------------------------------
 function M:touchDownHandler(e)
     if self._touching then
@@ -193,7 +204,8 @@ function M:touchDownHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- This event handler is called when the button is released.
+-- @param e Touch Event
 --------------------------------------------------------------------------------
 function M:touchUpHandler(e)
     if e.idx ~= self._touchIndex then
@@ -211,7 +223,8 @@ function M:touchUpHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- This event handler is called when you move on the button.
+-- @param e Touch Event
 --------------------------------------------------------------------------------
 function M:touchMoveHandler(e)
     if e.idx ~= self._touchIndex then
@@ -231,7 +244,8 @@ function M:touchMoveHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- タッチした時のイベントリスナです.
+-- This event handler is called when you move on the button.
+-- @param e Touch Event
 --------------------------------------------------------------------------------
 function M:touchCancelHandler(e)
     if not self:isToggle() then
@@ -244,7 +258,8 @@ function M:touchCancelHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- リサイズ時のイベントハンドラです.
+-- This event handler is called when resizing.
+-- @param e resize event
 --------------------------------------------------------------------------------
 function M:resizeHandler(e)
     local background = self._background
@@ -259,7 +274,8 @@ function M:resizeHandler(e)
 end
 
 --------------------------------------------------------------------------------
--- 有効変更時のイベントハンドラです.
+-- This event handler is called when the enabled state changes.
+-- @param e event
 --------------------------------------------------------------------------------
 function M:enabledChangedHandler(e)
     if not self:isEnabled() then
