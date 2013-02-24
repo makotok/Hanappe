@@ -728,6 +728,17 @@ function Resources.readFile(fileName)
     return data
 end
 
+--------------------------------------------------------------------------------
+-- Returns the result of executing the dofile.
+-- Browse to the directory of the resource.
+-- @param fileName lua file name
+-- @return results of running the dofile
+--------------------------------------------------------------------------------
+function Resources.dofile(fileName)
+    local filePath = Resources.getResourceFilePath(fileName)
+    return dofile(filePath)
+end
+
 ----------------------------------------------------------------------------------------------------
 -- @type ClassFactory
 -- 
