@@ -3,7 +3,8 @@ cd `dirname $0`
 
 # moai setting
 MOAI_HOME=~/moai-sdk
-MOAI_IOS="$MOAI_HOME/hosts/xcode/ios"
+MOAI_BIN="$MOAI_HOME/bin/osx/moai"
+MOAI_IOS="$MOAI_HOME/hosts/ios"
 MOAI_TARGET="moai-target"
 MOAI_LUA_MODULES="$MOAI_HOME/include/lua-modules"
 
@@ -13,12 +14,13 @@ IOS_BUILD_APP="$IOS_BUILD_TARGET.app"
 IOS_BUILD_CONFIG="Release"
 IOS_BUILD_JOB="flower"
 IOS_BUILD_SDK="iphonesimulator"
-IOS_BUILD_DIR="/tmp/$IOS_BUILD_JOB/ios/$IOS_BUILD_TARGET/moai/$IOS_BUILD_SDK/$IOS_BUILD_CONFIG"
+IOS_BUILD_DIR="/tmp/$IOS_BUILD_JOB/ios/$IOS_BUILD_TARGET/moai/iphonesimulator/$IOS_BUILD_CONFIG"
 IOS_SIMULATOR_DIR=~/"Library/Application Support/iPhone Simulator/6.1/Applications"
-IPHONE_SIMULATOR="iPhone Simulator.app"
 
 # local setting
-LOCAL_BIN_DIR="`pwd`/bin"
+BIN_DIR="`pwd`/bin"
+CONFIG_LUA="$MOAI_HOME/samples/config/config.lua"
+MAIN_LAU="main.lua"
 
 # flower build
 ant build
@@ -30,7 +32,7 @@ fi
 
 # ios build
 cd "$MOAI_IOS"
-echo "$LOCAL_BIN_DIR" > $MOAI_TARGET
+echo "$BIN_DIR" > $MOAI_TARGET
 echo "$MOAI_LUA_MODULES" >> $MOAI_TARGET
 . package.sh
 

@@ -4,7 +4,7 @@ cd `dirname $0`
 # moai setting
 MOAI_HOME=~/moai-sdk
 MOAI_BIN="$MOAI_HOME/bin/osx/moai"
-MOAI_IOS="$MOAI_HOME/hosts/xcode/ios"
+MOAI_IOS="$MOAI_HOME/hosts/ios"
 MOAI_TARGET="moai-target"
 MOAI_LUA_MODULES="$MOAI_HOME/include/lua-modules"
 
