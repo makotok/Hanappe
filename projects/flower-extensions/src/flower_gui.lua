@@ -174,10 +174,10 @@ Joystick.MODE_DIGITAL          = "digital"
 Joystick.RANGE_OF_CENTER_RATE  = 0.5
 
 --- Default texture
-Joystick.DEFAULT_BASE_TEXTURE  = "gui/joystick_base.png"
+Joystick.DEFAULT_BASE_TEXTURE  = "skins/joystick_base.png"
 
 --- Default texture
-Joystick.DEFAULT_KNOB_TEXTURE  = "gui/joystick_knob.png"
+Joystick.DEFAULT_KNOB_TEXTURE  = "skins/joystick_knob.png"
 
 --------------------------------------------------------------------------------
 -- The constructor.
@@ -353,11 +353,11 @@ function Joystick:getStickDirection()
 
     local dir
     if x == cx and y == cy then
-        dir = M.STICK_CENTER
+        dir = Joystick.STICK_CENTER
     elseif math.cos(radian) < math.sin(radian) then
-        dir = x < cx and M.STICK_LEFT or M.STICK_RIGHT
+        dir = x < cx and Joystick.STICK_LEFT or Joystick.STICK_RIGHT
     else
-        dir = y < cy and M.STICK_TOP or M.STICK_BOTTOM
+        dir = y < cy and Joystick.STICK_TOP or Joystick.STICK_BOTTOM
     end
     return dir
 end
