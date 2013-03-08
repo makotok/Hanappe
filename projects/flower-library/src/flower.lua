@@ -1498,6 +1498,9 @@ M.DisplayObject = DisplayObject
 --------------------------------------------------------------------------------
 function DisplayObject:getSize()
     local w, h, d = self:getDims()
+    w = w or 0
+    h = h or 0
+    d = d or 0
     return math.abs(w), math.abs(h), math.abs(d)
 end
 
@@ -1761,8 +1764,7 @@ function Group:init(layer, width, height)
     self.children = {}
     self.isGroup = true
     self.layer = layer
-    self.width = width or 0
-    self.height = height or 0
+    self:setSize(width or 0, height or 0)
     
     self:setPivToCenter()
 end
@@ -1774,24 +1776,7 @@ end
 -- @param height height
 --------------------------------------------------------------------------------
 function Group:setSize(width, height)
-    self.width = width
-    self.height = height
-end
-
---------------------------------------------------------------------------------
--- Returns the size.
--- @return width, height, 0
---------------------------------------------------------------------------------
-function Group:getDims()
-    return self.width, self.height, 0
-end
-
---------------------------------------------------------------------------------
--- Returns the bounds.
--- @return xMin, yMin, zMin, xMax, yMax, zMax
---------------------------------------------------------------------------------
-function Group:getBounds()
-    return 0, 0, 0, self.width, self.height, 0
+    self:setBounds(0, 0, 0, width, height, 0)
 end
 
 --------------------------------------------------------------------------------
@@ -2614,8 +2599,10 @@ function NineImage:setImageDeck(imagePath, width, height)
         self.deck = imagePath
     end
     
-    width = width or self.width or self.deck.displayWidth
-    height = height or self.height or self.deck.displayHeight
+    local orgWidth, orgHeight = self:getSize()
+    
+    width = width or orgWidth or self.deck.displayWidth
+    height = height or orgHeight or self.deck.displayHeight
     
     self:setDeck(self.deck)
     self:setSize(width, height)
@@ -2632,9 +2619,7 @@ function NineImage:setSize(width, height)
     local left, top = self:getPos()
     local sclX, sclY, sclZ = width / iw, height / ih, 1
     
-    self.width = width
-    self.height = height
-    
+    self:setBounds(0, 0, 0, width, height, 0)
     self:setScl(sclX, sclY, sclZ)
 end
 
@@ -2646,24 +2631,6 @@ function NineImage:setPiv(xPiv, yPiv, zPiv)
 end
 
 --------------------------------------------------------------------------------
--- Returns the size.
--- @return width
--- @return height
--- @return 0
---------------------------------------------------------------------------------
-function NineImage:getDims()
-    return self.width, self.height, 0
-end
-
---------------------------------------------------------------------------------
--- Returns the bounds.
--- @return xMin, yMin, zMin, xMax, yMax, zMax
---------------------------------------------------------------------------------
-function NineImage:getBounds()
-    return 0, 0, 0, self.width, self.height, 0
-end
-
---------------------------------------------------------------------------------
 -- Returns the content rect from NinePatch.
 -- @return xMin
 -- @return yMin
@@ -2671,11 +2638,12 @@ end
 -- @return yMax
 --------------------------------------------------------------------------------
 function NineImage:getContentRect()
+    local width, height = self:getSize()
     local padding = self.deck.contentPadding
     local xMin = padding[1]
     local yMin = padding[2]
-    local xMax = self.width - padding[3]
-    local yMax = self.height - padding[4]
+    local xMax = width - padding[3]
+    local yMax = height - padding[4]
     return xMin, yMin, xMax, yMax
 end
 
