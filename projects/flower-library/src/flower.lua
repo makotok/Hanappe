@@ -667,6 +667,7 @@ function Resources.createNineImageDeck(fileName)
     local displayWidth, displayHeight = imageWidth - 2, imageHeight - 2
     local stretchRows = Resources.createStretchRowsOrColumns(image, true)
     local stretchColumns = Resources.createStretchRowsOrColumns(image, false)
+    local contentPadding = Resources.getNineImageContentPadding(image)
     local texture = Resources.getTexture(filePath)
     local uvRect = {1 / imageWidth, 1 / imageHeight, (imageWidth - 1) / imageWidth, (imageHeight - 1) / imageHeight}
 
@@ -675,6 +676,7 @@ function Resources.createNineImageDeck(fileName)
     deck.imageHeight = imageHeight
     deck.displayWidth = displayWidth
     deck.displayHeight = displayHeight
+    deck.contentPadding = contentPadding
     deck:reserveUVRects(1)
     deck:setTexture(texture)
     deck:setRect(0, 0, displayWidth, displayHeight)
@@ -699,7 +701,7 @@ function Resources.createStretchRowsOrColumns(image, isRow)
     local stretchSize = 0
     local pr, pg, pb, pa = image:getRGBA(0, 1)
     
-    for i = 1, targetSize - 1 do
+    for i = 1, targetSize - 2 do
         local r, g, b, a = image:getRGBA(isRow and 0 or i, isRow and i or 0)
         stretchSize = stretchSize + 1
         
@@ -713,6 +715,45 @@ function Resources.createStretchRowsOrColumns(image, isRow)
     end
     
     return stretchs
+end
+
+function Resources.getNineImageContentPadding(image)
+    local imageWidth, imageHeight = image:getSize()
+    local paddingLeft = 0
+    local paddingTop = 0
+    local paddingRight = 0
+    local paddingBottom = 0
+    
+    for x = 0, imageWidth - 2 do
+        local r, g, b, a = image:getRGBA(x + 1, imageHeight - 1)
+        if a > 0 then
+            paddingLeft = x
+            break
+        end
+    end
+    for x = 0, imageWidth - 2 do
+        local r, g, b, a = image:getRGBA(imageWidth - x - 2, imageHeight - 1)
+        if a > 0 then
+            paddingRight = x
+            break
+        end
+    end
+    for y = 0, imageHeight - 2 do
+        local r, g, b, a = image:getRGBA(imageWidth - 1, y + 1)
+        if a > 0 then
+            paddingTop = y
+            break
+        end
+    end
+    for y = 0, imageHeight - 2 do
+        local r, g, b, a = image:getRGBA(imageWidth - 1, imageHeight - y - 2)
+        if a > 0 then
+            paddingBottom = y
+            break
+        end
+    end
+    
+    return {paddingLeft, paddingTop, paddingRight, paddingBottom}
 end
 
 --------------------------------------------------------------------------------
@@ -2556,10 +2597,28 @@ M.NineImage = NineImage
 --------------------------------------------------------------------------------
 function NineImage:init(imagePath, width, height)
     DisplayObject.init(self)
+
+    self:setImageDeck(imagePath, width, height)
+end
+
+--------------------------------------------------------------------------------
+-- Set the NineImageDeck.
+-- @param imagePath File path or NineImageDeck.
+-- @param width (option) Width of image.
+-- @param height (option) Height of image.
+--------------------------------------------------------------------------------
+function NineImage:setImageDeck(imagePath, width, height)
+    if type(imagePath) == "string" then
+        self.deck = Resources.getNineImageDeck(imagePath)
+    else
+        self.deck = imagePath
+    end
     
-    self.deck = Resources.getNineImageDeck(imagePath)
+    width = width or self.width or self.deck.displayWidth
+    height = height or self.height or self.deck.displayHeight
+    
     self:setDeck(self.deck)
-    self:setSize(width or self.deck.displayWidth, height or self.deck.displayHeight)
+    self:setSize(width, height)
 end
 
 --------------------------------------------------------------------------------
@@ -2588,7 +2647,9 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the size.
--- @return width, height, 0
+-- @return width
+-- @return height
+-- @return 0
 --------------------------------------------------------------------------------
 function NineImage:getDims()
     return self.width, self.height, 0
@@ -2602,6 +2663,21 @@ function NineImage:getBounds()
     return 0, 0, 0, self.width, self.height, 0
 end
 
+--------------------------------------------------------------------------------
+-- Returns the content rect from NinePatch.
+-- @return xMin
+-- @return yMin
+-- @return xMax
+-- @return yMax
+--------------------------------------------------------------------------------
+function NineImage:getContentRect()
+    local padding = self.deck.contentPadding
+    local xMin = padding[1]
+    local yMin = padding[2]
+    local xMax = self.width - padding[3]
+    local yMax = self.height - padding[4]
+    return xMin, yMin, xMax, yMax
+end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Label
