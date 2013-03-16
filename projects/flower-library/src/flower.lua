@@ -616,6 +616,7 @@ function Resources.getTextureAtlas(luaFilePath, texture)
     data.frames = {}
     data.names = {}
     data.texture = texture and Resources.getTexture(texture)
+    data.useBounds = false
 
     for i, frame in ipairs(frames) do
         data.names[frame.name] = i
@@ -623,6 +624,7 @@ function Resources.getTextureAtlas(luaFilePath, texture)
 
         local uv = frame.uvRect
         local r = frame.spriteColorRect
+        local b = frame.spriteSourceSize
         local dataFrame = data.frames[i]
         if frame.textureRotated then
             dataFrame.quad = {uv.u0, uv.v0, uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0}
@@ -630,6 +632,8 @@ function Resources.getTextureAtlas(luaFilePath, texture)
             dataFrame.quad = {uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0, uv.u0, uv.v0}
         end
         dataFrame.rect = {r.x, r.y, r.x + r.width, r.y + r.height}
+        dataFrame.bounds = {0, 0, 0, b.width, b.height, 0}
+        data.useBounds = data.useBounds or frame.spriteTrimmed
     end
     cache[filePath] = data
     return data
@@ -2285,11 +2289,23 @@ function SheetImage:setTextureAtlas(atlas, texture)
         self.texture = atlas.texture
     end
     
+    local boundsDeck = nil
+    if atlas.useBounds then
+        boundsDeck = MOAIBoundsDeck.new()
+        boundsDeck:reserveBounds(self.sheetSize)
+        boundsDeck:reserveIndices(self.sheetSize)
+        deck:setBoundsDeck(boundsDeck)
+    end
+
     for i, frame in ipairs ( atlas.frames ) do
         if not self.grid then
             deck:setRect(i, unpack(frame.rect))
         end
         deck:setUVQuad(i, unpack(frame.quad))
+        if boundsDeck then
+            boundsDeck:setBounds(i, unpack(frame.bounds))
+            boundsDeck:setIndex(i, i)
+        end
     end
 end
 
