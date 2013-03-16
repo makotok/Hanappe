@@ -1,7 +1,7 @@
 -- import
 flower = require "flower"
-tiled  = require "flower_tiled"
-gui    = require "flower_gui"
+tiled  = require "tiled"
+gui    = require "gui"
 
 -- Resource Setting
 flower.Resources.addResourceDirectory("assets")
