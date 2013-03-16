@@ -27,7 +27,6 @@ function onCreate(params)
             },
         }},
     }
-    view:updateComponent()
 end
 
 function onStartClick(e)
