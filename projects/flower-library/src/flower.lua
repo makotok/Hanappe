@@ -931,7 +931,7 @@ end
 EventDispatcher = class()
 M.EventDispatcher = EventDispatcher
 
-EventDispatcher.eventCache = {}
+EventDispatcher.EVENT_CACHE = {}
 
 --------------------------------------------------------------------------------
 -- The constructor.
@@ -1022,8 +1022,8 @@ end
 function EventDispatcher:dispatchEvent(event, data)
     local eventName = type(event) == "string" and event
     if eventName then
-        event = self.eventCache[eventName] or Event(eventName)
-        self.eventCache[eventName] = nil
+        event = EventDispatcher.EVENT_CACHE[eventName] or Event(eventName)
+        EventDispatcher.EVENT_CACHE[eventName] = nil
     end
     
     assert(event.type)
@@ -1043,7 +1043,7 @@ function EventDispatcher:dispatchEvent(event, data)
     end
     
     if eventName then
-        self.eventCache[eventName] = event
+        EventDispatcher.EVENT_CACHE[eventName] = event
     end
 end
 
