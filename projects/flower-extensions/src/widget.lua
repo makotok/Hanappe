@@ -20,16 +20,17 @@ local Group = flower.Group
 
 -- classes
 local PropertyUtils
+local PriorityQueue
+local LayoutMgr
 local ThemeMgr
 local FocusMgr
 local UIComponent
 local UIGroup
-local UIView
+local View
 local ScrollView
 local ListView
 local Button
 local TextInput
-local Joystick
 local Panel
 local MsgBox
 local Layout
@@ -45,7 +46,7 @@ local BUILTIN_THEME = {
         normalTexture = "skins/button_normal.9.png",
         selectedTexture = "skins/button_selected.9.png",
         disabledTexture = "skins/button_disabled.9.png",
-        fontName = "VL-PGothic.ttf",
+        font = "VL-PGothic.ttf",
         textSize = 24,
         textColor = {0, 0, 0, 1},
         horizotalAlign = "center",
@@ -59,7 +60,7 @@ local BUILTIN_THEME = {
     },
     MsgBox = {
         panelTexture = "skins/panel_base.9.png",
-        fontName = "VL-PGothic.ttf",
+        font = "VL-PGothic.ttf",
         textSize = 24,
         textColor = {0, 0, 0, 1},
     },
@@ -161,6 +162,176 @@ function PropertyUtils.getProperty(obj, name)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type PriorityQueue
+----------------------------------------------------------------------------------------------------
+PriorityQueue = class()
+
+----------------------------------------
+-- コンストラクタです.
+-- @param comparetor
+----------------------------------------
+function PriorityQueue:init(comparetor)
+    assert(comparetor, "comparetor is nil!")
+    self.queue = {}
+    self.comparetor = comparetor
+end
+
+----------------------------------------
+-- オブジェクトを順序付けて追加します.
+-- @param object オブジェクト
+----------------------------------------
+function PriorityQueue:push(object)
+    self:remove(object)
+
+    local comparetor = assert(self.comparetor)
+    local index = 0
+    for i, v in ipairs(self.queue) do
+        index = i
+        if comparetor(object, v) > 0 then
+            break
+        end
+    end
+    index = index + 1
+    table.insert(self.queue, index, object)
+end
+
+----------------------------------------
+-- キューの先頭オブジェクト削除してから返します.<br>
+-- キューに存在しない場合はnilを返します.
+-- @return object
+----------------------------------------
+function PriorityQueue:poll()
+    if self:size() > 0 then
+        return table.remove(self.queue, 1)
+    end
+    return nil
+end
+
+----------------------------------------
+-- 指定したインデックスのオブジェクトを返します.
+-- @param i インデックス
+-- @return object
+----------------------------------------
+function PriorityQueue:get(i)
+    return self.queue[i]
+end
+
+
+----------------------------------------
+-- 指定したオブジェクトが存在する場合削除します.
+-- 存在しない場合は削除しません.
+-- @param object オブジェクト
+-- @return 削除した場合はそのオブジェクト
+----------------------------------------
+function PriorityQueue:remove(object)
+    for i, v in ipairs(self.queue) do
+        if object == v then
+            return table.remove(self.queue, i)
+        end
+    end
+    return nil
+end
+
+----------------------------------------
+-- キューの内容をクリアします.
+----------------------------------------
+function PriorityQueue:clear()
+    self.queue = {}
+end
+
+----------------------------------------
+-- キューのサイズを返します.
+-- @return キューのサイズ.
+----------------------------------------
+function PriorityQueue:size()
+    return #self.queue
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type LayoutMgr
+----------------------------------------------------------------------------------------------------
+LayoutMgr = class()
+M.LayoutMgr = LayoutMgr
+
+LayoutMgr.ASC_COMPARETOR = function(a, b) 
+    local alevel = a:getNestLevel()
+    local blevel = b:getNestLevel()
+    
+    if alevel < blevel then
+        return -1
+    elseif alevel == blevel then
+        return 0
+    else
+        return 1
+    end
+end
+
+LayoutMgr.DESC_COMPARETOR = function(a, b) 
+    return ascComparetor(a, b) * -1
+end
+
+function LayoutMgr:init()
+    self._callOncePushed = false
+    self._invalidateDisplayFlag = false
+    self._invalidateLayoutFlag = false
+    self._invalidateDisplayQueue = PriorityQueue(self.DESC_COMPARETOR)
+    self._invalidateLayoutQueue = PriorityQueue(self.DESC_COMPARETOR)
+end
+
+function LayoutMgr:validate()
+    self:validateDisplay()
+    self:validateLayout()
+end
+
+function LayoutMgr:validateDisplay()
+    if not self._invalidateDisplayFlag then
+        return
+    end
+
+    local object = self._invalidateDisplayQueue:poll()
+    while object do
+        object:validateDisplay()
+        object = self._invalidateDisplayQueue:poll()
+    end
+    self._invalidateDisplayFlag = false
+end
+
+function LayoutMgr:validateLayout()
+    if not self._invalidateLayoutFlag then
+        return
+    end
+
+    local object = invalidateLayoutQueue:poll()
+    while object do
+        object:validateLayout()
+        object = self._invalidateLayoutQueue:poll()
+    end
+    self._invalidateLayoutFlag = false
+end
+
+function LayoutMgr:invalidateDisplay(object)
+    self.invalidateDisplayFlag = true
+    self.invalidateDisplayQueue:push(object)
+    self:callOnceValidate()
+end
+
+function LayoutMgr:invalidateLayout(object)
+    self._invalidateLayoutFlag = true
+    self._invalidateLayoutQueue:push(object)
+    self:callOnceValidate()
+end
+
+function LayoutMgr:callOnceValidate()
+    if not self._callOncePushed then
+        self._callOncePushed = true
+        Executors.callOnce(function()
+            self:validate()
+            self._callOncePushed = false
+        end)
+    end
+end
+
+----------------------------------------------------------------------------------------------------
 -- @type ThemeMgr
 ----------------------------------------------------------------------------------------------------
 ThemeMgr = class()
@@ -227,7 +398,7 @@ UIComponent.EVENT_THEME_CHANGED = "themeChanged"
 UIComponent.EVENT_STYLE_CHANGED = "styleChanged"
 
 --- Event: Style changed Event
-UIComponent.EVENT_ENABLED_CHANGED = "enabledChanged"
+UIComponent.EVENT_PROPERTY_CHANGED = "propertyChanged"
 
 --- Event: FocusIn Event
 UIComponent.EVENT_FOCUS_IN = "focusIn"
@@ -245,16 +416,12 @@ function UIComponent:init(params)
     Group.init(self)
     self:initInternal(params)
     self:initEventListeners(params)
-    self:initChildren(params)
-
-    self:setProperties(params)
-    self:updateDisplay()
+    self:initComponent(params)
 end
 
 --------------------------------------------------------------------------------
 -- Initialization is the process of internal variables.
 -- Please to inherit this function if the definition of the variable.
--- @param params Parameter table
 --------------------------------------------------------------------------------
 function UIComponent:initInternal(params)
     self.isComponent = true
@@ -263,14 +430,16 @@ function UIComponent:initInternal(params)
     self._focusEnabled = true
     self._theme = nil
     self._styles = {}
+    self._properties = {}
     self._layout = nil
     self._excludeLayout = false
+    self._invalidDisplayFlag = false
+    self._invalidLayoutFlag = false
 end
 
 --------------------------------------------------------------------------------
 -- Performing the initialization processing of the event listener.
 -- Please to inherit this function if you want to initialize the event listener.
--- @param params Parameter table
 --------------------------------------------------------------------------------
 function UIComponent:initEventListeners(params)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchCommon, self, -10)
@@ -284,29 +453,118 @@ end
 -- Please to inherit this function if you want to change the behavior of the component.
 -- @param params Parameter table
 --------------------------------------------------------------------------------
-function UIComponent:initChildren(params)
+function UIComponent:initComponent(params)
+    self:createChildren()
+    self:invalidateAll()
+    
+    PropertyUtils.setProperties(self, params, true)
+end
 
+--------------------------------------------------------------------------------
+-- To create a child components.
+-- Please be inherited as necessary.
+--------------------------------------------------------------------------------
+function UIComponent:createChildren()
+end
+
+--------------------------------------------------------------------------------
+-- Scheduling the update process of the component.
+--------------------------------------------------------------------------------
+function UIComponent:invalidateAll()
+    self:invalidateDisplay()
+    self:invalidateLayout()
+end
+
+--------------------------------------------------------------------------------
+-- Scheduling the process of updating the display.
+--------------------------------------------------------------------------------
+function UIComponent:invalidateDisplay()
+    if not self._invalidDisplayFlag then
+        local layoutMgr = self:getLayoutMgr()
+        layoutMgr:invalidateDisplay(self)
+
+        self._invalidDisplayFlag = true
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Scheduling the process of updating the layout.
+--------------------------------------------------------------------------------
+function UIComponent:invalidateLayout()
+    if not self._invalidLayoutFlag then
+        local parent = self.parent
+        local layoutMgr = self:getLayoutMgr()
+        
+        if parent and parent.isComponent then
+            parent:invalidateLayout()
+        end
+        
+        layoutMgr:invalidateLayout(self)
+        self._invalidLayoutFlag = true
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Validation of the component.
+-- This process is heavy.
+-- Use when you want to determine the size and layout of the component.
+--------------------------------------------------------------------------------
+function UIComponent:validateAll(updateChildrenFlag)
+    self:validateDisplay(updateChildrenFlag)
+    self:validateLayout(updateChildrenFlag)
+end
+
+--------------------------------------------------------------------------------
+-- Validation of the display.
+-- This process is heavy.
+-- Use when you want to determine the size and layout of the component.
+--------------------------------------------------------------------------------
+function UIComponent:validateDisplay(updateChildrenFlag)
+    if updateChildrenFlag then
+        for i, child in ipairs(self:getChildren()) do
+            if child.validateDisplay then
+                child:validateDisplay(updateChildrenFlag)
+            end
+        end
+    end
+
+    if self._invalidDisplayFlag then
+        self:updateDisplay()
+        self._invalidDisplayFlag = false
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Validation of the layout.
+-- This process is heavy.
+-- Use when you want to determine the size and layout of the component.
+-- @param updateChildrenFlag Children are also updated
+--------------------------------------------------------------------------------
+function UIComponent:validateLayout(updateChildrenFlag)
+    if updateChildrenFlag then
+        for i, child in ipairs(self:getChildren()) do
+            if child.validateLayout then
+                child:validateLayout(updateChildrenFlag)
+            end
+        end
+    end
+    if self._invalidLayoutFlag then
+        self:updateLayout()
+        self._invalidLayoutFlag = false
+    end
 end
 
 --------------------------------------------------------------------------------
 -- Update the display.
+-- This method is called at the time you need to update the display.
 --------------------------------------------------------------------------------
 function UIComponent:updateDisplay()
-
 end
 
 --------------------------------------------------------------------------------
 -- Update the layout.
 --------------------------------------------------------------------------------
-function UIComponent:updateLayout(childrenUpdate)
-    if childrenUpdate then
-        for i, child in ipairs(self:getChildren()) do
-            if child.isComponent then
-                child:updateLayout(childrenUpdate)
-            end
-        end
-    end
-     
+function UIComponent:updateLayout()
     if self._layout then
         self._layout:update(self)
     end
@@ -322,6 +580,33 @@ function UIComponent:getChildren()
 end
 
 --------------------------------------------------------------------------------
+-- Add the child component.
+-- After adding performs scheduling of the layout.
+-- @param child the child component
+-- @return TODO:
+--------------------------------------------------------------------------------
+function UIComponent:addChild(child)
+    if Group.addChild(self, child) then
+        self:invalidateLayout()
+        return true
+    end
+    return false
+end
+
+--------------------------------------------------------------------------------
+-- Remove the child component.
+-- @param child the child component
+-- @return TODO:
+--------------------------------------------------------------------------------
+function UIComponent:removeChild(child)
+    if Group.removeChild(self, child) then
+        self:invalidateLayout()
+        return true
+    end
+    return false
+end
+
+--------------------------------------------------------------------------------
 -- Returns the nest level.
 -- @return nest level
 --------------------------------------------------------------------------------
@@ -331,14 +616,6 @@ function UIComponent:getNestLevel()
         return parent:getNestLevel() + 1
     end
     return 1
-end
-
---------------------------------------------------------------------------------
--- Sets the properties
--- @param properties properties
---------------------------------------------------------------------------------
-function UIComponent:setProperties(properties)
-    PropertyUtils.setProperties(self, properties, true)
 end
 
 --------------------------------------------------------------------------------
@@ -354,6 +631,7 @@ function UIComponent:setSize(width, height)
     
     if oldWidth ~= width or oldHeight ~= height then
         Group.setSize(self, width, height)
+        self:invalidateAll()        
         self:dispatchEvent(UIComponent.EVENT_RESIZE)
     end
 end
@@ -362,11 +640,9 @@ end
 -- Set the enabled state.
 -- @param value enabled
 --------------------------------------------------------------------------------
-function UIComponent:setEnabled(enabled)
-    if self._enabled ~= enabled then
-        self._enabled = enabled
-        self:dispatchEvent(UIComponent.EVENT_ENABLED_CHANGED)
-    end    
+function UIComponent:setEnabled(value)
+    self:setProperty("enabled", value)
+    self:invalidateDisplay()
 end
 
 --------------------------------------------------------------------------------
@@ -374,7 +650,7 @@ end
 -- @return enabled
 --------------------------------------------------------------------------------
 function UIComponent:isEnabled()
-    return self._enabled
+    return self:getProperty("enabled")
 end
 
 --------------------------------------------------------------------------------
@@ -397,8 +673,7 @@ end
 -- @return focus
 --------------------------------------------------------------------------------
 function UIComponent:isFocus()
-    local focusMgr = self:getFocusMgr()
-    return focusMgr:getFocusObject() == self
+    return self:getFocusMgr():getFocusObject() == self
 end
 
 --------------------------------------------------------------------------------
@@ -429,7 +704,7 @@ end
 function UIComponent:setTheme(theme)
     if self._theme ~= theme then
         self._theme = theme
-        self:updateDisplay()
+        self:invalidateAll()
         self:dispatchEvent(UIComponent.EVENT_THEME_CHANGED)
     end
 end
@@ -443,9 +718,9 @@ function UIComponent:getTheme()
         return self._theme
     end
     
-    if self._themeName then
-        local globalTheme = M.getTheme()
-        return globalTheme[self._themeName]
+    local globalTheme = M.getTheme()
+    if self.THEME_NAME then
+        return globalTheme[self.THEME_NAME]
     end
 end
 
@@ -457,6 +732,7 @@ end
 function UIComponent:setStyle(name, value)
     if self._styles[name] ~= value then
         self._styles[name] = value
+        self:invalidateDisplay()
         self:dispatchEvent(UIComponent.EVENT_STYLE_CHANGED, {styleName = name, styleValue = value})
     end
 end
@@ -478,13 +754,37 @@ function UIComponent:getStyle(name)
 end
 
 --------------------------------------------------------------------------------
+-- Sets the style of the component.
+-- @param name style name
+-- @param value style value
+--------------------------------------------------------------------------------
+function UIComponent:setProperty(name, value)
+    if self._properties[name] ~= value then
+        self._properties[name] = value
+        self:dispatchEvent(UIComponent.EVENT_PROPERTY_CHANGED, {propName = name, propValue = value})
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Returns the style.
+-- @param name style name
+-- @return style value
+--------------------------------------------------------------------------------
+function UIComponent:getProperty(name)
+    return self._properties[name]
+end
+
+--------------------------------------------------------------------------------
 -- Set the layout.
 -- When you set the layout, the update process of layout class is called when resizing.
 -- The position of the component is automatically updated.
 -- @param layout layout object
 --------------------------------------------------------------------------------
 function UIComponent:setLayout(layout)
-    self._layout = layout
+    if self._layout ~= layout then
+        self._layout = layout
+        self:invalidateLayout()
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -499,7 +799,10 @@ end
 -- Set whether you want to update the position by the layout class.
 --------------------------------------------------------------------------------
 function UIComponent:setExcludeLayout(excludeLayout)
-    self._excludeLayout = excludeLayout
+    if self._excludeLayout ~= excludeLayout then
+        self._excludeLayout = excludeLayout
+        self:invalidateLayout()
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -562,32 +865,11 @@ M.UIGroup = UIGroup
 -- Please to inherit this function if the definition of the variable.
 --------------------------------------------------------------------------------
 function UIGroup:initInternal(params)
-    UIComponent.initInternal(self, params)
-    self._focusEnabled = false
-end
-
-----------------------------------------------------------------------------------------------------
--- @type UIView
--- This class is an image that can be pressed.
--- It is a simple button.
-----------------------------------------------------------------------------------------------------
-UIView = class(UIGroup)
-M.UIView = UIView
-
---------------------------------------------------------------------------------
--- Initialization is the process of internal variables.
--- Please to inherit this function if the definition of the variable.
---------------------------------------------------------------------------------
-function UIView:initInternal(params)
     UIGroup.initInternal(self, params)
-    self._focusEnabled = false
+    self:setFocusEnabled(false)
 end
 
-function UIView:initEventListeners(params)
-    UIGroup.initEventListeners(self, params)
-end
 
-function UIView:initChildren()
 
 ----------------------------------------------------------------------------------------------------
 -- @type ImageButton
@@ -596,6 +878,9 @@ function UIView:initChildren()
 ----------------------------------------------------------------------------------------------------
 Button = class(UIComponent)
 M.Button = Button
+
+--- Theme name
+Button.THEME_NAME = "Button"
 
 --- Align map
 Button.HORIZOTAL_ALIGNS = {
@@ -611,29 +896,29 @@ Button.VERTICAL_ALIGNS = {
     bottom  = MOAITextBox.RIGHT_JUSTIFY,
 }
 
---- Event: Click Event
+--- Click Event
 Button.EVENT_CLICK = "click"
 
---- Event: Button down Event
+--- Button down Event
 Button.EVENT_BUTTON_DOWN = "buttonDown"
 
---- Event: Button up Event
+--- Button up Event
 Button.EVENT_BUTTON_UP = "buttonUp"
 
---- Style: selectedTexture
-Button.STYLE_SELECTED_TEXTURE = "selectedTexture"
+--- Style: normalTexture
+Button.STYLE_NORMAL_TEXTURE = "normalTexture"
 
 --- Style: selectedTexture
 Button.STYLE_SELECTED_TEXTURE = "selectedTexture"
 
---- Style: disabledTexture
+--- Style: selectedTexture
 Button.STYLE_DISABLED_TEXTURE = "disabledTexture"
-
---- Style: fontName
-Button.STYLE_FONT_NAME = "fontName"
 
 --- Style: textSize
 Button.STYLE_TEXT_SIZE = "textSize"
+
+--- Style: font
+Button.STYLE_FONT = "font"
 
 --- Style: horizotalAlign
 Button.STYLE_HORIZOTAL_ALIGN = "horizotalAlign"
@@ -647,32 +932,29 @@ Button.STYLE_VERTICAL_ALIGN = "verticalAlign"
 --------------------------------------------------------------------------------
 function Button:initInternal(params)
     UIComponent.initInternal(self, params)
-    self._themeName = "Button"
     self._touchDownIdx = nil
-    self._imageDeck = nil
-    self._font = nil
-    self._horizotalAlign = nil
-    self._verticalAlign = nil
+    self._currentImageDeck = nil
+    self._currentTextSize = nil
+    self._currentFont = nil
+    self._currentHorizotalAlign = nil
+    self._currentVerticalAlign = nil
     self._buttonImage = nil
     self._text = params.text or ""
-    self._textSize = nil
     self._textLabel = nil
 end
 
 function Button:initEventListeners(params)
     UIComponent.initEventListeners(self, params)
-    self:addEventListener(UIComponent.EVENT_ENABLED_CHANGED, self.onEnabledChanged, self)
-    self:addEventListener(Event.RESIZE, self.onResize, self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
     self:addEventListener(Event.TOUCH_UP, self.onTouchUp, self)
     self:addEventListener(Event.TOUCH_MOVE, self.onTouchMove, self)
     self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self)
 end
 
-function Button:initChildren(params)
-    UIComponent.initChildren(self, params)
+function Button:initComponent(params)
+    UIComponent.initComponent(self, params)
     
-    self._imageDeck = self:getNewImageDeck()
+    self._currentImageDeck = self:getNewImageDeck()
     self._buttonImage = NineImage(self._currentImageDeck)
     self:addChild(self._buttonImage)
     
@@ -682,39 +964,61 @@ function Button:initChildren(params)
     self:setSize(self._buttonImage:getSize())
 end
 
---------------------------------------------------------------------------------
--- Update the display.
---------------------------------------------------------------------------------
 function Button:updateDisplay()
-    local buttonImage = self._buttonImage
-    buttonImage:setDeck(self:getImageDeck())
-    buttonImage:setSize(self:getSize())
-
-    local textLabel = self._textLabel
-    local xMin, yMin, xMax, yMax = buttonImage:getContentRect()
-    local textWidth, textHeight = xMax - xMin, yMax - yMin    
-    textLabel:setPos(xMin, yMin)
-    textLabel:setSize(textWidth, textHeight)
-    textLabel:setString(self:getText())
-    textLabel:setTextSize(self:getTextSize())
-    textLabel:setTextColor(self:getTextColor())
-    textLabel:setAlignment(self:getAlignment())
-    textLabel:setFont(self:getFont())
+    -- button image
+    do
+        local buttonImage = self._buttonImage
+        local newImageDeck = self:getNewImageDeck()
+        if newImageDeck ~= self._currentImageDeck then
+            self._currentImageDeck = newImageDeck
+            buttonImage:setImageDeck(self._currentImageDeck)
+        end
+        buttonImage:setSize(self:getSize())
+    end
+    
+    -- text label
+    do
+        local textLabel = self._textLabel
+        local xMin, yMin, xMax, yMax = self._buttonImage:getContentRect()
+        local textWidth, textHeight = xMax - xMin, yMax - yMin
+        local currentTextWidth, currentTextHeight = self._textLabel:getSize()
+        
+        -- position
+        textLabel:setPos(xMin, yMin)
+        
+        -- size
+        if currentTextWidth ~= textWidth or currentTextHeight ~= textHeight then
+            textLabel:setSize(textWidth, textHeight)
+        end
+        
+        -- textSize
+        if self._currentTextSize ~= textSize then
+            self._currentTextSize = textSize
+            textLabel:setTextSize(textSize)
+        end
+        
+        -- text align
+        local horizotalAlign = self:getStyle(Button.STYLE_HORIZOTAL_ALIGN)
+        local verticalAlign = self:getStyle(Button.STYLE_VERTICAL_ALIGN)
+        if self._currentHorizotalAlign ~= horizotalAlign or self._currentVerticalAlign ~= verticalAlign then
+            local h = Button.HORIZOTAL_ALIGNS[horizotalAlign]
+            local v = Button.VERTICAL_ALIGNS[verticalAlign]
+            textLabel:setAlignment(h, v)
+        end
+        
+        -- font
+        local font = self:getStyle(Button.STYLE_FONT)
+        local textSize = self:getStyle(Button.STYLE_TEXT_SIZE)
+        if self._currentFont ~= font then
+            self._currentFont = font
+            font = Resources.getFont(self._currentFont, nil, textSize)
+            textLabel:setFont(self._currentFont)
+            textLabel:setTextSize()
+        end
+    end
 end
 
---------------------------------------------------------------------------------
--- Update the imageDeck.
---------------------------------------------------------------------------------
-function Button:updateImageDeck()
-    local buttonImage = self._buttonImage
-    buttonImage:setDeck(self:getImageDeck())
-end
-
---------------------------------------------------------------------------------
--- Returns the imageDeck.
--- @return imageDeck
---------------------------------------------------------------------------------
-function Button:getImageDeck()
+function Button:getNewImageDeck()
     if not self:isEnabled() then
         return self:getStyle(Button.STYLE_DISABLED_TEXTURE)
     elseif self:isButtonDown() then
@@ -737,13 +1041,15 @@ end
 -- @param text text
 --------------------------------------------------------------------------------
 function Button:setText(text)
-    self._text = text
-    self._textLabel:setString(text)
+    if self._text ~= text then
+        self._text = text
+        self._textLabel:setString(text)
+    end
 end
 
 --------------------------------------------------------------------------------
 -- Returns the text.
--- @return text
+-- @param text text
 --------------------------------------------------------------------------------
 function Button:getText()
     return self._text
@@ -755,104 +1061,26 @@ end
 --------------------------------------------------------------------------------
 function Button:setTextSize(textSize)
     self:setStyle(Button.STYLE_TEXT_SIZE, textSize)
-    self._textLabel:setTextSize(self:getTextSize())
 end
 
 --------------------------------------------------------------------------------
 -- Sets the textSize.
 -- @param textSize textSize
 --------------------------------------------------------------------------------
-function Button:getTextSize()
-    return self:getStyle(Button.STYLE_TEXT_SIZE)
-end
-
---------------------------------------------------------------------------------
--- Sets the textSize.
--- @param textSize textSize
---------------------------------------------------------------------------------
-function Button:setFontName(fontName)
-    self:setStyle(Button.STYLE_FONT_NAME, font)
-    self._textLabel:setFont(self:getFont())
-end
-
---------------------------------------------------------------------------------
--- Sets the textSize.
--- @param textSize textSize
---------------------------------------------------------------------------------
-function Button:getFontName()
-    return self:getStyle(Button.STYLE_FONT_NAME)
-end
-
---------------------------------------------------------------------------------
--- Returns the font.
--- @return font
---------------------------------------------------------------------------------
-function Button:getFont()
-    local fontName = self:getFontName()
-    local font = Resources.getFont(fontName, nil, self:getTextSize())
-    return font
+function Button:setFont(font)
+    self:setStyle(Button.STYLE_FONT, font)
 end
 
 --------------------------------------------------------------------------------
 -- Sets the text align.
--- @param horizotalAlign horizotal align(left, center, top)
--- @param verticalAlign vertical align(top, center, bottom)
+-- @param horizotalAlign horizotal align
+-- @param verticalAlign vertical align
 --------------------------------------------------------------------------------
 function Button:setTextAlign(horizotalAlign, verticalAlign)
     self:setStyle(Button.STYLE_HORIZOTAL_ALIGN, horizotalAlign)
     self:setStyle(Button.STYLE_VERTICAL_ALIGN, verticalAlign)
-
-    self._textLabel:setAlignment(self:getAlignment())
 end
 
---------------------------------------------------------------------------------
--- Returns the text align.
--- @return horizotal align(left, center, top)
--- @return vertical align(top, center, bottom)
---------------------------------------------------------------------------------
-function Button:getTextAlign()
-    return self:getStyle(Button.STYLE_HORIZOTAL_ALIGN), self:getStyle(Button.STYLE_VERTICAL_ALIGN)
-end
-
---------------------------------------------------------------------------------
--- Returns the text align for MOAITextBox.
--- @return horizotal align
--- @return vertical align
---------------------------------------------------------------------------------
-function Button:getAlignment()
-    local h, v = self:getTextAlign()
-    h = assert(Button.HORIZOTAL_ALIGNS[h])
-    v = assert(Button.VERTICAL_ALIGNS[v])
-    return h, v
-end
-
---------------------------------------------------------------------------------
--- Sets the text align.
--- @param red red(0 ... 1)
--- @param green green(0 ... 1)
--- @param blue blue(0 ... 1)
--- @param alpha alpha(0 ... 1)
---------------------------------------------------------------------------------
-function Button:setTextColor(red, green, blue, alpha)
-    if red == nil and green == nil and blue == nil and alpha == nil then
-        self:setStyle(Button.STYLE_TEXT_COLOR, nil)
-    else
-        self:setStyle(Button.STYLE_TEXT_COLOR, {red or 0, green or 0, blue or 0, alpha or 0})
-    end
-    
-    self._textLabel:setColor(self:getTextColor())
-end
-
---------------------------------------------------------------------------------
--- Returns the text color.
--- @return red(0 ... 1)
--- @return green(0 ... 1)
--- @return blue(0 ... 1)
--- @return alpha(0 ... 1)
---------------------------------------------------------------------------------
-function Button:getTextColor()
-    return unpack(self:getStyle(Button.STYLE_TEXT_COLOR))
-end
 --------------------------------------------------------------------------------
 -- Down the button.
 -- There is no need to call directly to the basic.
@@ -864,7 +1092,7 @@ function Button:doButtonDown(idx)
     end
     
     self.touchDownIdx = idx
-    self:updateImageDeck()
+    self._buttonImage:setImageDeck(self:getNewImageDeck())
     
     self:dispatchEvent(Button.EVENT_BUTTON_DOWN)
 end
@@ -879,33 +1107,9 @@ function Button:doButtonUp()
     end
 
     self.touchDownIdx = nil
-    self:updateImageDeck()
+    self._buttonImage:setImageDeck(self:getNewImageDeck())
     
     self:dispatchEvent(Button.EVENT_BUTTON_UP)
-end
-
---------------------------------------------------------------------------------
--- This event handler is called when enabled Changed.
--- @param e Touch Event
---------------------------------------------------------------------------------
-function Button:onEnabledChanged(e)
-    self:updateImageDeck()
-    if not self:isEnabled() then
-        self:doButtonUp()
-    end
-end
-
---------------------------------------------------------------------------------
--- This event handler is called when resize.
--- @param e Touch Event
---------------------------------------------------------------------------------
-function Button:onResize(e)
-    self._buttonImage:setSize(self:getSize())
-
-    local xMin, yMin, xMax, yMax = self._buttonImage:getContentRect()
-    local textWidth, textHeight = xMax - xMin, yMax - yMin    
-    self._textLabel:setPos(xMin, yMin)
-    self._textLabel:setSize(textWidth, textHeight)    
 end
 
 --------------------------------------------------------------------------------
@@ -960,7 +1164,7 @@ end
 -- @type Joystick
 -- It is a virtual Joystick.
 ----------------------------------------------------------------------------------------------------
-Joystick = class(UIComponent)
+Joystick = class(Group)
 M.Joystick = Joystick
 
 --- Event type when you change the position of the stick
@@ -1001,44 +1205,43 @@ Joystick.DEFAULT_KNOB_TEXTURE  = "skins/joystick_knob.png"
 -- @param baseTexture Joystick base texture
 -- @param knobTexture Joystick knob texture
 --------------------------------------------------------------------------------
-function Joystick:initInternal(params)
-    UIComponent.initInternal(self, params)
+function Joystick:init(baseTexture, knobTexture)
+    Group.init(self)
     self._touchDownFlag = false
     self._rangeOfCenterRate = Joystick.RANGE_OF_CENTER_RATE
     self._stickMode = Joystick.MODE_ANALOG
     self._changedEvent = Event(Joystick.EVENT_STICK_CHANGED)
     self._baseTexture = baseTexture or Joystick.DEFAULT_BASE_TEXTURE
     self._knobTexture = knobTexture or Joystick.DEFAULT_KNOB_TEXTURE
+    
+    self:initChildren()
+    self:initEventListeners()
+end
+
+--------------------------------------------------------------------------------
+-- Initialize child objects that make up the Joystick.
+-- You must not be called directly.
+--------------------------------------------------------------------------------
+function Joystick:initChildren()
+    self._baseImage = Image(self._baseTexture)
+    self._knobImage = Image(self._knobTexture)
+    
+    self:addChild(self._baseImage)
+    self:addChild(self._knobImage)
+
+    self:setSize(self._baseImage:getSize())
+    self:setCenterKnob()
 end
 
 --------------------------------------------------------------------------------
 -- Initializes the event listener.
 -- You must not be called directly.
 --------------------------------------------------------------------------------
-function Joystick:initEventListeners(params)
-    UIComponent.initEventListeners(self, params)
+function Joystick:initEventListeners()
     self:addEventListener("touchDown", self.onTouchDown, self)
     self:addEventListener("touchUp", self.onTouchUp, self)
     self:addEventListener("touchMove", self.onTouchMove, self)
     self:addEventListener("touchCancel", self.onTouchCancel, self)
-end
-
-
---------------------------------------------------------------------------------
--- Initialize child objects that make up the Joystick.
--- You must not be called directly.
---------------------------------------------------------------------------------
-function Joystick:initChildren(params)
-    UIComponent.initChildren(self, params)
-    
-    self._baseImage = Image(self._baseTexture)
-    self._knobImage = Image(self._knobTexture)
-
-    self:addChild(self._baseImage)
-    self:addChild(self._knobImage)
-
-    self:setSize(self._baseImage:getSize())
-    self:setCenterKnob()
 end
 
 --------------------------------------------------------------------------------
@@ -1197,23 +1400,16 @@ function Joystick:setStickMode(mode)
 end
 
 --------------------------------------------------------------------------------
--- Returns the touched.
--- @return stick mode
---------------------------------------------------------------------------------
-function Joystick:isTouchDown()
-    return self._touchIndex ~= nil
-end
-
---------------------------------------------------------------------------------
 -- This event handler is called when touched.
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Joystick:onTouchDown(e)
-    if self:isTouchDown() then
+    if self._touchDownFlag then
         return
     end
 
     local mx, my = self:worldToModel(e.wx, e.wy, 0)
+    self._touchDownFlag = true
     self._touchIndex = e.idx
     self:updateKnob(mx, my)
 end
@@ -1223,11 +1419,14 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Joystick:onTouchUp(e)
+    if not self._touchDownFlag then
+        return
+    end
     if e.idx ~= self._touchIndex then
         return
     end
 
-    self._touchIndex = nil
+    self._touchDownFlag = false
     local cx, cy = self:getCenterLoc()
     self:updateKnob(cx, cy)
 end
@@ -1237,6 +1436,9 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Joystick:onTouchMove(e)
+    if not self._touchDownFlag then
+        return
+    end
     if e.idx ~= self._touchIndex then
         return
     end
@@ -1250,7 +1452,7 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Joystick:onTouchCancel(e)
-    self._touchIndex = nil
+    self._touchDownFlag = false
     self:setCenterKnob()
 end
 
