@@ -220,15 +220,15 @@ M.class = class
 -- @return class
 --------------------------------------------------------------------------------
 function class:__call(...)
-    local classObj = table.copy(self)
+    local clazz = table.copy(self)
     local bases = {...}
     for i = #bases, 1, -1 do
-        table.copy(bases[i], classObj)
+        table.copy(bases[i], clazz)
     end
-    classObj.__call = function(self, ...)
+    clazz.__call = function(self, ...)
         return self:new(...)
     end
-    return setmetatable(classObj, classObj)
+    return setmetatable(clazz, clazz)
 end
 
 --------------------------------------------------------------------------------
@@ -942,7 +942,7 @@ EventDispatcher.EVENT_CACHE = {}
 -- @param eventType (option)The type of event.
 --------------------------------------------------------------------------------
 function EventDispatcher:init()
-    self.eventlisteners = {}
+    self.eventListenersMap = {}
 end
 
 --------------------------------------------------------------------------------
@@ -960,17 +960,21 @@ function EventDispatcher:addEventListener(eventType, callback, source, priority)
     if self:hasEventListener(eventType, callback, source) then
         return false
     end
+    if not self.eventListenersMap[eventType] then
+        self.eventListenersMap[eventType] = {}
+    end
 
+    local listeners = self.eventListenersMap[eventType]
     local listener = EventListener(eventType, callback, source, priority)
 
-    for i, v in ipairs(self.eventlisteners) do
+    for i, v in ipairs(listeners) do
         if listener.priority < v.priority then
-            table.insert(self.eventlisteners, i, listener)
+            table.insert(listeners, i, listener)
             return true
         end
     end
 
-    table.insert(self.eventlisteners, listener)
+    table.insert(listeners, listener)
     return true
 end
 
@@ -985,9 +989,11 @@ function EventDispatcher:removeEventListener(eventType, callback, source)
     assert(eventType)
     assert(callback)
     
-    for key, obj in ipairs(self.eventlisteners) do
-        if obj.type == eventType and obj.callback == callback and obj.source == source then
-            table.remove(self.eventlisteners, key)
+    local listeners = self.eventListenersMap[eventType] or {}
+    
+    for i, listener in ipairs(listeners) do
+        if listener.type == eventType and listener.callback == callback and listener.source == source then
+            table.remove(listeners, i)
             return true
         end
     end
@@ -1004,15 +1010,18 @@ end
 function EventDispatcher:hasEventListener(eventType, callback, source)
     assert(eventType)
     
-    for key, obj in ipairs(self.eventlisteners) do
-        if obj.type == eventType then
-            if callback or source then
-                if obj.callback == callback and obj.source == source then
-                    return true
-                end
-            else
-                return true
-            end
+    local listeners = self.eventListenersMap[eventType]
+    if not listeners or #listeners == 0 then
+        return false
+    end
+    
+    if callback == nil and source == nil then
+        return true
+    end
+    
+    for i, listener in ipairs(listeners) do
+        if listener.callback == callback and listener.source == source then
+            return true
         end
     end
     return false
@@ -1036,7 +1045,9 @@ function EventDispatcher:dispatchEvent(event, data)
     event.stopFlag = false
     event.target = self.eventTarget or self
     
-    for key, obj in ipairs(self.eventlisteners) do
+    local listeners = self.eventListenersMap[event.type] or {}
+    
+    for key, obj in ipairs(listeners) do
         if obj.type == event.type then
             event:setListener(obj.callback, obj.source)
             obj:call(event)
@@ -1055,7 +1066,7 @@ end
 -- Remove all event listeners.
 --------------------------------------------------------------------------------
 function EventDispatcher:clearEventListeners()
-    self.eventlisteners = {}
+    self.eventlistenersMap = {}
 end
 
 ----------------------------------------------------------------------------------------------------
