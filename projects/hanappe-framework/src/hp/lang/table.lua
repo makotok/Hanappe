@@ -12,6 +12,12 @@ if unpack then
     M.unpack = unpack
 end
 
+-- Takes multiple arguments and returns them as a table.
+-- This is useful for interfacing with MOAI API's that return multiple values such as MOAIPartiion:propListForPoint()
+function M.pack(...)
+  return arg
+end
+
 --------------------------------------------------------------------------------
 -- Table decorate is useful for decorating objects
 -- when using tables as classes.
