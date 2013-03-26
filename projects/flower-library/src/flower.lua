@@ -53,6 +53,9 @@ local mouseLeftSensor   = MOAIInputMgr.device.mouseLeft
 local touchSensor       = MOAIInputMgr.device.touch
 local keyboardSensor    = MOAIInputMgr.device.keyboard
 
+-- interfaces
+local MOAIPropInterface = MOAIProp.getInterfaceTable()
+
 ----------------------------------------------------------------------------------------------------
 -- Public functions
 ----------------------------------------------------------------------------------------------------
@@ -240,9 +243,11 @@ function class:new(...)
     local obj
     if self.__factory then
         obj = self.__factory.new()
+        obj.__class = self
         table.copy(self, obj)
     else
         obj = {__index = self}
+        obj.__class = self
         setmetatable(obj, obj)
     end
     
@@ -1894,8 +1899,7 @@ end
 -- @param value visible
 --------------------------------------------------------------------------------
 function Group:setVisible(value)
-    local I = MOAIProp.getInterfaceTable()
-    I.setVisible(self, value)
+    MOAIPropInterface.setVisible(self, value)
     
     for i, v in ipairs(self.children) do
         v:setVisible(value)
@@ -1905,14 +1909,13 @@ end
 --------------------------------------------------------------------------------
 -- Sets the group's priority.
 -- Also sets the priority of any children.
--- @param value priority
+-- @param priority priority
 --------------------------------------------------------------------------------
-function Group:setPriority(value)
-    local I = MOAIProp.getInterfaceTable()
-    I.setPriority(self, value)
+function Group:setPriority(priority)
+    MOAIPropInterface.setPriority(self, priority)
     
     for i, v in ipairs(self.children) do
-        v:setPriority(value)
+        v:setPriority(priority)
     end
 end
 
@@ -2610,7 +2613,7 @@ M.NineImage = NineImage
 function NineImage:init(imagePath, width, height)
     DisplayObject.init(self)
 
-    self:setImageDeck(imagePath, width, height)
+    self:setImage(imagePath, width, height)
 end
 
 --------------------------------------------------------------------------------
@@ -2619,7 +2622,7 @@ end
 -- @param width (option) Width of image.
 -- @param height (option) Height of image.
 --------------------------------------------------------------------------------
-function NineImage:setImageDeck(imagePath, width, height)
+function NineImage:setImage(imagePath, width, height)
     if type(imagePath) == "string" then
         self.deck = Resources.getNineImageDeck(imagePath)
     else
