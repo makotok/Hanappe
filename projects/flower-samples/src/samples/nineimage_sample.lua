@@ -20,7 +20,7 @@ function onCreate(e)
     image3:setLayer(layer)
     
     image4 = flower.NineImage("btn_keyboard_key_fulltrans_normal_off.9.png")
-    image4:setImageDeck("btn_default_normal_holo.9.png", 150, 100)
+    image4:setImage("btn_default_normal_holo.9.png", 150, 100)
     image4:setPos(0, image3:getBottom() + 5)
     image4:setLayer(layer)
 

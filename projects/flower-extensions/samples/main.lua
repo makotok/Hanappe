@@ -1,10 +1,13 @@
 -- import
 flower = require "flower"
-tiled  = require "tiled"
-gui    = require "gui"
+tiled = require "tiled"
+widget = require "widget"
+Resources = flower.Resources
 
--- setting
-flower.Resources.addResourceDirectory("assets")
+-- Resources setting
+Resources.addResourceDirectory("assets")
+
+-- Screen setting
 local screenWidth = MOAIEnvironment.horizontalResolution or 320
 local screenHeight = MOAIEnvironment.verticalResolution or 480
 local screenDpi = MOAIEnvironment.screenDpi or 120
