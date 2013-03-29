@@ -22,15 +22,3 @@ function onCreate(e)
     }
     
 end
-
-function buttonOnClick(e)
-    print("Click!")
-end
-
-function buttonOnDown(e)
-    print("Down!")
-end
-
-function buttonOnUp(e)
-    print("Up!")
-end

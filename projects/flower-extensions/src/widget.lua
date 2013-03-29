@@ -13,17 +13,20 @@ local class = flower.class
 local table = flower.table
 local Executors = flower.Executors
 local Resources = flower.Resources
+local PropertyUtils = flower.PropertyUtils
 local Event = flower.Event
 local Layer = flower.Layer
 local Group = flower.Group
 local Image = flower.Image
 local NineImage = flower.NineImage
+local MovieClip = flower.MovieClip
 local Label = flower.Label
+local MOAIKeyboard = MOAIKeyboardAndroid or MOAIKeyboardIOS
 
 -- classes
-local PropertyUtils
 local ThemeMgr
 local FocusMgr
+local TextAlign
 local UIComponent
 local UIGroup
 local UIView
@@ -32,59 +35,73 @@ local Button
 local TextInput
 local Joystick
 local Panel
+local TextBox
 local MsgBox
 local ListBox
+local PictureBox
 local TileList
 local BaseLayout
 local BoxLayout
 local TileLayout
 
-----------------------------------------------------------------------------------------------------
--- Constraints
-----------------------------------------------------------------------------------------------------
-
-local BUILTIN_THEME = {
-    Button = {
-        normalTexture = "skins/button_normal.9.png",
-        selectedTexture = "skins/button_selected.9.png",
-        disabledTexture = "skins/button_normal.9.png",
-        fontName = "VL-PGothic.ttf",
-        textSize = 24,
-        textColor = {0, 0, 0, 1},
-        textDisabledColor = {0.5, 0.5, 0.5, 1},
-        textAlign = {"center", "center"},
-    },
-    Joystick = {
-        baseTexture = "skins/joystick_base.png",
-        knobTexture = "skins/joystick_knob.png",
-    },
-    TextInput = {
-        normalTexture = "skins/textinput_normal.9.png",
-        focusTexture = "skins/textinput_focus.9.png",
-    },
-    Panel = {
-        backgroundTexture = "skins/panel.9.png",
-    },
-    MsgBox = {
-        backgroundTexture = "skins/panel.9.png",
-        fontName = "VL-PGothic.ttf",
-        textSize = 24,
-        textColor = {0, 0, 0, 1},
-    },
-    ListBox = {
-        backgroundTexture = "skins/panel.9.png",
-        fontName = "VL-PGothic.ttf",
-        textSize = 24,
-        textColor = {0, 0, 0, 1},
-    },
-}
-
-----------------------------------------------------------------------------------------------------
--- Variables
-----------------------------------------------------------------------------------------------------
-
 -- interfaces
 local MOAIPropInterface = MOAIProp.getInterfaceTable()
+
+----------------------------------------------------------------------------------------------------
+-- Local functions
+----------------------------------------------------------------------------------------------------
+
+local function buildTheme()
+    return {
+        Button = {
+            normalTexture = "skins/button_normal.9.png",
+            selectedTexture = "skins/button_selected.9.png",
+            disabledTexture = "skins/button_normal.9.png",
+            fontName = "VL-PGothic.ttf",
+            textSize = 20,
+            textColor = {0, 0, 0, 1},
+            textDisabledColor = {0.5, 0.5, 0.5, 1},
+            textAlign = {"center", "center"},
+        },
+        TextInput = {
+            normalTexture = "skins/textinput_normal.9.png",
+            focusTexture = "skins/textinput_focus.9.png",
+        },
+        Joystick = {
+            baseTexture = "skins/joystick_base.png",
+            knobTexture = "skins/joystick_knob.png",
+        },
+        Panel = {
+            backgroundTexture = "skins/panel.9.png",
+        },
+        TextBox = {
+            backgroundTexture = "skins/panel.9.png",
+            fontName = "VL-PGothic.ttf",
+            textSize = 18,
+            textColor = {1, 1, 1, 1},
+            textAlign = {"left", "top"},
+        },
+        MsgBox = {
+            backgroundTexture = "skins/panel.9.png",
+            pauseTexture = "skins/msgbox_pause.png",
+            fontName = "VL-PGothic.ttf",
+            textSize = 18,
+            textColor = {1, 1, 1, 1},
+            textAlign = {"left", "top"},
+            animShowFunction = MsgBox.ANIM_SHOW_FUNCTION,
+            animHideFunction = MsgBox.ANIM_HIDE_FUNCTION,
+        },
+        ListBox = {
+            backgroundTexture = "skins/panel.9.png",
+            fontName = "VL-PGothic.ttf",
+            textSize = 18,
+            textColor = {0, 0, 0, 1},
+        },
+        PictureBox = {
+            backgroundTexture = "skins/panel.9.png",
+        },
+    }
+end
 
 ----------------------------------------------------------------------------------------------------
 -- Public functions
@@ -117,43 +134,6 @@ function M.getFocusMgr()
     return M.focusMgr
 end
 
-----------------------------------------------------------------------------------------------------
--- @type PropertyUtils
--- It is a property utility class.
-----------------------------------------------------------------------------------------------------
-PropertyUtils = {}
-M.PropertyUtils = PropertyUtils
-
-PropertyUtils.SETTER_NAMES = {}
-
---------------------------------------------------------------------------------
--- Sets the properties to object.
--- 
---------------------------------------------------------------------------------
-function PropertyUtils.setProperties(obj, params, unpackFlag)
-    for k, v in pairs(params) do
-        PropertyUtils.setProperty(obj, k, v, unpackFlag)
-    end
-end
-
---------------------------------------------------------------------------------
--- オブジェクトのsetter関数経由で値を設定します.
---------------------------------------------------------------------------------
-function PropertyUtils.setProperty(obj, name, value, unpackFlag)
-    local setterNames = PropertyUtils.SETTER_NAMES
-    if not setterNames[name] then
-        local setterName = "set" .. name:sub(1, 1):upper() .. (#name > 1 and name:sub(2) or "")
-        setterNames[name] = setterName
-    end
-
-    local setterName = setterNames[name]
-    local setter = assert(obj[setterName], "Not Found Property!" .. name)
-    if not unpackFlag or type(value) ~= "table" or getmetatable(value) ~= nil then
-        return setter(obj, value)
-    else
-        return setter(obj, unpack(value))
-    end
-end
 
 ----------------------------------------------------------------------------------------------------
 -- @type ThemeMgr
@@ -165,7 +145,7 @@ M.ThemeMgr = ThemeMgr
 ThemeMgr.EVENT_THEME_CHANGED = "themeChanged"
 
 function ThemeMgr:init()
-    self.theme = BUILTIN_THEME
+    self.theme = buildTheme()
 end
 
 function ThemeMgr:setTheme(theme)
@@ -209,6 +189,18 @@ function FocusMgr:getFocusObject()
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type TextAlign
+----------------------------------------------------------------------------------------------------
+TextAlign = {}
+M.TextAlign = TextAlign
+
+TextAlign["left"] = MOAITextBox.LEFT_JUSTIFY
+TextAlign["center"] = MOAITextBox.CENTER_JUSTIFY
+TextAlign["right"] = MOAITextBox.RIGHT_JUSTIFY
+TextAlign["top"] = MOAITextBox.LEFT_JUSTIFY
+TextAlign["bottom"] = MOAITextBox.RIGHT_JUSTIFY
+
+----------------------------------------------------------------------------------------------------
 -- @type UIComponent
 -- This class is an image that can be pressed.
 -- It is a simple button.
@@ -244,10 +236,11 @@ function UIComponent:init(params)
     Group.init(self)
     self:initInternal(params)
     self:initEventListeners(params)
-    self:initChildren(params)
-
+    self:createChildren(params)
+    
     self:setProperties(params)
     self:updateDisplay()
+    self:setPivToCenter()
 end
 
 --------------------------------------------------------------------------------
@@ -284,7 +277,7 @@ end
 -- Please to inherit this function if you want to change the behavior of the component.
 -- @param params Parameter table
 --------------------------------------------------------------------------------
-function UIComponent:initChildren(params)
+function UIComponent:createChildren(params)
 
 end
 
@@ -752,20 +745,6 @@ end
 Button = class(UIComponent)
 M.Button = Button
 
---- Align map
-Button.HORIZOTAL_ALIGNS = {
-    left    = MOAITextBox.LEFT_JUSTIFY,
-    center  = MOAITextBox.CENTER_JUSTIFY,
-    right   = MOAITextBox.RIGHT_JUSTIFY,
-}
-
---- Align map
-Button.VERTICAL_ALIGNS = {
-    top     = MOAITextBox.LEFT_JUSTIFY,
-    center  = MOAITextBox.CENTER_JUSTIFY,
-    bottom  = MOAITextBox.RIGHT_JUSTIFY,
-}
-
 --- Event: Click Event
 Button.EVENT_CLICK = "click"
 
@@ -804,12 +783,8 @@ function Button:initInternal(params)
     UIComponent.initInternal(self, params)
     self._themeName = "Button"
     self._touchDownIdx = nil
-    self._font = nil
-    self._horizotalAlign = nil
-    self._verticalAlign = nil
     self._buttonImage = nil
-    self._text = params.text or ""
-    self._textSize = nil
+    self._text = ""
     self._textLabel = nil
 end
 
@@ -822,8 +797,8 @@ function Button:initEventListeners(params)
     self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self)
 end
 
-function Button:initChildren(params)
-    UIComponent.initChildren(self, params)
+function Button:createChildren(params)
+    UIComponent.createChildren(self, params)
     
     local imagePath = assert(self:getImagePath())
     self._buttonImage = NineImage(imagePath)
@@ -981,8 +956,6 @@ function Button:setTextAlign(horizotalAlign, verticalAlign)
     else
         self:setStyle(Button.STYLE_TEXT_ALIGN, nil)
     end
-    
-
     self._textLabel:setAlignment(self:getAlignment())
 end
 
@@ -1002,8 +975,8 @@ end
 --------------------------------------------------------------------------------
 function Button:getAlignment()
     local h, v = self:getTextAlign()
-    h = assert(Button.HORIZOTAL_ALIGNS[h])
-    v = assert(Button.VERTICAL_ALIGNS[v])
+    h = assert(TextAlign[h])
+    v = assert(TextAlign[v])
     return h, v
 end
 
@@ -1020,7 +993,6 @@ function Button:setTextColor(red, green, blue, alpha)
     else
         self:setStyle(Button.STYLE_TEXT_COLOR, {red or 0, green or 0, blue or 0, alpha or 0})
     end
-    
     self._textLabel:setColor(self:getTextColor())
 end
 
@@ -1232,8 +1204,8 @@ end
 -- Initialize child objects that make up the Joystick.
 -- You must not be called directly.
 --------------------------------------------------------------------------------
-function Joystick:initChildren(params)
-    UIComponent.initChildren(self, params)
+function Joystick:createChildren(params)
+    UIComponent.createChildren(self, params)
     
     self._baseImage = Image(self:getStyle(Joystick.STYLE_BASE_TEXTURE))
     self._knobImage = Image(self:getStyle(Joystick.STYLE_KNOB_TEXTURE))
@@ -1472,10 +1444,10 @@ function Joystick:onTouchCancel(e)
 end
 
 ----------------------------------------------------------------------------------------------------
--- @type ListBox
--- It is a virtual Joystick.
+-- @type Panel
+-- It is a Panel.
 ----------------------------------------------------------------------------------------------------
-Panel = class(UIGroup)
+Panel = class(UIComponent)
 M.Panel = Panel
 
 --- Style: panelTexture
@@ -1487,7 +1459,7 @@ Panel.STYLE_BACKGROUND_TEXTURE = "backgroundTexture"
 -- @param knobTexture Joystick knob texture
 --------------------------------------------------------------------------------
 function Panel:initInternal(params)
-    UIGroup.initInternal(self, params)
+    UIComponent.initInternal(self, params)
     self._themeName = "Panel"
 end
 
@@ -1495,7 +1467,7 @@ end
 -- Initialize the event listeners
 --------------------------------------------------------------------------------
 function Panel:initEventListeners(params)
-    UIGroup.initEventListeners(self, params)
+    UIComponent.initEventListeners(self, params)
     self:addEventListener(Event.RESIZE, self.onResize, self)
 end
 
@@ -1503,8 +1475,8 @@ end
 -- Initialize child objects that make up the Joystick.
 -- You must not be called directly.
 --------------------------------------------------------------------------------
-function Panel:initChildren(params)
-    UIGroup.initChildren(self, params)
+function Panel:createChildren(params)
+    UIComponent.createChildren(self, params)
     
     self._backgroundImage = NineImage(self:getStyle(Panel.STYLE_BACKGROUND_TEXTURE))
     self:addChild(self._backgroundImage)
@@ -1514,7 +1486,7 @@ end
 -- Update the display objects.
 --------------------------------------------------------------------------------
 function Panel:updateDisplay()
-    UIGroup.updateDisplay(self)
+    UIComponent.updateDisplay(self)
     self._backgroundImage:setImage(self:getStyle(Panel.STYLE_BACKGROUND_TEXTURE))
     self._backgroundImage:setSize(self:getSize())
 end
@@ -1534,6 +1506,386 @@ end
 --------------------------------------------------------------------------------
 function Panel:onResize(e)
     self._backgroundImage:setSize(self:getSize())
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type TextBox
+-- It is a TextBox.
+----------------------------------------------------------------------------------------------------
+TextBox = class(Panel)
+M.TextBox = TextBox
+
+--- Style: fontName
+TextBox.STYLE_FONT_NAME = "fontName"
+
+--- Style: textSize
+TextBox.STYLE_TEXT_SIZE = "textSize"
+
+--- Style: textColor
+TextBox.STYLE_TEXT_COLOR = "textColor"
+
+--- Style: textSize
+TextBox.STYLE_TEXT_ALIGN = "textAlign"
+
+--------------------------------------------------------------------------------
+--Initialize a variables
+--------------------------------------------------------------------------------
+function TextBox:initInternal(params)
+    Panel.initInternal(self, params)
+    self._themeName = "TextBox"
+    self._text = ""
+    self._textLabel = nil
+end
+
+--------------------------------------------------------------------------------
+-- Initialize child objects that make up the Joystick.
+-- You must not be called directly.
+--------------------------------------------------------------------------------
+function TextBox:createChildren(params)
+    Panel.createChildren(self, params)
+    
+    self._textLabel = Label(self._text, 100, 30)
+    self._textLabel:setWordBreak(MOAITextBox.WORD_BREAK_CHAR)
+    self:addChild(self._textLabel)
+end
+
+--------------------------------------------------------------------------------
+-- Update the display objects.
+--------------------------------------------------------------------------------
+function TextBox:updateDisplay()
+    Panel.updateDisplay(self)
+
+    local textLabel = self._textLabel
+    local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
+    local textWidth, textHeight = xMax - xMin, yMax - yMin    
+    textLabel:setPos(xMin, yMin)
+    textLabel:setSize(textWidth, textHeight)
+    textLabel:setString(self:getText())
+    textLabel:setTextSize(self:getTextSize())
+    textLabel:setColor(self:getTextColor())
+    textLabel:setAlignment(self:getAlignment())
+    textLabel:setFont(self:getFont())
+end
+
+--------------------------------------------------------------------------------
+-- Sets the text.
+-- @param text text
+--------------------------------------------------------------------------------
+function TextBox:setText(text)
+    self._text = text
+    self._textLabel:setString(text)
+end
+
+--------------------------------------------------------------------------------
+-- Returns the text.
+-- @return text
+--------------------------------------------------------------------------------
+function TextBox:getText()
+    return self._text
+end
+
+--------------------------------------------------------------------------------
+-- Sets the textSize.
+-- @param textSize textSize
+--------------------------------------------------------------------------------
+function TextBox:setTextSize(textSize)
+    self:setStyle(TextBox.STYLE_TEXT_SIZE, textSize)
+    self._textLabel:setTextSize(self:getTextSize())
+end
+
+--------------------------------------------------------------------------------
+-- Sets the textSize.
+-- @param textSize textSize
+--------------------------------------------------------------------------------
+function TextBox:getTextSize()
+    return self:getStyle(TextBox.STYLE_TEXT_SIZE)
+end
+
+--------------------------------------------------------------------------------
+-- Sets the textSize.
+-- @param textSize textSize
+--------------------------------------------------------------------------------
+function TextBox:setFontName(fontName)
+    self:setStyle(TextBox.STYLE_FONT_NAME, font)
+    self._textLabel:setFont(self:getFont())
+end
+
+--------------------------------------------------------------------------------
+-- Sets the textSize.
+-- @param textSize textSize
+--------------------------------------------------------------------------------
+function TextBox:getFontName()
+    return self:getStyle(TextBox.STYLE_FONT_NAME)
+end
+
+--------------------------------------------------------------------------------
+-- Returns the font.
+-- @return font
+--------------------------------------------------------------------------------
+function TextBox:getFont()
+    local fontName = self:getFontName()
+    local font = Resources.getFont(fontName, nil, self:getTextSize())
+    return font
+end
+
+--------------------------------------------------------------------------------
+-- Sets the text align.
+-- @param horizotalAlign horizotal align(left, center, top)
+-- @param verticalAlign vertical align(top, center, bottom)
+--------------------------------------------------------------------------------
+function TextBox:setTextAlign(horizotalAlign, verticalAlign)
+    if horizotalAlign or verticalAlign then
+        self:setStyle(TextBox.STYLE_TEXT_ALIGN, {horizotalAlign or "center", verticalAlign or "center"})
+    else
+        self:setStyle(TextBox.STYLE_TEXT_ALIGN, nil)
+    end
+    self._textLabel:setAlignment(self:getAlignment())
+end
+
+--------------------------------------------------------------------------------
+-- Returns the text align.
+-- @return horizotal align(left, center, top)
+-- @return vertical align(top, center, bottom)
+--------------------------------------------------------------------------------
+function TextBox:getTextAlign()
+    return unpack(self:getStyle(TextBox.STYLE_TEXT_ALIGN))
+end
+
+--------------------------------------------------------------------------------
+-- Returns the text align for MOAITextBox.
+-- @return horizotal align
+-- @return vertical align
+--------------------------------------------------------------------------------
+function TextBox:getAlignment()
+    local h, v = self:getTextAlign()
+    h = assert(TextAlign[h])
+    v = assert(TextAlign[v])
+    return h, v
+end
+
+--------------------------------------------------------------------------------
+-- Sets the text align.
+-- @param red red(0 ... 1)
+-- @param green green(0 ... 1)
+-- @param blue blue(0 ... 1)
+-- @param alpha alpha(0 ... 1)
+--------------------------------------------------------------------------------
+function TextBox:setTextColor(red, green, blue, alpha)
+    if red == nil and green == nil and blue == nil and alpha == nil then
+        self:setStyle(TextBox.STYLE_TEXT_COLOR, nil)
+    else
+        self:setStyle(TextBox.STYLE_TEXT_COLOR, {red or 0, green or 0, blue or 0, alpha or 0})
+    end
+    self._textLabel:setColor(self:getTextColor())
+end
+
+--------------------------------------------------------------------------------
+-- Returns the text color.
+-- @return red(0 ... 1)
+-- @return green(0 ... 1)
+-- @return blue(0 ... 1)
+-- @return alpha(0 ... 1)
+--------------------------------------------------------------------------------
+function TextBox:getTextColor()
+    return unpack(self:getStyle(TextBox.STYLE_TEXT_COLOR))
+end
+--------------------------------------------------------------------------------
+-- This event handler is called when resize.
+-- @param e Touch Event
+--------------------------------------------------------------------------------
+function TextBox:onResize(e)
+    Panel.onResize(self, e)
+    
+    local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
+    local textWidth, textHeight = xMax - xMin, yMax - yMin
+    self._textLabel:setPos(xMin, yMin)
+    self._textLabel:setSize(textWidth, textHeight)
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type MsgBox
+-- It is a MsgBox.
+----------------------------------------------------------------------------------------------------
+MsgBox = class(TextBox)
+M.MsgBox = MsgBox
+
+--- Event: msgShow
+MsgBox.EVENT_MSG_SHOW = "msgShow"
+
+--- Event: msgHide
+MsgBox.EVENT_MSG_HIDE = "msgHide"
+
+--- Event: msgEnd
+MsgBox.EVENT_MSG_END = "msgEnd"
+
+--- Event: spoolStop
+MsgBox.EVENT_SPOOL_STOP = "spoolStop"
+
+--- Style: animShowFunction
+MsgBox.STYLE_ANIM_SHOW_FUNCTION = "animShowFunction"
+
+--- Style: animHideFunction
+MsgBox.STYLE_ANIM_HIDE_FUNCTION = "animHideFunction"
+
+MsgBox.ANIM_SHOW_FUNCTION = function(self)
+    self:setColor(0, 0, 0, 0)
+    self:setScl(0.8, 0.8, 1)
+    
+    local action1 = self:seekColor(1, 1, 1, 1, 0.5)
+    local action2 = self:seekScl(1, 1, 1, 0.5)
+    MOAICoroutine.blockOnAction(action1)
+end
+
+MsgBox.ANIM_HIDE_FUNCTION = function(self)
+    local action1 = self:seekColor(0, 0, 0, 0, 0.5)
+    local action2 = self:seekScl(0.8, 0.8, 1, 0.5)
+    MOAICoroutine.blockOnAction(action1)
+end
+
+--------------------------------------------------------------------------------
+-- Initialize a internal variables.
+--------------------------------------------------------------------------------
+function MsgBox:initInternal(params)
+    TextBox.initInternal(self, params)
+    self._themeName = "MsgBox"
+    self._popupShowing = false
+    self._spoolingEnabled = true
+    
+    -- TODO: visibility
+    self:setColor(0, 0, 0, 0)
+end
+
+--------------------------------------------------------------------------------
+-- Initialize the event listeners.
+--------------------------------------------------------------------------------
+function MsgBox:initEventListeners(params)
+    TextBox.initEventListeners(self, params)
+    self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
+end
+
+--------------------------------------------------------------------------------
+-- Show MsgBox.
+--------------------------------------------------------------------------------
+function MsgBox:showPopup()
+    if self:isPopupShowing() then
+        return
+    end
+    self._popupShowing = true
+    
+    -- text label setting
+    self:setText(self._text)
+    if self._spoolingEnabled then
+        self._textLabel:setReveal(0)
+    else
+        self._textLabel:revealAll()
+    end
+    
+    -- show animation
+    Executors.callOnce(function()
+        local showFunc = self:getStyle(MsgBox.STYLE_ANIM_SHOW_FUNCTION)
+        showFunc(self)
+
+        if self._spoolingEnabled then
+            self._textLabel:spool()
+        end
+        
+        self:dispatchEvent(MsgBox.EVENT_MSG_SHOW)
+    end)
+end
+
+--------------------------------------------------------------------------------
+-- Hide MsgBox.
+--------------------------------------------------------------------------------
+function MsgBox:hidePopup()
+    if not self:isPopupShowing() then
+        return
+    end
+    self._textLabel:stop()
+    
+    Executors.callOnce(function()
+        local hideFunc = self:getStyle(MsgBox.STYLE_ANIM_HIDE_FUNCTION)
+        hideFunc(self)
+        
+        self:dispatchEvent(MsgBox.EVENT_MSG_HIDE)
+        self._popupShowing = false
+    end)
+end
+
+--------------------------------------------------------------------------------
+-- Displays the next page.
+--------------------------------------------------------------------------------
+function MsgBox:nextPage()
+    self._textLabel:nextPage()
+    if self._spoolingEnabled then
+        self._textLabel:spool()
+    end
+end
+
+--------------------------------------------------------------------------------
+-- TODO:LDoc.
+--------------------------------------------------------------------------------
+function MsgBox:isPopupShowing()
+    return self._popupShowing
+end
+
+--------------------------------------------------------------------------------
+-- TODO:LDoc.
+--------------------------------------------------------------------------------
+function MsgBox:isSpooling()
+    return self._textLabel:isBusy()
+end
+
+--------------------------------------------------------------------------------
+-- TODO:LDoc.
+--------------------------------------------------------------------------------
+function MsgBox:hasNextPase()
+    return self._textLabel:more()
+end
+
+--------------------------------------------------------------------------------
+-- Sets the pause texture.
+-- @param texture pause texture
+--------------------------------------------------------------------------------
+function MsgBox:setPauseTexture(texture)
+    self:setStyle(MsgBox.STYLE_PAUSE_TEXTURE, texture)
+    
+    local pauseIcon = self._pauseIcon
+    pauseIcon:setTexture(self:getStyle(MsgBox.STYLE_PAUSE_TEXTURE))    
+    pauseIcon:setSheetSize(1, 6)
+    local width, height = self:getSize()
+    local iconWidth, iconHeight = pauseIcon:getSize()
+    pauseIcon:setPos(width - iconWidth, height - iconHeight)
+end
+
+--------------------------------------------------------------------------------
+-- Turns spooling ON or OFF.
+-- If self is currently spooling and enable is false, stop spooling and reveal 
+-- entire page. 
+-- @param enable Boolean for new state
+-- @return none
+-------------------------------------------------------------------------------
+function MsgBox:setSpoolingEnabled(enabled)
+    self._spoolingEnabled = enabled
+    if not self._spoolingEnabled and self:isSpooling() then
+        self._textLabel:stop()
+        self._textLabel:revealAll()
+    end
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when you touch the component.
+-- @param e touch event
+--------------------------------------------------------------------------------
+function MsgBox:onTouchDown(e)
+    if self:isSpooling() then
+        self._textLabel:stop()
+        self._textLabel:revealAll()
+    elseif self:hasNextPase() then
+        self:nextPage()
+    else
+        self:dispatchEvent(MsgBox.EVENT_MSG_END)
+        self:hidePopup()
+    end
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1580,6 +1932,259 @@ function BaseLayout:setProperties(params)
     end
 end
 
+----------------------------------------------------------------------------------------------------
+-- @type BoxLayout
+-- TODO:Doc
+----------------------------------------------------------------------------------------------------
+BoxLayout = class(BaseLayout)
+M.BoxLayout = BoxLayout
+
+--- Horizotal Align: left
+BoxLayout.HORIZOTAL_LEFT = "left"
+
+--- Horizotal Align: center
+BoxLayout.HORIZOTAL_CENTER = "center"
+
+--- Horizotal Align: right
+BoxLayout.HORIZOTAL_RIGHT = "right"
+
+--- Vertical Align: top
+BoxLayout.VERTICAL_TOP = "top"
+
+--- Vertical Align: center
+BoxLayout.VERTICAL_CENTER = "center"
+
+--- Vertical Align: bottom
+BoxLayout.VERTICAL_BOTTOM = "bottom"
+
+--- Direction: vertical
+BoxLayout.DIRECTION_VERTICAL = "vertical"
+
+--- Direction: horizotal
+BoxLayout.DIRECTION_HORIZOTAL = "horizotal"
+
+--------------------------------------------------------------------------------
+-- 内部変数の初期化処理です.
+--------------------------------------------------------------------------------
+function BoxLayout:initInternal(params)
+    self._horizotalAlign = BoxLayout.HORIZOTAL_LEFT
+    self._horizotalGap = 5
+    self._verticalAlign = BoxLayout.VERTICAL_TOP
+    self._verticalGap = 5
+    self._paddingTop = 0
+    self._paddingBottom = 0
+    self._paddingLeft = 0
+    self._paddingRight = 0
+    self._direction = BoxLayout.DIRECTION_VERTICAL
+    self._parentResizable = true
+end
+
+--------------------------------------------------------------------------------
+-- 指定した親コンポーネントのレイアウトを更新します.
+--------------------------------------------------------------------------------
+function BoxLayout:update(parent)
+    if self._direction == BoxLayout.DIRECTION_VERTICAL then
+        self:updateVertical(parent)
+    elseif self._direction == BoxLayout.DIRECTION_HORIZOTAL then
+        self:updateHorizotal(parent)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- 垂直方向に子オブジェクトを配置します.
+--------------------------------------------------------------------------------
+function BoxLayout:updateVertical(parent)
+    local children = parent:getChildren()
+    local childrenWidth, childrenHeight = self:getVerticalLayoutSize(children)
+    
+    local parentWidth, parentHeight = parent:getSize()
+    local parentWidth = parentWidth > childrenWidth and parentWidth or childrenWidth
+    local parentHeight = parentHeight > childrenHeight and parentHeight or childrenHeight
+    
+    if self._parentResizable then
+        parent:setSize(parentWidth, parentHeight)
+    end
+    
+    local childY = self:getChildY(parentHeight, childrenHeight)
+    for i, child in ipairs(children) do
+        if child.isIncludeLayout == nil or child:isIncludeLayout() then
+            local childWidth, childHeight = child:getSize()
+            local childX = self:getChildX(parentWidth, childWidth)
+            child:setPos(childX, childY)
+            childY = childY + childHeight + self._verticalGap
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- 水平方向に子オブジェクトを配置します.
+--------------------------------------------------------------------------------
+function BoxLayout:updateHorizotal(parent)
+    local children = parent:getChildren()
+    local childrenWidth, childrenHeight = self:getHorizotalLayoutSize(children)
+
+    local parentWidth, parentHeight = parent:getSize()
+    local parentWidth = parentWidth > childrenWidth and parentWidth or childrenWidth
+    local parentHeight = parentHeight > childrenHeight and parentHeight or childrenHeight
+    
+    if self._parentResizable then
+        parent:setSize(parentWidth, parentHeight)
+    end
+
+    local childX = self:getChildX(parentWidth, childrenWidth)
+
+    for i, child in ipairs(children) do
+        if child.isIncludeLayout == nil or child:isIncludeLayout() then
+            local childWidth, childHeight = child.getSize and child:getSize() or DisplayObject.getSize(child)
+            local childY = self:getChildY(parentHeight, childHeight)
+            child:setPos(childX, childY)
+            childX = childX + childWidth + self._horizotalGap
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+-- 上下左右の余白を設定します.
+--------------------------------------------------------------------------------
+function BoxLayout:setPadding(left, top, right, bottom)
+    self._paddingLeft = left or self._paddingTop
+    self._paddingTop = top or self._paddingTop
+    self._paddingRight = right or self._paddingRight
+    self._paddingBottom = bottom or self._paddingBottom
+end
+
+--------------------------------------------------------------------------------
+-- 上下左右の余白を設定します.
+--------------------------------------------------------------------------------
+function BoxLayout:getPadding()
+    return self._paddingLeft, self._paddingTop, self._paddingRight, self._paddingBottom
+end
+
+--------------------------------------------------------------------------------
+-- アラインを設定します.
+--------------------------------------------------------------------------------
+function BoxLayout:setAlign(horizotalAlign, verticalAlign)
+    self._horizotalAlign = horizotalAlign
+    self._verticalAlign = verticalAlign
+end
+
+--------------------------------------------------------------------------------
+-- アラインを返します.
+--------------------------------------------------------------------------------
+function BoxLayout:getAlign()
+    return self._horizotalAlign, self._verticalAlign
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントを配置する方向を設定します.
+--------------------------------------------------------------------------------
+function BoxLayout:setDirection(direction)
+    self._direction = direction
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントを配置する方向を返します.
+--------------------------------------------------------------------------------
+function BoxLayout:getDirection()
+    return self._direction
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの間隔を設定します.
+--------------------------------------------------------------------------------
+function BoxLayout:setGap(horizotalGap, verticalGap)
+    self._horizotalGap = horizotalGap
+    self._verticalGap = verticalGap
+end
+
+--------------------------------------------------------------------------------
+-- コンポーネントの間隔を返します..
+--------------------------------------------------------------------------------
+function BoxLayout:getGap()
+    return self._horizotalGap, self._verticalGap
+end
+
+--------------------------------------------------------------------------------
+-- 子オブジェクトのX座標を返します.
+--------------------------------------------------------------------------------
+function BoxLayout:getChildX(parentWidth, childWidth)
+    local diffWidth = parentWidth - childWidth
+
+    local x = 0
+    if self._horizotalAlign == M.HORIZOTAL_LEFT then
+        x = self._paddingLeft
+    elseif self._horizotalAlign == M.HORIZOTAL_CENTER then
+        x = math.floor((diffWidth + self._paddingLeft - self._paddingRight) / 2)
+    elseif self._horizotalAlign == M.HORIZOTAL_RIGHT then
+        x = diffWidth - self._paddingRight
+    else
+        error("Not found direction!")
+    end
+    return x
+end
+
+--------------------------------------------------------------------------------
+-- 子オブジェクトのY座標を返します.
+--------------------------------------------------------------------------------
+function BoxLayout:getChildY(parentHeight, childHeight)
+    local diffHeight = parentHeight - childHeight
+
+    local y = 0
+    if self._verticalAlign == M.VERTICAL_TOP then
+        y = self._paddingTop
+    elseif self._verticalAlign == M.VERTICAL_CENTER then
+        y = math.floor((diffHeight + self._paddingTop - self._paddingBottom) / 2)
+    elseif self._verticalAlign == M.VERTICAL_BOTTOM then
+        y = diffHeight - self._paddingBottom
+    else
+        error("Not found direction!")
+    end
+    return y
+end
+
+--------------------------------------------------------------------------------
+-- 垂直方向に子オブジェクトを配置した時の
+-- 全体のレイアウトサイズを返します.
+--------------------------------------------------------------------------------
+function BoxLayout:getVerticalLayoutSize(children)
+    local width = self._paddingLeft + self._paddingRight
+    local height = self._paddingTop + self._paddingBottom
+    local count = 0
+    for i, child in ipairs(children) do
+        if not (child.isExcludeLayout and child:isExcludeLayout()) then
+            local cWidth, cHeight = child.getSize and child:getSize() or DisplayObject.getSize(child)
+            height = height + cHeight + self._verticalGap
+            width = math.max(width, cWidth)
+            count = count + 1
+        end
+    end
+    if count > 1 then
+        height = height - self._verticalGap
+    end
+    return width, height
+end
+
+--------------------------------------------------------------------------------
+-- 水平方向に子オブジェクトを配置した時の
+-- 全体のレイアウトサイズを返します.
+--------------------------------------------------------------------------------
+function BoxLayout:getHorizotalLayoutSize(children)
+    local width = self._paddingLeft + self._paddingRight
+    local height = self._paddingTop + self._paddingBottom
+    local count = 0
+    for i, child in ipairs(children) do
+        if not (child.isExcludeLayout and child:isExcludeLayout()) then
+            local cWidth, cHeight = child.getSize and child:getSize() or DisplayObject.getSize(child)
+            width = width + cWidth + self._horizotalGap
+            height = math.max(height, cHeight)
+            count = count + 1
+        end
+    end
+    if count > 1 then
+        width = width - self._horizotalGap
+    end
+    return width, height
+end
 
 -- widget initialize
 M.initialize()
