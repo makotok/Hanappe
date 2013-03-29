@@ -58,8 +58,12 @@ function onCreate(e)
     addTouchEventListeners(image1)
     addTouchEventListeners(image2)
     addTouchEventListeners(image3)
-    
-    
+end
+
+function onStart(e)
+    image1:moveLoc(50, 50, 0, 5)
+    image1:moveRot(0, 0, 90, 5)
+    image1:moveScl(1, 1, 0, 5)
 end
 
 function item_onTouchDown(e)
