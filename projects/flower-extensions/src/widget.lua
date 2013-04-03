@@ -14,30 +14,38 @@ local table = flower.table
 local Executors = flower.Executors
 local Resources = flower.Resources
 local PropertyUtils = flower.PropertyUtils
+local InputMgr = flower.InputMgr
 local Event = flower.Event
+local DisplayObject = flower.DisplayObject
 local Layer = flower.Layer
 local Group = flower.Group
 local Image = flower.Image
 local NineImage = flower.NineImage
 local MovieClip = flower.MovieClip
 local Label = flower.Label
+local Rect = flower.Rect
+local TouchHandler = flower.TouchHandler
 local MOAIKeyboard = MOAIKeyboardAndroid or MOAIKeyboardIOS
 
 -- classes
 local ThemeMgr
 local FocusMgr
 local TextAlign
+local KeyCode
+local UIEvent
 local UIComponent
 local UIGroup
-local UIView
 local UILayer
+local UITouchHandler
+local UIView
 local Button
-local TextInput
 local Joystick
 local Panel
 local TextBox
+local TextInput
 local MsgBox
 local ListBox
+local ListItem
 local PictureBox
 local TileList
 local BaseLayout
@@ -63,10 +71,6 @@ local function buildTheme()
             textDisabledColor = {0.5, 0.5, 0.5, 1},
             textAlign = {"center", "center"},
         },
-        TextInput = {
-            normalTexture = "skins/textinput_normal.9.png",
-            focusTexture = "skins/textinput_focus.9.png",
-        },
         Joystick = {
             baseTexture = "skins/joystick_base.png",
             knobTexture = "skins/joystick_knob.png",
@@ -80,6 +84,14 @@ local function buildTheme()
             textSize = 18,
             textColor = {1, 1, 1, 1},
             textAlign = {"left", "top"},
+        },
+        TextInput = {
+            backgroundTexture = "skins/textinput_normal.9.png",
+            focusTexture = "skins/textinput_focus.9.png",
+            fontName = "VL-PGothic.ttf",
+            textSize = 20,
+            textColor = {0, 0, 0, 1},
+            textAlign = {"left", "center"},
         },
         MsgBox = {
             backgroundTexture = "skins/panel.9.png",
@@ -141,9 +153,6 @@ end
 ThemeMgr = class()
 M.ThemeMgr = ThemeMgr
 
---- Event: themeChanged
-ThemeMgr.EVENT_THEME_CHANGED = "themeChanged"
-
 function ThemeMgr:init()
     self.theme = buildTheme()
 end
@@ -151,7 +160,7 @@ end
 function ThemeMgr:setTheme(theme)
     if self.theme ~= theme then
         self.theme = theme
-        self:dispatchEvent(ThemeMgr.EVENT_THEME_CHANGED)
+        self:dispatchEvent(UIEvent.THEME_CHANGED)
     end
 end
 
@@ -173,14 +182,15 @@ function FocusMgr:setFocusObject(object)
     if self.focusObject == object then
         return
     end
-    if self.focusObject then
-        self.focusObject:dispatchEvent(UIComponent.EVENT_FOCUS_OUT)
-    end
     
+    local oldFocusObject = self.focusObject
     self.focusObject = object
     
+    if oldFocusObject then
+        oldFocusObject:dispatchEvent(UIEvent.FOCUS_OUT)
+    end
     if self.focusObject then
-        self.focusObject:dispatchEvent(UIComponent.EVENT_FOCUS_IN)
+        self.focusObject:dispatchEvent(UIEvent.FOCUS_IN)
     end
 end
 
@@ -201,30 +211,76 @@ TextAlign["top"] = MOAITextBox.LEFT_JUSTIFY
 TextAlign["bottom"] = MOAITextBox.RIGHT_JUSTIFY
 
 ----------------------------------------------------------------------------------------------------
+-- @type TextAlign
+----------------------------------------------------------------------------------------------------
+KeyCode = {}
+M.KeyCode = KeyCode
+
+KeyCode.DEL = 127 -- TODO:Code
+KeyCode.BACKSPACE = 127
+KeyCode.SPACE = 32
+KeyCode.ENTER = 13
+KeyCode.TAB = 9
+
+
+----------------------------------------------------------------------------------------------------
+-- @type UIEvent
+----------------------------------------------------------------------------------------------------
+UIEvent = class(Event)
+M.UIEvent = UIEvent
+
+--- UIComponent: Resize Event
+UIEvent.RESIZE = "resize"
+
+--- UIComponent: Theme changed Event
+UIEvent.THEME_CHANGED = "themeChanged"
+
+--- UIComponent: Style changed Event
+UIEvent.STYLE_CHANGED = "styleChanged"
+
+--- UIComponent: Enabled changed Event
+UIEvent.ENABLED_CHANGED = "enabledChanged"
+
+--- UIComponent: FocusIn Event
+UIEvent.FOCUS_IN = "focusIn"
+
+--- UIComponent: FocusOut Event
+UIEvent.FOCUS_OUT = "focusOut"
+
+--- Button: Click Event
+UIEvent.CLICK = "click"
+
+--- Button: down Event
+UIEvent.DOWN = "down"
+
+--- Button: up Event
+UIEvent.UP = "up"
+
+--- Button: up Event
+UIEvent.UP = "up"
+
+--- Joystick: Event type when you change the position of the stick
+UIEvent.STICK_CHANGED   = "stickChanged"
+
+--- MsgBox: msgShow Event
+UIEvent.MSG_SHOW = "msgShow"
+
+--- MsgBox: msgHide Event
+UIEvent.MSG_HIDE = "msgHide"
+
+--- MsgBox: msgEnd Event
+UIEvent.MSG_END = "msgEnd"
+
+--- MsgBox: spoolStop Event
+UIEvent.SPOOL_STOP = "spoolStop"
+
+----------------------------------------------------------------------------------------------------
 -- @type UIComponent
 -- This class is an image that can be pressed.
 -- It is a simple button.
 ----------------------------------------------------------------------------------------------------
 UIComponent = class(Group)
 M.UIComponent = UIComponent
-
---- Event: Resize Event
-UIComponent.EVENT_RESIZE = "resize"
-
---- Event: Theme changed Event
-UIComponent.EVENT_THEME_CHANGED = "themeChanged"
-
---- Event: Style changed Event
-UIComponent.EVENT_STYLE_CHANGED = "styleChanged"
-
---- Event: Style changed Event
-UIComponent.EVENT_ENABLED_CHANGED = "enabledChanged"
-
---- Event: FocusIn Event
-UIComponent.EVENT_FOCUS_IN = "focusIn"
-
---- Event: FocusOut Event
-UIComponent.EVENT_FOCUS_OUT = "focusOut"
 
 --------------------------------------------------------------------------------
 -- Constructor.
@@ -234,9 +290,9 @@ UIComponent.EVENT_FOCUS_OUT = "focusOut"
 --------------------------------------------------------------------------------
 function UIComponent:init(params)
     Group.init(self)
-    self:initInternal(params)
-    self:initEventListeners(params)
-    self:createChildren(params)
+    self:_initInternal()
+    self:_initEventListeners()
+    self:_createChildren()
     
     self:setProperties(params)
     self:updateDisplay()
@@ -246,26 +302,25 @@ end
 --------------------------------------------------------------------------------
 -- Initialization is the process of internal variables.
 -- Please to inherit this function if the definition of the variable.
--- @param params Parameter table
 --------------------------------------------------------------------------------
-function UIComponent:initInternal(params)
+function UIComponent:_initInternal()
     self.isUIComponent = true
     
     self._enabled = true
     self._focusEnabled = true
     self._theme = nil
     self._styles = {}
-    self._layout = nil
     self._excludeLayout = false
 end
 
 --------------------------------------------------------------------------------
 -- Performing the initialization processing of the event listener.
 -- Please to inherit this function if you want to initialize the event listener.
--- @param params Parameter table
 --------------------------------------------------------------------------------
-function UIComponent:initEventListeners(params)
-    self:addEventListener(UIComponent.EVENT_ENABLED_CHANGED, self.onEnabledChanged, self)
+function UIComponent:_initEventListeners()
+    self:addEventListener(UIEvent.ENABLED_CHANGED, self.onEnabledChanged, self)
+    self:addEventListener(UIEvent.FOCUS_IN, self.onFocusIn, self)
+    self:addEventListener(UIEvent.FOCUS_OUT, self.onFocusOut, self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchCommon, self, -10)
     self:addEventListener(Event.TOUCH_UP, self.onTouchCommon, self, -10)
     self:addEventListener(Event.TOUCH_MOVE, self.onTouchCommon, self, -10)
@@ -275,9 +330,8 @@ end
 --------------------------------------------------------------------------------
 -- Performing the initialization processing of the component.
 -- Please to inherit this function if you want to change the behavior of the component.
--- @param params Parameter table
 --------------------------------------------------------------------------------
-function UIComponent:createChildren(params)
+function UIComponent:_createChildren()
 
 end
 
@@ -289,20 +343,10 @@ function UIComponent:updateDisplay()
 end
 
 --------------------------------------------------------------------------------
--- Update the layout.
+-- Draw focus object.
 --------------------------------------------------------------------------------
-function UIComponent:updateLayout(childrenUpdate)
-    if childrenUpdate then
-        for i, child in ipairs(self:getChildren()) do
-            if child.isUIComponent then
-                child:updateLayout(childrenUpdate)
-            end
-        end
-    end
-     
-    if self._layout then
-        self._layout:update(self)
-    end
+function UIComponent:drawFocus(focus)
+
 end
 
 ----------------------------------------------------------------
@@ -361,7 +405,7 @@ function UIComponent:setSize(width, height)
     
     if oldWidth ~= width or oldHeight ~= height then
         Group.setSize(self, width, height)
-        self:dispatchEvent(UIComponent.EVENT_RESIZE)
+        self:dispatchEvent(UIEvent.RESIZE)
     end
 end
 
@@ -395,7 +439,7 @@ end
 function UIComponent:setEnabled(enabled)
     if self._enabled ~= enabled then
         self._enabled = enabled
-        self:dispatchEvent(UIComponent.EVENT_ENABLED_CHANGED)
+        self:dispatchEvent(UIEvent.ENABLED_CHANGED)
     end    
 end
 
@@ -444,8 +488,8 @@ function UIComponent:isFocus()
 end
 
 --------------------------------------------------------------------------------
--- Returns the focus.
--- @return focus
+-- Sets the focus.
+-- @param focus
 --------------------------------------------------------------------------------
 function UIComponent:setFocusEnabled(focusEnabled)
     if self._focusEnabled ~= focusEnabled then
@@ -472,7 +516,7 @@ function UIComponent:setTheme(theme)
     if self._theme ~= theme then
         self._theme = theme
         self:updateDisplay()
-        self:dispatchEvent(UIComponent.EVENT_THEME_CHANGED)
+        self:dispatchEvent(UIEvent.THEME_CHANGED)
     end
 end
 
@@ -499,7 +543,7 @@ end
 function UIComponent:setStyle(name, value)
     if self._styles[name] ~= value then
         self._styles[name] = value
-        self:dispatchEvent(UIComponent.EVENT_STYLE_CHANGED, {styleName = name, styleValue = value})
+        self:dispatchEvent(UIEvent.STYLE_CHANGED, {styleName = name, styleValue = value})
     end
 end
 
@@ -614,6 +658,22 @@ function UIComponent:onTouchCommon(e)
     end
 end
 
+--------------------------------------------------------------------------------
+-- This event handler is called when focus.
+-- @param e focus Event
+--------------------------------------------------------------------------------
+function UIComponent:onFocusIn(e)
+    self:drawFocus(true)
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when focus.
+-- @param e focus Event
+--------------------------------------------------------------------------------
+function UIComponent:onFocusOut(e)
+    self:drawFocus(false)
+end
+
 ----------------------------------------------------------------------------------------------------
 -- @type UIGroup
 -- This class is an image that can be pressed.
@@ -626,8 +686,8 @@ M.UIGroup = UIGroup
 -- Initialization is the process of internal variables.
 -- Please to inherit this function if the definition of the variable.
 --------------------------------------------------------------------------------
-function UIGroup:initInternal(params)
-    UIComponent.initInternal(self, params)
+function UIGroup:_initInternal()
+    UIComponent._initInternal(self)
     self.isUIGroup = true
     self._focusEnabled = false
 end
@@ -669,25 +729,30 @@ UIView.PRIORITY_MARGIN = 100
 -- Initialization is the process of internal variables.
 -- Please to inherit this function if the definition of the variable.
 --------------------------------------------------------------------------------
-function UIView:initInternal(params)
-    UIGroup.initInternal(self, params)
+function UIView:_initInternal()
+    UIGroup._initInternal(self)
     self.isUIView = true
     self._scene = nil
     self._lastPriority = 0
     
-    self:initLayer()
+    self:_initLayer()
 end
 
-function UIView:initLayer()
+function UIView:_initLayer()
     local layer = Layer()
     layer:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
     layer:setTouchEnabled(true)
+    layer:addEventListener(Event.TOUCH_DOWN, self.onLayerTouchDown, self, 10)
 
     self:setLayer(layer)
 end
 
-function UIView:initEventListeners(params)
-    UIGroup.initEventListeners(self, params)
+function UIView:_initEventListeners()
+    UIGroup._initEventListeners(self)
+end
+
+function UIView:onLayerTouchDown(e)
+    FocusMgr:setFocusObject(nil)
 end
 
 --------------------------------------------------------------------------------
@@ -745,15 +810,6 @@ end
 Button = class(UIComponent)
 M.Button = Button
 
---- Event: Click Event
-Button.EVENT_CLICK = "click"
-
---- Event: Button down Event
-Button.EVENT_DOWN = "down"
-
---- Event: Button up Event
-Button.EVENT_UP = "up"
-
 --- Style: selectedTexture
 Button.STYLE_NORMAL_TEXTURE = "normalTexture"
 
@@ -779,8 +835,8 @@ Button.STYLE_TEXT_ALIGN = "textAlign"
 -- The constructor.
 -- @param 
 --------------------------------------------------------------------------------
-function Button:initInternal(params)
-    UIComponent.initInternal(self, params)
+function Button:_initInternal()
+    UIComponent._initInternal(self)
     self._themeName = "Button"
     self._touchDownIdx = nil
     self._buttonImage = nil
@@ -788,8 +844,8 @@ function Button:initInternal(params)
     self._textLabel = nil
 end
 
-function Button:initEventListeners(params)
-    UIComponent.initEventListeners(self, params)
+function Button:_initEventListeners()
+    UIComponent._initEventListeners(self)
     self:addEventListener(Event.RESIZE, self.onResize, self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
     self:addEventListener(Event.TOUCH_UP, self.onTouchUp, self)
@@ -797,8 +853,8 @@ function Button:initEventListeners(params)
     self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self)
 end
 
-function Button:createChildren(params)
-    UIComponent.createChildren(self, params)
+function Button:_createChildren()
+    UIComponent._createChildren(self)
     
     local imagePath = assert(self:getImagePath())
     self._buttonImage = NineImage(imagePath)
@@ -1012,7 +1068,7 @@ end
 -- @param func click event handler
 --------------------------------------------------------------------------------
 function Button:setOnClick(func)
-    self:setEventListener(Button.EVENT_CLICK, func)
+    self:setEventListener(UIEvent.CLICK, func)
 end
 
 --------------------------------------------------------------------------------
@@ -1020,7 +1076,7 @@ end
 -- @param func button down event handler
 --------------------------------------------------------------------------------
 function Button:setOnDown(func, obj)
-    self:setEventListener(Button.EVENT_DOWN, func)
+    self:setEventListener(UIEvent.DOWN, func)
 end
 
 --------------------------------------------------------------------------------
@@ -1028,7 +1084,7 @@ end
 -- @param func button up event handler
 --------------------------------------------------------------------------------
 function Button:setOnUp(func)
-    self:setEventListener(Button.EVENT_UP, func)
+    self:setEventListener(UIEvent.UP, func)
 end
 
 --------------------------------------------------------------------------------
@@ -1044,7 +1100,7 @@ function Button:doButtonDown(idx)
     self.touchDownIdx = idx
     self:updateImageDeck()
     
-    self:dispatchEvent(Button.EVENT_DOWN)
+    self:dispatchEvent(UIEvent.DOWN)
 end
 
 --------------------------------------------------------------------------------
@@ -1059,7 +1115,7 @@ function Button:doButtonUp()
     self.touchDownIdx = nil
     self:updateImageDeck()
     
-    self:dispatchEvent(Button.EVENT_UP)
+    self:dispatchEvent(UIEvent.UP)
 end
 
 --------------------------------------------------------------------------------
@@ -1106,7 +1162,7 @@ function Button:onTouchUp(e)
         return
     end
     self:doButtonUp()
-    self:dispatchEvent(Button.EVENT_CLICK)
+    self:dispatchEvent(UIEvent.CLICK)
 end
 
 --------------------------------------------------------------------------------
@@ -1164,9 +1220,6 @@ Joystick.MODE_DIGITAL          = "digital"
 --- The ratio of the center
 Joystick.RANGE_OF_CENTER_RATE  = 0.5
 
---- Event: Event type when you change the position of the stick
-Joystick.EVENT_STICK_CHANGED   = "stickChanged"
-
 --- Style: baseTexture
 Joystick.STYLE_BASE_TEXTURE  = "baseTexture"
 
@@ -1174,25 +1227,23 @@ Joystick.STYLE_BASE_TEXTURE  = "baseTexture"
 Joystick.STYLE_KNOB_TEXTURE  = "knobTexture"
 
 --------------------------------------------------------------------------------
--- The constructor.
--- @param baseTexture Joystick base texture
--- @param knobTexture Joystick knob texture
+-- Initializes the internal variables.
 --------------------------------------------------------------------------------
-function Joystick:initInternal(params)
-    UIComponent.initInternal(self, params)
+function Joystick:_initInternal()
+    UIComponent._initInternal(self)
     self._themeName = "Joystick"
     self._touchIndex = nil
     self._rangeOfCenterRate = Joystick.RANGE_OF_CENTER_RATE
     self._stickMode = Joystick.MODE_ANALOG
-    self._changedEvent = Event(Joystick.EVENT_STICK_CHANGED)
+    self._changedEvent = Event(UIEvent.STICK_CHANGED)
 end
 
 --------------------------------------------------------------------------------
 -- Initializes the event listener.
 -- You must not be called directly.
 --------------------------------------------------------------------------------
-function Joystick:initEventListeners(params)
-    UIComponent.initEventListeners(self, params)
+function Joystick:_initEventListeners()
+    UIComponent._initEventListeners(self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
     self:addEventListener(Event.TOUCH_UP, self.onTouchUp, self)
     self:addEventListener(Event.TOUCH_MOVE, self.onTouchMove, self)
@@ -1204,8 +1255,8 @@ end
 -- Initialize child objects that make up the Joystick.
 -- You must not be called directly.
 --------------------------------------------------------------------------------
-function Joystick:createChildren(params)
-    UIComponent.createChildren(self, params)
+function Joystick:_createChildren()
+    UIComponent._createChildren(self)
     
     self._baseImage = Image(self:getStyle(Joystick.STYLE_BASE_TEXTURE))
     self._knobImage = Image(self:getStyle(Joystick.STYLE_KNOB_TEXTURE))
@@ -1390,7 +1441,7 @@ end
 -- @param func stickChanged event handler
 --------------------------------------------------------------------------------
 function Joystick:setOnStickChanged(func)
-    self:setEventListener(Joystick.EVENT_STICK_CHANGED, func)
+    self:setEventListener(UIEvent.STICK_CHANGED, func)
 end
 
 --------------------------------------------------------------------------------
@@ -1458,16 +1509,16 @@ Panel.STYLE_BACKGROUND_TEXTURE = "backgroundTexture"
 -- @param baseTexture Joystick base texture
 -- @param knobTexture Joystick knob texture
 --------------------------------------------------------------------------------
-function Panel:initInternal(params)
-    UIComponent.initInternal(self, params)
+function Panel:_initInternal()
+    UIComponent._initInternal(self)
     self._themeName = "Panel"
 end
 
 --------------------------------------------------------------------------------
 -- Initialize the event listeners
 --------------------------------------------------------------------------------
-function Panel:initEventListeners(params)
-    UIComponent.initEventListeners(self, params)
+function Panel:_initEventListeners()
+    UIComponent._initEventListeners(self)
     self:addEventListener(Event.RESIZE, self.onResize, self)
 end
 
@@ -1475,8 +1526,8 @@ end
 -- Initialize child objects that make up the Joystick.
 -- You must not be called directly.
 --------------------------------------------------------------------------------
-function Panel:createChildren(params)
-    UIComponent.createChildren(self, params)
+function Panel:_createChildren()
+    UIComponent._createChildren(self)
     
     self._backgroundImage = NineImage(self:getStyle(Panel.STYLE_BACKGROUND_TEXTURE))
     self:addChild(self._backgroundImage)
@@ -1487,18 +1538,27 @@ end
 --------------------------------------------------------------------------------
 function Panel:updateDisplay()
     UIComponent.updateDisplay(self)
-    self._backgroundImage:setImage(self:getStyle(Panel.STYLE_BACKGROUND_TEXTURE))
+    self._backgroundImage:setImage(self:getBackgroundTexture())
     self._backgroundImage:setSize(self:getSize())
 end
 
 --------------------------------------------------------------------------------
--- Sets the background texture.
--- @param texture background texture
+-- Sets the background texture path.
+-- @param texture background texture path
 --------------------------------------------------------------------------------
 function Panel:setBackgroundTexture(texture)
     self:setStyle(Panel.STYLE_BACKGROUND_TEXTURE, texture)
-    self._backgroundImage:setImage(self:getStyle(Panel.STYLE_BACKGROUND_TEXTURE))    
+    self._backgroundImage:setImage(self:getBackgroundTexture())    
 end
+
+--------------------------------------------------------------------------------
+-- Returns the background texture path.
+-- @param texture background texture path
+--------------------------------------------------------------------------------
+function Panel:getBackgroundTexture()
+    return self:getStyle(Panel.STYLE_BACKGROUND_TEXTURE)
+end
+
 
 --------------------------------------------------------------------------------
 -- This event handler is called when resize.
@@ -1530,8 +1590,8 @@ TextBox.STYLE_TEXT_ALIGN = "textAlign"
 --------------------------------------------------------------------------------
 --Initialize a variables
 --------------------------------------------------------------------------------
-function TextBox:initInternal(params)
-    Panel.initInternal(self, params)
+function TextBox:_initInternal()
+    Panel._initInternal(self)
     self._themeName = "TextBox"
     self._text = ""
     self._textLabel = nil
@@ -1541,8 +1601,8 @@ end
 -- Initialize child objects that make up the Joystick.
 -- You must not be called directly.
 --------------------------------------------------------------------------------
-function TextBox:createChildren(params)
-    Panel.createChildren(self, params)
+function TextBox:_createChildren()
+    Panel._createChildren(self)
     
     self._textLabel = Label(self._text, 100, 30)
     self._textLabel:setWordBreak(MOAITextBox.WORD_BREAK_CHAR)
@@ -1574,6 +1634,14 @@ end
 function TextBox:setText(text)
     self._text = text
     self._textLabel:setString(text)
+end
+
+--------------------------------------------------------------------------------
+-- Adds the text.
+-- @param text text
+--------------------------------------------------------------------------------
+function TextBox:addText(text)
+    self:setText(self._text .. text)
 end
 
 --------------------------------------------------------------------------------
@@ -1689,6 +1757,7 @@ end
 function TextBox:getTextColor()
     return unpack(self:getStyle(TextBox.STYLE_TEXT_COLOR))
 end
+
 --------------------------------------------------------------------------------
 -- This event handler is called when resize.
 -- @param e Touch Event
@@ -1703,23 +1772,176 @@ function TextBox:onResize(e)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type TextBox
+-- It is a TextBox.
+----------------------------------------------------------------------------------------------------
+TextInput = class(TextBox)
+M.TextInput = TextInput
+
+--- Style: focusTexture
+TextInput.STYLE_FOCUS_TEXTURE = "focusTexture"
+
+--------------------------------------------------------------------------------
+-- Initialize a variables
+--------------------------------------------------------------------------------
+function TextInput:_initInternal()
+    TextBox._initInternal(self)
+    self._themeName = "TextInput"
+    self._onKeyboardInput = function(start, length, text)
+        self:onKeyboardInput(start, length, text)
+    end
+    self._onKeyboardReturn = function()
+        self:onKeyboardReturn()
+    end
+    
+end
+
+--------------------------------------------------------------------------------
+-- Initialize the event listeners.
+--------------------------------------------------------------------------------
+function TextInput:_initEventListeners()
+    TextBox._initEventListeners(self)
+end
+
+--------------------------------------------------------------------------------
+-- Create the children.
+--------------------------------------------------------------------------------
+function TextInput:_createChildren()
+    TextBox._createChildren(self)
+    
+    self._textAllow = Rect(1, self:getTextSize())
+    self._textAllow:setColor(0, 0, 0, 1)
+    self._textAllow:setVisible(false)
+    self:addChild(self._textAllow)
+end
+
+--------------------------------------------------------------------------------
+-- Draw the focus object.
+--------------------------------------------------------------------------------
+function TextInput:drawFocus(focus)
+    TextBox.drawFocus(self, focus)
+    self._backgroundImage:setImage(self:getBackgroundTexture())
+    
+    self:drawTextAllow()
+end
+
+function TextInput:drawTextAllow()
+    if not self:isFocus() then
+        self._textAllow:setVisible(false)
+        return
+    end
+
+    local textLabel = self._textLabel
+    local tLen = #self._text
+    local txMin, tyMin, txMax, tyMax = textLabel:getStringBounds(1, tLen)
+    local tLeft, tTop = textLabel:getPos()
+    local tWidth, tHeight = textLabel:getSize()
+    local textSize = self:getTextSize()
+    txMin, tyMin, txMax, tyMax = txMin or 0, tyMin or 0, txMax or 0, tyMax or 0
+    
+    local textAllow = self._textAllow
+    local allowLeft, allowTop = txMax + tLeft, (tHeight - textSize) / 2 + tTop
+    textAllow:setSize(1, self:getTextSize())
+    textAllow:setPos(allowLeft, allowTop)
+    textAllow:setVisible(self:isFocus())
+end
+
+--------------------------------------------------------------------------------
+-- Returns the background texture path.
+-- @return background texture path
+--------------------------------------------------------------------------------
+function TextInput:getBackgroundTexture()
+    if self:isFocus() then
+        return self:getStyle(TextInput.STYLE_FOCUS_TEXTURE)
+    end
+    return TextBox.getBackgroundTexture(self)
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when focus in.
+-- @param e event
+--------------------------------------------------------------------------------
+function TextInput:onFocusIn(e)
+    TextBox.onFocusIn(self, e)
+    
+    if MOAIKeyboard then
+        MOAIKeyboard.setListener(MOAIKeyboard.EVENT_INPUT, self._onKeyboardInput)
+        MOAIKeyboard.setListener(MOAIKeyboard.EVENT_RETURN, self._onKeyboardReturn)
+        MOAIKeyboard.showKeyboard(self:getText())
+    else
+        InputMgr:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
+        InputMgr:addEventListener(Event.KEY_UP, self.onKeyUp, self)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when focus in.
+-- @param e event
+--------------------------------------------------------------------------------
+function TextInput:onFocusOut(e)
+    TextBox.onFocusOut(self, e)
+
+    if MOAIKeyboard then
+        --TODO:MOAIKeyboard.hideKeyboard()
+    else
+        InputMgr:removeEventListener(Event.KEY_DOWN, self.onKeyDown, self)
+        InputMgr:removeEventListener(Event.KEY_UP, self.onKeyUp, self)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when focus in.
+-- @param e event
+--------------------------------------------------------------------------------
+function TextInput:onKeyDown(e)
+    local key = e.key
+    print("key = " .. key)
+    
+    if key == KeyCode.DEL or key == KeyCode.BACKSPACE then
+        local text = self:getText()
+        text = #text > 0 and text:sub(1, #text - 1) or text
+        self:setText(text)
+    elseif key == KeyCode.ENTER then
+        -- TODO: LF
+    else
+        self:addText(string.char(key))
+    end
+
+    self:drawTextAllow()
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when key up.
+-- @param e event
+--------------------------------------------------------------------------------
+function TextInput:onKeyUp(e)
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when keyboard input.
+-- @param start start
+-- @param length length
+-- @param text text
+--------------------------------------------------------------------------------
+function TextInput:onKeyboardInput(start, length, text)
+    self:setText(MOAIKeyboard.getText())
+    self:drawTextAllow()
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when keyboard input.
+--------------------------------------------------------------------------------
+function TextInput:onKeyboardReturn()
+    self:setText(MOAIKeyboard.getText())
+    self:setFocus(false)
+end
+
+----------------------------------------------------------------------------------------------------
 -- @type MsgBox
 -- It is a MsgBox.
 ----------------------------------------------------------------------------------------------------
 MsgBox = class(TextBox)
 M.MsgBox = MsgBox
-
---- Event: msgShow
-MsgBox.EVENT_MSG_SHOW = "msgShow"
-
---- Event: msgHide
-MsgBox.EVENT_MSG_HIDE = "msgHide"
-
---- Event: msgEnd
-MsgBox.EVENT_MSG_END = "msgEnd"
-
---- Event: spoolStop
-MsgBox.EVENT_SPOOL_STOP = "spoolStop"
 
 --- Style: animShowFunction
 MsgBox.STYLE_ANIM_SHOW_FUNCTION = "animShowFunction"
@@ -1727,6 +1949,7 @@ MsgBox.STYLE_ANIM_SHOW_FUNCTION = "animShowFunction"
 --- Style: animHideFunction
 MsgBox.STYLE_ANIM_HIDE_FUNCTION = "animHideFunction"
 
+--- Default: Show Animation function
 MsgBox.ANIM_SHOW_FUNCTION = function(self)
     self:setColor(0, 0, 0, 0)
     self:setScl(0.8, 0.8, 1)
@@ -1736,6 +1959,7 @@ MsgBox.ANIM_SHOW_FUNCTION = function(self)
     MOAICoroutine.blockOnAction(action1)
 end
 
+--- Default: Hide Animation function
 MsgBox.ANIM_HIDE_FUNCTION = function(self)
     local action1 = self:seekColor(0, 0, 0, 0, 0.5)
     local action2 = self:seekScl(0.8, 0.8, 1, 0.5)
@@ -1745,8 +1969,8 @@ end
 --------------------------------------------------------------------------------
 -- Initialize a internal variables.
 --------------------------------------------------------------------------------
-function MsgBox:initInternal(params)
-    TextBox.initInternal(self, params)
+function MsgBox:_initInternal()
+    TextBox._initInternal(self)
     self._themeName = "MsgBox"
     self._popupShowing = false
     self._spoolingEnabled = true
@@ -1758,8 +1982,8 @@ end
 --------------------------------------------------------------------------------
 -- Initialize the event listeners.
 --------------------------------------------------------------------------------
-function MsgBox:initEventListeners(params)
-    TextBox.initEventListeners(self, params)
+function MsgBox:_initEventListeners()
+    TextBox._initEventListeners(self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
 end
 
@@ -1789,7 +2013,7 @@ function MsgBox:showPopup()
             self._textLabel:spool()
         end
         
-        self:dispatchEvent(MsgBox.EVENT_MSG_SHOW)
+        self:dispatchEvent(UIEvent.MSG_SHOW)
     end)
 end
 
@@ -1806,7 +2030,7 @@ function MsgBox:hidePopup()
         local hideFunc = self:getStyle(MsgBox.STYLE_ANIM_HIDE_FUNCTION)
         hideFunc(self)
         
-        self:dispatchEvent(MsgBox.EVENT_MSG_HIDE)
+        self:dispatchEvent(UIEvent.MSG_HIDE)
         self._popupShowing = false
     end)
 end
@@ -1883,307 +2107,64 @@ function MsgBox:onTouchDown(e)
     elseif self:hasNextPase() then
         self:nextPage()
     else
-        self:dispatchEvent(MsgBox.EVENT_MSG_END)
+        self:dispatchEvent(UIEvent.MSG_END)
         self:hidePopup()
     end
 end
 
 ----------------------------------------------------------------------------------------------------
--- @type BaseLayout
--- TODO:Doc
--- GUIコンポーネントのレイアウトを更新するためのクラスです.
--- レイアウトクラスは、コンポーネントに対する参照を持ちません.
--- また、コンポーネント間で共有してもいいように実装しなければなりません.
+-- @type ListBox
+-- 
 ----------------------------------------------------------------------------------------------------
-BaseLayout = class()
-M.BaseLayout = BaseLayout
+ListBox = class(Panel)
+M.ListBox = ListBox
 
 --------------------------------------------------------------------------------
--- Construntor
+-- Initialize a variables
 --------------------------------------------------------------------------------
-function BaseLayout:init(params)
-    self:initInternal(params)
-    self:setProperties(params)
+function ListBox:_initInternal()
+    Panel._initInternal(self)
+    self._themeName = "ListBox"
+    self._listItems = {}
+    self._listHeader = nil
 end
 
 --------------------------------------------------------------------------------
--- 内部変数の初期化処理です.
+-- Initialize the event listeners.
 --------------------------------------------------------------------------------
-function BaseLayout:initInternal(params)
+function ListBox:_initEventListeners()
+    Panel._initEventListeners(self)
+end
+
+--------------------------------------------------------------------------------
+-- Create the children.
+--------------------------------------------------------------------------------
+function ListBox:_createChildren()
+    Panel._createChildren(self)
     
+    self._textAllow = Rect(1, self:getTextSize())
+    self._textAllow:setColor(0, 0, 0, 1)
+    self._textAllow:setVisible(false)
+    self:addChild(self._textAllow)
 end
 
 --------------------------------------------------------------------------------
--- レイアウトの更新処理を行います.
--- デフォルトでは何もしません.
--- 継承するクラスで実装してください.
+-- Create the listItems.
 --------------------------------------------------------------------------------
-function BaseLayout:update(parent)
+function ListBox:createListItems()
 
 end
 
---------------------------------------------------------------------------------
--- Set the parameter setter function.
--- @param params Parameter is set to Object.<br>
---------------------------------------------------------------------------------
-function BaseLayout:setProperties(params)
-    if params then
-        PropertyUtils.setProperties(self, params, true)
-    end
+function ListBox:refreshData()
+
 end
 
-----------------------------------------------------------------------------------------------------
--- @type BoxLayout
--- TODO:Doc
-----------------------------------------------------------------------------------------------------
-BoxLayout = class(BaseLayout)
-M.BoxLayout = BoxLayout
-
---- Horizotal Align: left
-BoxLayout.HORIZOTAL_LEFT = "left"
-
---- Horizotal Align: center
-BoxLayout.HORIZOTAL_CENTER = "center"
-
---- Horizotal Align: right
-BoxLayout.HORIZOTAL_RIGHT = "right"
-
---- Vertical Align: top
-BoxLayout.VERTICAL_TOP = "top"
-
---- Vertical Align: center
-BoxLayout.VERTICAL_CENTER = "center"
-
---- Vertical Align: bottom
-BoxLayout.VERTICAL_BOTTOM = "bottom"
-
---- Direction: vertical
-BoxLayout.DIRECTION_VERTICAL = "vertical"
-
---- Direction: horizotal
-BoxLayout.DIRECTION_HORIZOTAL = "horizotal"
-
---------------------------------------------------------------------------------
--- 内部変数の初期化処理です.
---------------------------------------------------------------------------------
-function BoxLayout:initInternal(params)
-    self._horizotalAlign = BoxLayout.HORIZOTAL_LEFT
-    self._horizotalGap = 5
-    self._verticalAlign = BoxLayout.VERTICAL_TOP
-    self._verticalGap = 5
-    self._paddingTop = 0
-    self._paddingBottom = 0
-    self._paddingLeft = 0
-    self._paddingRight = 0
-    self._direction = BoxLayout.DIRECTION_VERTICAL
-    self._parentResizable = true
+function ListBox:setListData(listData)
+    self._listData = listData
 end
 
---------------------------------------------------------------------------------
--- 指定した親コンポーネントのレイアウトを更新します.
---------------------------------------------------------------------------------
-function BoxLayout:update(parent)
-    if self._direction == BoxLayout.DIRECTION_VERTICAL then
-        self:updateVertical(parent)
-    elseif self._direction == BoxLayout.DIRECTION_HORIZOTAL then
-        self:updateHorizotal(parent)
-    end
-end
+function ListBox:getDataProvider()
 
---------------------------------------------------------------------------------
--- 垂直方向に子オブジェクトを配置します.
---------------------------------------------------------------------------------
-function BoxLayout:updateVertical(parent)
-    local children = parent:getChildren()
-    local childrenWidth, childrenHeight = self:getVerticalLayoutSize(children)
-    
-    local parentWidth, parentHeight = parent:getSize()
-    local parentWidth = parentWidth > childrenWidth and parentWidth or childrenWidth
-    local parentHeight = parentHeight > childrenHeight and parentHeight or childrenHeight
-    
-    if self._parentResizable then
-        parent:setSize(parentWidth, parentHeight)
-    end
-    
-    local childY = self:getChildY(parentHeight, childrenHeight)
-    for i, child in ipairs(children) do
-        if child.isIncludeLayout == nil or child:isIncludeLayout() then
-            local childWidth, childHeight = child:getSize()
-            local childX = self:getChildX(parentWidth, childWidth)
-            child:setPos(childX, childY)
-            childY = childY + childHeight + self._verticalGap
-        end
-    end
-end
-
---------------------------------------------------------------------------------
--- 水平方向に子オブジェクトを配置します.
---------------------------------------------------------------------------------
-function BoxLayout:updateHorizotal(parent)
-    local children = parent:getChildren()
-    local childrenWidth, childrenHeight = self:getHorizotalLayoutSize(children)
-
-    local parentWidth, parentHeight = parent:getSize()
-    local parentWidth = parentWidth > childrenWidth and parentWidth or childrenWidth
-    local parentHeight = parentHeight > childrenHeight and parentHeight or childrenHeight
-    
-    if self._parentResizable then
-        parent:setSize(parentWidth, parentHeight)
-    end
-
-    local childX = self:getChildX(parentWidth, childrenWidth)
-
-    for i, child in ipairs(children) do
-        if child.isIncludeLayout == nil or child:isIncludeLayout() then
-            local childWidth, childHeight = child.getSize and child:getSize() or DisplayObject.getSize(child)
-            local childY = self:getChildY(parentHeight, childHeight)
-            child:setPos(childX, childY)
-            childX = childX + childWidth + self._horizotalGap
-        end
-    end
-end
-
---------------------------------------------------------------------------------
--- 上下左右の余白を設定します.
---------------------------------------------------------------------------------
-function BoxLayout:setPadding(left, top, right, bottom)
-    self._paddingLeft = left or self._paddingTop
-    self._paddingTop = top or self._paddingTop
-    self._paddingRight = right or self._paddingRight
-    self._paddingBottom = bottom or self._paddingBottom
-end
-
---------------------------------------------------------------------------------
--- 上下左右の余白を設定します.
---------------------------------------------------------------------------------
-function BoxLayout:getPadding()
-    return self._paddingLeft, self._paddingTop, self._paddingRight, self._paddingBottom
-end
-
---------------------------------------------------------------------------------
--- アラインを設定します.
---------------------------------------------------------------------------------
-function BoxLayout:setAlign(horizotalAlign, verticalAlign)
-    self._horizotalAlign = horizotalAlign
-    self._verticalAlign = verticalAlign
-end
-
---------------------------------------------------------------------------------
--- アラインを返します.
---------------------------------------------------------------------------------
-function BoxLayout:getAlign()
-    return self._horizotalAlign, self._verticalAlign
-end
-
---------------------------------------------------------------------------------
--- コンポーネントを配置する方向を設定します.
---------------------------------------------------------------------------------
-function BoxLayout:setDirection(direction)
-    self._direction = direction
-end
-
---------------------------------------------------------------------------------
--- コンポーネントを配置する方向を返します.
---------------------------------------------------------------------------------
-function BoxLayout:getDirection()
-    return self._direction
-end
-
---------------------------------------------------------------------------------
--- コンポーネントの間隔を設定します.
---------------------------------------------------------------------------------
-function BoxLayout:setGap(horizotalGap, verticalGap)
-    self._horizotalGap = horizotalGap
-    self._verticalGap = verticalGap
-end
-
---------------------------------------------------------------------------------
--- コンポーネントの間隔を返します..
---------------------------------------------------------------------------------
-function BoxLayout:getGap()
-    return self._horizotalGap, self._verticalGap
-end
-
---------------------------------------------------------------------------------
--- 子オブジェクトのX座標を返します.
---------------------------------------------------------------------------------
-function BoxLayout:getChildX(parentWidth, childWidth)
-    local diffWidth = parentWidth - childWidth
-
-    local x = 0
-    if self._horizotalAlign == M.HORIZOTAL_LEFT then
-        x = self._paddingLeft
-    elseif self._horizotalAlign == M.HORIZOTAL_CENTER then
-        x = math.floor((diffWidth + self._paddingLeft - self._paddingRight) / 2)
-    elseif self._horizotalAlign == M.HORIZOTAL_RIGHT then
-        x = diffWidth - self._paddingRight
-    else
-        error("Not found direction!")
-    end
-    return x
-end
-
---------------------------------------------------------------------------------
--- 子オブジェクトのY座標を返します.
---------------------------------------------------------------------------------
-function BoxLayout:getChildY(parentHeight, childHeight)
-    local diffHeight = parentHeight - childHeight
-
-    local y = 0
-    if self._verticalAlign == M.VERTICAL_TOP then
-        y = self._paddingTop
-    elseif self._verticalAlign == M.VERTICAL_CENTER then
-        y = math.floor((diffHeight + self._paddingTop - self._paddingBottom) / 2)
-    elseif self._verticalAlign == M.VERTICAL_BOTTOM then
-        y = diffHeight - self._paddingBottom
-    else
-        error("Not found direction!")
-    end
-    return y
-end
-
---------------------------------------------------------------------------------
--- 垂直方向に子オブジェクトを配置した時の
--- 全体のレイアウトサイズを返します.
---------------------------------------------------------------------------------
-function BoxLayout:getVerticalLayoutSize(children)
-    local width = self._paddingLeft + self._paddingRight
-    local height = self._paddingTop + self._paddingBottom
-    local count = 0
-    for i, child in ipairs(children) do
-        if not (child.isExcludeLayout and child:isExcludeLayout()) then
-            local cWidth, cHeight = child.getSize and child:getSize() or DisplayObject.getSize(child)
-            height = height + cHeight + self._verticalGap
-            width = math.max(width, cWidth)
-            count = count + 1
-        end
-    end
-    if count > 1 then
-        height = height - self._verticalGap
-    end
-    return width, height
-end
-
---------------------------------------------------------------------------------
--- 水平方向に子オブジェクトを配置した時の
--- 全体のレイアウトサイズを返します.
---------------------------------------------------------------------------------
-function BoxLayout:getHorizotalLayoutSize(children)
-    local width = self._paddingLeft + self._paddingRight
-    local height = self._paddingTop + self._paddingBottom
-    local count = 0
-    for i, child in ipairs(children) do
-        if not (child.isExcludeLayout and child:isExcludeLayout()) then
-            local cWidth, cHeight = child.getSize and child:getSize() or DisplayObject.getSize(child)
-            width = width + cWidth + self._horizotalGap
-            height = math.max(height, cHeight)
-            count = count + 1
-        end
-    end
-    if count > 1 then
-        width = width - self._horizotalGap
-    end
-    return width, height
 end
 
 -- widget initialize

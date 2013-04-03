@@ -7,5 +7,6 @@ return {
     {title = "Widget Joystick", scene = "scenes/widget_joystick_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget Panel", scene = "scenes/widget_panel_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget TextBox", scene = "scenes/widget_textbox_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Widget TextInput", scene = "scenes/widget_textinput_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget MsgBox", scene = "scenes/widget_msgbox_sample", openAnime = "fade", closeAnime = "fade"},
 }

@@ -1589,6 +1589,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the position.
+-- Without depending on the Pivot, move the top left corner as the origin.
 -- @param left Left position
 -- @param top Top position
 --------------------------------------------------------------------------------
