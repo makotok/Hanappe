@@ -3121,6 +3121,14 @@
    <tile gid="0"/>
   </data>
  </layer>
+ <objectgroup name="ObjectLayer" width="100" height="31">
+  <object type="SpriteSheet" gid="241" x="224" y="352">
+   <properties>
+    <property name="playAnim" value="walkDown"/>
+    <property name="sheetAnims" value="{name = &quot;walkDown&quot;, indexes = {2, 1, 2, 3, 2}, sec = 0.25},{name = &quot;walkLeft&quot;, indexes = {5, 4, 5, 6, 5}, sec = 0.25},{name = &quot;walkRight&quot;, indexes = {8, 7, 8, 9, 8}, sec = 0.25},{name = &quot;walkUp&quot;, indexes = {11, 10, 11, 12, 11}, sec = 0.25}"/>
+   </properties>
+  </object>
+ </objectgroup>
  <layer name="Main" width="100" height="31">
   <data>
    <tile gid="85"/>
@@ -9329,12 +9337,4 @@
    <tile gid="0"/>
   </data>
  </layer>
- <objectgroup name="ObjectLayer" width="100" height="31">
-  <object type="SpriteSheet" gid="241" x="96" y="288">
-   <properties>
-    <property name="playAnim" value="walkDown"/>
-    <property name="sheetAnims" value="{name = &quot;walkDown&quot;, indexes = {2, 1, 2, 3, 2}, sec = 0.25},{name = &quot;walkLeft&quot;, indexes = {5, 4, 5, 6, 5}, sec = 0.25},{name = &quot;walkRight&quot;, indexes = {8, 7, 8, 9, 8}, sec = 0.25},{name = &quot;walkUp&quot;, indexes = {11, 10, 11, 12, 11}, sec = 0.25}"/>
-   </properties>
-  </object>
- </objectgroup>
 </map>
