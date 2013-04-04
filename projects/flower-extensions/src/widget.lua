@@ -38,6 +38,7 @@ local UIGroup
 local UILayer
 local UITouchHandler
 local UIView
+local TextSupport
 local Button
 local Joystick
 local Panel
@@ -46,6 +47,8 @@ local TextInput
 local MsgBox
 local ListBox
 local ListItem
+local ListHeader
+local ListFooter
 local PictureBox
 local TileList
 local BaseLayout
@@ -108,6 +111,7 @@ local function buildTheme()
             fontName = "VL-PGothic.ttf",
             textSize = 18,
             textColor = {0, 0, 0, 1},
+            
         },
         PictureBox = {
             backgroundTexture = "skins/panel.9.png",
@@ -752,7 +756,8 @@ function UIView:_initEventListeners()
 end
 
 function UIView:onLayerTouchDown(e)
-    FocusMgr:setFocusObject(nil)
+    local focusMgr = self:getFocusMgr()
+    --focusMgr:setFocusObject(nil)
 end
 
 --------------------------------------------------------------------------------
@@ -794,16 +799,8 @@ function UIView:setScene(scene)
     self.layer:setScene(scene)
 end
 
---------------------------------------------------------------------------------
--- Event handler when you touch a layer.
--- @param e Event object
---------------------------------------------------------------------------------
-function UIView:onTouchLayer(e)
-    
-end
-
 ----------------------------------------------------------------------------------------------------
--- @type ImageButton
+-- @type Button
 -- This class is an image that can be pressed.
 -- It is a simple button.
 ----------------------------------------------------------------------------------------------------
@@ -2119,6 +2116,9 @@ end
 ListBox = class(Panel)
 M.ListBox = ListBox
 
+--- Style: listItemFactory
+ListBox.STYLE_LIST_ITEM_FACTORY = "listItemFactory"
+
 --------------------------------------------------------------------------------
 -- Initialize a variables
 --------------------------------------------------------------------------------
@@ -2126,7 +2126,10 @@ function ListBox:_initInternal()
     Panel._initInternal(self)
     self._themeName = "ListBox"
     self._listItems = {}
+    self._listData = {}
     self._listHeader = nil
+    self._listBody = nil
+    self._listFooter = nil
 end
 
 --------------------------------------------------------------------------------
@@ -2141,30 +2144,68 @@ end
 --------------------------------------------------------------------------------
 function ListBox:_createChildren()
     Panel._createChildren(self)
-    
-    self._textAllow = Rect(1, self:getTextSize())
-    self._textAllow:setColor(0, 0, 0, 1)
-    self._textAllow:setVisible(false)
-    self:addChild(self._textAllow)
 end
 
 --------------------------------------------------------------------------------
 -- Create the listItems.
 --------------------------------------------------------------------------------
-function ListBox:createListItems()
+function ListBox:_createListItems()
+    local totalHeight = 0
+    while true do
+    
+    end
+end
 
+--------------------------------------------------------------------------------
+-- Update the display.
+--------------------------------------------------------------------------------
+function ListBox:updateDisplay()
+    Panel.updateDisplay(self)
+end
+
+function ListBox:updateLayout()
+    
 end
 
 function ListBox:refreshData()
+    
+end
 
+function ListBox:getHeader()
+    return self._listHeader
+end
+
+function ListBox:getBody()
+    return self._listBody
+end
+
+function ListBox:getFooter()
+    return self._listFooter
 end
 
 function ListBox:setListData(listData)
     self._listData = listData
+    self:refreshData()
 end
 
-function ListBox:getDataProvider()
+function ListBox:getListData()
+    return self._listData
+end
 
+function ListBox:setListHeaderFactory(listHeaderFactory)
+    self:setStyle(ListBox.STYLE_LIST_HEADER_FACTORY, listHeaderFactory)
+end
+
+function ListBox:getListHeaderFactory()
+    return self:getStyle(ListBox.STYLE_LIST_HEADER_FACTORY)
+end
+
+function ListBox:setListItemFactory(listItemFactory)
+    self:setStyle(ListBox.STYLE_LIST_ITEM_FACTORY, listItemFactory)
+end
+
+function ListBox:getListItemFactory()
+    return self:getStyle(ListBox.STYLE_LIST_ITEM_FACTORY)
 end
 
 -- widget initialize
