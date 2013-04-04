@@ -2667,6 +2667,8 @@ M.NineImage = NineImage
 --------------------------------------------------------------------------------
 function NineImage:init(imagePath, width, height)
     DisplayObject.init(self)
+    self._scaledWidth = nil
+    self._scaledHeight = nil
 
     self:setImage(imagePath, width, height)
 end
@@ -2686,6 +2688,9 @@ function NineImage:setImage(imagePath, width, height)
     
     local orgWidth, orgHeight = self:getSize()
     
+    print("originSize:", orgWidth, orgHeight)
+    print("displaySize:", self.deck.displayWidth, self.deck.displayHeight)
+    
     width = width or orgWidth or self.deck.displayWidth
     height = height or orgHeight or self.deck.displayHeight
     
@@ -2704,8 +2709,32 @@ function NineImage:setSize(width, height)
     local left, top = self:getPos()
     local sclX, sclY, sclZ = width / iw, height / ih, 1
     
-    self:setBounds(0, 0, 0, width, height, 0)
+    self._scaledWidth = width
+    self._scaledHeight = height
     self:setScl(sclX, sclY, sclZ)
+end
+
+--------------------------------------------------------------------------------
+-- Returns the dummey dimensions.
+-- @return sacled width
+-- @return scaled height
+-- @return 0
+--------------------------------------------------------------------------------
+function NineImage:getDims()
+    return self._scaledWidth, self._scaledHeight, 0
+end
+
+--------------------------------------------------------------------------------
+-- Returns the dummey bounds.
+-- @return xMin(0)
+-- @return yMin(0)
+-- @return zMin(0)
+-- @return xMax(sacled width)
+-- @return yMax(scaled height)
+-- @return 0
+--------------------------------------------------------------------------------
+function NineImage:getBounds()
+    return 0, 0, 0, self._scaledWidth, self._scaledHeight, 0
 end
 
 --------------------------------------------------------------------------------
