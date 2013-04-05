@@ -169,11 +169,11 @@ end
 function M:createDisplayObjectLayer(objectGroup)
     local objectLayer = Layer:new()
     objectLayer.objects = {}
+    objectLayer.objectGroup = objectGroup
     for j, object in ipairs(objectGroup.objects) do
         if object.gid and object.gid > 0 then
             local displayObject = self:createDisplayObject(object)
-            objectLayer:insertProp(displayObject)
-            table.insert(objectLayer.objects, displayObject)
+            self:addDisplayObject(objectLayer, displayObject)
         end
     end
     return objectLayer
@@ -181,7 +181,6 @@ end
 
 --------------------------------------------------------------------------------
 -- To generate a display object from the object data.
--- Because of inheritance has been left for, please do not call from the outside.
 --------------------------------------------------------------------------------
 function M:createDisplayObject(object)
     local tmxMap = self.tmxMap
@@ -337,6 +336,26 @@ function M:updateGid(layer, x, y, gid)
             table.insert(layer.tilesetRenderers, renderer)
         end
     end
+end
+
+--------------------------------------------------------------------------------
+-- Add the object.
+-- @param objectLayer object layer
+-- @param object target object
+--------------------------------------------------------------------------------
+function M:addDisplayObject(objectLayer, object)
+    table.insertElement(objectLayer.objects, object)
+    object:setLayer(objectLayer)
+end
+
+--------------------------------------------------------------------------------
+-- Remove the object.
+-- @param objectLayer object layer
+-- @param object target object
+--------------------------------------------------------------------------------
+function M:removeDisplayObject(objectLayer, object)
+    table.removeElement(objectLayer.objects, object)
+    object:setLayer(nil)
 end
 
 --------------------------------------------------------------------------------
