@@ -1334,6 +1334,7 @@ SceneMgr.currentScene = nil
 SceneMgr.nextScene = nil
 SceneMgr.transitioning = false
 SceneMgr.sceneUpdateEnabled = true
+SceneMgr.sceneTouchEnabled = true
 SceneMgr.sceneFactory = nil
 
 --------------------------------------------------------------------------------
@@ -1530,8 +1531,12 @@ end
 -- @param e Touch event
 --------------------------------------------------------------------------------
 function SceneMgr:onTouch(e)
+    if not self.sceneTouchEnabled then
+        return
+    end
+
     local scene = self.currentScene
-    if scene then
+    if scene and scene.sceneTouchEnabled then
         scene:dispatchEvent(e)
     end
 end
@@ -1995,6 +2000,7 @@ function Scene:init(sceneName, params)
     self.opened = false
     self.started = false
     self.sceneUpdateEnabled = false
+    self.sceneTouchEnabled = false
     self.controller = self:createController(params)
     self.controller.scene = self
     self:initListeners()
@@ -2079,6 +2085,7 @@ function Scene:start(params)
     self.started = true
     self.paused = false
     self.sceneUpdateEnabled = true
+    self.sceneTouchEnabled = true
 end
 
 --------------------------------------------------------------------------------
@@ -2093,6 +2100,7 @@ function Scene:stop(params)
     self:dispatchEvent(Event.STOP, params)
     self.started = false
     self.sceneUpdateEnabled = false
+    self.sceneTouchEnabled = false
 end
 
 --------------------------------------------------------------------------------
