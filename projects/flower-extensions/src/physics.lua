@@ -340,7 +340,7 @@ function B2Fixture:setProperties(params)
     end
     if params.collisionHandler then
         local collisionHandler = params.collisionHandler
-        local collisionArbiter = params.Arbiter or MOAIBox2DArbiter.ALL
+        local collisionArbiter = params.arbiter or MOAIBox2DArbiter.ALL
         self:setCollisionHandler(collisionHandler, MOAIBox2DArbiter.ALL)
     end
 end

@@ -447,10 +447,11 @@ Executors = {}
 M.Executors = Executors
 
 --------------------------------------------------------------------------------
--- Run the specified function in a loop in a coroutine, forever. <br>
+-- Run the specified function in a loop in a coroutine, forever.
 -- If there is a return value of a function of argument, the loop is terminated.
 -- @param func Target function.
 -- @param ... Arguments to be passed to the function.
+-- @return MOAICoroutine object
 --------------------------------------------------------------------------------
 function Executors.callLoop(func, ...)
     local thread = MOAICoroutine.new()
@@ -465,6 +466,7 @@ function Executors.callLoop(func, ...)
             end
         end
     )
+    return thread
 end
 
 --------------------------------------------------------------------------------
@@ -472,9 +474,10 @@ end
 -- (upon next coroutine.yield())
 -- @param func Target function.
 -- @param ... Arguments.
+-- @return MOAICoroutine object
 --------------------------------------------------------------------------------
 function Executors.callOnce(func, ...)
-    Executors.callLaterFrame(0, func, ...)
+    return Executors.callLaterFrame(0, func, ...)
 end
 
 --------------------------------------------------------------------------------
@@ -482,6 +485,7 @@ end
 -- @param frame Delay frame count.
 -- @param func Target function.
 -- @param ... Arguments.
+-- @return MOAICoroutine object
 --------------------------------------------------------------------------------
 function Executors.callLaterFrame(frame, func, ...)
     local thread = MOAICoroutine.new()
@@ -496,6 +500,7 @@ function Executors.callLaterFrame(frame, func, ...)
             func(unpack(args))
         end
     )
+    return thread
 end
 
 --------------------------------------------------------------------------------
@@ -503,6 +508,7 @@ end
 -- @param time Delay seconds.
 -- @param func Target function.
 -- @param ... Arguments.
+-- @return MOAITimer object
 --------------------------------------------------------------------------------
 function Executors.callLaterTime(time, func, ...)
     local args = {...}
@@ -510,6 +516,7 @@ function Executors.callLaterTime(time, func, ...)
     timer:setSpan(time)
     timer:setListener(MOAITimer.EVENT_STOP, function() func(unpack(args)) end)
     timer:start()
+    return timer
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -2671,6 +2678,9 @@ function NineImage:init(imagePath, width, height)
     self._scaledHeight = nil
 
     self:setImage(imagePath, width, height)
+    if not width or not height then
+        self:setSize(width or self.deck.displayWidth, height or self.deck.displayHeight)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -2687,12 +2697,8 @@ function NineImage:setImage(imagePath, width, height)
     end
     
     local orgWidth, orgHeight = self:getSize()
-    
-    print("originSize:", orgWidth, orgHeight)
-    print("displaySize:", self.deck.displayWidth, self.deck.displayHeight)
-    
-    width = width or orgWidth or self.deck.displayWidth
-    height = height or orgHeight or self.deck.displayHeight
+    width = width or orgWidth
+    height = height or orgHeight
     
     self:setDeck(self.deck)
     self:setSize(width, height)

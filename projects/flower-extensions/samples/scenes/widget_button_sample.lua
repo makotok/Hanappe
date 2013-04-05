@@ -12,46 +12,92 @@ function onCreate(e)
     button1 = widget.Button {
         size = {200, 50},
         pos = {50, 50},
-        text = "Hello",
+        text = "Test1",
         parent = view,
-        onClick = button_OnClick,
-        onDown = button_OnDown,
-        onUp = button_OnUp,
+        onClick = button1_OnClick,
+        onDown = button1_OnDown,
+        onUp = button1_OnUp,
     }
     
-    button2 = widget.Button {
+    button2 = widget.Button()
+    button2:setSize(200, 50)
+    button2:setPivToCenter()
+    button2:setPos(50, button1:getBottom() + 10)
+    button2:setText("Test2")
+    button2:setTextSize(24)
+    button2:setOnClick(button2_OnClick)
+    button2:setParent(view)
+    
+    button3 = widget.Button {
         size = {200, 50},
-        pos = {50, 120},
-        text = "World",
+        pos = {50, button2:getBottom() + 10},
+        text = "Test3",
         parent = view,
-        onClick = button_OnClick,
-        onDown = button_OnDown,
-        onUp = button_OnUp,
+        onClick = button3_OnClick,
     }
     
     -- event listeners
-    button1:addEventListener("focusIn", button_OnFocusIn)
-    button1:addEventListener("focusOut", button_OnFocusOut)
-    button2:addEventListener("focusIn", button_OnFocusIn)
-    button2:addEventListener("focusOut", button_OnFocusOut)
+    button1:addEventListener("focusIn", button1_OnFocusIn)
+    button1:addEventListener("focusOut", button1_OnFocusOut)
 end
 
-function button_OnFocusIn(e)
-    print("FocusIn!")
+function button1_OnClick(e)
+    print("button1_OnClick!")
+
+    -- test size
+    button1:setSize(150, 50)
+    button2:setSize(250, 50)
+    button1:setPivToCenter()
+    button2:setPivToCenter()
+
+    -- test textSize
+    button1:setTextSize(16)
+    button2:setTextSize(22)
 end
 
-function button_OnFocusOut(e)
-    print("FocusOut!")
+function button1_OnDown(e)
+    print("button1_OnDown!")
 end
 
-function button_OnClick(e)
-    print("Click!")
+function button1_OnUp(e)
+    print("button1_OnUp!")
 end
 
-function button_OnDown(e)
-    print("Down!")
+function button1_OnFocusIn(e)
+    print("button1_OnFocusIn!")
 end
 
-function button_OnUp(e)
-    print("Up!")
+function button1_OnFocusOut(e)
+    print("button1_OnFocusOut!")
+end
+
+function button2_OnClick(e)
+    print("button2_OnClick!")
+    if coroutineAction then
+        return
+    end
+
+    coroutineAction = flower.callOnce(function()
+        -- test loc
+        MOAICoroutine.blockOnAction(button1:moveLoc(100, 100, 0, 1))
+        MOAICoroutine.blockOnAction(button1:moveLoc(-100, -100, 0, 1))
+    
+        -- test scl
+        MOAICoroutine.blockOnAction(button1:moveScl(1, 1, 0, 1))
+        MOAICoroutine.blockOnAction(button1:seekScl(1, 1, 1, 1))
+    
+        -- test rot
+        MOAICoroutine.blockOnAction(button1:moveRot(0, 0, 180, 1))
+        MOAICoroutine.blockOnAction(button1:seekRot(0, 0, 0, 1))
+        
+        -- test color
+        MOAICoroutine.blockOnAction(button1:moveColor(-1, -1, -1, -1, 1))
+        MOAICoroutine.blockOnAction(button1:moveColor(1, 1, 1, 1, 1))
+        
+        coroutineAction = nil
+    end)
+end
+
+function button3_OnClick(e)
+    flower.closeScene({animation = "fade"})
 end

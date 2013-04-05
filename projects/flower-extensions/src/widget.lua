@@ -15,6 +15,7 @@ local Executors = flower.Executors
 local Resources = flower.Resources
 local PropertyUtils = flower.PropertyUtils
 local InputMgr = flower.InputMgr
+local ClassFactory = flower.ClassFactory
 local Event = flower.Event
 local DisplayObject = flower.DisplayObject
 local Layer = flower.Layer
@@ -47,8 +48,6 @@ local TextInput
 local MsgBox
 local ListBox
 local ListItem
-local ListHeader
-local ListFooter
 local PictureBox
 local TileList
 local BaseLayout
@@ -108,9 +107,9 @@ local function buildTheme()
         },
         ListBox = {
             backgroundTexture = "skins/panel.9.png",
-            fontName = "VL-PGothic.ttf",
-            textSize = 18,
-            textColor = {0, 0, 0, 1},
+            listItemFactory = ClassFactory(ListItem),
+        },
+        ListItem = {
             
         },
         PictureBox = {
@@ -208,14 +207,23 @@ end
 TextAlign = {}
 M.TextAlign = TextAlign
 
+--- left: MOAITextBox.LEFT_JUSTIFY
 TextAlign["left"] = MOAITextBox.LEFT_JUSTIFY
+
+--- center: MOAITextBox.CENTER_JUSTIFY
 TextAlign["center"] = MOAITextBox.CENTER_JUSTIFY
+
+--- right: MOAITextBox.RIGHT_JUSTIFY
 TextAlign["right"] = MOAITextBox.RIGHT_JUSTIFY
+
+--- top: MOAITextBox.LEFT_JUSTIFY
 TextAlign["top"] = MOAITextBox.LEFT_JUSTIFY
+
+--- bottom: MOAITextBox.RIGHT_JUSTIFY
 TextAlign["bottom"] = MOAITextBox.RIGHT_JUSTIFY
 
 ----------------------------------------------------------------------------------------------------
--- @type TextAlign
+-- @type KeyCode
 ----------------------------------------------------------------------------------------------------
 KeyCode = {}
 M.KeyCode = KeyCode
@@ -367,6 +375,19 @@ end
 -- @param child DisplayObject
 --------------------------------------------------------------------------------
 function UIComponent:addChild(child)
+    if Group.addChild(self, child) then
+        child:setPriority(self:getPriority())
+        return true
+    end
+    return false
+end
+
+--------------------------------------------------------------------------------
+-- Adds the specified child.
+-- @param child DisplayObject
+-- @param index insert index
+--------------------------------------------------------------------------------
+function UIComponent:addChildAt(child, index)
     if Group.addChild(self, child) then
         child:setPriority(self:getPriority())
         return true
@@ -755,11 +776,6 @@ function UIView:_initEventListeners()
     UIGroup._initEventListeners(self)
 end
 
-function UIView:onLayerTouchDown(e)
-    local focusMgr = self:getFocusMgr()
-    --focusMgr:setFocusObject(nil)
-end
-
 --------------------------------------------------------------------------------
 -- Adds the specified child.
 -- @param child DisplayObject
@@ -796,8 +812,35 @@ end
 -- @param scene scene
 --------------------------------------------------------------------------------
 function UIView:setScene(scene)
+    if self.layer.scene then
+        self.layer.scene:removeEventListener(Event.STOP, self.onSceneStop, self, -10)
+    end
+    
     self.layer:setScene(scene)
+    
+    if self.layer.scene then
+        self.layer.scene:addEventListener(Event.STOP, self.onSceneStop, self, -10)
+    end
 end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when you touch the layer.
+-- @param e Touch Event
+--------------------------------------------------------------------------------
+function UIView:onLayerTouchDown(e)
+    local focusMgr = self:getFocusMgr()
+    focusMgr:setFocusObject(nil)
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when you stop the scene.
+-- @param e Touch Event
+--------------------------------------------------------------------------------
+function UIView:onSceneStop(e)
+    local focusMgr = self:getFocusMgr()
+    focusMgr:setFocusObject(nil)
+end
+
 
 ----------------------------------------------------------------------------------------------------
 -- @type Button
@@ -1525,9 +1568,19 @@ end
 --------------------------------------------------------------------------------
 function Panel:_createChildren()
     UIComponent._createChildren(self)
+    self:_createBackgroundImage()
+end
+
+function Panel:_createBackgroundImage()
+    if self._backgroundImage then
+        return
+    end
     
-    self._backgroundImage = NineImage(self:getStyle(Panel.STYLE_BACKGROUND_TEXTURE))
-    self:addChild(self._backgroundImage)
+    local texture = self:getBackgroundTexture()
+    if texture then
+        self._backgroundImage = NineImage(texture)
+        self:addChild(self._backgroundImage)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1535,8 +1588,10 @@ end
 --------------------------------------------------------------------------------
 function Panel:updateDisplay()
     UIComponent.updateDisplay(self)
-    self._backgroundImage:setImage(self:getBackgroundTexture())
-    self._backgroundImage:setSize(self:getSize())
+    if self._backgroundImage then
+        self._backgroundImage:setImage(self:getBackgroundTexture())
+        self._backgroundImage:setSize(self:getSize())
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -2127,9 +2182,6 @@ function ListBox:_initInternal()
     self._themeName = "ListBox"
     self._listItems = {}
     self._listData = {}
-    self._listHeader = nil
-    self._listBody = nil
-    self._listFooter = nil
 end
 
 --------------------------------------------------------------------------------
@@ -2137,6 +2189,7 @@ end
 --------------------------------------------------------------------------------
 function ListBox:_initEventListeners()
     Panel._initEventListeners(self)
+    self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
 end
 
 --------------------------------------------------------------------------------
@@ -2144,16 +2197,6 @@ end
 --------------------------------------------------------------------------------
 function ListBox:_createChildren()
     Panel._createChildren(self)
-end
-
---------------------------------------------------------------------------------
--- Create the listItems.
---------------------------------------------------------------------------------
-function ListBox:_createListItems()
-    local totalHeight = 0
-    while true do
-    
-    end
 end
 
 --------------------------------------------------------------------------------
@@ -2171,18 +2214,6 @@ function ListBox:refreshData()
     
 end
 
-function ListBox:getHeader()
-    return self._listHeader
-end
-
-function ListBox:getBody()
-    return self._listBody
-end
-
-function ListBox:getFooter()
-    return self._listFooter
-end
-
 function ListBox:setListData(listData)
     self._listData = listData
     self:refreshData()
@@ -2192,21 +2223,67 @@ function ListBox:getListData()
     return self._listData
 end
 
-function ListBox:setListHeaderFactory(listHeaderFactory)
-    self:setStyle(ListBox.STYLE_LIST_HEADER_FACTORY, listHeaderFactory)
-end
-
-function ListBox:getListHeaderFactory()
-    return self:getStyle(ListBox.STYLE_LIST_HEADER_FACTORY)
-end
-
-function ListBox:setListItemFactory(listItemFactory)
-    self:setStyle(ListBox.STYLE_LIST_ITEM_FACTORY, listItemFactory)
-end
-
 function ListBox:getListItemFactory()
     return self:getStyle(ListBox.STYLE_LIST_ITEM_FACTORY)
 end
+
+
+
+
+----------------------------------------------------------------------------------------------------
+-- @type ListBox
+-- 
+----------------------------------------------------------------------------------------------------
+ListItem = class(UIComponent)
+M.ListItem = ListItem
+
+--------------------------------------------------------------------------------
+-- Initialize a variables
+--------------------------------------------------------------------------------
+function ListItem:_initInternal()
+    UIComponent._initInternal(self)
+    self._themeName = "ListItem"
+    self._data = nil
+    self._rowIndex = nil
+end
+
+--------------------------------------------------------------------------------
+-- Initialize the event listeners.
+--------------------------------------------------------------------------------
+function ListItem:_initEventListeners()
+    UIComponent._initEventListeners(self)
+    self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
+end
+
+--------------------------------------------------------------------------------
+-- Create the children.
+--------------------------------------------------------------------------------
+function ListItem:_createChildren()
+    UIComponent._createChildren(self)
+end
+
+--------------------------------------------------------------------------------
+-- Update the display.
+--------------------------------------------------------------------------------
+function ListItem:updateDisplay()
+    UIComponent.updateDisplay(self)
+    
+    
+    
+end
+
+function ListItem:setData(data, rowIndex)
+    self._data = data
+    self._rowIndex = rowIndex
+    self:updateDisplay()
+end
+
+
+function ListItem:onTouchDown(e)
+    
+
+end
+
 
 -- widget initialize
 M.initialize()
