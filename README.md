@@ -11,6 +11,11 @@ However, it supports the latest version basically.
 
 * Moai SDK Version 1.3 (Build 160)
 
+Version of the following does not work some.
+It is fixed in the latest build.
+
+* Moai SDK Release 1.4p0
+
 ## Tools Version
 Tool version being used by the Hanappe is as follows.
 You are not necessarily required.
