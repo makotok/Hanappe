@@ -1212,6 +1212,9 @@ M.SceneMgr = SceneMgr
 SceneMgr.scenes = {}
 SceneMgr.currentScene = nil
 SceneMgr.nextScene = nil
+SceneMgr.nextSceneIndex = nil
+SceneMgr.closingSceneSize = nil
+SceneMgr.closingSceneGroup = nil
 SceneMgr.transitioning = false
 SceneMgr.sceneUpdateEnabled = true
 SceneMgr.sceneTouchEnabled = true
@@ -1253,7 +1256,12 @@ end
 
 --------------------------------------------------------------------------------
 -- Open the scene for the internal implementation.
--- NOTE: FOR INTERNAL USE ONLY
+-- variable that can be specified in params are as follows.
+-- <ul>
+--   <li>animation: Scene animation of transition. </li>
+--   <li>second: Time to scene animation. </li>
+--   <li>easeType: EaseType to animation scene. </li>
+-- </ul>
 --------------------------------------------------------------------------------
 function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     params = params or {}
@@ -1300,6 +1308,14 @@ end
 
 --------------------------------------------------------------------------------
 -- Close the Scene.
+-- variable that can be specified in params are as follows.
+-- <ul>
+--   <li>animation: Scene animation of transition. </li>
+--   <li>second: Time to scene animation. </li>
+--   <li>easeType: EaseType to animation scene. </li>
+--   <li>backScene: The name of the scene you want to back. </li>
+--   <li>backSceneCount: Number of scene you want to back. </li>
+-- </ul>
 -- @param params (option)Parameters of the Scene
 --------------------------------------------------------------------------------
 function SceneMgr:closeScene(params)
@@ -1312,15 +1328,34 @@ function SceneMgr:closeScene(params)
     self.transitioning = true
     
     -- set next scene
-    self.nextScene = self.scenes[#self.scenes - 1]
+    local backSceneName = params.backScene
+    local backSceneCount = params.backSceneCount or 1
+    self.nextScene = backSceneName and assert(self:getSceneByName(backSceneName)) or self.scenes[#self.scenes - backSceneCount]
+    self.nextSceneIndex = table.indexOf(self.scenes, self.nextScene)
+    
+    -- set closing scenes
+    self.closingSceneSize = #self.scenes - self.nextSceneIndex
+    self.closingSceneGroup = Scene()
+    for i = 0, self.closingSceneSize - 1 do
+        local scene = self.scenes[#self.scenes - i]
+        self.closingSceneGroup:addChild(scene)
+    end
+    
+    -- stop current scene
     self.currentScene:stop(params)
 
     Executors.callOnce(
         function()
             local animation = self:getSceneAnimationByName(params.animation)
-            animation(self.currentScene, self.nextScene or Scene(), params) 
+            animation(self.closingSceneGroup, self.nextScene or Scene(), params) 
             
-            self.currentScene:close(params)
+            -- close scens
+            for i, scene in ipairs(self.closingSceneGroup.children) do
+                scene:close(params)
+            end
+            
+            self.closingSceneGroup = nil
+            self.closingSceneSize = nil
             self.currentScene = self.nextScene
             self.nextScene = nil
             self.transitioning = false
@@ -2032,6 +2067,7 @@ end
 ----------------------------------------------------------------------------------------------------
 SceneAnimations = {}
 
+--- Scene animation
 function SceneAnimations.change(currentScene, nextScene, params)
     currentScene:setVisible(false)
 
@@ -2041,6 +2077,7 @@ function SceneAnimations.change(currentScene, nextScene, params)
     nextScene:setVisible(true)
 end
 
+--- Scene animation
 function SceneAnimations.overlay(currentScene, nextScene, params)
     nextScene:setScl(1, 1, 1)
     nextScene:setColor(1, 1, 1, 1)
@@ -2048,105 +2085,121 @@ function SceneAnimations.overlay(currentScene, nextScene, params)
     nextScene:setVisible(true)
 end
 
+--- Scene animation
 function SceneAnimations.fade(currentScene, nextScene, params)
     local sec = params.second or 0.5
+    local easeType = params.easeType
 
     nextScene:setVisible(true)
     nextScene:setColor(0, 0, 0, 0)
 
-    MOAICoroutine.blockOnAction(currentScene:seekColor(0, 0, 0, 0, sec))
-    MOAICoroutine.blockOnAction(nextScene:seekColor(1, 1, 1, 1, sec))
+    MOAICoroutine.blockOnAction(currentScene:seekColor(0, 0, 0, 0, sec, easeType))
+    MOAICoroutine.blockOnAction(nextScene:seekColor(1, 1, 1, 1, sec, easeType))
     
     currentScene:setVisible(false)
 end
 
+--- Scene animation
 function SceneAnimations.crossFade(currentScene, nextScene, params)
     local sec = params.second or 0.5
+    local easeType = params.easeType
 
     nextScene:setVisible(true)
     nextScene:setColor(0, 0, 0, 0)
     
-    local action1 = currentScene:seekColor(0, 0, 0, 0, sec)
-    local action2 = nextScene:seekColor(1, 1, 1, 1, sec)
+    local action1 = currentScene:seekColor(0, 0, 0, 0, sec, easeType)
+    local action2 = nextScene:seekColor(1, 1, 1, 1, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
     
     currentScene:setVisible(false)
 end
 
+--- Scene animation
 function SceneAnimations.popIn(currentScene, nextScene, params)
     local sec = params.second or 0.5
+    local easeType = params.easeType
     
     nextScene:setVisible(true)
     nextScene:setScl(0.5, 0.5, 0.5)
     nextScene:setColor(0, 0, 0, 0)
 
-    local action1 = nextScene:seekColor(1, 1, 1, 1, sec)
-    local action2 = nextScene:seekScl(1, 1, 1, sec)
+    local action1 = nextScene:seekColor(1, 1, 1, 1, sec, easeType)
+    local action2 = nextScene:seekScl(1, 1, 1, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
 end
 
+--- Scene animation
 function SceneAnimations.popOut(currentScene, nextScene, params)
     local sec = params.second or 0.5
+    local easeType = params.easeType
 
-    local action1 = currentScene:seekColor(0, 0, 0, 0, sec)
-    local action2 = currentScene:seekScl(0.5, 0.5, 0.5, sec)
+    local action1 = currentScene:seekColor(0, 0, 0, 0, sec, easeType)
+    local action2 = currentScene:seekScl(0.5, 0.5, 0.5, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
 end
 
+--- Scene animation
 function SceneAnimations.slideLeft(currentScene, nextScene, params)
     local sec = params.second or 0.5
+    local easeType = params.easeType
     local sw, sh = M.getScreenSize()
 
     nextScene:setVisible(true)
     nextScene:setPos(sw, 0)
     
-    local action1 = currentScene:moveLoc(-sw, 0, 0, sec)
-    local action2 = nextScene:moveLoc(-sw, 0, 0, sec)
+    local action1 = currentScene:moveLoc(-sw, 0, 0, sec, easeType)
+    local action2 = nextScene:moveLoc(-sw, 0, 0, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
 
     currentScene:setVisible(false)
     nextScene:setPos(0, 0)
 end
 
+--- Scene animation
 function SceneAnimations.slideRight(currentScene, nextScene, params)
     local sec = params.second or 0.5
+    local easeType = params.easeType
     local sw, sh = M.getScreenSize()
 
     nextScene:setVisible(true)
     nextScene:setPos(-sw, 0)
     
-    local action1 = currentScene:moveLoc(sw, 0, 0, sec)
-    local action2 = nextScene:moveLoc(sw, 0, 0, sec)
+    local action1 = currentScene:moveLoc(sw, 0, 0, sec, easeType)
+    local action2 = nextScene:moveLoc(sw, 0, 0, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
     
     currentScene:setVisible(false)
     nextScene:setPos(0, 0)
 end
 
+--- Scene animation
 function SceneAnimations.slideTop(currentScene, nextScene, params)
     local sec = params.second or 0.5
+    local easeType = params.easeType
     local sw, sh = M.getScreenSize()
 
     nextScene:setVisible(true)
     nextScene:setPos(0, sh)
     
-    local action1 = currentScene:moveLoc(0, -sh, 0, sec)
-    local action2 = nextScene:moveLoc(0, -sh, 0, sec)
+    local action1 = currentScene:moveLoc(0, -sh, 0, sec, easeType)
+    local action2 = nextScene:moveLoc(0, -sh, 0, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
     
     currentScene:setVisible(false)
     nextScene:setPos(0, 0)
 end
 
+--- Scene animation
 function SceneAnimations.slideBottom(currentScene, nextScene, params)
     local sec = params.second or 0.5
+    local easeType = params.easeType
     local sw, sh = M.getScreenSize()
 
     nextScene:setVisible(true)
     nextScene:setPos(0, -sh)
     
-    local action1 = currentScene:moveLoc(0, sh, 0, sec)
-    local action2 = nextScene:moveLoc(0, sh, 0, sec)
+    local action1 = currentScene:moveLoc(0, sh, 0, sec, easeType)
+    local action2 = nextScene:moveLoc(0, sh, 0, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
 
     currentScene:setVisible(false)
