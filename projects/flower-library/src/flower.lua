@@ -229,6 +229,7 @@ function class:__call(...)
     for i = #bases, 1, -1 do
         table.copy(bases[i], clazz)
     end
+    clazz.__super = bases[1]
     clazz.__call = function(self, ...)
         return self:new(...)
     end
@@ -2826,6 +2827,18 @@ function NineImage:getContentRect()
     local xMax = width - padding[3]
     local yMax = height - padding[4]
     return xMin, yMin, xMax, yMax
+end
+
+--------------------------------------------------------------------------------
+-- Returns the content padding from NinePatch.
+-- @return paddingLeft
+-- @return paddingTop
+-- @return paddingRight
+-- @return paddingBottom
+--------------------------------------------------------------------------------
+function NineImage:getContentPadding()
+    local padding = self.deck.contentPadding
+    return unpack(padding)
 end
 
 ----------------------------------------------------------------------------------------------------

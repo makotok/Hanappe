@@ -1,17 +1,9 @@
 module(..., package.seeall)
 
-local listData = {
-    {label = "label001", data = "data001"},
-    {label = "label002", data = "data001"},
-    {label = "label003", data = "data001"},
-    {label = "label004", data = "data001"},
-    {label = "label005", data = "data001"},
-    {label = "label006", data = "data001"},
-    {label = "label007", data = "data001"},
-    {label = "label008", data = "data001"},
-    {label = "label009", data = "data001"},
-    {label = "label010", data = "data001"},
-}
+local listData = {}
+for i = 1, 100 do
+    table.insert(listData, {label = "label" .. i, text = "text" .. i})
+end
 
 --------------------------------------------------------------------------------
 -- Event Handler
@@ -23,10 +15,32 @@ function onCreate(e)
     }
     
     listBox1 = widget.ListBox {
-        size = {300, 200},
+        width = 200,
+        rowCount = 5,
         pos = {5, 5},
         parent = view,
         labelField = "label",
         listData = {listData},
+        onItemChanged = listBox_OnItemChanged,
+        onItemEnter = listBox_OnItemEnter,
     }
+    
+    textbox = widget.TextBox {
+        size = {flower.viewWidth - 10, 100},
+        pos = {5, flower.viewHeight - 105},
+        parent = view,
+    }
+    
+end
+
+function listBox_OnItemChanged(e)
+    print("listBox_OnItemChanged(e)")
+    local data = e.data
+    local text = data and data.text or ""
+    textbox:setText(text)
+end
+
+function listBox_OnItemEnter(e)
+    print("listBox_OnItemEnter(e)")
+        
 end
