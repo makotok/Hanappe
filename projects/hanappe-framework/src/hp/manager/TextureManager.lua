@@ -10,6 +10,8 @@ local cache = {}
 
 setmetatable(cache, {__mode = "v"})
 
+M.DEFAULT_FILTER = MOAITexture.GL_LINEAR
+
 ----------------------------------------------------------------
 -- Requests the texture. <br>
 -- The textures are cached internally.
@@ -24,6 +26,10 @@ function M:request(path)
         texture:load(path)
         texture.path = path
         cache[path] = texture
+        
+        if M.DEFAULT_FILTER then
+            texture:setFilter(M.DEFAULT_FILTER)
+        end
     end
     
     local texture = cache[path]

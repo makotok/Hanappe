@@ -2760,6 +2760,9 @@ Texture = class()
 Texture.__factory = MOAITexture
 M.Texture = Texture
 
+--- Default Texture filter
+Texture.DEFAULT_FILTER = MOAITexture.GL_LINEAR
+
 --------------------------------------------------------------------------------
 -- Constructor.
 -- @param path Texture path
@@ -2767,6 +2770,10 @@ M.Texture = Texture
 function Texture:init(path)
     self:load(path)
     self.path = path
+
+    if Texture.DEFAULT_FILTER then
+        self:setFilter(Texture.DEFAULT_FILTER)
+    end
 end
 
 ----------------------------------------------------------------------------------------------------
