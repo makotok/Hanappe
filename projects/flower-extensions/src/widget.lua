@@ -2272,7 +2272,7 @@ function ListBox:_initInternal()
     self._listItems = {}
     self._listData = {}
     self._freeListItems = {}
-    self._selectedItem = nil
+    self._selectedIndex = nil
     self._rowCount = 5
     self._verticalScrollPosition = 0
 end
@@ -2295,8 +2295,9 @@ end
 --------------------------------------------------------------------------------
 function ListBox:_createListItem(index)
     if not self._listItems[index] then
-        local listItemFactory = self:getListItemFactory()
-        local listItem = listItemFactory:newInstance()
+        local factory = self:getListItemFactory()
+        local freeItems = self._freeListItems
+        local listItem = #freeItems > 0 and table.remove(freeItems, 1) or factory:newInstance()
         self:addChild(listItem)
         self._listItems[index] = listItem
     end
@@ -2309,6 +2310,7 @@ function ListBox:_createListItem(index)
     listItem:setData(self._listData[index], index)
     listItem:setSize(itemWidth, itemHeight)
     listItem:setPos(xMin, yMin + (index - vsp - 1) * itemHeight)
+    listItem:setSelected(index == self._selectedIndex)
     
     return listItem
 end
@@ -2320,8 +2322,9 @@ end
 function ListBox:_deleteListItem(index)
     local listItem = self._listItems[index]
     if listItem then
+        listItem:setSelected(false)
         self:removeChild(listItem)
-        --table.insert(self._freeListItems, listItem)
+        table.insert(self._freeListItems, listItem)
         self._listItems[index] = nil
     end
 end
@@ -2428,12 +2431,26 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the selectedIndex.
--- TODO:実装
 -- @param index selectedIndex
 --------------------------------------------------------------------------------
 function ListBox:setSelectedIndex(index)
-    local item = self:getListItemAt(index)
+    if index == self._selectedIndex then
+        return
+    end
     
+    local oldItem = self:getSelectedItem()
+    if oldItem then
+        oldItem:setSelected(false)
+    end
+
+    self._selectedIndex = index
+    
+    local newItem = self:getSelectedItem()
+    if newItem then
+        newItem:setSelected(true)
+    end
+    
+    self:dispatchEvent(UIEvent.ITEM_CHANGED, data)
 end
 
 --------------------------------------------------------------------------------
@@ -2441,27 +2458,7 @@ end
 -- @return selectedIndex
 --------------------------------------------------------------------------------
 function ListBox:getSelectedIndex()
-    if self._selectedItem then
-        return self._selectedItem:getDataIndex()
-    end
-end
-
---------------------------------------------------------------------------------
--- Set the selected data.
--- @param data selected data
---------------------------------------------------------------------------------
-function ListBox:setSelectedData(data)
-    --TODO
-end
-
---------------------------------------------------------------------------------
--- Return the selected data.
--- @return selected data
---------------------------------------------------------------------------------
-function ListBox:getSelectedData()
-    if self._selectedItem then
-        return self._selectedItem:getData()
-    end
+    return self._selectedIndex
 end
 
 --------------------------------------------------------------------------------
@@ -2469,21 +2466,11 @@ end
 -- @param item selected item
 --------------------------------------------------------------------------------
 function ListBox:setSelectedItem(item)
-    if self._selectedItem == item then
-        return
+    if item then
+        self:setSelectedIndex(item:getDataIndex())
+    else
+        self:setSelectedIndex(nil)
     end
-
-    if self._selectedItem then
-        self._selectedItem:setSelected(false)
-    end
-    
-    self._selectedItem = item
-    if self._selectedItem then
-        self._selectedItem:setSelected(true)
-    end
-    
-    local data = item and item._data or nil
-    self:dispatchEvent(UIEvent.ITEM_CHANGED, data)
 end
 
 --------------------------------------------------------------------------------
@@ -2491,7 +2478,9 @@ end
 -- @return selected item
 --------------------------------------------------------------------------------
 function ListBox:getSelectedItem()
-    return self._selectedItem
+    if self._selectedIndex then
+        return self._listItems[self._selectedIndex]
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -2603,12 +2592,14 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function ListBox:onTouchDown(e)
-    if self._touchedIndex then
+    print("ListBox:onTouchDown(e)")
+    if self._touchedIndex ~= nil and self._touchedIndex ~= e.idx then
         return
     end
     self._touchedIndex = e.idx
     self._touchedY = e.wy
     self._touchedVsp = self:getVerticalScrollPosition()
+    print(e.idx, e.wy, self._touchedVsp)
 end
 
 --------------------------------------------------------------------------------
@@ -2616,6 +2607,7 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function ListBox:onTouchUp(e)
+    print("ListBox:onTouchUp(e)")
     if self._touchedIndex ~= e.idx then
         return
     end
@@ -2629,6 +2621,7 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function ListBox:onTouchMove(e)
+    print("ListBox:onTouchMove(e)")
     if self._touchedIndex ~= e.idx then
         return
     end
@@ -2644,6 +2637,7 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function ListBox:onTouchCancel(e)
+    print("ListBox:onTouchCancel(e)")
     self:onTouchUp(e)
 end
 
@@ -2707,6 +2701,22 @@ function ListItem:setData(data, dataIndex)
 
     local textLabel = self._textLabel
     textLabel:setString(self:getText())
+end
+
+--------------------------------------------------------------------------------
+-- Return the data.
+-- @return data
+--------------------------------------------------------------------------------
+function ListItem:getData()
+    return self._data
+end
+
+--------------------------------------------------------------------------------
+-- Return the data index.
+-- @return data index
+--------------------------------------------------------------------------------
+function ListItem:getDataIndex()
+    return self._dataIndex
 end
 
 --------------------------------------------------------------------------------
