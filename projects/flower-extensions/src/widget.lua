@@ -36,8 +36,6 @@ local KeyCode
 local UIEvent
 local UIComponent
 local UIGroup
-local UILayer
-local UITouchHandler
 local UIView
 local BoxBase
 local TextBase
@@ -61,6 +59,10 @@ local MOAIPropInterface = MOAIProp.getInterfaceTable()
 
 local function buildTheme()
     return {
+        common = {
+            normalColor = {1, 1, 1, 1},
+            disabledColor = {0.5, 0.5, 0.5, 1},
+        },
         Button = {
             normalTexture = "skins/button_normal.9.png",
             selectedTexture = "skins/button_selected.9.png",
@@ -105,14 +107,14 @@ local function buildTheme()
         },
         ListBox = {
             backgroundTexture = "skins/panel.9.png",
-            rowHeight = 30,
+            rowHeight = 35,
             listItemFactory = ClassFactory(ListItem),
         },
         ListItem = {
             backgroundTexture = "skins/listitem_background.9.png",
             backgroundVisible = false,
             fontName = "VL-PGothic.ttf",
-            textSize = 18,
+            textSize = 20,
             textColor = {1, 1, 1, 1},
             textAlign = {"left", "top"},
         },
@@ -353,6 +355,12 @@ UIEvent.ITEM_ENTER = "itemEnter"
 UIComponent = class(Group)
 M.UIComponent = UIComponent
 
+--- Style: normalColor
+UIComponent.STYLE_NORMAL_COLOR = "normalColor"
+
+--- Style: disabledColor
+UIComponent.STYLE_DISABLED_COLOR = "disabledColor"
+
 --------------------------------------------------------------------------------
 -- Constructor.
 -- Please do not inherit this constructor.
@@ -532,10 +540,8 @@ end
 -- @param value enabled
 --------------------------------------------------------------------------------
 function UIComponent:setEnabled(enabled)
-    if self._enabled ~= enabled then
-        self._enabled = enabled
-        self:dispatchEvent(UIEvent.ENABLED_CHANGED)
-    end    
+    self._enabled = enabled
+    self:dispatchEvent(UIEvent.ENABLED_CHANGED)
 end
 
 --------------------------------------------------------------------------------
@@ -550,12 +556,16 @@ end
 -- Returns the parent enabled.
 -- @return enabled
 --------------------------------------------------------------------------------
-function UIComponent:isParentEnabled()
-    local parent = self.parent
-    if parent and parent.isParentEnabled then
-        return parent:isParentEnabled()
+function UIComponent:isComponentEnabled()
+    if not self._enabled then
+        return false
     end
-    return self._enabled
+    
+    local parent = self.parent
+    if parent and parent.isComponentEnabled then
+        return parent:isComponentEnabled()
+    end
+    return true
 end
 
 --------------------------------------------------------------------------------
@@ -656,6 +666,9 @@ function UIComponent:getStyle(name)
     if theme and theme[name] ~= nil then
         return theme[name]
     end
+    
+    local globalTheme = M.getTheme()
+    return globalTheme["common"][name]
 end
 
 --------------------------------------------------------------------------------
@@ -735,6 +748,11 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function UIComponent:onEnabledChanged(e)
+    if self:isEnabled() then
+        self:setColor(unpack(self:getStyle(UIComponent.STYLE_NORMAL_COLOR)))
+    else
+        self:setColor(unpack(self:getStyle(UIComponent.STYLE_DISABLED_COLOR)))
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -742,8 +760,9 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function UIComponent:onTouchCommon(e)
-    if not self:isParentEnabled() then
+    if not self:isComponentEnabled() then
         e:stop()
+        return
     end
     if e.type == Event.TOUCH_DOWN then
         if self:isFocusEnabled() then
@@ -841,7 +860,8 @@ function UIView:_initLayer()
     layer:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
     layer:setTouchEnabled(true)
     layer:addEventListener(Event.TOUCH_DOWN, self.onLayerTouchDown, self, 10)
-
+    
+    self:setSize(layer:getSize())
     self:setLayer(layer)
 end
 
@@ -850,6 +870,27 @@ end
 --------------------------------------------------------------------------------
 function UIView:_initEventListeners()
     UIView.__super._initEventListeners(self)
+end
+
+function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
+    local viewScale = flower.viewScale
+    local viewWidth = screenWidth / viewScale
+    local viewHeight = screenHeight / viewScale
+    
+    local viewport = MOAIViewport.new()
+    viewport:setSize(screenX, screenY, screenX + screenWidth, screenY + screenHeight)
+    viewport:setScale(viewWidth, -viewHeight)
+    viewport:setOffset(-1, 1)
+
+    self.layer:setViewport(viewport)
+    self:setSize(viewWidth, viewHeight)
+end
+
+--------------------------------------------------------------------------------
+-- Initializes the event listener.
+--------------------------------------------------------------------------------
+function UIView:resetViewport()
+    self.layer:setViewport(flower.getViewport())
 end
 
 --------------------------------------------------------------------------------
@@ -2128,7 +2169,7 @@ function MsgBox:_initInternal()
     self._popupShowing = false
     self._spoolingEnabled = true
     
-    -- TODO: visibility
+    -- TODO: inherit visibility
     self:setColor(0, 0, 0, 0)
 end
 
@@ -2199,14 +2240,15 @@ function MsgBox:nextPage()
 end
 
 --------------------------------------------------------------------------------
--- TODO:LDoc.
+-- Return true if showing.
+-- @return true if showing
 --------------------------------------------------------------------------------
 function MsgBox:isPopupShowing()
     return self._popupShowing
 end
 
 --------------------------------------------------------------------------------
--- TODO:LDoc.
+-- Return true if textLabel is busy.
 --------------------------------------------------------------------------------
 function MsgBox:isSpooling()
     return self._textLabel:isBusy()
@@ -2274,6 +2316,7 @@ function ListBox:_initInternal()
     self._freeListItems = {}
     self._selectedIndex = nil
     self._rowCount = 5
+    self._columnCount = 1
     self._verticalScrollPosition = 0
 end
 
@@ -2286,6 +2329,10 @@ function ListBox:_initEventListeners()
     self:addEventListener(Event.TOUCH_UP, self.onTouchUp, self)
     self:addEventListener(Event.TOUCH_MOVE, self.onTouchMove, self)
     self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self)
+end
+
+function ListBox:_createChildren()
+    ListBox.__super._createChildren(self)
 end
 
 --------------------------------------------------------------------------------
@@ -2303,13 +2350,17 @@ function ListBox:_createListItem(index)
     end
 
     local vsp = self:getVerticalScrollPosition()
+    local colCount = self:getColumnCount()
     local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
-    local itemWidth, itemHeight = xMax - xMin, self:getRowHeight()
+    local itemWidth = (xMax - xMin) / colCount
+    local itemHeight = self:getRowHeight()
+    local itemX = xMin + itemWidth * ((index - 1) % colCount)
+    local itemY = yMin + (math.floor((index - 1) / colCount) - vsp) * itemHeight
 
     local listItem = self._listItems[index]
     listItem:setData(self._listData[index], index)
     listItem:setSize(itemWidth, itemHeight)
-    listItem:setPos(xMin, yMin + (index - vsp - 1) * itemHeight)
+    listItem:setPos(itemX, itemY)
     listItem:setSelected(index == self._selectedIndex)
     
     return listItem
@@ -2330,12 +2381,13 @@ function ListBox:_deleteListItem(index)
 end
 
 --------------------------------------------------------------------------------
--- Delete the ListItems.
+-- Clears the ListItems.
 --------------------------------------------------------------------------------
-function ListBox:_deleteListItems()
+function ListBox:_clearListItems()
     for i = 1, #self._listItems do
         self:_deleteListItem(i)
     end
+    self._freeListItems = {}
 end
 
 --------------------------------------------------------------------------------
@@ -2347,7 +2399,9 @@ function ListBox:updateDisplay()
     -- listItems
     local vsp = self:getVerticalScrollPosition()
     local rowCount = self:getRowCount()
-    local minIndex, maxIndex = vsp + 1, vsp + rowCount
+    local colCount = self:getColumnCount()
+    local minIndex = vsp * colCount + 1
+    local maxIndex = vsp * colCount + rowCount * colCount
     local listSize = self:getListSize()
     for i = 1, listSize do
         if i < minIndex or maxIndex < i then
@@ -2417,7 +2471,7 @@ end
 --------------------------------------------------------------------------------
 function ListBox:setListItemFactory(factory)
     self:setStyle(ListBox.STYLE_LIST_ITEM_FACTORY, factory)
-    self:_deleteListItems()
+    self:_clearListItems()
     self:updateDisplay()
 end
 
@@ -2450,6 +2504,7 @@ function ListBox:setSelectedIndex(index)
         newItem:setSelected(true)
     end
     
+    local data = newItem and  newItem:getData() or nil
     self:dispatchEvent(UIEvent.ITEM_CHANGED, data)
 end
 
@@ -2564,6 +2619,25 @@ function ListBox:getRowCount()
 end
 
 --------------------------------------------------------------------------------
+-- Set the count of the columns.
+-- @param columnCount count of the columns
+--------------------------------------------------------------------------------
+function ListBox:setColumnCount(columnCount)
+    assert(columnCount >= 1, "columnCount property error!")
+    
+    self._columnCount = columnCount
+    self:updateDisplay()
+end
+
+--------------------------------------------------------------------------------
+-- Return the count of the columns.
+-- @return columnCount
+--------------------------------------------------------------------------------
+function ListBox:getColumnCount()
+    return self._columnCount
+end
+
+--------------------------------------------------------------------------------
 -- Returns true if the component has been touched.
 -- @return touching
 --------------------------------------------------------------------------------
@@ -2592,14 +2666,12 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function ListBox:onTouchDown(e)
-    print("ListBox:onTouchDown(e)")
     if self._touchedIndex ~= nil and self._touchedIndex ~= e.idx then
         return
     end
     self._touchedIndex = e.idx
     self._touchedY = e.wy
     self._touchedVsp = self:getVerticalScrollPosition()
-    print(e.idx, e.wy, self._touchedVsp)
 end
 
 --------------------------------------------------------------------------------
@@ -2607,7 +2679,6 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function ListBox:onTouchUp(e)
-    print("ListBox:onTouchUp(e)")
     if self._touchedIndex ~= e.idx then
         return
     end
@@ -2621,7 +2692,6 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function ListBox:onTouchMove(e)
-    print("ListBox:onTouchMove(e)")
     if self._touchedIndex ~= e.idx then
         return
     end
@@ -2637,7 +2707,6 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function ListBox:onTouchCancel(e)
-    print("ListBox:onTouchCancel(e)")
     self:onTouchUp(e)
 end
 
@@ -2727,6 +2796,10 @@ function ListItem:setSelected(selected)
     self:setBackgroundVisible(selected)
 end
 
+--------------------------------------------------------------------------------
+-- Returns true if selected.
+-- @return true if selected
+--------------------------------------------------------------------------------
 function ListItem:isSelected()
     return self._selected
 end
@@ -2746,6 +2819,10 @@ function ListItem:getText()
     end
 end
 
+--------------------------------------------------------------------------------
+-- Returns the labelField.
+-- @return labelField
+--------------------------------------------------------------------------------
 function ListItem:getLabelField()
     if self.parent then
         return self.parent:getLabelField()

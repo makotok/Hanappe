@@ -25,10 +25,38 @@ function onCreate(e)
         onItemEnter = listBox_OnItemEnter,
     }
     
+    listBox2 = widget.ListBox {
+        width = 200,
+        rowCount = 5,
+        columnCount = 2,
+        pos = {5, listBox1:getBottom() + 5},
+        parent = view,
+        labelField = "label",
+        listData = {listData},
+        onItemChanged = listBox_OnItemChanged,
+        onItemEnter = listBox_OnItemEnter,
+    }
+    
     textbox = widget.TextBox {
         size = {flower.viewWidth - 10, 100},
         pos = {5, flower.viewHeight - 105},
         parent = view,
+    }
+    
+    enabledButton = widget.Button {
+        size = {100, 50},
+        pos = {210, 50},
+        text = "Enable",
+        parent = view,
+        onClick = enabledButton_OnClick,
+    }
+    
+    disabledButton = widget.Button {
+        size = {100, 50},
+        pos = {210, enabledButton:getBottom()},
+        text = "Disable",
+        parent = view,
+        onClick = disabledButton_OnClick,
     }
     
 end
@@ -43,4 +71,16 @@ end
 function listBox_OnItemEnter(e)
     print("listBox_OnItemEnter(e)")
         
+end
+
+function enabledButton_OnClick(e)
+    print("enabledButton_OnClick(e)")
+    listBox1:setEnabled(true)
+    listBox2:setEnabled(true)
+end
+
+function disabledButton_OnClick(e)
+    print("disabledButton_OnClick(e)")
+    listBox1:setEnabled(false)
+    listBox2:setEnabled(false)
 end
