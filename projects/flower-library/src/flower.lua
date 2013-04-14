@@ -6,7 +6,7 @@
 -- issues, questions, or problems regarding the documentation.
 --
 -- @author Makoto
--- @release V2.1.0
+-- @release V2.1.1
 ----------------------------------------------------------------------------------------------------
 
 -- module
