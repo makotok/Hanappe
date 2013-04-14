@@ -1,9 +1,48 @@
 # Release notes
 
-## Version 2.1.0 (Update: 2013/02/017, Moai SDK Version 1.3 Build 160)
+## Version 2.1.1 (Update: 2013/04/15)
+
+I've implemented around the extension of the Flower.
+
+### Test Version
+Moai SDK Version 1.3 Build 160
+
+Moai SDK Release 1.4p0 + [#660](https://github.com/moai/moai-dev/pull/660)
+
+V1.4 compatibility is broken.
+Please be careful.
+
+### Flower Library
+
+* Add a function to get a range of content NineImage.
+* Work better when the trim of TexturePacker.
+* Change the logic of setting the size of the Group.
+* Optimizing EventDispatcher.
+* Modified so that it can not be touched during the transition of the Scene.
+* Modified so that it can close multiple scenes.
+* Change in the texture filter GL_LINEAR.
+
+### Flower Extensions
+
+* Change the file name of the module.
+* Add many widgets.(Button, ListBox, TextInput etc…)
+
+### Hanappe Framework
+
+* Improve the memory leak.
+* Improvement to be able to disable the spooling function MsgBox.
+* Improve the operation of the Scroller.
+* Add a convenient function TMXMapView.
+* Change in the texture filter GL_LINEAR.
+
+
+## Version 2.1.0 (Update: 2013/02/17)
 
 I made ​​a lot of improvements.
 I also improved the document.
+
+### Test Version
+Moai SDK Version 1.3 Build 160
 
 ### Flower Library
 
@@ -43,9 +82,12 @@ Please use caution this extension.
 * Other small fixes.
 
 
-## Version 2.0.2 (Update: 2013/01/02, Moai SDK Version 1.3 Build 160)
+## Version 2.0.2 (Update: 2013/01/02)
 
 I made ​​a few important fixes.
+
+### Test Version
+Moai SDK Version 1.3 Build 160
 
 ### Flower Library
 
@@ -61,7 +103,10 @@ I made ​​a few important fixes.
 
 * Fixed a bug in the Application:isMobile function.
 
-## Version 2.0.1 (Update: 2012/12/08, Moai SDK Version 1.3 Build 98)
+## Version 2.0.1 (Update: 2012/12/08)
+
+### Test Version
+Moai SDK Version 1.3 Build 98
 
 ### Flower Library
 
@@ -72,21 +117,30 @@ Flower is a library that can be used by itself.
 
 I have fixed some small bugs.
 
-## Version 2.0.0 (Update: 2012/10/07, Moai SDK Version 1.3 Build 98)
+## Version 2.0.0 (Update: 2012/10/07)
 
 I made ​​a big fix for the portion GUI.
 Compatible part is impaired.
+
+### Test Version
+Moai SDK Version 1.3 Build 98
+
+### Hanappe Framework
 
 * I have changed the configuration directory of the project.
 * I had to rebuild the implementation of the GUI.
 * I've added a method to detect touch events DisplayObject.
 * Improvement how to set the initial properties of the DisplayObject.
 
-## Version 1.5.1 (Update: 2012/07/17, Moai SDK Version 1.2 Build 56)
+## Version 1.5.1 (Update: 2012/07/17)
 
 There is no significant modification.
 Has a minor bug fixes.
 
+### Test Version
+Moai SDK Version 1.2 Build 56
+
+### Hanappe Framework
 * Some refactoring in the file.
 * Add functions to the ResourceManager.
 * Modify the pop-up effect of MessageBox.
@@ -95,8 +149,12 @@ Has a minor bug fixes.
 * Add functions to the Group.
 * Others, such as bug fixes.
 
-## Version 1.5.0 (Update: 2012/07/01, Moai SDK Version 1.2 Build 56)
+## Version 1.5.0 (Update: 2012/07/01)
 
+### Test Version
+Moai SDK Version 1.2 Build 56
+
+### Hanappe Framework
 In this version, we have a lot of improvements and refactoring.
 Some care must be taken, so compatibility has been lost.
 

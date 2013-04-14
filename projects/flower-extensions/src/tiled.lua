@@ -333,14 +333,16 @@ function TileMap:getTileProperties(gid)
 end
 
 --------------------------------------------------------------------------------
--- TODO:Documents
+-- Returns true if the orientation is orthogonal.
+-- @return True if the orientation is orthogonal.
 --------------------------------------------------------------------------------
 function TileMap:isOrthogonal()
     return self.orientation == "orthogonal"
 end
 
 --------------------------------------------------------------------------------
--- TODO:Documents
+-- Returns true if the orientation is isometric.
+-- @return True if the orientation is isometric.
 --------------------------------------------------------------------------------
 function TileMap:isIsometric()
     return self.orientation == "isometric"
