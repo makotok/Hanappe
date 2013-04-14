@@ -1,5 +1,11 @@
 ----------------------------------------------------------------------------------------------------
 -- GUI Library.
+-- There are still some problems.
+-- 
+-- TODO:Require refactoring of some of the classes.
+-- TODO:TextInput does not support multi-byte.
+-- TODO:TextInput can not move the cursor.
+-- TODO:Does not have a scroll bar in ListBox.
 -- 
 -- @author Makoto
 ----------------------------------------------------------------------------------------------------
@@ -145,6 +151,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Set the theme of widget.
+-- TODO:Theme can be changed dynamically
 -- @param theme theme of widget
 --------------------------------------------------------------------------------
 function M.setTheme(theme)
@@ -176,6 +183,7 @@ end
 ----------------------------------------------------------------------------------------------------
 -- @type ThemeMgr
 -- This is a class to manage the Theme.
+-- Please get an instance from the widget module.
 ----------------------------------------------------------------------------------------------------
 ThemeMgr = class()
 M.ThemeMgr = ThemeMgr
@@ -209,6 +217,7 @@ end
 ----------------------------------------------------------------------------------------------------
 -- @type FocusMgr
 -- This is a class to manage the focus of the widget.
+-- Please get an instance from the widget module.
 ----------------------------------------------------------------------------------------------------
 FocusMgr = class()
 M.FocusMgr = FocusMgr
@@ -672,38 +681,6 @@ function UIComponent:getStyle(name)
 end
 
 --------------------------------------------------------------------------------
--- Set the layout.
--- When you set the layout, the update process of layout class is called when resizing.
--- The position of the component is automatically updated.
--- @param layout layout object
---------------------------------------------------------------------------------
-function UIComponent:setLayout(layout)
-    self._layout = layout
-end
-
---------------------------------------------------------------------------------
--- Returns a layout.
--- @return layout object
---------------------------------------------------------------------------------
-function UIComponent:getLayout()
-    return self._layout
-end
-
---------------------------------------------------------------------------------
--- Set whether you want to update the position by the layout class.
---------------------------------------------------------------------------------
-function UIComponent:setExcludeLayout(excludeLayout)
-    self._excludeLayout = excludeLayout
-end
-
---------------------------------------------------------------------------------
--- Return whether or not to set the layout automatically.
---------------------------------------------------------------------------------
-function UIComponent:isExcludeLayout()
-    return self._excludeLayout
-end
-
---------------------------------------------------------------------------------
 -- Set the event listener.
 -- Event listener that you set in this function is one.
 -- @param eventName event name
@@ -757,6 +734,7 @@ end
 
 --------------------------------------------------------------------------------
 -- This event handler is called when touch.
+-- TODO:I should do in TouchHandler.
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function UIComponent:onTouchCommon(e)
@@ -790,8 +768,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type UIGroup
--- This class is an image that can be pressed.
--- It is a simple button.
+-- It is a class that can have on a child UIComponent.
 ----------------------------------------------------------------------------------------------------
 UIGroup = class(UIComponent)
 M.UIGroup = UIGroup
@@ -872,6 +849,10 @@ function UIView:_initEventListeners()
     UIView.__super._initEventListeners(self)
 end
 
+--------------------------------------------------------------------------------
+-- Change the size of the viewport.
+-- TODO:There is room for consideration.
+--------------------------------------------------------------------------------
 function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
     local viewScale = flower.viewScale
     local viewWidth = screenWidth / viewScale
@@ -887,7 +868,7 @@ function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
 end
 
 --------------------------------------------------------------------------------
--- Initializes the event listener.
+-- Reset the view port.
 --------------------------------------------------------------------------------
 function UIView:resetViewport()
     self.layer:setViewport(flower.getViewport())
@@ -1285,6 +1266,7 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Button:onEnabledChanged(e)
+    Button.__super.onEnabledChanged(self, e)
     self:updateImageDeck()
     if not self:isEnabled() then
         self:doButtonUp()
@@ -1657,7 +1639,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Panel
--- It is a Panel.
+-- It is the only class to display the panel.
 ----------------------------------------------------------------------------------------------------
 Panel = class(UIComponent)
 M.Panel = Panel
@@ -1669,9 +1651,7 @@ Panel.STYLE_BACKGROUND_TEXTURE = "backgroundTexture"
 Panel.STYLE_BACKGROUND_VISIBLE = "backgroundVisible"
 
 --------------------------------------------------------------------------------
--- The constructor.
--- @param baseTexture Joystick base texture
--- @param knobTexture Joystick knob texture
+-- Initializes the internal variables.
 --------------------------------------------------------------------------------
 function Panel:_initInternal()
     Panel.__super._initInternal(self)
@@ -1687,14 +1667,16 @@ function Panel:_initEventListeners()
 end
 
 --------------------------------------------------------------------------------
--- Initialize child objects that make up the Joystick.
--- You must not be called directly.
+-- Create a children object.
 --------------------------------------------------------------------------------
 function Panel:_createChildren()
     Panel.__super._createChildren(self)
     self:_createBackgroundImage()
 end
 
+--------------------------------------------------------------------------------
+-- Create an image of the background
+--------------------------------------------------------------------------------
 function Panel:_createBackgroundImage()
     if self._backgroundImage then
         return
@@ -1764,7 +1746,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type TextBox
--- It is a TextBox.
+-- It is a class that displays the text.
 ----------------------------------------------------------------------------------------------------
 TextBox = class(Panel)
 M.TextBox = TextBox
@@ -1782,7 +1764,7 @@ TextBox.STYLE_TEXT_COLOR = "textColor"
 TextBox.STYLE_TEXT_ALIGN = "textAlign"
 
 --------------------------------------------------------------------------------
---Initialize a variables
+-- Initialize a variables
 --------------------------------------------------------------------------------
 function TextBox:_initInternal()
     TextBox.__super._initInternal(self)
@@ -1792,8 +1774,7 @@ function TextBox:_initInternal()
 end
 
 --------------------------------------------------------------------------------
--- Initialize child objects that make up the Joystick.
--- You must not be called directly.
+-- Create a children object.
 --------------------------------------------------------------------------------
 function TextBox:_createChildren()
     TextBox.__super._createChildren(self)
@@ -1967,8 +1948,9 @@ function TextBox:onResize(e)
 end
 
 ----------------------------------------------------------------------------------------------------
--- @type TextBox
--- It is a TextBox.
+-- @type TextInput
+-- This class is a line of text can be entered.
+-- Does not correspond to a multi-line input.
 ----------------------------------------------------------------------------------------------------
 TextInput = class(TextBox)
 M.TextInput = TextInput
@@ -2019,6 +2001,9 @@ function TextInput:drawFocus(focus)
     self:drawTextAllow()
 end
 
+--------------------------------------------------------------------------------
+-- Draw an arrow in the text.
+--------------------------------------------------------------------------------
 function TextInput:drawTextAllow()
     if not self:isFocus() then
         self._textAllow:setVisible(false)
@@ -2089,7 +2074,6 @@ end
 --------------------------------------------------------------------------------
 function TextInput:onKeyDown(e)
     local key = e.key
-    print("key = " .. key)
     
     if key == KeyCode.DEL or key == KeyCode.BACKSPACE then
         local text = self:getText()
@@ -2132,7 +2116,8 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type MsgBox
--- It is a MsgBox.
+-- It is a class that displays the message.
+-- Displays the next page of the message when selected.
 ----------------------------------------------------------------------------------------------------
 MsgBox = class(TextBox)
 M.MsgBox = MsgBox
@@ -2255,7 +2240,8 @@ function MsgBox:isSpooling()
 end
 
 --------------------------------------------------------------------------------
--- TODO:LDoc.
+-- Returns true if there is a next page.
+-- @return True if there is a next page
 --------------------------------------------------------------------------------
 function MsgBox:hasNextPase()
     return self._textLabel:more()
@@ -2294,7 +2280,8 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type ListBox
--- 
+-- It is a class that displays multiple items.
+-- You can choose to scroll through the items.
 ----------------------------------------------------------------------------------------------------
 ListBox = class(Panel)
 M.ListBox = ListBox
@@ -2331,6 +2318,9 @@ function ListBox:_initEventListeners()
     self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self)
 end
 
+--------------------------------------------------------------------------------
+-- Create the children.
+--------------------------------------------------------------------------------
 function ListBox:_createChildren()
     ListBox.__super._createChildren(self)
 end
@@ -2450,7 +2440,10 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the ListItems.
--- @return size
+-- Care must be taken to use the ListItems.
+-- ListItems is used to cache internally rotate.
+-- Therefore, ListItems should not be accessed from outside too.
+-- @return listItems
 --------------------------------------------------------------------------------
 function ListBox:getListItems()
     return self._listItems
@@ -2727,7 +2720,8 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type ListItem
--- 
+-- It is the item class ListBox.
+-- Used from the ListBox.
 ----------------------------------------------------------------------------------------------------
 ListItem = class(TextBox)
 M.ListItem = ListItem
