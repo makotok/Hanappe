@@ -25,17 +25,16 @@ function onCreate(e)
         onItemEnter = listBox_OnItemEnter,
     }
     
-    listBox2 = widget.ListBox {
-        width = 200,
-        rowCount = 5,
-        columnCount = 2,
-        pos = {5, listBox1:getBottom() + 5},
-        parent = view,
-        labelField = "label",
-        listData = {listData},
-        onItemChanged = listBox_OnItemChanged,
-        onItemEnter = listBox_OnItemEnter,
-    }
+    listBox2 = widget.ListBox()
+    listBox2:setWidth(200)
+    listBox2:setRowCount(5)
+    listBox2:setColumnCount(2)
+    listBox2:setPos(5, listBox1:getBottom() + 5)
+    listBox2:setLabelField("label")
+    listBox2:setListData(listData)
+    listBox2:setParent(view)
+    listBox2:setOnItemChanged(listBox_OnItemChanged)
+    listBox2:setOnItemEnter(listBox_OnItemEnter)
     
     textbox = widget.TextBox {
         size = {flower.viewWidth - 10, 100},
