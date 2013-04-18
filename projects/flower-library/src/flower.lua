@@ -3024,6 +3024,7 @@ function TouchHandler:onTouch(e)
     
     -- touch down prop
     if e.type == Event.TOUCH_DOWN then
+        prop2 = nil 
         self.touchProps[e.idx] = prop
     elseif e.type == Event.TOUCH_UP then
         self.touchProps[e.idx] = nil
