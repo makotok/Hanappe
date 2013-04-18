@@ -1,0 +1,32 @@
+<project name="example" default="build" basedir=".">
+
+    <!-- Setting -->
+    <property name="flower.lib.dir" value="../flower-library"/>
+    <property name="flower.ext.dir" value="../flower-extensions"/>
+    <property name="prj.bin.dir" value="./bin"/>
+
+    <!-- Targets -->
+    <!-- Clean -->
+    <target name="clean">
+        <mkdir dir="${prj.bin.dir}"/>
+        <delete>
+            <fileset dir="${prj.bin.dir}"/>
+        </delete>
+    </target>
+
+    <!-- Build -->
+    <target name="build" depends="clean">
+        <copy todir="${prj.bin.dir}" overwrite="true">
+            <fileset dir="${flower.lib.dir}/assets"/>
+            <fileset dir="${flower.lib.dir}/src"/>
+        </copy>
+        <copy todir="${prj.bin.dir}" overwrite="true">
+            <fileset dir="${flower.ext.dir}/assets"/>
+            <fileset dir="${flower.ext.dir}/src"/>
+        </copy>
+        <copy todir="${prj.bin.dir}" overwrite="true">
+            <fileset dir="assets"/>
+            <fileset dir="src"/>
+        </copy>
+    </target>
+</project>
