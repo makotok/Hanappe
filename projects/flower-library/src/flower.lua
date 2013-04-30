@@ -798,6 +798,17 @@ function Resources.dofile(fileName)
     return dofile(filePath)
 end
 
+--------------------------------------------------------------------------------
+-- Destroys the reference when the module.
+-- @param m module
+--------------------------------------------------------------------------------
+function Resources.destroyModule(m)
+    if m and m._M and m._NAME and package.loaded[m._NAME] then
+        package.loaded[m._NAME] = nil
+        _G[m._NAME] = nil
+    end
+end
+
 ----------------------------------------------------------------------------------------------------
 -- @type PropertyUtils
 -- It is a property utility class.
@@ -2022,7 +2033,12 @@ end
 Scene = class(Group)
 M.Scene = Scene
 
+--- Touch Event Cache
 Scene.TOUCH_EVENT = Event()
+
+--- Default scene destroy enabled
+Scene.DEFAULT_DESTROY_ENABLED = true
+
 
 --------------------------------------------------------------------------------
 -- The constructor.
@@ -2037,6 +2053,7 @@ function Scene:init(sceneName, params)
     self.started = false
     self.sceneUpdateEnabled = false
     self.sceneTouchEnabled = false
+    self.sceneDestroyEnabled = Scene.DEFAULT_DESTROY_ENABLED
     self.controller = self:createController(params)
     self.controller.scene = self
     self:initListeners()
@@ -2104,8 +2121,13 @@ function Scene:close(params)
         return
     end
     self:stop()
+    self.opened = false
     self:dispatchEvent(Event.CLOSE, params)
     SceneMgr:removeScene(self)
+
+    if self.sceneDestroyEnabled then
+        Resources.destroyModule(self.controller)
+    end
 end
 
 --------------------------------------------------------------------------------
