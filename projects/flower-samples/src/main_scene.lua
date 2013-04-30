@@ -98,6 +98,13 @@ function onCreate(e)
     flower.Runtime:addEventListener("resize", onResize)
 end
 
+function onStart(e)
+    -- debug
+    MOAISim.forceGarbageCollection()
+    MOAISim.reportHistogram()
+
+end
+
 function onResize(e)
     resizeMenuList()
     resetPosition()
