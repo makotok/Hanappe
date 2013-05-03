@@ -58,6 +58,19 @@ local keyboardSensor    = MOAIInputMgr.device.keyboard
 local MOAIPropInterface = MOAIProp.getInterfaceTable()
 
 ----------------------------------------------------------------------------------------------------
+-- Public Const
+----------------------------------------------------------------------------------------------------
+
+--- default width of the screen
+M.DEFAULT_SCREEN_WIDTH = MOAIEnvironment.horizontalResolution or 320
+
+--- default height of the screen
+M.DEFAULT_SCREEN_HEIGHT = MOAIEnvironment.verticalResolution or 480
+
+--- default scale of the viewport
+M.DEFAULT_VIEWPORT_SCALE = 1
+
+----------------------------------------------------------------------------------------------------
 -- Public functions
 ----------------------------------------------------------------------------------------------------
 
@@ -70,9 +83,9 @@ local MOAIPropInterface = MOAIProp.getInterfaceTable()
 -- @param scale (Option)Scale of the Viewport to the Screen
 --------------------------------------------------------------------------------
 function M.openWindow(title, width, height, scale)
-    width = width or MOAIEnvironment.horizontalResolution
-    height = height or MOAIEnvironment.verticalResolution
-    scale = scale or 1.0
+    width = width or M.DEFAULT_SCREEN_WIDTH
+    height = height or M.DEFAULT_SCREEN_HEIGHT
+    scale = scale or M.DEFAULT_VIEWPORT_SCALE
     
     M.updateDisplaySize(width, height, scale)
     
