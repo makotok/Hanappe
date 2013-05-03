@@ -26,4 +26,12 @@ function onCreate(e)
     label4 = flower.Label("こんにちはモアイ！", 200, 30)
     label4:setPos(0, label3:getBottom())
     label4:setLayer(layer)
+    
+    -- bitmap font
+    local bitmapFont = MOAIFont.new ()
+    bitmapFont:loadFromBMFont ( 'CopperPlateGothic.fnt' )
+    label5 = flower.Label("Hello BitmapFont!", 300, 100, bitmapFont, 32)
+    label5:setShader(MOAIShaderMgr.getShader(MOAIShaderMgr.DECK2D_SHADER))
+    label5:setPos(0, label4:getBottom())
+    label5:setLayer(layer)
 end
