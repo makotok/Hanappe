@@ -888,6 +888,22 @@ function UIView:addChild(child)
 end
 
 --------------------------------------------------------------------------------
+-- Sets the visible to layer.
+-- @param visible visible
+--------------------------------------------------------------------------------
+function UIView:setVisible(visible)
+    self.layer:setVisible(visible)
+end
+
+--------------------------------------------------------------------------------
+-- Returns the visible from layer.
+-- @return visible
+--------------------------------------------------------------------------------
+function UIView:getVisible()
+    self.layer:getVisible()
+end
+
+--------------------------------------------------------------------------------
 -- Sets the group's priority.
 -- Also sets the priority of any children.
 -- @param priority priority
