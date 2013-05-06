@@ -20,11 +20,15 @@ local MovieClip = flower.MovieClip
 local ClassFactory = flower.ClassFactory
 
 -- class
+local BitLib
+local TileFlag
 local TileMap
 local Tileset
 local TileLayer
 local TileObject
 local TileObjectGroup
+local TileSheetImage
+local TileMapImage
 local TileLayerRenderer
 local IsometricLayerRenderer
 local TileObjectRenderer
@@ -34,6 +38,53 @@ local TileObjectRendererFactory
 -- variables
 local MOAIPropInterface = MOAIProp.getInterfaceTable()
 
+----------------------------------------------------------------------------------------------------
+-- @type BitLib
+-- 
+-- Small library for bit operation.
+----------------------------------------------------------------------------------------------------
+BitLib = {}
+M.BitLib = BitLib
+
+function BitLib.bit(p)
+    return 2 ^ (p - 1)  -- 1-based indexing
+end
+
+function BitLib.hasbit(x, p)
+    return x % (p + p) >= p       
+end
+
+function BitLib.setbit(x, p)
+    return BitLib.hasbit(x, p) and x or x + p
+end
+
+function BitLib.clearbit(x, p)
+    return BitLib.hasbit(x, p) and x - p or x
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type TileFlag
+-- 
+-- Constant representing the flag of the tile.
+----------------------------------------------------------------------------------------------------
+TileFlag = {}
+M.TileFlag = TileFlag
+
+--- Flip horizontal of the flag.
+TileFlag.FLIPPED_HORIZONTALLY_FLAG = BitLib.bit(32)
+
+--- Flip vertical of the flag.
+TileFlag.FLIPPED_VERTICALLY_FLAG = BitLib.bit(31)
+
+--- Flip diagonally of the flag.
+TileFlag.FLIPPED_DIAGONALLY_FLAG = BitLib.bit(30)
+
+function TileFlag.clearFlags(value)
+    value = BitLib.clearbit(value, TileFlag.FLIPPED_HORIZONTALLY_FLAG)
+    value = BitLib.clearbit(value, TileFlag.FLIPPED_VERTICALLY_FLAG)
+    value = BitLib.clearbit(value, TileFlag.FLIPPED_DIAGONALLY_FLAG)
+    return value
+end
 
 ----------------------------------------------------------------------------------------------------
 -- @type TileMap
@@ -289,6 +340,7 @@ end
 -- @return TMXTileset
 --------------------------------------------------------------------------------
 function TileMap:findTilesetByGid(gid)
+    gid = TileFlag.clearFlags(gid)
     for i = #self.tilesets, 1, -1 do
         local tileset = self.tilesets[i]
         if gid >= tileset.firstgid then
@@ -576,6 +628,7 @@ end
 -- @return tile index.
 --------------------------------------------------------------------------------
 function Tileset:getTileIndexByGid(gid)
+    gid = TileFlag.clearFlags(gid)
     return gid == 0 and 0 or gid - self.firstgid + 1
 end
 
@@ -585,7 +638,18 @@ end
 -- @return tile id.
 --------------------------------------------------------------------------------
 function Tileset:getTileIdByGid(gid)
+    gid = TileFlag.clearFlags(gid)
     return gid == 0 and -1 or gid - self.firstgid
+end
+
+--------------------------------------------------------------------------------
+-- Returns the size of the tile.
+-- @return tile size.
+--------------------------------------------------------------------------------
+function Tileset:getTileSize()
+    local tileX = math.floor(self.imageWidth / self.tileWidth)
+    local tileY = math.floor(self.imageHeight / self.tileHeight)
+    return tileX * tileY
 end
 
 --------------------------------------------------------------------------------
@@ -900,6 +964,75 @@ function TileObjectGroup:getProperty(key)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type TileSheetImage
+-- 
+-- SheetImage an extension for the tile map.
+-- In addition to the tiles typically includes tile diagonal.
+----------------------------------------------------------------------------------------------------
+TileSheetImage = class(SheetImage)
+M.TileSheetImage = TileSheetImage
+
+--------------------------------------------------------------------------------
+-- Override to create a tile diagonal.
+-- @param tileWidth The width of the tile
+-- @param tileHeight The height of the tile
+-- @param spacing (option)Spacing of the tiles
+-- @param margin (option)Margin of the sheet
+--------------------------------------------------------------------------------
+function TileSheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
+    spacing = spacing or 0
+    margin = margin or 0
+    
+    local tw, th = self.texture:getSize()
+    local tileX = math.floor((tw - margin) / (tileWidth + spacing))
+    local tileY = math.floor((th - margin) / (tileHeight + spacing))
+
+    local deck = self.deck
+    self.sheetSize = tileX * tileY
+    self.reserveSize = self.sheetSize * 2
+    deck:reserve(self.reserveSize)
+    
+    local i = 1
+    for y = 1, tileY do
+        for x = 1, tileX do
+            local sx = (x - 1) * (tileWidth + spacing) + margin
+            local sy = (y - 1) * (tileHeight + spacing) + margin
+            local ux0 = sx / tw
+            local uy0 = sy / th
+            local ux1 = (sx + tileWidth) / tw
+            local uy1 = (sy + tileHeight) / th
+
+            if not self.grid then
+                deck:setRect(i, 0, 0, tileWidth, tileHeight)
+            end
+
+            deck:setUVRect(i, ux0, uy0, ux1, uy1)
+            deck:setUVQuad(i + self.sheetSize, ux1, uy0, ux1, uy1, ux0, uy1, ux0, uy0)
+            i = i + 1
+        end
+    end
+end
+----------------------------------------------------------------------------------------------------
+-- @type TileMapImage
+-- 
+-- MapImage an extension for the tile map.
+-- In addition to the tiles typically includes tile diagonal.
+----------------------------------------------------------------------------------------------------
+TileMapImage = class(MapImage)
+M.TileMapImage = TileMapImage
+
+--------------------------------------------------------------------------------
+-- Override to create a tile diagonal.
+-- @param tileWidth The width of the tile
+-- @param tileHeight The height of the tile
+-- @param spacing (option)Spacing of the tiles
+-- @param margin (option)Margin of the sheet
+--------------------------------------------------------------------------------
+function TileMapImage:setTileSize(tileWidth, tileHeight, spacing, margin)
+    TileSheetImage.setTileSize(self, tileWidth, tileHeight, spacing, margin)
+end
+
+----------------------------------------------------------------------------------------------------
 -- @type TileLayerRenderer
 -- 
 -- Renderer class is used to draw a tile layer.
@@ -952,7 +1085,7 @@ function TileLayerRenderer:createRenderer(tileset)
     local tileWidth, tileHeight = tileset.tileWidth, tileset.tileHeight
     local spacing, margin = tileset.spacing, tileset.margin
 
-    local renderer = MapImage(texture, mapWidth, mapHeight, tileWidth, tileHeight, spacing, margin)
+    local renderer = TileMapImage(texture, mapWidth, mapHeight, tileWidth, tileHeight, spacing, margin)
     renderer.tileset = tileset
     self.tilesetToRendererMap[tileset] = renderer
 
@@ -963,8 +1096,7 @@ function TileLayerRenderer:createRenderer(tileset)
         local rowData = {}
         for x = 0, mapWidth - 1 do
             local gid = tileLayer:getGid(x, y)
-            local tileNo = tileset:getTileIndexByGid(gid)
-            tileNo = tileNo > tileSize and 0 or tileNo
+            local tileNo = self:gidToTileNo(tileset, gid)
             table.insertElement(rowData, tileNo)
         end
         renderer:setRow(y + 1, unpack(rowData))
@@ -972,6 +1104,34 @@ function TileLayerRenderer:createRenderer(tileset)
     
     self:addChild(renderer)
     return renderer
+end
+
+--------------------------------------------------------------------------------
+-- Convert to tile value to draw the layer.
+-- Use tile flag.
+-- @param tileset tileset
+-- @param gid gid
+-- @return tileNo
+--------------------------------------------------------------------------------
+function TileLayerRenderer:gidToTileNo(tileset, gid)
+    local tileNo = tileset:getTileIndexByGid(gid)
+    local tileSize = tileset:getTileSize()
+    
+    local flipH = BitLib.hasbit(gid, TileFlag.FLIPPED_HORIZONTALLY_FLAG)
+    local flipV = BitLib.hasbit(gid, TileFlag.FLIPPED_VERTICALLY_FLAG)
+    local flipD = BitLib.hasbit(gid, TileFlag.FLIPPED_DIAGONALLY_FLAG)
+    
+    if flipH then
+        tileNo = tileNo + MOAIGridSpace.TILE_X_FLIP
+    end
+    if flipV then
+        tileNo = tileNo + MOAIGridSpace.TILE_Y_FLIP
+    end
+    if flipD then
+        tileNo = tileNo + tileSize
+    end
+    
+    return tileNo
 end
 
 --------------------------------------------------------------------------------
@@ -1012,7 +1172,7 @@ end
 --------------------------------------------------------------------------------
 function TileLayerRenderer:setGid(x, y, gid)
     local tileset = self.tileMap:findTilesetByGid(gid)
-    local tileNo = tileset:getTileIndexByGid(gid)
+    local tileNo = self:toTileValue(tileset, gid)
     local renderer = self:getRendererByTileset(tileset) or self:createRenderer(tileset)
     renderer:setTile(x + 1, y + 1, tileNo)
     self:addChild(renderer)
@@ -1083,6 +1243,7 @@ function IsometricLayerRenderer:createRenderer(x, y, gid)
     local tileWidth, tileHeight = tileset.tileWidth, tileset.tileHeight
     local spacing, margin = tileset.spacing, tileset.margin
 
+    -- TODO:Flip, rotation not implemented.
     local renderer = SheetImage(texture)
     renderer:setIndex(tileNo)
 
