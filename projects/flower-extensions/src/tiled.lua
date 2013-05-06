@@ -1121,15 +1121,9 @@ function TileLayerRenderer:gidToTileNo(tileset, gid)
     local flipV = BitLib.hasbit(gid, TileFlag.FLIPPED_VERTICALLY_FLAG)
     local flipD = BitLib.hasbit(gid, TileFlag.FLIPPED_DIAGONALLY_FLAG)
     
-    if flipH then
-        tileNo = tileNo + MOAIGridSpace.TILE_X_FLIP
-    end
-    if flipV then
-        tileNo = tileNo + MOAIGridSpace.TILE_Y_FLIP
-    end
-    if flipD then
-        tileNo = tileNo + tileSize
-    end
+    tileNo = flipH and tileNo + MOAIGridSpace.TILE_X_FLIP or tileNo
+    tileNo = flipV and tileNo + MOAIGridSpace.TILE_Y_FLIP or tileNo
+    tileNo = flipD and tileNo + tileSize or tileNo
     
     return tileNo
 end
@@ -1172,7 +1166,7 @@ end
 --------------------------------------------------------------------------------
 function TileLayerRenderer:setGid(x, y, gid)
     local tileset = self.tileMap:findTilesetByGid(gid)
-    local tileNo = self:toTileValue(tileset, gid)
+    local tileNo = self:gidToTileNo(tileset, gid)
     local renderer = self:getRendererByTileset(tileset) or self:createRenderer(tileset)
     renderer:setTile(x + 1, y + 1, tileNo)
     self:addChild(renderer)
