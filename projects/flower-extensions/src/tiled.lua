@@ -934,15 +934,69 @@ function TileObjectGroup:getObjects()
 end
 
 --------------------------------------------------------------------------------
--- Find a TileObjects.
--- @return objects
+-- Find a TileObject.
+-- @param fieldName Name of the field.
+-- @param fieldValue Value of the field.
+-- @return object
 --------------------------------------------------------------------------------
-function TileObjectGroup:findObjectByName(name)
+function TileObjectGroup:findObject(fieldName, fieldValue)
     for i, object in ipairs(self.objects) do
-        if object.name == name then
+        if object[fieldName] == fieldValue then
             return object
         end
     end
+end
+
+--------------------------------------------------------------------------------
+-- Find a TileObject by name.
+-- @param name name
+-- @return object
+--------------------------------------------------------------------------------
+function TileObjectGroup:findObjectByName(name)
+    return self:findObject("name", name)
+end
+
+--------------------------------------------------------------------------------
+-- Find a TileObject by type.
+-- @param type type
+-- @return object
+--------------------------------------------------------------------------------
+function TileObjectGroup:findObjectByType(type)
+    return self:findObject("type", type)
+end
+
+--------------------------------------------------------------------------------
+-- Find a TileObjects.
+-- @param fieldName Name of the field.
+-- @param fieldValue Value of the field.
+-- @return objects
+--------------------------------------------------------------------------------
+function TileObjectGroup:findObjects(fieldName, fieldValue)
+    local list = {}
+    for i, object in ipairs(self.objects) do
+        if object[fieldName] == fieldValue then
+            table.insertElement(list, object)
+        end
+    end
+    return list
+end
+
+--------------------------------------------------------------------------------
+-- Find a TileObjects by name.
+-- @param name name
+-- @return objects
+--------------------------------------------------------------------------------
+function TileObjectGroup:findObjectsByName(name)
+    return self:findObjects("name", name)
+end
+
+--------------------------------------------------------------------------------
+-- Find a TileObjects.
+-- @param type type
+-- @return objects
+--------------------------------------------------------------------------------
+function TileObjectGroup:findObjectsByType(type)
+    return self:findObjects("type", type)
 end
 
 --------------------------------------------------------------------------------
