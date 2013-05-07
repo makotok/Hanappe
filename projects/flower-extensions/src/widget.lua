@@ -2589,7 +2589,7 @@ end
 -- @return maxVerticalScrollPosition
 --------------------------------------------------------------------------------
 function ListBox:getMaxVerticalScrollPosition()
-    return math.max(self:getListSize() - self:getRowCount(), 0)
+    return math.max(math.floor(self:getListSize() / self:getColumnCount()) - self:getRowCount(), 0)
 end
 
 --------------------------------------------------------------------------------
