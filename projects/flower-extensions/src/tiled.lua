@@ -80,9 +80,11 @@ TileFlag.FLIPPED_VERTICALLY_FLAG = BitLib.bit(31)
 TileFlag.FLIPPED_DIAGONALLY_FLAG = BitLib.bit(30)
 
 function TileFlag.clearFlags(value)
-    value = BitLib.clearbit(value, TileFlag.FLIPPED_HORIZONTALLY_FLAG)
-    value = BitLib.clearbit(value, TileFlag.FLIPPED_VERTICALLY_FLAG)
-    value = BitLib.clearbit(value, TileFlag.FLIPPED_DIAGONALLY_FLAG)
+    if value >= TileFlag.FLIPPED_DIAGONALLY_FLAG then
+        value = BitLib.clearbit(value, TileFlag.FLIPPED_HORIZONTALLY_FLAG)
+        value = BitLib.clearbit(value, TileFlag.FLIPPED_VERTICALLY_FLAG)
+        value = BitLib.clearbit(value, TileFlag.FLIPPED_DIAGONALLY_FLAG)
+    end
     return value
 end
 
