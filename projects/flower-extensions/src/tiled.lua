@@ -343,7 +343,7 @@ function TileMap:findTilesetByGid(gid)
     gid = TileFlag.clearFlags(gid)
     for i = #self.tilesets, 1, -1 do
         local tileset = self.tilesets[i]
-        if gid >= tileset.firstgid then
+        if tileset:hasTile(gid) then
             return tileset
         end
     end
@@ -585,6 +585,10 @@ function Tileset:loadData(data)
     self.imageHeight = data.imageheight
     self.tiles = data.tiles
     self.properties = data.properties
+
+    self.tileSizeX = math.floor(self.imageWidth / self.tileWidth)
+    self.tileSizeY = math.floor(self.imageHeight / self.tileHeight)
+    self.tileSize = self.tileSizeX * self.tileSizeY
 end
 
 --------------------------------------------------------------------------------
@@ -624,12 +628,23 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the tile index of the specified gid.
+-- TODO:LDoc
+-- @param gid gid.
+-- @return If has gid return true.
+--------------------------------------------------------------------------------
+function Tileset:hasTile(gid)
+    gid = TileFlag.clearFlags(gid)
+    return self.firstgid <= gid and gid < self.firstgid + self.tileSize
+end
+
+--------------------------------------------------------------------------------
+-- Returns the tile index of the specified gid.
 -- @param gid gid.
 -- @return tile index.
 --------------------------------------------------------------------------------
 function Tileset:getTileIndexByGid(gid)
     gid = TileFlag.clearFlags(gid)
-    return gid == 0 and 0 or gid - self.firstgid + 1
+    return self:hasTile(gid) and gid - self.firstgid + 1 or 0
 end
 
 --------------------------------------------------------------------------------
@@ -639,7 +654,7 @@ end
 --------------------------------------------------------------------------------
 function Tileset:getTileIdByGid(gid)
     gid = TileFlag.clearFlags(gid)
-    return gid == 0 and -1 or gid - self.firstgid
+    return self:hasTile(gid) and gid - self.firstgid or -1
 end
 
 --------------------------------------------------------------------------------
@@ -647,9 +662,7 @@ end
 -- @return tile size.
 --------------------------------------------------------------------------------
 function Tileset:getTileSize()
-    local tileX = math.floor(self.imageWidth / self.tileWidth)
-    local tileY = math.floor(self.imageHeight / self.tileHeight)
-    return tileX * tileY
+    return self.tileSize
 end
 
 --------------------------------------------------------------------------------
@@ -1170,6 +1183,10 @@ end
 function TileLayerRenderer:gidToTileNo(tileset, gid)
     local tileNo = tileset:getTileIndexByGid(gid)
     local tileSize = tileset:getTileSize()
+
+    if tileNo == 0 then
+        return tileNo
+    end
     
     local flipH = BitLib.hasbit(gid, TileFlag.FLIPPED_HORIZONTALLY_FLAG)
     local flipV = BitLib.hasbit(gid, TileFlag.FLIPPED_VERTICALLY_FLAG)
