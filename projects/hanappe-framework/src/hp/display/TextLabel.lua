@@ -130,7 +130,7 @@ function M:fitSize(length)
     width = width % 2 == 0 and width or width + 1
     height = height % 2 == 0 and height or height + 1
 
-    self:setRect(-width / 2, -height / 2, width / 2, height / 2)
+    self:setSize(width, height)
 end
 
 --------------------------------------------------------------------------------
@@ -148,7 +148,7 @@ function M:fitHeight(length)
     width = width % 2 == 0 and width or width + 1
     height = height % 2 == 0 and height or height + 1
 
-    self:setRect(-width / 2, -height / 2, width / 2, height / 2)
+    self:setHeight(height)
 end
 
 return M
