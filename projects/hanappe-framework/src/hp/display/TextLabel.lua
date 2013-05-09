@@ -1,7 +1,7 @@
 --------------------------------------------------------------------------------
--- This is a class to draw the text.<br>
+-- This is a class to draw the text.
 -- See MOAITextBox.<br>
--- Base Classes => DisplayObject, Resizable<br>
+-- Base Classes => DisplayObject, Resizable
 --------------------------------------------------------------------------------
 
 -- import
@@ -34,6 +34,12 @@ M.VERTICAL_ALIGNS = {
     bottom  = MOAITextBox.RIGHT_JUSTIFY,
 }
 
+--- Max width for fit size.
+M.MAX_FIT_WIDTH = 10000000
+
+--- Max height for fit size.
+M.MAX_FIT_HEIGHT = 10000000
+
 --------------------------------------------------------------------------------
 -- The constructor.
 -- @param params (option)Parameter is set to Object.<br>
@@ -51,7 +57,7 @@ function M:init(params)
 end
 
 --------------------------------------------------------------------------------
--- Set the text size.<br>
+-- Set the text size.
 -- @param width
 -- @param height
 --------------------------------------------------------------------------------
@@ -65,7 +71,7 @@ function M:setSize(width, height)
 end
 
 --------------------------------------------------------------------------------
--- Set the text size.<br>
+-- Set the text size.
 -- @param points size.
 -- @param dpi (deprecated)Resolution.
 --------------------------------------------------------------------------------
@@ -76,7 +82,7 @@ function M:setTextSize(points, dpi)
 end
 
 --------------------------------------------------------------------------------
--- Returns the text size.<br>
+-- Returns the text size.
 -- @return points, dpi
 --------------------------------------------------------------------------------
 function M:getTextSize()
@@ -84,7 +90,7 @@ function M:getTextSize()
 end
 
 --------------------------------------------------------------------------------
--- Set the text.<br>
+-- Set the text.
 -- @param text text.
 --------------------------------------------------------------------------------
 function M:setText(text)
@@ -92,7 +98,7 @@ function M:setText(text)
 end
 
 --------------------------------------------------------------------------------
--- Set the font.<br>
+-- Set the font.
 -- @param font font.
 --------------------------------------------------------------------------------
 function M:setFont(font)
@@ -108,6 +114,41 @@ end
 function M:setAlign(horizotalAlign, verticalAlign)
     local h, v = M.HORIZOTAL_ALIGNS[horizotalAlign], M.VERTICAL_ALIGNS[verticalAlign]
     self:setAlignment(h, v)
+end
+
+--------------------------------------------------------------------------------
+-- Sets the fit size.
+-- @param lenfth (Option)Length of the text.
+--------------------------------------------------------------------------------
+function M:fitSize(length)
+    self:setRect(0, 0, M.MAX_FIT_WIDTH, M.MAX_FIT_HEIGHT)
+    
+    length = length or 1000000
+    local padding = 2
+    local left, top, right, bottom = self:getStringBounds(1, length)
+    local width, height = right - left + padding, bottom - top + padding
+    width = width % 2 == 0 and width or width + 1
+    height = height % 2 == 0 and height or height + 1
+
+    self:setRect(-width / 2, -height / 2, width / 2, height / 2)
+end
+
+--------------------------------------------------------------------------------
+-- Sets the fit height.
+-- @param lenfth (Option)Length of the text.
+--------------------------------------------------------------------------------
+function M:fitHeight(length)
+    local w, h, d = self:getDims()
+    self:setRect(0, 0, w, M.MAX_FIT_HEIGHT)
+    
+    length = length or 1000000
+    local padding = 2
+    local left, top, right, bottom = self:getStringBounds(1, length)
+    local width, height = right - left + padding, bottom - top + padding
+    width = width % 2 == 0 and width or width + 1
+    height = height % 2 == 0 and height or height + 1
+
+    self:setRect(-width / 2, -height / 2, width / 2, height / 2)
 end
 
 return M

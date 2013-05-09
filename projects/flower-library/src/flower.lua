@@ -2886,6 +2886,12 @@ Label = class(DisplayObject)
 Label.__factory = MOAITextBox
 M.Label = Label
 
+--- Max width for fit size.
+Label.MAX_FIT_WIDTH = 10000000
+
+--- Max height for fit size.
+Label.MAX_FIT_HEIGHT = 10000000
+
 --------------------------------------------------------------------------------
 -- Constructor.
 -- @param text Text
@@ -2900,9 +2906,13 @@ function Label:init(text, width, height, font, textSize)
     font = Resources.getFont(font, nil, textSize)
 
     self:setFont(font)
-    self:setRect(0, 0, width, height)
+    self:setRect(0, 0, width or 10, height or 10)
     self:setTextSize(textSize or Font.DEFAULT_POINTS)
     self:setString(text)
+    
+    if not width or not height then
+        self:fitSize(#text)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -2911,6 +2921,37 @@ end
 -- @param height Height
 --------------------------------------------------------------------------------
 function Label:setSize(width, height)
+    self:setRect(0, 0, width, height)
+end
+
+--------------------------------------------------------------------------------
+-- Sets the fit size.
+-- @param lenfth (Option)Length of the text.
+--------------------------------------------------------------------------------
+function Label:fitSize(length)
+    self:setRect(0, 0, Label.MAX_FIT_WIDTH, Label.MAX_FIT_HEIGHT)
+    
+    length = length or 1000000
+    local padding = 2
+    local left, top, right, bottom = self:getStringBounds(1, length)
+    local width, height = right - left + padding, bottom - top + padding
+
+    self:setRect(0, 0, width, height)
+end
+
+--------------------------------------------------------------------------------
+-- Sets the fit height.
+-- @param lenfth (Option)Length of the text.
+--------------------------------------------------------------------------------
+function Label:fitHeight(length)
+    local w, h, d = self:getDims()
+    self:setRect(0, 0, w, Label.MAX_FIT_HEIGHT)
+    
+    length = length or 1000000
+    local padding = 2
+    local left, top, right, bottom = self:getStringBounds(1, length)
+    local width, height = right - left + padding, bottom - top + padding
+
     self:setRect(0, 0, width, height)
 end
 
