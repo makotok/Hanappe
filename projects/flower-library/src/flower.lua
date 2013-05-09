@@ -2892,6 +2892,12 @@ Label.MAX_FIT_WIDTH = 10000000
 --- Max height for fit size.
 Label.MAX_FIT_HEIGHT = 10000000
 
+--- default fit length.
+Label.DEFAULT_FIT_LENGTH = 10000000
+
+--- default fit padding.
+Label.DEFAULT_FIT_PADDING = 2
+
 --------------------------------------------------------------------------------
 -- Constructor.
 -- @param text Text
@@ -2929,11 +2935,10 @@ end
 -- @param lenfth (Option)Length of the text.
 --------------------------------------------------------------------------------
 function Label:fitSize(length)
-    self:setRect(0, 0, Label.MAX_FIT_WIDTH, Label.MAX_FIT_HEIGHT)
+    self:setSize(Label.MAX_FIT_WIDTH, Label.MAX_FIT_HEIGHT)
     
-    length = length or 1000000
-    local padding = 2
-    local left, top, right, bottom = self:getStringBounds(1, length)
+    local padding = Label.DEFAULT_FIT_PADDING
+    local left, top, right, bottom = self:getStringBounds(1, length or Label.DEFAULT_FIT_LENGTH)
     local width, height = right - left + padding, bottom - top + padding
 
     self:setSize(width, height)
@@ -2944,13 +2949,11 @@ end
 -- @param lenfth (Option)Length of the text.
 --------------------------------------------------------------------------------
 function Label:fitHeight(length)
-    local w, h, d = self:getDims()
-    self:setRect(0, 0, w, Label.MAX_FIT_HEIGHT)
+    self:setSize(self:getWidth(), Label.MAX_FIT_HEIGHT)
     
-    length = length or 1000000
-    local padding = 2
-    local left, top, right, bottom = self:getStringBounds(1, length)
-    local width, height = w, bottom - top + padding
+    local padding = Label.DEFAULT_FIT_PADDING
+    local left, top, right, bottom = self:getStringBounds(1, length or Label.DEFAULT_FIT_LENGTH)
+    local width, height = self:getWidth(), bottom - top + padding
 
     self:setSize(width, height)
 end
