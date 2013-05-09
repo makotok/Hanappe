@@ -2936,7 +2936,7 @@ function Label:fitSize(length)
     local left, top, right, bottom = self:getStringBounds(1, length)
     local width, height = right - left + padding, bottom - top + padding
 
-    self:setRect(0, 0, width, height)
+    self:setSize(width, height)
 end
 
 --------------------------------------------------------------------------------
@@ -2950,9 +2950,9 @@ function Label:fitHeight(length)
     length = length or 1000000
     local padding = 2
     local left, top, right, bottom = self:getStringBounds(1, length)
-    local width, height = right - left + padding, bottom - top + padding
+    local width, height = w, bottom - top + padding
 
-    self:setRect(0, 0, width, height)
+    self:setSize(width, height)
 end
 
 ----------------------------------------------------------------------------------------------------
