@@ -2886,6 +2886,18 @@ Label = class(DisplayObject)
 Label.__factory = MOAITextBox
 M.Label = Label
 
+--- Max width for fit size.
+Label.MAX_FIT_WIDTH = 10000000
+
+--- Max height for fit size.
+Label.MAX_FIT_HEIGHT = 10000000
+
+--- default fit length.
+Label.DEFAULT_FIT_LENGTH = 10000000
+
+--- default fit padding.
+Label.DEFAULT_FIT_PADDING = 2
+
 --------------------------------------------------------------------------------
 -- Constructor.
 -- @param text Text
@@ -2900,9 +2912,13 @@ function Label:init(text, width, height, font, textSize)
     font = Resources.getFont(font, nil, textSize)
 
     self:setFont(font)
-    self:setRect(0, 0, width, height)
+    self:setRect(0, 0, width or 10, height or 10)
     self:setTextSize(textSize or Font.DEFAULT_POINTS)
     self:setString(text)
+    
+    if not width or not height then
+        self:fitSize(#text)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -2912,6 +2928,34 @@ end
 --------------------------------------------------------------------------------
 function Label:setSize(width, height)
     self:setRect(0, 0, width, height)
+end
+
+--------------------------------------------------------------------------------
+-- Sets the fit size.
+-- @param lenfth (Option)Length of the text.
+--------------------------------------------------------------------------------
+function Label:fitSize(length)
+    self:setSize(Label.MAX_FIT_WIDTH, Label.MAX_FIT_HEIGHT)
+    
+    local padding = Label.DEFAULT_FIT_PADDING
+    local left, top, right, bottom = self:getStringBounds(1, length or Label.DEFAULT_FIT_LENGTH)
+    local width, height = right - left + padding, bottom - top + padding
+
+    self:setSize(width, height)
+end
+
+--------------------------------------------------------------------------------
+-- Sets the fit height.
+-- @param lenfth (Option)Length of the text.
+--------------------------------------------------------------------------------
+function Label:fitHeight(length)
+    self:setSize(self:getWidth(), Label.MAX_FIT_HEIGHT)
+    
+    local padding = Label.DEFAULT_FIT_PADDING
+    local left, top, right, bottom = self:getStringBounds(1, length or Label.DEFAULT_FIT_LENGTH)
+    local width, height = self:getWidth(), bottom - top + padding
+
+    self:setSize(width, height)
 end
 
 ----------------------------------------------------------------------------------------------------

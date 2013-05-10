@@ -5,18 +5,19 @@ function onCreate(params)
     
     -- simple impl
     textbox1 = TextLabel {
-        text = "hello world!",
-        size = {layer:getViewWidth(), 30},
-        pos = {0, 0},
+        text = "hello world!\nこんにちわ!\n你好",
         layer = layer,
     }
+    textbox1:fitSize()
+    textbox1:setPos(0, 0) -- MEMO: ORDER(size -> pos)
     
     -- It supports an empty constructor.
     textbox2 = TextLabel()
-    textbox2:setText("empty constructor.")
+    textbox2:setText("empty constructor.abc abc abc")
     textbox2:setLayer(layer)
     textbox2:setSize(layer:getViewWidth(), 30)
-    textbox2:setPos(0, textbox1:getBottom())
+    textbox2:fitHeight()
+    textbox2:setPos(0, textbox1:getBottom()) -- MEMO: ORDER(size -> pos)
     textbox2:setFont("arial-rounded")
     
     -- If the first argument string, and the text parameters.
