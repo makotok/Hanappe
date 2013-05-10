@@ -35,6 +35,55 @@ function onCreate(e)
         parent = view,
         onClick = button3_OnClick,
     }
+
+    closeButton = widget.ImageButton {
+        pos = {50, button3:getBottom() + 10},
+        parent = view,
+        sheetImage = "skins/tp_image",
+        normalTexture = "gb-up.png",
+        selectedTexture = "gb-down.png",
+        disabledTexture = "gb-up.png",
+        --onClick = button3_OnClick,
+    }
+
+    local checkbox1 = widget.CheckBox {
+        pos = {50, closeButton:getBottom() + 10},
+        size = {300, 40},
+        parent = view,
+        --onDown = button1_OnDown,
+        sheetImage = "skins/tp_image",
+        checkedTexture = "checkbox_mark.png",
+        backgroundTexture = "checkbox_bg.png",
+        textSize = 20,
+        textColor = {1, 1, 1, 1},
+        text = "メッセージ",
+        leftPadding = 46,
+        checked = true,
+    }
+
+    local checkbox2 = widget.CheckBox {
+        pos = {50, checkbox1:getBottom() + 20},
+        size = {146, 40},
+        parent = view,
+        --onDown = button1_OnDown,
+        sheetImage = "skins/tp_image",
+        checkedTexture = "checkbox_mark.png",
+        backgroundTexture = "checkbox_bg.png",
+        textSize = 20,
+        textColor = {1, 1, 1, 1},
+        text = "English",
+        leftPadding = 46,
+        checked = true,
+    }
+
+    local slider1 = widget.Slider { -- test Slider
+        size = {200, 36},
+        pos = {50, checkbox2:getBottom() + 20},
+        backgroundTexture = "skins/slider_background.png",
+        progressTexture = "skins/slider_progress.png",
+        thumbTexture = "skins/slider_thumb.png",
+        parent = view,
+    }
     
     -- event listeners
     button1:addEventListener("focusIn", button1_OnFocusIn)

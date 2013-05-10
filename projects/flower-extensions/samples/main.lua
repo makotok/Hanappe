@@ -1,4 +1,5 @@
 -- import
+local position = require "position"
 flower = require "flower"
 tiled = require "tiled"
 widget = require "widget"
@@ -17,13 +18,16 @@ MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_WORLD_BOUNDS, 2, 0.75, 0.75, 0.75 
 ]]
 
 -- Screen setting
-local screenWidth = MOAIEnvironment.horizontalResolution or 320
-local screenHeight = MOAIEnvironment.verticalResolution or 480
+local screenWidth = 320--MOAIEnvironment.horizontalResolution or 320
+local screenHeight = 480--MOAIEnvironment.verticalResolution or 480
 local screenDpi = MOAIEnvironment.screenDpi or 120
 local viewScale = math.floor(screenDpi / 240) + 1
-
+print(screenWidth, screenHeight)
 -- open window
-flower.openWindow("Flower extensions", screenWidth, screenHeight, viewScale)
+
+position.init(screenWidth, screenHeight)
+
+flower.openWindow("Flower extensions", screenWidth, screenHeight)--, viewScale)
 
 -- open scene
 flower.openScene("main_scene")

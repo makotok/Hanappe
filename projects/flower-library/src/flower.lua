@@ -9,7 +9,7 @@
 -- @release V2.1.1
 ----------------------------------------------------------------------------------------------------
 
-require "position"
+local position = require "position"
 
 -- module
 local M = {}

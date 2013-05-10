@@ -10,6 +10,8 @@
 -- @author Makoto
 ----------------------------------------------------------------------------------------------------
 
+local position = require "position"
+
 -- module
 local M = {}
 
@@ -3207,7 +3209,7 @@ function CheckBox:updateDisplay()
         self._checkedImage:setTextureAtlas(sheetImage .. ".lua")
         self:addChild(self._checkedImage)
 
-        self._textLabel = Label(self._text, 100, 30)
+        self._textLabel = flower.Label(self:getText(), 100, 40)
         self:addChild(self._textLabel)
 
         self._inited = true
@@ -3221,13 +3223,14 @@ function CheckBox:updateDisplay()
     local _, count2 = string.gsub(self:getText(), "%w", "") -- ascii word num
     local printWidth = count1 - count2 + count2 / 2
     local total_word_space = (count1 - 1) * self:getTextSize() * 0.05
-    local label_width = self:getTextSize() * printWidth + total_word_space
+    local label_width = (self:getTextSize() * printWidth + total_word_space) * 1.1
     local textLabel = self._textLabel
     local leftPadding = bg_width * 1.3
-    local total_height = self:getTextSize() * 1.2
+    local total_height = self:getTextSize() * 1.3
     if self:getLeftPadding() then
         leftPadding = self:getLeftPadding()
     end
+
     textLabel:setSize(label_width, total_height)
     textLabel:setPos(leftPadding, 0)
     textLabel:setString(self:getText())
@@ -3618,9 +3621,6 @@ function Slider:doSliderDown(idx, downx)
     self.touchDownIdx = idx
     local width, _ = self:getSize()
     local left = self:getLeft()
-    if self.parent then
-        left = self.parent:getLeft()
-    end
     downx = downx - left
     if downx <= width and downx >= 0 then
         self._currValue = downx / width
