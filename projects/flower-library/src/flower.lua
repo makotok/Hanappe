@@ -9,6 +9,8 @@
 -- @release V2.1.1
 ----------------------------------------------------------------------------------------------------
 
+require "position"
+
 -- module
 local M = {}
 
@@ -529,6 +531,23 @@ function Executors.callLaterTime(time, func, ...)
     local timer = MOAITimer.new()
     timer:setSpan(time)
     timer:setListener(MOAITimer.EVENT_STOP, function() func(unpack(args)) end)
+    timer:start()
+    return timer
+end
+
+--------------------------------------------------------------------------------
+-- Run the specified function in loop by a span time over and over again
+-- @param time loop seconds.
+-- @param func Target function.
+-- @param ... Arguments.
+-- @return MOAITimer object
+--------------------------------------------------------------------------------
+function Executors.callLoopTime(time, func, ...)
+    local args = {...}
+    local timer = MOAITimer.new()
+    timer:setMode(MOAITimer.LOOP)
+    timer:setSpan(time) -- EVENT_TIMER_LOOP
+    timer:setListener(MOAITimer.EVENT_TIMER_BEGIN_SPAN, function() func(unpack(args)) end)
     timer:start()
     return timer
 end
@@ -1751,6 +1770,17 @@ function DisplayObject:setPivToCenter()
 end
 
 --------------------------------------------------------------------------------
+-- Sets the anchor point of the object's.
+--------------------------------------------------------------------------------
+function DisplayObject:setAnchorPoint(pos)
+    local w, h, d = self:getSize()
+    local left, top = self:getPos()
+    anchorX, anchorY = position.GetAnchorPoint(pos, w, h)
+    self:setPiv(anchorX, anchorY, 0)
+    self:setPos(left - anchorX, top - anchorY)
+end
+
+--------------------------------------------------------------------------------
 -- Returns whether or not the object is currently visible or invisible.
 -- @return visible
 --------------------------------------------------------------------------------
@@ -1805,16 +1835,24 @@ M.Layer = Layer
 --------------------------------------------------------------------------------
 -- The constructor.
 --------------------------------------------------------------------------------
-function Layer:init()
+function Layer:init(vp)
     DisplayObject.init(self)
+    local viewport = M.viewport
+    if vp then
+        viewport = vp
+    end
 
     local partition = MOAIPartition.new()
     self:setPartition(partition)
     self.partition = partition
     
-    self:setViewport(M.viewport)
+    self:setViewport(viewport)
     self.touchEnabled = false
     self.touchHandler = nil
+end
+
+function Layer:setNewViewport(vp)
+    self:setViewport(vp)
 end
 
 --------------------------------------------------------------------------------
@@ -2428,6 +2466,10 @@ function SheetImage:init(texture, sizeX, sizeY)
     self.texture = texture
     self.sheetSize = 0
     self.sheetNames = {}
+    self.imageSize = {}
+    self.width = 0
+    self.height = 0
+    self.imageIndex = -1
     
     if sizeX and sizeY then
         self:setSheetSize(sizeX, sizeY)
@@ -2472,6 +2514,8 @@ function SheetImage:setTextureAtlas(atlas, texture)
 
     for i, frame in ipairs ( atlas.frames ) do
         if not self.grid then
+            x, y, width, height = unpack(frame.rect)
+            self.imageSize[i] = {width, height}
             deck:setRect(i, unpack(frame.rect))
         end
         deck:setUVQuad(i, unpack(frame.quad))
@@ -2541,9 +2585,35 @@ function SheetImage:setIndexByName(name)
     if type(name) == "string" then
         local index = self.sheetNames[name] or self:getIndex()        
         self:setIndex(index)
+        self.imageIndex = index
+        if self.imageSize[index] then
+            self:setSize(self.imageSize[index][1], self.imageSize[index][2])
+        end
     elseif type(name) == "number" then
         self:setIndex(index)
+        self.imageIndex = index
+        if self.imageSize[index] then
+            self:setSize(self.imageSize[index][1], self.imageSize[index][2])
+        end
     end
+end
+
+--------------------------------------------------------------------------------
+-- get the sheet's image width and height.
+--------------------------------------------------------------------------------
+function SheetImage:getSize()
+    return self.width, self.height, 0
+end
+
+--------------------------------------------------------------------------------
+-- Sets the sheet's image width and height.
+-- @param width
+-- @param height
+--------------------------------------------------------------------------------
+function SheetImage:setSize(width, height)
+    self.deck:setRect(self.imageIndex, 0, 0, width, height)
+    self.width = width
+    self.height = height
 end
 
 ----------------------------------------------------------------------------------------------------
