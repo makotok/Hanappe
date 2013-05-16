@@ -9,8 +9,6 @@
 -- @release V2.1.1
 ----------------------------------------------------------------------------------------------------
 
-local position = require "position"
-
 -- module
 local M = {}
 
@@ -611,6 +609,7 @@ function Resources.getTexture(path)
     if cache[filepath] == nil then
         local texture = Texture(filepath)
         cache[filepath] = texture
+        print("Texture load!", filepath)
     end
     return cache[filepath]
 end
@@ -1770,17 +1769,6 @@ function DisplayObject:setPivToCenter()
 end
 
 --------------------------------------------------------------------------------
--- Sets the anchor point of the object's.
---------------------------------------------------------------------------------
-function DisplayObject:setAnchorPoint(pos)
-    local w, h, d = self:getSize()
-    local left, top = self:getPos()
-    anchorX, anchorY = position.GetAnchorPoint(pos, w, h)
-    self:setPiv(anchorX, anchorY, 0)
-    self:setPos(left - anchorX, top - anchorY)
-end
-
---------------------------------------------------------------------------------
 -- Returns whether or not the object is currently visible or invisible.
 -- @return visible
 --------------------------------------------------------------------------------
@@ -2434,7 +2422,7 @@ end
 --------------------------------------------------------------------------------
 function Image:setTexture(texture)
     self.texture = Resources.getTexture(texture)
-    self.deck:setTexture(texture)
+    self.deck:setTexture(self.texture)
     local tw, th = self.texture:getSize()
     self:setSize(tw, th)
 end
@@ -3003,12 +2991,19 @@ end
 --------------------------------------------------------------------------------
 -- Sets the fit size.
 -- @param lenfth (Option)Length of the text.
+-- @param maxWidth (Option)maxWidth of the text.
+-- @param maxHeight (Option)maxHeight of the text.
+-- @param padding (Option)padding of the text.
 --------------------------------------------------------------------------------
-function Label:fitSize(length)
-    self:setSize(Label.MAX_FIT_WIDTH, Label.MAX_FIT_HEIGHT)
-    
-    local padding = Label.DEFAULT_FIT_PADDING
-    local left, top, right, bottom = self:getStringBounds(1, length or Label.DEFAULT_FIT_LENGTH)
+function Label:fitSize(length, maxWidth, maxHeight, padding)
+    length = length or Label.DEFAULT_FIT_LENGTH
+    maxWidth = maxWidth or Label.MAX_FIT_WIDTH
+    maxHeight = maxHeight or Label.MAX_FIT_HEIGHT
+    padding = padding or Label.DEFAULT_FIT_PADDING
+
+    self:setSize(maxWidth, maxHeight)
+    local left, top, right, bottom = self:getStringBounds(1, length)
+    left, top, right, bottom = left or 0, top or 0, right or 0, bottom or 0
     local width, height = right - left + padding, bottom - top + padding
 
     self:setSize(width, height)
@@ -3017,15 +3012,21 @@ end
 --------------------------------------------------------------------------------
 -- Sets the fit height.
 -- @param lenfth (Option)Length of the text.
+-- @param maxHeight (Option)maxHeight of the text.
+-- @param padding (Option)padding of the text.
 --------------------------------------------------------------------------------
-function Label:fitHeight(length)
-    self:setSize(self:getWidth(), Label.MAX_FIT_HEIGHT)
-    
-    local padding = Label.DEFAULT_FIT_PADDING
-    local left, top, right, bottom = self:getStringBounds(1, length or Label.DEFAULT_FIT_LENGTH)
-    local width, height = self:getWidth(), bottom - top + padding
+function Label:fitHeight(length, maxHeight, padding)
+    self:fitSize(length, self:getWidth(), maxHeight, padding)
+end
 
-    self:setSize(width, height)
+--------------------------------------------------------------------------------
+-- Sets the fit height.
+-- @param lenfth (Option)Length of the text.
+-- @param maxWidth (Option)maxWidth of the text.
+-- @param padding (Option)padding of the text.
+--------------------------------------------------------------------------------
+function Label:fitWidth(length, maxWidth, padding)
+    self:fitSize(length, maxWidth, self:getHeight(), padding)
 end
 
 ----------------------------------------------------------------------------------------------------

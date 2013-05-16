@@ -10,8 +10,6 @@
 -- @author Makoto
 ----------------------------------------------------------------------------------------------------
 
-local position = require "position"
-
 -- module
 local M = {}
 
@@ -47,10 +45,9 @@ local UIEvent
 local UIComponent
 local UIGroup
 local UIView
-local BoxBase
-local TextBase
-local ListBase
 local Button
+local ImageButton
+local CheckBox
 local Joystick
 local Panel
 local TextBox
@@ -59,6 +56,8 @@ local MsgBox
 local ListBox
 local ListItem
 local ScrollBar
+local Slider
+local ButtonImageFactory
 
 -- interfaces
 local MOAIPropInterface = MOAIProp.getInterfaceTable()
@@ -83,9 +82,24 @@ local function buildTheme()
             textDisabledColor = {0.5, 0.5, 0.5, 1},
             textAlign = {"center", "center"},
         },
+        CheckBox = {
+            normalTexture = "skins/checkbox_normal.png",
+            selectedTexture = "skins/checkbox_selected.png",
+            disabledTexture = "skins/checkbox_normal.png",
+            fontName = "VL-PGothic.ttf",
+            textSize = 20,
+            textColor = {1, 1, 1, 1},
+            textDisabledColor = {0.5, 0.5, 0.5, 1},
+            textAlign = {"left", "center"},
+        },
         Joystick = {
             baseTexture = "skins/joystick_base.png",
             knobTexture = "skins/joystick_knob.png",
+        },
+        Slider = {
+            backgroundTexture = "skins/slider_background.9.png",
+            progressTexture = "skins/slider_progress.9.png",
+            thumbTexture = "skins/slider_thumb.png",
         },
         Panel = {
             backgroundTexture = "skins/panel.9.png",
@@ -182,6 +196,21 @@ end
 --------------------------------------------------------------------------------
 function M.getFocusMgr()
     return M.focusMgr
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type function showDialog
+-- This class is an dialog or IOS and Android.
+-- @param string title, 
+-- @param string message, 
+-- @param string positive, 
+-- @param string neutral, 
+-- @param string negative, 
+-- @param bool cancelable 
+-- @param [, function callback ]
+----------------------------------------------------------------------------------------------------
+function M.showDialog(...)
+    MOAIDialog.showDialog(...)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -332,6 +361,12 @@ UIEvent.FOCUS_OUT = "focusOut"
 
 --- Button: Click Event
 UIEvent.CLICK = "click"
+
+--- Button: Click Event
+UIEvent.CANCEL = "cancel"
+
+--- Button: Selected changed Event
+UIEvent.SELECTED_CHANGED = "selectedChanged"
 
 --- Button: down Event
 UIEvent.DOWN = "down"
@@ -959,7 +994,6 @@ function UIView:onSceneStop(e)
     focusMgr:setFocusObject(nil)
 end
 
-
 ----------------------------------------------------------------------------------------------------
 -- @type Button
 -- This class is an image that can be pressed.
@@ -999,6 +1033,8 @@ function Button:_initInternal()
     self._buttonImage = nil
     self._text = ""
     self._textLabel = nil
+    self._selected = false
+    self._toggle = false
 end
 
 --------------------------------------------------------------------------------
@@ -1011,6 +1047,7 @@ function Button:_initEventListeners()
     self:addEventListener(Event.TOUCH_UP, self.onTouchUp, self)
     self:addEventListener(Event.TOUCH_MOVE, self.onTouchMove, self)
     self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self)
+    self:addEventListener(UIEvent.SELECTED_CHANGED, self.onSelectedChanged, self)
 end
 
 --------------------------------------------------------------------------------
@@ -1019,26 +1056,64 @@ end
 function Button:_createChildren()
     Button.__super._createChildren(self)
     
+    self:_createButtonImage()
+    self:_createTextLabel()
+    
+    if self._buttonImage then
+        self:setSize(self._buttonImage:getSize())
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Create the buttonImage.
+--------------------------------------------------------------------------------
+function Button:_createButtonImage()
+    if self._buttonImage then
+        return
+    end
     local imagePath = assert(self:getImagePath())
     self._buttonImage = NineImage(imagePath)
-    self._textLabel = Label(self._text, 100, 30)
-
     self:addChild(self._buttonImage)
+end
+
+--------------------------------------------------------------------------------
+-- Create the textLabel.
+--------------------------------------------------------------------------------
+function Button:_createTextLabel()
+    if self._textLabel then
+        return
+    end
+    self._textLabel = Label(self._text)
     self:addChild(self._textLabel)
-    
-    self:setSize(self._buttonImage:getSize())
 end
 
 --------------------------------------------------------------------------------
 -- Update the display.
 --------------------------------------------------------------------------------
 function Button:updateDisplay()
+    self:updateButtonImage()
+    self:updateTextLabel()
+end
+
+--------------------------------------------------------------------------------
+-- Update the buttonImage.
+--------------------------------------------------------------------------------
+function Button:updateButtonImage()
     local buttonImage = self._buttonImage
     buttonImage:setImage(self:getImagePath())
     buttonImage:setSize(self:getSize())
+end
 
+--------------------------------------------------------------------------------
+-- Update the buttonImage.
+--------------------------------------------------------------------------------
+function Button:updateTextLabel()
+    if not self._textLabel then
+        return
+    end
+    
     local textLabel = self._textLabel
-    local xMin, yMin, xMax, yMax = buttonImage:getContentRect()
+    local xMin, yMin, xMax, yMax = self:getLabelContentRect()
     local textWidth, textHeight = xMax - xMin, yMax - yMin    
     textLabel:setSize(textWidth, textHeight)
     textLabel:setPos(xMin, yMin)
@@ -1050,21 +1125,13 @@ function Button:updateDisplay()
 end
 
 --------------------------------------------------------------------------------
--- Update the imageDeck.
---------------------------------------------------------------------------------
-function Button:updateImageDeck()
-    local buttonImage = self._buttonImage
-    buttonImage:setImage(self:getImagePath())
-end
-
---------------------------------------------------------------------------------
 -- Returns the imageDeck.
 -- @return imageDeck
 --------------------------------------------------------------------------------
 function Button:getImagePath()
     if not self:isEnabled() then
         return self:getStyle(Button.STYLE_DISABLED_TEXTURE)
-    elseif self:isButtonDown() then
+    elseif self:isSelected() then
         return self:getStyle(Button.STYLE_SELECTED_TEXTURE)
     else
         return self:getStyle(Button.STYLE_NORMAL_TEXTURE)
@@ -1072,11 +1139,45 @@ function Button:getImagePath()
 end
 
 --------------------------------------------------------------------------------
--- If the user presses the button returns True.
--- @return If the user presses the button returns True
+-- Returns the label content rect.
+-- @return content rect
 --------------------------------------------------------------------------------
-function Button:isButtonDown()
-    return self.touchDownIdx ~= nil
+function Button:getLabelContentRect()
+    local buttonImage = self._buttonImage
+    if buttonImage and buttonImage.getContentRect then
+        return buttonImage:getContentRect()
+    end
+    return 0, 0, 0, 0
+end
+
+--------------------------------------------------------------------------------
+-- If the selected the button returns True.
+-- @return If the selected the button returns True
+--------------------------------------------------------------------------------
+function Button:isSelected()
+    return self._selected
+end
+
+--------------------------------------------------------------------------------
+-- Sets the selected.
+-- @param selected selected
+--------------------------------------------------------------------------------
+function Button:setSelected(selected)
+    if self._selected == selected then
+        return
+    end
+    
+    self._selected = selected
+    self:updateButtonImage()
+    self:dispatchEvent(UIEvent.SELECTED_CHANGED)
+end
+
+function Button:setToggle(toggle)
+    self._toggle = toggle
+end
+
+function Button:isToggle()
+    return self._toggle
 end
 
 --------------------------------------------------------------------------------
@@ -1251,45 +1352,27 @@ function Button:setOnUp(func)
 end
 
 --------------------------------------------------------------------------------
--- Down the button.
--- There is no need to call directly to the basic.
--- @param idx Touch index
---------------------------------------------------------------------------------
-function Button:doButtonDown(idx)
-    if self:isButtonDown() then
-        return
-    end
-    
-    self.touchDownIdx = idx
-    self:updateImageDeck()
-    
-    self:dispatchEvent(UIEvent.DOWN)
-end
-
---------------------------------------------------------------------------------
--- Up the button.
--- There is no need to call directly to the basic.
---------------------------------------------------------------------------------
-function Button:doButtonUp()
-    if not self:isButtonDown() then
-        return
-    end
-
-    self.touchDownIdx = nil
-    self:updateImageDeck()
-    
-    self:dispatchEvent(UIEvent.UP)
-end
-
---------------------------------------------------------------------------------
 -- This event handler is called when enabled Changed.
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Button:onEnabledChanged(e)
     Button.__super.onEnabledChanged(self, e)
-    self:updateImageDeck()
-    if not self:isEnabled() then
-        self:doButtonUp()
+    self:updateButtonImage()
+    
+    if not self:isEnabled() and not self:isToggle() then
+        self:setSelected(false)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when selected changed.
+-- @param e Touch Event
+--------------------------------------------------------------------------------
+function Button:onSelectedChanged(e)
+    if self:isSelected() then
+        self:dispatchEvent(UIEvent.DOWN)
+    else
+        self:dispatchEvent(UIEvent.UP)
     end
 end
 
@@ -1298,12 +1381,7 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Button:onResize(e)
-    self._buttonImage:setSize(self:getSize())
-
-    local xMin, yMin, xMax, yMax = self._buttonImage:getContentRect()
-    local textWidth, textHeight = xMax - xMin, yMax - yMin    
-    self._textLabel:setSize(textWidth, textHeight)    
-    self._textLabel:setPos(xMin, yMin)
+    self:updateDisplay()
 end
 
 --------------------------------------------------------------------------------
@@ -1311,10 +1389,16 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Button:onTouchDown(e)
-    if self:isButtonDown() then
+    if self._touchDownIdx ~= nil then
         return
     end
-    self:doButtonDown(e.idx)
+    self._touchDownIdx = e.idx
+    
+    if self:isToggle() then
+        self:setSelected(not self:isSelected())
+    else
+        self:setSelected(true)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1322,11 +1406,15 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Button:onTouchUp(e)
-    if self.touchDownIdx ~= e.idx then
+    if self._touchDownIdx ~= e.idx then
         return
     end
-    self:doButtonUp()
-    self:dispatchEvent(UIEvent.CLICK)
+    self._touchDownIdx = nil
+    
+    if not self:isToggle() then
+       self:setSelected(false)
+       self:dispatchEvent(UIEvent.CLICK)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1334,11 +1422,18 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Button:onTouchMove(e)
-    if self.touchDownIdx ~= e.idx then
+    if self._touchDownIdx ~= e.idx then
         return
     end
-    if not self:inside(e.wx, e.wy, 0) then
-        self:doButtonUp()
+    if self:inside(e.wx, e.wy, 0) then
+        return
+    end
+    
+    self._touchDownIdx = nil
+    
+    if not self:isToggle() then
+       self:setSelected(false)
+       self:dispatchEvent(UIEvent.CANCEL)
     end
 end
 
@@ -1347,10 +1442,138 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Button:onTouchCancel(e)
-    if self.touchDownIdx ~= e.idx then
+    if self._touchDownIdx ~= e.idx then
         return
     end
-    self:doButtonUp()
+
+    self._touchDownIdx = nil
+    
+    if not self:isToggle() then
+       self:setSelected(false)
+       self:dispatchEvent(UIEvent.CANCEL)
+    end
+end
+
+
+----------------------------------------------------------------------------------------------------
+-- @type ImageButton
+-- This class is an image that can be pressed.
+-- It is a image button not have text
+----------------------------------------------------------------------------------------------------
+ImageButton = class(Button)
+M.ImageButton = ImageButton
+
+--- Style: sheetImage
+ImageButton.STYLE_SHEET_IMAGE = "sheetImage"
+
+--------------------------------------------------------------------------------
+-- Initializes the internal variables.
+--------------------------------------------------------------------------------
+function ImageButton:_initInternal()
+    ImageButton.__super._initInternal(self)
+    self._themeName = "ImageButton"
+end
+
+function ImageButton:_createButtonImage()
+    if self._buttonImage then
+        return
+    end
+    
+    local sheetImage = assert(self:getStyle(ImageButton.STYLE_SHEET_IMAGE))
+    self._buttonImage = SheetImage(sheetImage .. ".png")
+    self._buttonImage:setTextureAtlas(sheetImage .. ".lua")
+    self:addChild(self._buttonImage)
+end
+
+--------------------------------------------------------------------------------
+-- Deprecated.
+--------------------------------------------------------------------------------
+function ImageButton:_createTextLabel()
+    -- Nop
+end
+
+--------------------------------------------------------------------------------
+-- Update the imageDeck.
+--------------------------------------------------------------------------------
+function ImageButton:updateButtonImage()
+    local imagePath = assert(self:getImagePath())
+    local sheetImage = assert(self:getStyle(ImageButton.STYLE_SHEET_IMAGE))
+
+    self._buttonImage:setIndexByName(imagePath)
+    self:setSize(self._buttonImage:getSize())
+end
+
+--------------------------------------------------------------------------------
+-- Deprecated.
+--------------------------------------------------------------------------------
+function ImageButton:updateTextLabel()
+    -- Nop
+end
+
+--------------------------------------------------------------------------------
+-- Sets the sheet texture's file.
+-- @param sheet texture
+--------------------------------------------------------------------------------
+function ImageButton:setSheetImage(filename)
+    self:setStyle(ImageButton.STYLE_SHEET_IMAGE, filename)
+end
+
+
+----------------------------------------------------------------------------------------------------
+-- @type CheckBox
+-- This class is an checkbox.
+----------------------------------------------------------------------------------------------------
+CheckBox = class(Button)
+M.CheckBox = CheckBox
+
+--------------------------------------------------------------------------------
+-- Initializes the internal variables.
+--------------------------------------------------------------------------------
+function CheckBox:_initInternal()
+    CheckBox.__super._initInternal(self)
+    self._themeName = "CheckBox"
+    self._toggle = true
+end
+
+--------------------------------------------------------------------------------
+-- Create the buttonImage.
+--------------------------------------------------------------------------------
+function CheckBox:_createButtonImage()
+    if self._buttonImage then
+        return
+    end
+    local imagePath = assert(self:getImagePath())
+    self._buttonImage = Image(imagePath)
+    self:addChild(self._buttonImage)
+end
+
+--------------------------------------------------------------------------------
+-- Update the buttonImage.
+--------------------------------------------------------------------------------
+function CheckBox:updateButtonImage()
+    local buttonImage = self._buttonImage
+    buttonImage:setTexture(self:getImagePath())
+end
+
+--------------------------------------------------------------------------------
+-- Returns the label content rect.
+-- @return content rect
+--------------------------------------------------------------------------------
+function CheckBox:getLabelContentRect()
+    local buttonImage = self._buttonImage
+    local textLabel = self._textLabel
+    local left, top = buttonImage:getRight(), buttonImage:getTop()
+    local right, bottom = left + textLabel:getWidth(), top + buttonImage:getHeight()
+    return left, top, right, bottom
+end
+
+--------------------------------------------------------------------------------
+-- Update the textLabel.
+--------------------------------------------------------------------------------
+function CheckBox:updateTextLabel()
+    CheckBox.__super.updateTextLabel(self)
+    
+    self._textLabel:fitWidth()
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -2878,598 +3101,6 @@ function ListItem:onTouchDown(e)
     end
 end
 
-----------------------------------------------------------------------------------------------------
--- @type ImageButton
--- This class is an image that can be pressed.
--- It is a image button not have text
-----------------------------------------------------------------------------------------------------
-ImageButton = class(UIComponent)
-M.ImageButton = ImageButton
-
---- Style: sheetImage
-ImageButton.STYLE_SHEET_IMAGE = "sheetImage"
-
---- Style: selectedTexture
-ImageButton.STYLE_NORMAL_TEXTURE = "normalTexture"
-
---- Style: selectedTexture
-ImageButton.STYLE_SELECTED_TEXTURE = "selectedTexture"
-
---- Style: disabledTexture
-ImageButton.STYLE_DISABLED_TEXTURE = "disabledTexture"
-
---------------------------------------------------------------------------------
--- Initializes the internal variables.
---------------------------------------------------------------------------------
-function ImageButton:_initInternal()
-    ImageButton.__super._initInternal(self)
-    self._themeName = "ImageButton"
-    self._touchDownIdx = nil
-    self._buttonImage = nil
-end
-
---------------------------------------------------------------------------------
--- Initializes the event listener.
---------------------------------------------------------------------------------
-function ImageButton:_initEventListeners()
-    ImageButton.__super._initEventListeners(self)
-    self:addEventListener(Event.RESIZE, self.onResize, self)
-    self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
-    self:addEventListener(Event.TOUCH_UP, self.onTouchUp, self)
-    self:addEventListener(Event.TOUCH_MOVE, self.onTouchMove, self)
-    self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self)
-end
-
---------------------------------------------------------------------------------
--- Create children.
---------------------------------------------------------------------------------
-function ImageButton:_createChildren()
-    ImageButton.__super._createChildren(self)
-end
-
---------------------------------------------------------------------------------
--- Update the display.
---------------------------------------------------------------------------------
-function ImageButton:updateDisplay()
-    local imagePath = assert(self:getImagePath())
-    local sheetImage = assert(self:getStyle(ImageButton.STYLE_SHEET_IMAGE))
-
-    if not self._buttonImage then
-        self._buttonImage = SheetImage(sheetImage .. ".png")
-        self._buttonImage:setTextureAtlas(sheetImage .. ".lua")
-        self:addChild(self._buttonImage)
-    end
-    
-    self._buttonImage:setIndexByName(imagePath)
-    local width, height, d = self._buttonImage:getSize()
-    self:setSize(width, height)
-end
-
---------------------------------------------------------------------------------
--- Update the imageDeck.
---------------------------------------------------------------------------------
-function ImageButton:updateImageDeck()
-    local buttonImage = self._buttonImage
-    buttonImage:setIndexByName(self:getImagePath())
-end
-
---------------------------------------------------------------------------------
--- Returns the imageDeck.
--- @return imageDeck
---------------------------------------------------------------------------------
-function ImageButton:getImagePath()
-    if not self:isEnabled() then
-        return self:getStyle(ImageButton.STYLE_DISABLED_TEXTURE)
-    elseif self:isImageButtonDown() then
-        return self:getStyle(ImageButton.STYLE_SELECTED_TEXTURE)
-    else
-        return self:getStyle(ImageButton.STYLE_NORMAL_TEXTURE)
-    end
-end
-
---------------------------------------------------------------------------------
--- If the user presses the button returns True.
--- @return If the user presses the button returns True
---------------------------------------------------------------------------------
-function ImageButton:isImageButtonDown()
-    return self.touchDownIdx ~= nil
-end
-
---------------------------------------------------------------------------------
--- Sets the sheet texture's file.
--- @param sheet texture
---------------------------------------------------------------------------------
-function ImageButton:setSheetImage(filename)
-    self:setStyle(ImageButton.STYLE_SHEET_IMAGE, filename)
-end
-
---------------------------------------------------------------------------------
--- Sets the normal texture.
--- @param texture texture
---------------------------------------------------------------------------------
-function ImageButton:setNormalTexture(texture)
-    self:setStyle(ImageButton.STYLE_NORMAL_TEXTURE, texture)
-end
-
---------------------------------------------------------------------------------
--- Sets the selected texture.
--- @param texture texture
---------------------------------------------------------------------------------
-function ImageButton:setSelectedTexture(texture)
-    self:setStyle(ImageButton.STYLE_SELECTED_TEXTURE, texture)
-end
-
---------------------------------------------------------------------------------
--- Sets the selected texture.
--- @param texture texture
---------------------------------------------------------------------------------
-function ImageButton:setDisabledTexture(texture)
-    self:setStyle(ImageButton.STYLE_DISABLED_TEXTURE, texture)
-end
-
---------------------------------------------------------------------------------
--- Set the event listener that is called when the user click the button.
--- @param func click event handler
---------------------------------------------------------------------------------
-function ImageButton:setOnClick(func)
-    self:setEventListener(UIEvent.CLICK, func)
-end
-
---------------------------------------------------------------------------------
--- Set the event listener that is called when the user pressed the button.
--- @param func button down event handler
---------------------------------------------------------------------------------
-function ImageButton:setOnDown(func, obj)
-    self:setEventListener(UIEvent.DOWN, func)
-end
-
---------------------------------------------------------------------------------
--- Set the event listener that is called when the user released the button.
--- @param func button up event handler
---------------------------------------------------------------------------------
-function ImageButton:setOnUp(func)
-    self:setEventListener(UIEvent.UP, func)
-end
-
---------------------------------------------------------------------------------
--- Down the button.
--- There is no need to call directly to the basic.
--- @param idx Touch index
---------------------------------------------------------------------------------
-function ImageButton:doImageButtonDown(idx)
-    if self:isImageButtonDown() then
-        return
-    end
-    
-    self.touchDownIdx = idx
-    self:updateImageDeck()
-    
-    self:dispatchEvent(UIEvent.DOWN)
-end
-
---------------------------------------------------------------------------------
--- Up the button.
--- There is no need to call directly to the basic.
---------------------------------------------------------------------------------
-function ImageButton:doImageButtonUp()
-    if not self:isImageButtonDown() then
-        return
-    end
-
-    self.touchDownIdx = nil
-    self:updateImageDeck()
-    
-    self:dispatchEvent(UIEvent.UP)
-end
-
---------------------------------------------------------------------------------
--- This event handler is called when enabled Changed.
--- @param e Touch Event
---------------------------------------------------------------------------------
-function ImageButton:onEnabledChanged(e)
-    ImageButton.__super.onEnabledChanged(self, e)
-    self:updateImageDeck()
-    if not self:isEnabled() then
-        self:doImageButtonUp()
-    end
-end
-
---------------------------------------------------------------------------------
--- This event handler is called when resize.
--- @param e Touch Event
---------------------------------------------------------------------------------
-function ImageButton:onResize(e)
-    self._buttonImage:setSize(self:getSize())
-end
-
---------------------------------------------------------------------------------
--- This event handler is called when you touch the button.
--- @param e Touch Event
---------------------------------------------------------------------------------
-function ImageButton:onTouchDown(e)
-    if self:isImageButtonDown() then
-        return
-    end
-    self:doImageButtonDown(e.idx)
-end
-
---------------------------------------------------------------------------------
--- This event handler is called when the button is released.
--- @param e Touch Event
---------------------------------------------------------------------------------
-function ImageButton:onTouchUp(e)
-    if self.touchDownIdx ~= e.idx then
-        return
-    end
-    self:doImageButtonUp()
-    self:dispatchEvent(UIEvent.CLICK)
-end
-
---------------------------------------------------------------------------------
--- This event handler is called when you move on the button.
--- @param e Touch Event
---------------------------------------------------------------------------------
-function ImageButton:onTouchMove(e)
-    if self.touchDownIdx ~= e.idx then
-        return
-    end
-    if not self:inside(e.wx, e.wy, 0) then
-        self:doImageButtonUp()
-    end
-end
-
---------------------------------------------------------------------------------
--- This event handler is called when you cancel the touch.
--- @param e Touch Event
---------------------------------------------------------------------------------
-function ImageButton:onTouchCancel(e)
-    if self.touchDownIdx ~= e.idx then
-        return
-    end
-    self:doImageButtonUp()
-end
-
-
-----------------------------------------------------------------------------------------------------
--- @type CheckBox
--- This class is an checkbox.
-----------------------------------------------------------------------------------------------------
-CheckBox = class(UIComponent)
-M.CheckBox = CheckBox
-
---- Style: sheetImage
-CheckBox.STYLE_SHEET_IMAGE = "sheetImage"
-
---- Style: backgroundTexture
-CheckBox.STYLE_BACKGROUND_TEXTURE = "normalTexture"
-
---- Style: checkedTexture
-CheckBox.STYLE_CHECKED_TEXTURE = "checkedTexture"
-
---- Style: leftPadding
-CheckBox.STYLE_LEFT_PADDING = "leftPadding"
-
---- Style: fontName
-CheckBox.STYLE_FONT_NAME = "fontName"
-
---- Style: textSize
-CheckBox.STYLE_TEXT_SIZE = "textSize"
-
---- Style: textSize
-CheckBox.STYLE_TEXT_COLOR = "textColor"
-
---- Style: horizotalAlign
-CheckBox.STYLE_TEXT_ALIGN = "textAlign"
-
---------------------------------------------------------------------------------
--- Initializes the internal variables.
---------------------------------------------------------------------------------
-function CheckBox:_initInternal()
-    CheckBox.__super._initInternal(self)
-    self._themeName = "CheckBox"
-    self._backgroundImage = nil
-    self._checkedImage = nil
-    self._checked = false
-    self._inited = false
-    self._text = ""
-    self._textLabel = nil
-    self:setTextColor(0.5)
-    self:setTextAlign("left", "center")
-end
-
---------------------------------------------------------------------------------
--- Initializes the event listener.
---------------------------------------------------------------------------------
-function CheckBox:_initEventListeners()
-    CheckBox.__super._initEventListeners(self)
-    --self:addEventListener(Event.RESIZE, self.onResize, self)
-    self:addEventListener(Event.CLICK, self.onTouchDown, self)
-    self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
-end
-
---------------------------------------------------------------------------------
--- Create children.
---------------------------------------------------------------------------------
-function CheckBox:_createChildren()
-    CheckBox.__super._createChildren(self)
-end
-
---------------------------------------------------------------------------------
--- Update the display.
---------------------------------------------------------------------------------
-function CheckBox:updateDisplay()
-    local sheetImage = assert(self:getStyle(CheckBox.STYLE_SHEET_IMAGE))
-
-    if not self._inited then
-        self._backgroundImage = SheetImage(sheetImage .. ".png")
-        self._backgroundImage:setTextureAtlas(sheetImage .. ".lua")
-        self:addChild(self._backgroundImage)
-
-        self._checkedImage = SheetImage(sheetImage .. ".png")
-        self._checkedImage:setTextureAtlas(sheetImage .. ".lua")
-        self:addChild(self._checkedImage)
-
-        self._textLabel = flower.Label(self:getText(), 100, 40)
-        self:addChild(self._textLabel)
-
-        self._inited = true
-    end
-    
-    self._checkedImage:setIndexByName(self:getStyle(CheckBox.STYLE_CHECKED_TEXTURE))
-    self._backgroundImage:setIndexByName(self:getStyle(CheckBox.STYLE_BACKGROUND_TEXTURE))
-
-    bg_width, bg_height, _ = self._backgroundImage:getSize()
-    local _, count1 = string.gsub(self:getText(), "[^\128-\193]", "") -- word num total
-    local _, count2 = string.gsub(self:getText(), "%w", "") -- ascii word num
-    local printWidth = count1 - count2 + count2 / 2
-    local total_word_space = (count1 - 1) * self:getTextSize() * 0.05
-    local label_width = (self:getTextSize() * printWidth + total_word_space) * 1.1
-    local textLabel = self._textLabel
-    local leftPadding = bg_width * 1.3
-    local total_height = self:getTextSize() * 1.3
-    if self:getLeftPadding() then
-        leftPadding = self:getLeftPadding()
-    end
-
-    textLabel:setSize(label_width, total_height)
-    textLabel:setPos(leftPadding, 0)
-    textLabel:setString(self:getText())
-    textLabel:setTextSize(self:getTextSize())
-    textLabel:setColor(self:getTextColor())
-    textLabel:setAlignment(self:getAlignment())
-    textLabel:setFont(self:getFont())
-    self:updateImageDeck()
-    self:setSize(leftPadding + label_width, total_height)
-end
-
---------------------------------------------------------------------------------
--- Update the imageDeck.
---------------------------------------------------------------------------------
-function CheckBox:updateImageDeck()
-    local checkedImage = self._checkedImage
-    checkedImage:setVisible(self._checked)
-end
-
---------------------------------------------------------------------------------
--- Sets the sheet texture's file.
--- @param sheet texture
---------------------------------------------------------------------------------
-function CheckBox:setChecked(flag)
-    self._checked = flag
-end
-
---------------------------------------------------------------------------------
--- Sets the sheet texture's file.
--- @param sheet texture
---------------------------------------------------------------------------------
-function CheckBox:setSheetImage(filename)
-    self:setStyle(CheckBox.STYLE_SHEET_IMAGE, filename)
-end
-
---------------------------------------------------------------------------------
--- Sets the normal texture.
--- @param texture texture
---------------------------------------------------------------------------------
-function CheckBox:setBackgroundTexture(texture)
-    self:setStyle(CheckBox.STYLE_BACKGROUND_TEXTURE, texture)
-end
-
---------------------------------------------------------------------------------
--- Sets the selected texture.
--- @param texture texture
---------------------------------------------------------------------------------
-function CheckBox:setCheckedTexture(texture)
-    self:setStyle(CheckBox.STYLE_CHECKED_TEXTURE, texture)
-end
-
---------------------------------------------------------------------------------
--- Sets the text.
--- @param text text
---------------------------------------------------------------------------------
-function CheckBox:setText(text)
-    self._text = text
-end
-
---------------------------------------------------------------------------------
--- Returns the text.
--- @return text
---------------------------------------------------------------------------------
-function CheckBox:getText()
-    return self._text
-end
-
---------------------------------------------------------------------------------
--- Sets the textSize.
--- @param textSize textSize
---------------------------------------------------------------------------------
-function CheckBox:setTextSize(textSize)
-    self:setStyle(CheckBox.STYLE_TEXT_SIZE, textSize)
-end
-
---------------------------------------------------------------------------------
--- Sets the textSize.
--- @param textSize textSize
---------------------------------------------------------------------------------
-function CheckBox:getTextSize()
-    return self:getStyle(CheckBox.STYLE_TEXT_SIZE)
-end
-
---------------------------------------------------------------------------------
--- Sets the textSize.
--- @param textSize textSize
---------------------------------------------------------------------------------
-function CheckBox:setFontName(fontName)
-    self:setStyle(CheckBox.STYLE_FONT_NAME, font)
-    self._textLabel:setFont(self:getFont())
-end
-
-function CheckBox:setLeftPadding( padding )
-    self:setStyle(CheckBox.STYLE_LEFT_PADDING, padding)
-end
-
-function CheckBox:getLeftPadding()
-    return self:getStyle(CheckBox.STYLE_LEFT_PADDING)
-end
-
---------------------------------------------------------------------------------
--- Sets the textSize.
--- @param textSize textSize
---------------------------------------------------------------------------------
-function CheckBox:getFontName()
-    return self:getStyle(CheckBox.STYLE_FONT_NAME)
-end
-
---------------------------------------------------------------------------------
--- Returns the font.
--- @return font
---------------------------------------------------------------------------------
-function CheckBox:getFont()
-    local fontName = self:getFontName()
-    local font = Resources.getFont(fontName, nil, self:getTextSize())
-    return font
-end
-
---------------------------------------------------------------------------------
--- Sets the text align.
--- @param horizotalAlign horizotal align(left, center, top)
--- @param verticalAlign vertical align(top, center, bottom)
---------------------------------------------------------------------------------
-function CheckBox:setTextAlign(horizotalAlign, verticalAlign)
-    if horizotalAlign or verticalAlign then
-        self:setStyle(CheckBox.STYLE_TEXT_ALIGN, {horizotalAlign or "center", verticalAlign or "center"})
-    else
-        self:setStyle(CheckBox.STYLE_TEXT_ALIGN, nil)
-    end
-end
-
---------------------------------------------------------------------------------
--- Returns the text align.
--- @return horizotal align(left, center, top)
--- @return vertical align(top, center, bottom)
---------------------------------------------------------------------------------
-function CheckBox:getTextAlign()
-    return unpack(self:getStyle(CheckBox.STYLE_TEXT_ALIGN))
-end
-
---------------------------------------------------------------------------------
--- Returns the text align for MOAITextBox.
--- @return horizotal align
--- @return vertical align
---------------------------------------------------------------------------------
-function CheckBox:getAlignment()
-    local h, v = self:getTextAlign()
-    h = assert(TextAlign[h])
-    v = assert(TextAlign[v])
-    return h, v
-end
-
---------------------------------------------------------------------------------
--- Sets the text align.
--- @param red red(0 ... 1)
--- @param green green(0 ... 1)
--- @param blue blue(0 ... 1)
--- @param alpha alpha(0 ... 1)
---------------------------------------------------------------------------------
-function CheckBox:setTextColor(red, green, blue, alpha)
-    if red == nil and green == nil and blue == nil and alpha == nil then
-        self:setStyle(CheckBox.STYLE_TEXT_COLOR, nil)
-    else
-        self:setStyle(CheckBox.STYLE_TEXT_COLOR, {red or 0, green or 0, blue or 0, alpha or 0})
-    end
-end
-
---------------------------------------------------------------------------------
--- Returns the text color.
--- @return red(0 ... 1)
--- @return green(0 ... 1)
--- @return blue(0 ... 1)
--- @return alpha(0 ... 1)
---------------------------------------------------------------------------------
-function CheckBox:getTextColor()
-    return unpack(self:getStyle(CheckBox.STYLE_TEXT_COLOR))
-end
-
---------------------------------------------------------------------------------
--- Set the event listener that is called when the user pressed the checkbox.
--- @param func button down event handler
---------------------------------------------------------------------------------
-function CheckBox:setOnDown(func, obj)
-    self:setEventListener(UIEvent.DOWN, func)
-end
-
---------------------------------------------------------------------------------
--- Down the checkbox.
--- There is no need to call directly to the basic.
--- @param idx Touch index
---------------------------------------------------------------------------------
-function CheckBox:doCheckBoxDown(flag)
-    if flag == self._checked then
-        return
-    end
-    
-    self._checked = flag
-    self:updateImageDeck()
-    self:dispatchEvent(UIEvent.DOWN)
-end
-
---------------------------------------------------------------------------------
--- This event handler is called when resize.
--- @param e Touch Event
---------------------------------------------------------------------------------
-function CheckBox:onResize(e)
-    self._checkedImage:setSize(self:getSize())
-
-    local xMin, yMin, xMax, yMax = self._checkedImage:getContentRect()
-    local textWidth, textHeight = xMax - xMin, yMax - yMin    
-    self._textLabel:setSize(textWidth, textHeight)    
-    self._textLabel:setPos(xMin, yMin)
-end
-
---------------------------------------------------------------------------------
--- This event handler is called when you touch the checkbox.
--- @param e Touch Event
---------------------------------------------------------------------------------
-function CheckBox:onTouchDown(e)
-    self:doCheckBoxDown(not self._checked)
-end
-
-
-----------------------------------------------------------------------------------------------------
--- @type function showDialog
--- This class is an dialog or IOS and Android.
--- @param string title, 
--- @param string message, 
--- @param string positive, 
--- @param string neutral, 
--- @param string negative, 
--- @param bool cancelable 
--- @param [, function callback ]
-----------------------------------------------------------------------------------------------------
-M.showDialog = function (...)
-    MOAIDialog.showDialog(...)
-end
-
-
 
 ----------------------------------------------------------------------------------------------------
 -- @type Slider
@@ -3547,8 +3178,7 @@ function Slider:updateProgressDeck()
     local width, _ = self:getSize()
     local _, height = self._progressImage:getSize()
     self._progressImage:setSize(width * (self._currValue / self._maxValue), height)
-    self._thumbImage:setPos(width * (self._currValue / self._maxValue), 0)
-    self._thumbImage:setAnchorPoint(position.TopCenter)
+    self._thumbImage:setLoc(width * (self._currValue / self._maxValue), height / 2)
 end
 
 function Slider:setValue(value)
@@ -3696,7 +3326,6 @@ function Slider:onTouchCancel(e)
     end
     self:doSliderUp()
 end
-
 
 -- widget initialize
 M.initialize()
