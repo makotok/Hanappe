@@ -56,6 +56,11 @@ local keyboardSensor    = MOAIInputMgr.device.keyboard
 
 -- interfaces
 local MOAIPropInterface = MOAIProp.getInterfaceTable()
+local MOAILayerInterface = MOAILayer.getInterfaceTable()
+local MOAICameraInterface = MOAICamera.getInterfaceTable()
+local MOAITextureInterface = MOAITexture.getInterfaceTable()
+local MOAITextBoxInterface = MOAITextBox.getInterfaceTable()
+local MOAIFontInterface = MOAIFont.getInterfaceTable()
 
 ----------------------------------------------------------------------------------------------------
 -- Public Const
@@ -244,36 +249,42 @@ function class:__call(...)
     end
     clazz.__super = bases[1]
     clazz.__call = function(self, ...)
-        return self:new(...)
+        return self:__new(...)
     end
     return setmetatable(clazz, clazz)
 end
 
 --------------------------------------------------------------------------------
 -- Generic constructor function for classes.
--- Note that new() will call init() if it is available in the class.
+-- Note that __new() will call init() if it is available in the class.
 -- @return Instance
 --------------------------------------------------------------------------------
-function class:new(...)
-    local obj
-    if self.__factory then
-        obj = self.__factory.new()
-        obj.__class = self
-        table.copy(self, obj)
-    else
-        obj = {__index = self}
-        obj.__class = self
-        setmetatable(obj, obj)
-    end
+function class:__new(...)
+    local obj = self:__object_factory()
     
     if obj.init then
         obj:init(...)
     end
-
-    obj.new = nil
-    obj.init = nil
     
     return obj
+end
+
+--------------------------------------------------------------------------------
+-- Returns the new object.
+-- @return object
+--------------------------------------------------------------------------------
+function class:__object_factory()
+    local moai_class = self.__moai_class
+    
+    if moai_class then
+        local obj = moai_class.new()
+        obj.__class = self
+        obj:setInterface(self)
+        return obj
+    end
+    
+    local obj = {__index = self, __class = self}
+    return setmetatable(obj, obj)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1642,7 +1653,8 @@ end
 -- The base class of the display object, adding several useful methods.
 ----------------------------------------------------------------------------------------------------
 DisplayObject = class(EventDispatcher)
-DisplayObject.__factory = MOAIProp
+DisplayObject.__index = MOAIPropInterface
+DisplayObject.__moai_class = MOAIProp
 M.DisplayObject = DisplayObject
 
 --------------------------------------------------------------------------------
@@ -1817,7 +1829,8 @@ end
 -- This is flower's idea of a Layer, which is a superclass of the MOAI concept of Layer.
 ----------------------------------------------------------------------------------------------------
 Layer = class(DisplayObject)
-Layer.__factory = MOAILayer
+Layer.__index = MOAILayerInterface
+Layer.__moai_class = MOAILayer
 M.Layer = Layer
 
 --------------------------------------------------------------------------------
@@ -1890,7 +1903,8 @@ end
 -- flower's idea of a Camera, which is a superclass of the Moai Camera.
 ----------------------------------------------------------------------------------------------------
 Camera = class()
-Camera.__factory = MOAICamera
+Camera.__index = MOAICameraInterface
+Camera.__moai_class = MOAICamera
 M.Camera = Camera
 
 --------------------------------------------------------------------------------
@@ -2941,7 +2955,8 @@ end
 -- Based on MOAITextBox.
 ----------------------------------------------------------------------------------------------------
 Label = class(DisplayObject)
-Label.__factory = MOAITextBox
+Label.__index = MOAITextBoxInterface
+Label.__moai_class = MOAITextBox
 M.Label = Label
 
 --- Max width for fit size.
@@ -3079,7 +3094,8 @@ end
 -- Texture class.
 ----------------------------------------------------------------------------------------------------
 Texture = class()
-Texture.__factory = MOAITexture
+Texture.__index = MOAITextureInterface
+Texture.__moai_class = MOAITexture
 M.Texture = Texture
 
 --- Default Texture filter
@@ -3104,7 +3120,8 @@ end
 -- Font class.
 ----------------------------------------------------------------------------------------------------
 Font = class()
-Font.__factory = MOAIFont
+Font.__index = MOAIFontInterface
+Font.__moai_class = MOAIFont
 
 --- Default font
 Font.DEFAULT_FONT = "VL-PGothic.ttf"
