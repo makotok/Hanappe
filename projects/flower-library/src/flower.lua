@@ -2484,7 +2484,7 @@ end
 --------------------------------------------------------------------------------
 function SheetImage:setTexture(texture)
     self.texture = Resources.getTexture(texture)
-    self.deck:setTexture(texture)
+    self.deck:setTexture(self.texture)
 end
 
 --------------------------------------------------------------------------------
