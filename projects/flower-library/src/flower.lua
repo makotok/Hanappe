@@ -1767,9 +1767,20 @@ function DisplayObject:setParent(parent)
  
     self:clearAttrLink(MOAIColor.INHERIT_COLOR)
     self:clearAttrLink(MOAITransform.INHERIT_TRANSFORM)
+    
+    -- Conditions compatibility
+    if MOAIProp.INHERIT_VISIBLE then
+        self:clearAttrLink(MOAIProp.INHERIT_VISIBLE)
+    end
+    
     if parent then
         self:setAttrLink(MOAIColor.INHERIT_COLOR, parent, MOAIColor.COLOR_TRAIT)
         self:setAttrLink(MOAITransform.INHERIT_TRANSFORM, parent, MOAITransform.TRANSFORM_TRAIT)
+
+        -- Conditions compatibility
+        if MOAIProp.INHERIT_VISIBLE then
+            self:setAttrLink(MOAIProp.INHERIT_VISIBLE, parent, MOAIProp.ATTR_VISIBLE)
+        end
     end
 end
 
@@ -2019,8 +2030,11 @@ end
 function Group:setVisible(value)
     MOAIPropInterface.setVisible(self, value)
     
-    for i, v in ipairs(self.children) do
-        v:setVisible(value)
+    -- Compatibility
+    if not MOAIProp.INHERIT_VISIBLE then
+        for i, v in ipairs(self.children) do
+            v:setVisible(value)
+        end
     end
 end
 

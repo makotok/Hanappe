@@ -445,9 +445,8 @@ function TileLayer:loadData(data)
     self.properties = data.properties
 
     self:setPos(data.x, data.y)
-    self:setVisible(data.visible)
-
     self:createRenderer()
+    self:setVisible(data.visible)
 end
 
 --------------------------------------------------------------------------------
@@ -744,6 +743,7 @@ function TileObject:loadData(data)
     self:setPosByAuto(data.x, data.y)
     self:setSize(data.width, data.height)
     self:createRenderer()
+    self:setVisible(data.visible)
 end
 
 --------------------------------------------------------------------------------
@@ -883,8 +883,10 @@ function TileObjectGroup:loadData(data)
     self.properties = data.properties
     self.data = data
 
-    self:setVisible(data.visible)
     self:createObjects(data.objects)
+    if self:getVisible() ~= data.visible then
+        self:setVisible(data.visible)
+    end
 end
 
 --------------------------------------------------------------------------------
