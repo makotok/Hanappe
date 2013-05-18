@@ -57,7 +57,6 @@ local ListBox
 local ListItem
 local ScrollBar
 local Slider
-local ButtonImageFactory
 
 -- interfaces
 local MOAIPropInterface = MOAIProp.getInterfaceTable()
@@ -320,10 +319,10 @@ KeyCode = {}
 M.KeyCode = KeyCode
 
 --- DEL
-KeyCode.DEL = 127 -- TODO:Code
+KeyCode.DEL = 127
 
 --- BACKSPACE
-KeyCode.BACKSPACE = 127
+KeyCode.BACKSPACE = 8
 
 --- SPACE
 KeyCode.SPACE = 32
@@ -374,8 +373,11 @@ UIEvent.DOWN = "down"
 --- Button: up Event
 UIEvent.UP = "up"
 
+--- Slider: value changed Event
+UIEvent.VALUE_CHANGED = "valueChanged"
+
 --- Joystick: Event type when you change the position of the stick
-UIEvent.STICK_CHANGED   = "stickChanged"
+UIEvent.STICK_CHANGED = "stickChanged"
 
 --- MsgBox: msgShow Event
 UIEvent.MSG_SHOW = "msgShow"
@@ -907,13 +909,6 @@ function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
 end
 
 --------------------------------------------------------------------------------
--- Reset the view port.
---------------------------------------------------------------------------------
-function UIView:resetViewport()
-    self.layer:setViewport(flower.getViewport())
-end
-
---------------------------------------------------------------------------------
 -- Adds the specified child.
 -- @param child DisplayObject
 --------------------------------------------------------------------------------
@@ -1169,13 +1164,21 @@ function Button:setSelected(selected)
     
     self._selected = selected
     self:updateButtonImage()
-    self:dispatchEvent(UIEvent.SELECTED_CHANGED)
+    self:dispatchEvent(UIEvent.SELECTED_CHANGED, selected)
 end
 
+--------------------------------------------------------------------------------
+-- Sets the toggle.
+-- @param toggle toggle
+--------------------------------------------------------------------------------
 function Button:setToggle(toggle)
     self._toggle = toggle
 end
 
+--------------------------------------------------------------------------------
+-- Returns the toggle.
+-- @return toggle
+--------------------------------------------------------------------------------
 function Button:isToggle()
     return self._toggle
 end
@@ -1349,6 +1352,14 @@ end
 --------------------------------------------------------------------------------
 function Button:setOnUp(func)
     self:setEventListener(UIEvent.UP, func)
+end
+
+--------------------------------------------------------------------------------
+-- Set the event listener that is called when selected changed.
+-- @param func selected changed event handler
+--------------------------------------------------------------------------------
+function Button:setOnSelectedChanged(func, obj)
+    self:setEventListener(UIEvent.SELECTED_CHANGED, func)
 end
 
 --------------------------------------------------------------------------------
@@ -1879,6 +1890,7 @@ function Joystick:onTouchCancel(e)
     self._touchIndex = nil
     self:setCenterKnob()
 end
+
 
 ----------------------------------------------------------------------------------------------------
 -- @type Panel
@@ -3101,7 +3113,6 @@ function ListItem:onTouchDown(e)
     end
 end
 
-
 ----------------------------------------------------------------------------------------------------
 -- @type Slider
 -- This class is an slider that can be pressed and dragged.
@@ -3109,7 +3120,7 @@ end
 Slider = class(UIComponent)
 M.Slider = Slider
 
---- Style: selectedTexture
+--- Style: backgroundTexture
 Slider.STYLE_BACKGROUND_TEXTURE = "backgroundTexture"
 
 --- Style: progressTexture
@@ -3150,48 +3161,92 @@ end
 --------------------------------------------------------------------------------
 function Slider:_createChildren()
     Slider.__super._createChildren(self)
+    self:_createBackgroundImage()
+    self:_createProgressImage()
+    self:_createThumbImage()
+end
+
+--------------------------------------------------------------------------------
+-- Create the backgroundImage.
+--------------------------------------------------------------------------------
+function Slider:_createBackgroundImage()
+    if self._backgroundImage then
+        return
+    end
+    self._backgroundImage = NineImage(self:getStyle(Slider.STYLE_BACKGROUND_TEXTURE))
+    self:addChild(self._backgroundImage)
+end
+
+--------------------------------------------------------------------------------
+-- Create the progressImage.
+--------------------------------------------------------------------------------
+function Slider:_createProgressImage()
+    if self._progressImage then
+        return
+    end
+    self._progressImage = NineImage(self:getStyle(Slider.STYLE_PROGRESS_TEXTURE))
+    self:addChild(self._progressImage)
+end
+
+--------------------------------------------------------------------------------
+-- Create the progressImage.
+--------------------------------------------------------------------------------
+function Slider:_createThumbImage()
+    if self._thumbImage then
+        return
+    end
+    self._thumbImage = Image(self:getStyle(Slider.STYLE_THUMB_TEXTURE))
+    self:addChild(self._thumbImage)
 end
 
 --------------------------------------------------------------------------------
 -- Update the display.
 --------------------------------------------------------------------------------
 function Slider:updateDisplay()
-    if not self._backgroundImage then
-        self._backgroundImage = NineImage(self:getStyle(Slider.STYLE_BACKGROUND_TEXTURE))
-        self._progressImage = NineImage(self:getStyle(Slider.STYLE_PROGRESS_TEXTURE))
-        self._thumbImage = Image(self:getStyle(Slider.STYLE_THUMB_TEXTURE))
-        self:addChild(self._backgroundImage)
-        self:addChild(self._progressImage)
-        self:addChild(self._thumbImage)
-    end
-    
-    local width, _ = self:getSize()
-    local _, height = self._backgroundImage:getSize()
-    self._backgroundImage:setSize(width, height)
-    self:updateProgressDeck()
+    Slider.__super.updateDisplay(self)
+    self:updateBackgroundImage()
+    self:updateProgressImage()
 end
 
 --------------------------------------------------------------------------------
--- Update the imageDeck.
+-- Update the backgroundImage.
 --------------------------------------------------------------------------------
-function Slider:updateProgressDeck()
-    local width, _ = self:getSize()
-    local _, height = self._progressImage:getSize()
+function Slider:updateBackgroundImage()
+    local width = self:getWidth()
+    local height = self._backgroundImage:getHeight()
+    self._backgroundImage:setSize(width, height)
+end
+
+--------------------------------------------------------------------------------
+-- Update the progressImage.
+--------------------------------------------------------------------------------
+function Slider:updateProgressImage()
+    local width = self:getWidth()
+    local height = self._progressImage:getHeight()
     self._progressImage:setSize(width * (self._currValue / self._maxValue), height)
     self._thumbImage:setLoc(width * (self._currValue / self._maxValue), height / 2)
 end
 
+--------------------------------------------------------------------------------
+-- Set the value of the current.
+-- @param value value of the current
+--------------------------------------------------------------------------------
 function Slider:setValue(value)
+    if self._currValue == value then
+        return
+    end
+    
     self._currValue = value
-    self:updateProgressDeck()
+    self:updateProgressImage()
+    self:dispatchEvent(UIEvent.VALUE_CHANGED, self._currValue)
 end
 
+--------------------------------------------------------------------------------
+-- Return the value of the current.
+-- @return value of the current
+--------------------------------------------------------------------------------
 function Slider:getValue()
     return self._currValue
-end
-
-function Slider:setBackgroundTexture(texture)
-    self:setStyle(Slider.STYLE_BACKGROUND_TEXTURE, texture)
 end
 
 --------------------------------------------------------------------------------
@@ -3200,6 +3255,7 @@ end
 --------------------------------------------------------------------------------
 function Slider:setBackgroundTexture(texture)
     self:setStyle(Slider.STYLE_BACKGROUND_TEXTURE, texture)
+    self._backgroundImage:setImage(self:getStyle(Slider.STYLE_BACKGROUND_TEXTURE))
 end
 
 --------------------------------------------------------------------------------
@@ -3208,6 +3264,7 @@ end
 --------------------------------------------------------------------------------
 function Slider:setProgressTexture(texture)
     self:setStyle(Slider.STYLE_PROGRESS_TEXTURE, texture)
+    self._progressImage:setImage(self:getStyle(Slider.STYLE_PROGRESS_TEXTURE))
 end
 
 --------------------------------------------------------------------------------
@@ -3216,30 +3273,15 @@ end
 --------------------------------------------------------------------------------
 function Slider:setThumbTexture(texture)
     self:setStyle(Slider.STYLE_THUMB_TEXTURE, texture)
+    self._thumbImage:setTexture(self:getStyle(Slider.STYLE_THUMB_TEXTURE))
 end
 
 --------------------------------------------------------------------------------
 -- Set the event listener that is called when the user click the Slider.
 -- @param func click event handler
 --------------------------------------------------------------------------------
-function Slider:setOnClick(func)
-    self:setEventListener(UIEvent.CLICK, func)
-end
-
---------------------------------------------------------------------------------
--- Set the event listener that is called when the user pressed the Slider.
--- @param func Slider down event handler
---------------------------------------------------------------------------------
-function Slider:setOnDown(func, obj)
-    self:setEventListener(UIEvent.DOWN, func)
-end
-
---------------------------------------------------------------------------------
--- Set the event listener that is called when the user released the Slider.
--- @param func Slider up event handler
---------------------------------------------------------------------------------
-function Slider:setOnUp(func)
-    self:setEventListener(UIEvent.UP, func)
+function Slider:setOnValueChanged(func)
+    self:setEventListener(UIEvent.VALUE_CHANGED, func)
 end
 
 --------------------------------------------------------------------------------
@@ -3247,27 +3289,14 @@ end
 -- There is no need to call directly to the basic.
 -- @param idx Touch index
 --------------------------------------------------------------------------------
-function Slider:doSliderDown(idx, downx)
-    self.touchDownIdx = idx
-    local width, _ = self:getSize()
+function Slider:doSlide(worldX)
+    local width = self:getWidth()
     local left = self:getLeft()
-    downx = downx - left
-    if downx <= width and downx >= 0 then
-        self._currValue = downx / width
-        self:updateProgressDeck()
-        self:dispatchEvent(UIEvent.DOWN)
-    end
-end
-
---------------------------------------------------------------------------------
--- Up the Slider.
--- There is no need to call directly to the basic.
---------------------------------------------------------------------------------
-function Slider:doSliderUp()
-    self.touchDownIdx = nil
-    self:updateProgressDeck()
+    local modelX = worldX - left
     
-    self:dispatchEvent(UIEvent.UP)
+    modelX = math.min(modelX, width)
+    modelX = math.max(modelX, 0)
+    self:setValue(modelX / width)
 end
 
 --------------------------------------------------------------------------------
@@ -3275,10 +3304,7 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Slider:onResize(e)
-    if self._backgroundImage and self._progressImage then
-        self._backgroundImage:setSize(self:getSize())
-        self:updateProgressDeck()
-    end
+    self:updateDisplay()
 end
 
 --------------------------------------------------------------------------------
@@ -3286,7 +3312,12 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Slider:onTouchDown(e)
-    self:doSliderDown(e.idx, e.wx)
+    if self._touchDownIdx then
+        return
+    end
+    
+    self._touchDownIdx = e.idx
+    self:doSlide(e.wx)
 end
 
 --------------------------------------------------------------------------------
@@ -3294,11 +3325,11 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Slider:onTouchUp(e)
-    if self.touchDownIdx ~= e.idx then
+    if self._touchDownIdx ~= e.idx then
         return
     end
-    self:doSliderUp()
-    self:dispatchEvent(UIEvent.CLICK)
+    self._touchDownIdx = nil
+    self:doSlide(e.wx)
 end
 
 --------------------------------------------------------------------------------
@@ -3306,13 +3337,11 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Slider:onTouchMove(e)
-    if self.touchDownIdx ~= e.idx then
+    if self._touchDownIdx ~= e.idx then
         return
     end
-    if not self:inside(e.wx, e.wy, 0) then
-        -- TODO : touch out
-    else
-        self:doSliderDown(e.idx, e.wx)
+    if self:inside(e.wx, e.wy, 0) then
+        self:doSlide(e.wx)
     end
 end
 
@@ -3321,11 +3350,14 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Slider:onTouchCancel(e)
-    if self.touchDownIdx ~= e.idx then
+    if self._touchDownIdx ~= e.idx then
         return
     end
-    self:doSliderUp()
+    self._touchDownIdx = nil
+    self:doSlide(e.wx)
 end
+
+
 
 -- widget initialize
 M.initialize()

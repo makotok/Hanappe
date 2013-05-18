@@ -42,6 +42,9 @@ function onCreate(e)
         parent = view,
         text = "メッセージ",
         selected = true,
+        onSelectedChanged = function(e)
+            print("checkbox1 selected changed:", e.target:isSelected())
+        end,
     }
 
     checkbox2 = widget.CheckBox {
@@ -50,12 +53,18 @@ function onCreate(e)
         parent = view,
         text = "English",
         selected = true,
+        onSelectedChanged = function(e)
+            print("checkbox2 selected changed:", e.data)
+        end,
     }
 
-    slider1 = widget.Slider { -- test Slider
+    slider1 = widget.Slider {
         size = {200, 36},
         pos = {50, checkbox2:getBottom() + 20},
         parent = view,
+        onValueChanged = function(e)
+            print("slider value changed:", e.data)
+        end
     }
     
     -- event listeners

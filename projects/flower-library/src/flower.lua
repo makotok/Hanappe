@@ -620,7 +620,6 @@ function Resources.getTexture(path)
     if cache[filepath] == nil then
         local texture = Texture(filepath)
         cache[filepath] = texture
-        print("Texture load!", filepath)
     end
     return cache[filepath]
 end
@@ -1152,9 +1151,11 @@ function EventDispatcher:dispatchEvent(event, data)
     
     assert(event.type)
 
-    event.data = data or event.data
     event.stopFlag = false
     event.target = self.eventTarget or self
+    if data ~= nil then
+        event.data = data
+    end
     
     local listeners = self.eventListenersMap[event.type] or {}
     
