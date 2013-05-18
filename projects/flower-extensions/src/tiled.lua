@@ -1246,6 +1246,10 @@ end
 function TileLayerRenderer:setGid(x, y, gid)
     self:clearGid(x, y)
     
+    if gid == 0 then
+        return
+    end
+    
     local tileset = self.tileMap:findTilesetByGid(gid)
     local tileNo = self:gidToTileNo(tileset, gid)
     local renderer = self:getRendererByTileset(tileset) or self:createRenderer(tileset)
