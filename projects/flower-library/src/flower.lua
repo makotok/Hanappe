@@ -1848,24 +1848,16 @@ M.Layer = Layer
 --------------------------------------------------------------------------------
 -- The constructor.
 --------------------------------------------------------------------------------
-function Layer:init(vp)
+function Layer:init(viewport)
     DisplayObject.init(self)
-    local viewport = M.viewport
-    if vp then
-        viewport = vp
-    end
 
     local partition = MOAIPartition.new()
     self:setPartition(partition)
     self.partition = partition
     
-    self:setViewport(viewport)
+    self:setViewport(viewport or M.viewport)
     self.touchEnabled = false
     self.touchHandler = nil
-end
-
-function Layer:setNewViewport(vp)
-    self:setViewport(vp)
 end
 
 --------------------------------------------------------------------------------
@@ -2483,10 +2475,6 @@ function SheetImage:init(texture, sizeX, sizeY)
     self.texture = texture
     self.sheetSize = 0
     self.sheetNames = {}
-    self.imageSize = {}
-    self.width = 0
-    self.height = 0
-    self.imageIndex = -1
     
     if sizeX and sizeY then
         self:setSheetSize(sizeX, sizeY)
@@ -2531,8 +2519,6 @@ function SheetImage:setTextureAtlas(atlas, texture)
 
     for i, frame in ipairs ( atlas.frames ) do
         if not self.grid then
-            x, y, width, height = unpack(frame.rect)
-            self.imageSize[i] = {width, height}
             deck:setRect(i, unpack(frame.rect))
         end
         deck:setUVQuad(i, unpack(frame.quad))
@@ -2602,24 +2588,9 @@ function SheetImage:setIndexByName(name)
     if type(name) == "string" then
         local index = self.sheetNames[name] or self:getIndex()        
         self:setIndex(index)
-        self.imageIndex = index
-        if self.imageSize[index] then
-            self:setSize(self.imageSize[index][1], self.imageSize[index][2])
-        end
     elseif type(name) == "number" then
         self:setIndex(index)
-        self.imageIndex = index
-        if self.imageSize[index] then
-            self:setSize(self.imageSize[index][1], self.imageSize[index][2])
-        end
     end
-end
-
---------------------------------------------------------------------------------
--- get the sheet's image width and height.
---------------------------------------------------------------------------------
-function SheetImage:getSize()
-    return self.width, self.height, 0
 end
 
 --------------------------------------------------------------------------------
@@ -2628,9 +2599,7 @@ end
 -- @param height
 --------------------------------------------------------------------------------
 function SheetImage:setSize(width, height)
-    self.deck:setRect(self.imageIndex, 0, 0, width, height)
-    self.width = width
-    self.height = height
+    self.deck:setRect(self:getIndex(), 0, 0, width, height)
 end
 
 ----------------------------------------------------------------------------------------------------
