@@ -30,7 +30,6 @@ function onCreate(e)
                 tileMap:setMode("move")
                 modeChangeButton:setText("Edit")
             end
-            
         end,
     }
 end
