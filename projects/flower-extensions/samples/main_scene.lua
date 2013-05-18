@@ -62,8 +62,8 @@ function onCreate(e)
         parent = view,
         labelField = "title",
         listData = {SAMPLES},
-        rowHeight = 40,
-        listItemFactory = flower.ClassFactory(widget.ListItem, {textSize = 24}),
+        rowHeight = 35,
+        listItemFactory = flower.ClassFactory(widget.ListItem, {textSize = 20}),
         onItemChanged = menuList_OnItemChanged,
         onItemEnter = menuList_OnItemEnter,
     }
