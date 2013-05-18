@@ -1767,9 +1767,11 @@ function DisplayObject:setParent(parent)
  
     self:clearAttrLink(MOAIColor.INHERIT_COLOR)
     self:clearAttrLink(MOAITransform.INHERIT_TRANSFORM)
+    self:clearAttrLink(MOAIProp.INHERIT_VISIBLE)
     if parent then
         self:setAttrLink(MOAIColor.INHERIT_COLOR, parent, MOAIColor.COLOR_TRAIT)
         self:setAttrLink(MOAITransform.INHERIT_TRANSFORM, parent, MOAITransform.TRANSFORM_TRAIT)
+        self:setAttrLink(MOAIProp.INHERIT_VISIBLE, parent, MOAIProp.ATTR_VISIBLE)
     end
 end
 
