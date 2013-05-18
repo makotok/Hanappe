@@ -1148,7 +1148,7 @@ function TileLayerRenderer:createRenderer(tileset)
         return
     end
     
-    local texture = tileset.texture
+    local texture = tileset:loadTexture()
     local tw, th = texture:getSize()
 
     local tileLayer = self.tileLayer

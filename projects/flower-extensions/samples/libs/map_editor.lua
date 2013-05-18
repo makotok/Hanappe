@@ -91,7 +91,8 @@ function TileEditSystem:init(tileMap)
     self.tileMap = tileMap
     self.enabled = false
     self.editLayerName = "Collision"
-    self.editGid = 762 -- 
+
+    math.randomseed(os.time())
 end
 
 function TileEditSystem:setMode(mode)
@@ -105,9 +106,18 @@ function TileEditSystem:setMode(mode)
     end
 end
 
+function TileEditSystem:generateGid()
+    local tileMap = self.tileMap
+    local tilesetMaxNo = #tileMap.tilesets
+    local tilesetNo = math.random(tilesetMaxNo)
+    local tileset = tileMap.tilesets[tilesetNo]
+    return tileset.firstgid
+end
+
 function TileEditSystem:onTouchDown(e)
     local mx, my = self.tileMap:getPos()
     local wx, wy = e.wx - mx, e.wy - my
+    self.editGid = self:generateGid()
     self:setGid(wx, wy, self.editGid)
 end
 
