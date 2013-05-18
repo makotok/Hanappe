@@ -445,9 +445,8 @@ function TileLayer:loadData(data)
     self.properties = data.properties
 
     self:setPos(data.x, data.y)
-    self:setVisible(data.visible)
-
     self:createRenderer()
+    self:setVisible(data.visible)
 end
 
 --------------------------------------------------------------------------------
@@ -744,6 +743,7 @@ function TileObject:loadData(data)
     self:setPosByAuto(data.x, data.y)
     self:setSize(data.width, data.height)
     self:createRenderer()
+    self:setVisible(data.visible)
 end
 
 --------------------------------------------------------------------------------
@@ -883,8 +883,10 @@ function TileObjectGroup:loadData(data)
     self.properties = data.properties
     self.data = data
 
-    self:setVisible(data.visible)
     self:createObjects(data.objects)
+    if self:getVisible() ~= data.visible then
+        self:setVisible(data.visible)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1165,8 +1167,12 @@ function TileLayerRenderer:createRenderer(tileset)
         local rowData = {}
         for x = 0, mapWidth - 1 do
             local gid = tileLayer:getGid(x, y)
-            local tileNo = self:gidToTileNo(tileset, gid)
-            table.insertElement(rowData, tileNo)
+            if gid > 0 then
+                local tileNo = self:gidToTileNo(tileset, gid)
+                table.insertElement(rowData, tileNo)
+            else
+                table.insertElement(rowData, 0)
+            end
         end
         renderer:setRow(y + 1, unpack(rowData))
     end
@@ -1238,11 +1244,23 @@ end
 -- @param gid global id.
 --------------------------------------------------------------------------------
 function TileLayerRenderer:setGid(x, y, gid)
+    self:clearGid(x, y)
+    
     local tileset = self.tileMap:findTilesetByGid(gid)
     local tileNo = self:gidToTileNo(tileset, gid)
     local renderer = self:getRendererByTileset(tileset) or self:createRenderer(tileset)
     renderer:setTile(x + 1, y + 1, tileNo)
-    self:addChild(renderer)
+end
+
+--------------------------------------------------------------------------------
+-- Clear gid of the specified position.
+-- @param x potision of x (0 <= x && x <= mapWidth)
+-- @param y potision of y (0 <= y && y <= mapHeight)
+--------------------------------------------------------------------------------
+function TileLayerRenderer:clearGid(x, y)
+    for key, value in pairs(self.tilesetToRendererMap) do
+        value:setTile(x + 1, y + 1, 0)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1253,7 +1271,6 @@ end
 function TileLayerRenderer:getRendererByTileset(tileset)
     return self.tilesetToRendererMap[tileset]
 end
-
 
 ----------------------------------------------------------------------------------------------------
 -- @type IsometricLayerRenderer

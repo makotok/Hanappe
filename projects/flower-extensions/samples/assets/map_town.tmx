@@ -283,7 +283,7 @@
     <property name="playAnim" value="walkDown"/>
    </properties>
   </object>
-  <object name="ArmorShop" type="Actor" gid="538" x="320" y="448">
+  <object name="ArmorShop" type="Actor" gid="538" x="320" y="448" visible="0">
    <properties>
     <property name="playAnim" value="walkDown"/>
    </properties>

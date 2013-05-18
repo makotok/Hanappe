@@ -481,7 +481,7 @@ return {
       objects = {
         {
           name = "Player",
-          type = "Player",
+          type = "Actor",
           shape = "rectangle",
           x = 768,
           y = 1536,
@@ -516,7 +516,7 @@ return {
           width = 0,
           height = 0,
           gid = 538,
-          visible = true,
+          visible = false,
           properties = {
             ["playAnim"] = "walkDown"
           }
@@ -547,7 +547,7 @@ return {
         },
         {
           name = "",
-          type = "",
+          type = "Actor",
           shape = "rectangle",
           x = 576,
           y = 224,
@@ -571,7 +571,7 @@ return {
         },
         {
           name = "",
-          type = "",
+          type = "Actor",
           shape = "rectangle",
           x = 1280,
           y = 192,
@@ -611,7 +611,7 @@ return {
         },
         {
           name = "",
-          type = "",
+          type = "Actor",
           shape = "rectangle",
           x = 224,
           y = 1152,
@@ -623,7 +623,7 @@ return {
         },
         {
           name = "",
-          type = "",
+          type = "Actor",
           shape = "rectangle",
           x = 416,
           y = 1152,
@@ -635,7 +635,7 @@ return {
         },
         {
           name = "",
-          type = "",
+          type = "Actor",
           shape = "rectangle",
           x = 160,
           y = 1216,
@@ -647,7 +647,7 @@ return {
         },
         {
           name = "",
-          type = "",
+          type = "Actor",
           shape = "rectangle",
           x = 512,
           y = 1152,

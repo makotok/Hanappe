@@ -66,6 +66,7 @@ function RPGMap:initLayer()
     self.camera = Camera()
 
     local layer = Layer()
+    layer:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
     layer:setCamera(self.camera)
     self:setLayer(layer)
 end
