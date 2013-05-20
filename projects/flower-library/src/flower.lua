@@ -544,6 +544,23 @@ function Executors.callLaterTime(time, func, ...)
     return timer
 end
 
+--------------------------------------------------------------------------------
+-- Run the specified function in loop by a span time over and over again
+-- @param time loop seconds.
+-- @param func Target function.
+-- @param ... Arguments.
+-- @return MOAITimer object
+--------------------------------------------------------------------------------
+function Executors.callLoopTime(time, func, ...)
+    local args = {...}
+    local timer = MOAITimer.new()
+    timer:setMode(MOAITimer.LOOP)
+    timer:setSpan(time) -- EVENT_TIMER_LOOP
+    timer:setListener(MOAITimer.EVENT_TIMER_BEGIN_SPAN, function() func(unpack(args)) end)
+    timer:start()
+    return timer
+end
+
 ----------------------------------------------------------------------------------------------------
 -- @type Resources
 -- 
@@ -1134,9 +1151,11 @@ function EventDispatcher:dispatchEvent(event, data)
     
     assert(event.type)
 
-    event.data = data or event.data
     event.stopFlag = false
     event.target = self.eventTarget or self
+    if data ~= nil then
+        event.data = data
+    end
     
     local listeners = self.eventListenersMap[event.type] or {}
     
@@ -1771,6 +1790,16 @@ function DisplayObject:getVisible()
 end
 
 --------------------------------------------------------------------------------
+-- Sets the visibility.
+-- TODO:I avoid the bug of display settings MOAIProp.(2013/05/20 last build)
+-- @param value visible
+--------------------------------------------------------------------------------
+function DisplayObject:setVisible(visible)
+    MOAIPropInterface.setVisible(self, visible)
+    self:forceUpdate()
+end
+
+--------------------------------------------------------------------------------
 -- Sets the object's parent, inheriting its color and transform.
 -- @param parent parent
 --------------------------------------------------------------------------------
@@ -1829,14 +1858,14 @@ M.Layer = Layer
 --------------------------------------------------------------------------------
 -- The constructor.
 --------------------------------------------------------------------------------
-function Layer:init()
+function Layer:init(viewport)
     DisplayObject.init(self)
 
     local partition = MOAIPartition.new()
     self:setPartition(partition)
     self.partition = partition
     
-    self:setViewport(M.viewport)
+    self:setViewport(viewport or M.viewport)
     self.touchEnabled = false
     self.touchHandler = nil
 end
@@ -2042,7 +2071,7 @@ end
 -- @param value visible
 --------------------------------------------------------------------------------
 function Group:setVisible(value)
-    MOAIPropInterface.setVisible(self, value)
+    DisplayObject.setVisible(self, value)
     
     -- Compatibility
     if not MOAIProp.INHERIT_VISIBLE then
@@ -2424,7 +2453,7 @@ end
 --------------------------------------------------------------------------------
 function Image:setTexture(texture)
     self.texture = Resources.getTexture(texture)
-    self.deck:setTexture(texture)
+    self.deck:setTexture(self.texture)
     local tw, th = self.texture:getSize()
     self:setSize(tw, th)
 end
@@ -2468,7 +2497,7 @@ end
 --------------------------------------------------------------------------------
 function SheetImage:setTexture(texture)
     self.texture = Resources.getTexture(texture)
-    self.deck:setTexture(texture)
+    self.deck:setTexture(self.texture)
 end
 
 --------------------------------------------------------------------------------
@@ -2572,6 +2601,15 @@ function SheetImage:setIndexByName(name)
     elseif type(name) == "number" then
         self:setIndex(index)
     end
+end
+
+--------------------------------------------------------------------------------
+-- Sets the sheet's image width and height.
+-- @param width
+-- @param height
+--------------------------------------------------------------------------------
+function SheetImage:setSize(width, height)
+    self.deck:setRect(self:getIndex(), 0, 0, width, height)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -2962,12 +3000,19 @@ end
 --------------------------------------------------------------------------------
 -- Sets the fit size.
 -- @param lenfth (Option)Length of the text.
+-- @param maxWidth (Option)maxWidth of the text.
+-- @param maxHeight (Option)maxHeight of the text.
+-- @param padding (Option)padding of the text.
 --------------------------------------------------------------------------------
-function Label:fitSize(length)
-    self:setSize(Label.MAX_FIT_WIDTH, Label.MAX_FIT_HEIGHT)
-    
-    local padding = Label.DEFAULT_FIT_PADDING
-    local left, top, right, bottom = self:getStringBounds(1, length or Label.DEFAULT_FIT_LENGTH)
+function Label:fitSize(length, maxWidth, maxHeight, padding)
+    length = length or Label.DEFAULT_FIT_LENGTH
+    maxWidth = maxWidth or Label.MAX_FIT_WIDTH
+    maxHeight = maxHeight or Label.MAX_FIT_HEIGHT
+    padding = padding or Label.DEFAULT_FIT_PADDING
+
+    self:setSize(maxWidth, maxHeight)
+    local left, top, right, bottom = self:getStringBounds(1, length)
+    left, top, right, bottom = left or 0, top or 0, right or 0, bottom or 0
     local width, height = right - left + padding, bottom - top + padding
 
     self:setSize(width, height)
@@ -2976,15 +3021,21 @@ end
 --------------------------------------------------------------------------------
 -- Sets the fit height.
 -- @param lenfth (Option)Length of the text.
+-- @param maxHeight (Option)maxHeight of the text.
+-- @param padding (Option)padding of the text.
 --------------------------------------------------------------------------------
-function Label:fitHeight(length)
-    self:setSize(self:getWidth(), Label.MAX_FIT_HEIGHT)
-    
-    local padding = Label.DEFAULT_FIT_PADDING
-    local left, top, right, bottom = self:getStringBounds(1, length or Label.DEFAULT_FIT_LENGTH)
-    local width, height = self:getWidth(), bottom - top + padding
+function Label:fitHeight(length, maxHeight, padding)
+    self:fitSize(length, self:getWidth(), maxHeight, padding)
+end
 
-    self:setSize(width, height)
+--------------------------------------------------------------------------------
+-- Sets the fit height.
+-- @param lenfth (Option)Length of the text.
+-- @param maxWidth (Option)maxWidth of the text.
+-- @param padding (Option)padding of the text.
+--------------------------------------------------------------------------------
+function Label:fitWidth(length, maxWidth, padding)
+    self:fitSize(length, maxWidth, self:getHeight(), padding)
 end
 
 ----------------------------------------------------------------------------------------------------

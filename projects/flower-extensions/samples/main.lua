@@ -2,6 +2,7 @@
 flower = require "flower"
 tiled = require "tiled"
 widget = require "widget"
+themes = require "themes"
 Resources = flower.Resources
 
 -- Resources setting
@@ -21,9 +22,10 @@ local screenWidth = MOAIEnvironment.horizontalResolution or 320
 local screenHeight = MOAIEnvironment.verticalResolution or 480
 local screenDpi = MOAIEnvironment.screenDpi or 120
 local viewScale = math.floor(screenDpi / 240) + 1
+print(screenWidth, screenHeight)
 
 -- open window
-flower.openWindow("Flower extensions", screenWidth, screenHeight, viewScale)
+flower.openWindow("Flower extensions", screenWidth, screenHeight)--, viewScale)
 
 -- open scene
 flower.openScene("main_scene")

@@ -23,16 +23,19 @@ local PropertyUtils = flower.PropertyUtils
 local InputMgr = flower.InputMgr
 local ClassFactory = flower.ClassFactory
 local Event = flower.Event
+local EventDispatcher = flower.EventDispatcher
 local DisplayObject = flower.DisplayObject
 local Layer = flower.Layer
 local Group = flower.Group
 local Image = flower.Image
+local SheetImage = flower.SheetImage
 local NineImage = flower.NineImage
 local MovieClip = flower.MovieClip
 local Label = flower.Label
 local Rect = flower.Rect
 local TouchHandler = flower.TouchHandler
 local MOAIKeyboard = MOAIKeyboardAndroid or MOAIKeyboardIOS
+local MOAIDialog = MOAIDialogAndroid or MOAIDialogIOS
 
 -- classes
 local ThemeMgr
@@ -43,10 +46,10 @@ local UIEvent
 local UIComponent
 local UIGroup
 local UIView
-local BoxBase
-local TextBase
-local ListBase
 local Button
+local ImageButton
+local SheetButton
+local CheckBox
 local Joystick
 local Panel
 local TextBox
@@ -55,80 +58,10 @@ local MsgBox
 local ListBox
 local ListItem
 local ScrollBar
+local Slider
 
 -- interfaces
 local MOAIPropInterface = MOAIProp.getInterfaceTable()
-
-----------------------------------------------------------------------------------------------------
--- Local functions
-----------------------------------------------------------------------------------------------------
-
-local function buildTheme()
-    return {
-        common = {
-            normalColor = {1, 1, 1, 1},
-            disabledColor = {0.5, 0.5, 0.5, 1},
-        },
-        Button = {
-            normalTexture = "skins/button_normal.9.png",
-            selectedTexture = "skins/button_selected.9.png",
-            disabledTexture = "skins/button_normal.9.png",
-            fontName = "VL-PGothic.ttf",
-            textSize = 20,
-            textColor = {0, 0, 0, 1},
-            textDisabledColor = {0.5, 0.5, 0.5, 1},
-            textAlign = {"center", "center"},
-        },
-        Joystick = {
-            baseTexture = "skins/joystick_base.png",
-            knobTexture = "skins/joystick_knob.png",
-        },
-        Panel = {
-            backgroundTexture = "skins/panel.9.png",
-        },
-        TextBox = {
-            backgroundTexture = "skins/panel.9.png",
-            fontName = "VL-PGothic.ttf",
-            textSize = 18,
-            textColor = {1, 1, 1, 1},
-            textAlign = {"left", "top"},
-        },
-        TextInput = {
-            backgroundTexture = "skins/textinput_normal.9.png",
-            focusTexture = "skins/textinput_focus.9.png",
-            fontName = "VL-PGothic.ttf",
-            textSize = 20,
-            textColor = {0, 0, 0, 1},
-            textAlign = {"left", "center"},
-        },
-        MsgBox = {
-            backgroundTexture = "skins/panel.9.png",
-            pauseTexture = "skins/msgbox_pause.png",
-            fontName = "VL-PGothic.ttf",
-            textSize = 18,
-            textColor = {1, 1, 1, 1},
-            textAlign = {"left", "top"},
-            animShowFunction = MsgBox.ANIM_SHOW_FUNCTION,
-            animHideFunction = MsgBox.ANIM_HIDE_FUNCTION,
-        },
-        ListBox = {
-            backgroundTexture = "skins/panel.9.png",
-            rowHeight = 35,
-            listItemFactory = ClassFactory(ListItem),
-        },
-        ListItem = {
-            backgroundTexture = "skins/listitem_background.9.png",
-            backgroundVisible = false,
-            fontName = "VL-PGothic.ttf",
-            textSize = 20,
-            textColor = {1, 1, 1, 1},
-            textAlign = {"left", "top"},
-        },
-        PictureBox = {
-            backgroundTexture = "skins/panel.9.png",
-        },
-    }
-end
 
 ----------------------------------------------------------------------------------------------------
 -- Public functions
@@ -181,18 +114,34 @@ function M.getFocusMgr()
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type function showDialog
+-- This class is an dialog or IOS and Android.
+-- @param string title, 
+-- @param string message, 
+-- @param string positive, 
+-- @param string neutral, 
+-- @param string negative, 
+-- @param bool cancelable 
+-- @param [, function callback ]
+----------------------------------------------------------------------------------------------------
+function M.showDialog(...)
+    MOAIDialog.showDialog(...)
+end
+
+----------------------------------------------------------------------------------------------------
 -- @type ThemeMgr
 -- This is a class to manage the Theme.
 -- Please get an instance from the widget module.
 ----------------------------------------------------------------------------------------------------
-ThemeMgr = class()
+ThemeMgr = class(EventDispatcher)
 M.ThemeMgr = ThemeMgr
 
 --------------------------------------------------------------------------------
 -- Constructor.
 --------------------------------------------------------------------------------
 function ThemeMgr:init()
-    self.theme = buildTheme()
+    ThemeMgr.__super.init(self)
+    self.theme = nil
 end
 
 --------------------------------------------------------------------------------
@@ -219,13 +168,14 @@ end
 -- This is a class to manage the focus of the widget.
 -- Please get an instance from the widget module.
 ----------------------------------------------------------------------------------------------------
-FocusMgr = class()
+FocusMgr = class(EventDispatcher)
 M.FocusMgr = FocusMgr
 
 --------------------------------------------------------------------------------
 -- Constructor.
 --------------------------------------------------------------------------------
 function FocusMgr:init()
+    FocusMgr.__super.init(self)
     self.focusObject = nil
 end
 
@@ -287,10 +237,10 @@ KeyCode = {}
 M.KeyCode = KeyCode
 
 --- DEL
-KeyCode.DEL = 127 -- TODO:Code
+KeyCode.DEL = 127
 
 --- BACKSPACE
-KeyCode.BACKSPACE = 127
+KeyCode.BACKSPACE = 8
 
 --- SPACE
 KeyCode.SPACE = 32
@@ -329,14 +279,23 @@ UIEvent.FOCUS_OUT = "focusOut"
 --- Button: Click Event
 UIEvent.CLICK = "click"
 
+--- Button: Click Event
+UIEvent.CANCEL = "cancel"
+
+--- Button: Selected changed Event
+UIEvent.SELECTED_CHANGED = "selectedChanged"
+
 --- Button: down Event
 UIEvent.DOWN = "down"
 
 --- Button: up Event
 UIEvent.UP = "up"
 
+--- Slider: value changed Event
+UIEvent.VALUE_CHANGED = "valueChanged"
+
 --- Joystick: Event type when you change the position of the stick
-UIEvent.STICK_CHANGED   = "stickChanged"
+UIEvent.STICK_CHANGED = "stickChanged"
 
 --- MsgBox: msgShow Event
 UIEvent.MSG_SHOW = "msgShow"
@@ -385,6 +344,8 @@ function UIComponent:init(params)
     self:setProperties(params)
     self:updateDisplay()
     self:setPivToCenter()
+    
+    self._initialized = true
 end
 
 --------------------------------------------------------------------------------
@@ -394,6 +355,7 @@ end
 function UIComponent:_initInternal()
     self.isUIComponent = true
     
+    self._initialized = false
     self._enabled = true
     self._focusEnabled = true
     self._theme = nil
@@ -734,7 +696,6 @@ end
 
 --------------------------------------------------------------------------------
 -- This event handler is called when touch.
--- TODO:I should do in TouchHandler.
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function UIComponent:onTouchCommon(e)
@@ -851,7 +812,10 @@ end
 
 --------------------------------------------------------------------------------
 -- Change the size of the viewport.
--- TODO:There is room for consideration.
+-- @param screenX X of the Screen.
+-- @param screenY Y of the Screen.
+-- @param screenWidth Width of the Screen.
+-- @param screenHeight Height of the Screen.
 --------------------------------------------------------------------------------
 function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
     local viewScale = flower.viewScale
@@ -865,13 +829,6 @@ function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
 
     self.layer:setViewport(viewport)
     self:setSize(viewWidth, viewHeight)
-end
-
---------------------------------------------------------------------------------
--- Reset the view port.
---------------------------------------------------------------------------------
-function UIView:resetViewport()
-    self.layer:setViewport(flower.getViewport())
 end
 
 --------------------------------------------------------------------------------
@@ -955,7 +912,6 @@ function UIView:onSceneStop(e)
     focusMgr:setFocusObject(nil)
 end
 
-
 ----------------------------------------------------------------------------------------------------
 -- @type Button
 -- This class is an image that can be pressed.
@@ -979,11 +935,14 @@ Button.STYLE_FONT_NAME = "fontName"
 --- Style: textSize
 Button.STYLE_TEXT_SIZE = "textSize"
 
---- Style: textSize
+--- Style: textColor
 Button.STYLE_TEXT_COLOR = "textColor"
 
---- Style: horizotalAlign
+--- Style: textAlign
 Button.STYLE_TEXT_ALIGN = "textAlign"
+
+--- Style: textPadding
+Button.STYLE_TEXT_PADDING = "textPadding"
 
 --------------------------------------------------------------------------------
 -- Initializes the internal variables.
@@ -995,6 +954,8 @@ function Button:_initInternal()
     self._buttonImage = nil
     self._text = ""
     self._textLabel = nil
+    self._selected = false
+    self._toggle = false
 end
 
 --------------------------------------------------------------------------------
@@ -1007,6 +968,7 @@ function Button:_initEventListeners()
     self:addEventListener(Event.TOUCH_UP, self.onTouchUp, self)
     self:addEventListener(Event.TOUCH_MOVE, self.onTouchMove, self)
     self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self)
+    self:addEventListener(UIEvent.SELECTED_CHANGED, self.onSelectedChanged, self)
 end
 
 --------------------------------------------------------------------------------
@@ -1015,26 +977,64 @@ end
 function Button:_createChildren()
     Button.__super._createChildren(self)
     
+    self:_createButtonImage()
+    self:_createTextLabel()
+    
+    if self._buttonImage then
+        self:setSize(self._buttonImage:getSize())
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Create the buttonImage.
+--------------------------------------------------------------------------------
+function Button:_createButtonImage()
+    if self._buttonImage then
+        return
+    end
     local imagePath = assert(self:getImagePath())
     self._buttonImage = NineImage(imagePath)
-    self._textLabel = Label(self._text, 100, 30)
-
     self:addChild(self._buttonImage)
+end
+
+--------------------------------------------------------------------------------
+-- Create the textLabel.
+--------------------------------------------------------------------------------
+function Button:_createTextLabel()
+    if self._textLabel then
+        return
+    end
+    self._textLabel = Label(self._text)
     self:addChild(self._textLabel)
-    
-    self:setSize(self._buttonImage:getSize())
 end
 
 --------------------------------------------------------------------------------
 -- Update the display.
 --------------------------------------------------------------------------------
 function Button:updateDisplay()
+    self:updateButtonImage()
+    self:updateTextLabel()
+end
+
+--------------------------------------------------------------------------------
+-- Update the buttonImage.
+--------------------------------------------------------------------------------
+function Button:updateButtonImage()
     local buttonImage = self._buttonImage
     buttonImage:setImage(self:getImagePath())
     buttonImage:setSize(self:getSize())
+end
 
+--------------------------------------------------------------------------------
+-- Update the buttonImage.
+--------------------------------------------------------------------------------
+function Button:updateTextLabel()
+    if not self._textLabel then
+        return
+    end
+    
     local textLabel = self._textLabel
-    local xMin, yMin, xMax, yMax = buttonImage:getContentRect()
+    local xMin, yMin, xMax, yMax = self:getLabelContentRect()
     local textWidth, textHeight = xMax - xMin, yMax - yMin    
     textLabel:setSize(textWidth, textHeight)
     textLabel:setPos(xMin, yMin)
@@ -1046,21 +1046,13 @@ function Button:updateDisplay()
 end
 
 --------------------------------------------------------------------------------
--- Update the imageDeck.
---------------------------------------------------------------------------------
-function Button:updateImageDeck()
-    local buttonImage = self._buttonImage
-    buttonImage:setImage(self:getImagePath())
-end
-
---------------------------------------------------------------------------------
--- Returns the imageDeck.
+-- Returns the image path.
 -- @return imageDeck
 --------------------------------------------------------------------------------
 function Button:getImagePath()
     if not self:isEnabled() then
         return self:getStyle(Button.STYLE_DISABLED_TEXTURE)
-    elseif self:isButtonDown() then
+    elseif self:isSelected() then
         return self:getStyle(Button.STYLE_SELECTED_TEXTURE)
     else
         return self:getStyle(Button.STYLE_NORMAL_TEXTURE)
@@ -1068,11 +1060,57 @@ function Button:getImagePath()
 end
 
 --------------------------------------------------------------------------------
--- If the user presses the button returns True.
--- @return If the user presses the button returns True
+-- Returns the label content rect.
+-- @return content rect
 --------------------------------------------------------------------------------
-function Button:isButtonDown()
-    return self.touchDownIdx ~= nil
+function Button:getLabelContentRect()
+    local buttonImage = self._buttonImage
+    local paddingLeft, paddingTop, paddingRight, paddingBottom = self:getTextPadding()
+    if buttonImage.getContentRect then
+        local xMin, yMin, xMax, yMax = buttonImage:getContentRect()
+        return xMin + paddingLeft, yMin + paddingTop, xMax - paddingRight, yMax - paddingBottom
+    else
+        local xMin, yMin, xMax, yMax = 0, 0, buttonImage:getSize()
+        return xMin + paddingLeft, yMin + paddingTop, xMax - paddingRight, yMax - paddingBottom
+    end
+end
+
+--------------------------------------------------------------------------------
+-- If the selected the button returns True.
+-- @return If the selected the button returns True
+--------------------------------------------------------------------------------
+function Button:isSelected()
+    return self._selected
+end
+
+--------------------------------------------------------------------------------
+-- Sets the selected.
+-- @param selected selected
+--------------------------------------------------------------------------------
+function Button:setSelected(selected)
+    if self._selected == selected then
+        return
+    end
+    
+    self._selected = selected
+    self:updateButtonImage()
+    self:dispatchEvent(UIEvent.SELECTED_CHANGED, selected)
+end
+
+--------------------------------------------------------------------------------
+-- Sets the toggle.
+-- @param toggle toggle
+--------------------------------------------------------------------------------
+function Button:setToggle(toggle)
+    self._toggle = toggle
+end
+
+--------------------------------------------------------------------------------
+-- Returns the toggle.
+-- @return toggle
+--------------------------------------------------------------------------------
+function Button:isToggle()
+    return self._toggle
 end
 
 --------------------------------------------------------------------------------
@@ -1081,6 +1119,9 @@ end
 --------------------------------------------------------------------------------
 function Button:setNormalTexture(texture)
     self:setStyle(Button.STYLE_NORMAL_TEXTURE, texture)
+    if self._initialized then
+        self:updateDisplay()
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1089,6 +1130,9 @@ end
 --------------------------------------------------------------------------------
 function Button:setSelectedTexture(texture)
     self:setStyle(Button.STYLE_SELECTED_TEXTURE, texture)
+    if self._initialized then
+        self:updateDisplay()
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1097,6 +1141,9 @@ end
 --------------------------------------------------------------------------------
 function Button:setDisabledTexture(texture)
     self:setStyle(Button.STYLE_DISABLED_TEXTURE, texture)
+    if self._initialized then
+        self:updateDisplay()
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1196,7 +1243,7 @@ function Button:getAlignment()
 end
 
 --------------------------------------------------------------------------------
--- Sets the text align.
+-- Sets the text color.
 -- @param red red(0 ... 1)
 -- @param green green(0 ... 1)
 -- @param blue blue(0 ... 1)
@@ -1220,6 +1267,36 @@ end
 --------------------------------------------------------------------------------
 function Button:getTextColor()
     return unpack(self:getStyle(Button.STYLE_TEXT_COLOR))
+end
+
+--------------------------------------------------------------------------------
+-- Sets the text padding.
+-- @param paddingLeft padding left
+-- @param paddingTop padding top
+-- @param paddingRight padding right
+-- @param paddingBottom padding bottom
+--------------------------------------------------------------------------------
+function Button:setTextPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+    local style = {paddingLeft or 0, paddingTop or 0, paddingRight or 0, paddingBottom or 0}
+    self:setStyle(Button.STYLE_TEXT_PADDING, style)
+    if self._initialized then
+        self:updateTextLabel()
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Returns the text padding.
+-- @return paddingLeft
+-- @return paddingTop
+-- @return paddingRight
+-- @return paddingBottom
+--------------------------------------------------------------------------------
+function Button:getTextPadding()
+    local padding = self:getStyle(Button.STYLE_TEXT_PADDING)
+    if padding then
+        return unpack(padding)
+    end
+    return 0, 0, 0, 0
 end
 
 --------------------------------------------------------------------------------
@@ -1247,34 +1324,11 @@ function Button:setOnUp(func)
 end
 
 --------------------------------------------------------------------------------
--- Down the button.
--- There is no need to call directly to the basic.
--- @param idx Touch index
+-- Set the event listener that is called when selected changed.
+-- @param func selected changed event handler
 --------------------------------------------------------------------------------
-function Button:doButtonDown(idx)
-    if self:isButtonDown() then
-        return
-    end
-    
-    self.touchDownIdx = idx
-    self:updateImageDeck()
-    
-    self:dispatchEvent(UIEvent.DOWN)
-end
-
---------------------------------------------------------------------------------
--- Up the button.
--- There is no need to call directly to the basic.
---------------------------------------------------------------------------------
-function Button:doButtonUp()
-    if not self:isButtonDown() then
-        return
-    end
-
-    self.touchDownIdx = nil
-    self:updateImageDeck()
-    
-    self:dispatchEvent(UIEvent.UP)
+function Button:setOnSelectedChanged(func, obj)
+    self:setEventListener(UIEvent.SELECTED_CHANGED, func)
 end
 
 --------------------------------------------------------------------------------
@@ -1283,9 +1337,22 @@ end
 --------------------------------------------------------------------------------
 function Button:onEnabledChanged(e)
     Button.__super.onEnabledChanged(self, e)
-    self:updateImageDeck()
-    if not self:isEnabled() then
-        self:doButtonUp()
+    self:updateButtonImage()
+    
+    if not self:isEnabled() and not self:isToggle() then
+        self:setSelected(false)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when selected changed.
+-- @param e Touch Event
+--------------------------------------------------------------------------------
+function Button:onSelectedChanged(e)
+    if self:isSelected() then
+        self:dispatchEvent(UIEvent.DOWN)
+    else
+        self:dispatchEvent(UIEvent.UP)
     end
 end
 
@@ -1294,12 +1361,7 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Button:onResize(e)
-    self._buttonImage:setSize(self:getSize())
-
-    local xMin, yMin, xMax, yMax = self._buttonImage:getContentRect()
-    local textWidth, textHeight = xMax - xMin, yMax - yMin    
-    self._textLabel:setSize(textWidth, textHeight)    
-    self._textLabel:setPos(xMin, yMin)
+    self:updateDisplay()
 end
 
 --------------------------------------------------------------------------------
@@ -1307,10 +1369,16 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Button:onTouchDown(e)
-    if self:isButtonDown() then
+    if self._touchDownIdx ~= nil then
         return
     end
-    self:doButtonDown(e.idx)
+    self._touchDownIdx = e.idx
+    
+    if self:isToggle() then
+        self:setSelected(not self:isSelected())
+    else
+        self:setSelected(true)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1318,11 +1386,15 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Button:onTouchUp(e)
-    if self.touchDownIdx ~= e.idx then
+    if self._touchDownIdx ~= e.idx then
         return
     end
-    self:doButtonUp()
-    self:dispatchEvent(UIEvent.CLICK)
+    self._touchDownIdx = nil
+    
+    if not self:isToggle() then
+       self:setSelected(false)
+       self:dispatchEvent(UIEvent.CLICK)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1330,11 +1402,18 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Button:onTouchMove(e)
-    if self.touchDownIdx ~= e.idx then
+    if self._touchDownIdx ~= e.idx then
         return
     end
-    if not self:inside(e.wx, e.wy, 0) then
-        self:doButtonUp()
+    if self:inside(e.wx, e.wy, 0) then
+        return
+    end
+    
+    self._touchDownIdx = nil
+    
+    if not self:isToggle() then
+       self:setSelected(false)
+       self:dispatchEvent(UIEvent.CANCEL)
     end
 end
 
@@ -1343,10 +1422,151 @@ end
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function Button:onTouchCancel(e)
-    if self.touchDownIdx ~= e.idx then
+    if self._touchDownIdx ~= e.idx then
         return
     end
-    self:doButtonUp()
+
+    self._touchDownIdx = nil
+    
+    if not self:isToggle() then
+       self:setSelected(false)
+       self:dispatchEvent(UIEvent.CANCEL)
+    end
+end
+
+
+----------------------------------------------------------------------------------------------------
+-- @type ImageButton
+-- This class is an Image that can be pressed.
+----------------------------------------------------------------------------------------------------
+ImageButton = class(Button)
+M.ImageButton = ImageButton
+
+--------------------------------------------------------------------------------
+-- Initializes the internal variables.
+--------------------------------------------------------------------------------
+function ImageButton:_initInternal()
+    ImageButton.__super._initInternal(self)
+    self._themeName = "ImageButton"
+end
+
+--------------------------------------------------------------------------------
+-- Create the buttonImage.
+--------------------------------------------------------------------------------
+function ImageButton:_createButtonImage()
+    if self._buttonImage then
+        return
+    end
+    local imagePath = assert(self:getImagePath())
+    self._buttonImage = Image(imagePath)
+    self:addChild(self._buttonImage)
+end
+
+--------------------------------------------------------------------------------
+-- Update the imageDeck.
+--------------------------------------------------------------------------------
+function ImageButton:updateButtonImage()
+    local imagePath = assert(self:getImagePath())
+
+    self._buttonImage:setTexture(imagePath)
+    self:setSize(self._buttonImage:getSize())
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type SheetButton
+-- This class is an SheetImage that can be pressed.
+----------------------------------------------------------------------------------------------------
+SheetButton = class(Button)
+M.SheetButton = SheetButton
+
+--- Style: textureSheets
+SheetButton.STYLE_TEXTURE_SHEETS = "textureSheets"
+
+--------------------------------------------------------------------------------
+-- Initializes the internal variables.
+--------------------------------------------------------------------------------
+function SheetButton:_initInternal()
+    SheetButton.__super._initInternal(self)
+    self._themeName = "SheetButton"
+end
+
+--------------------------------------------------------------------------------
+-- Create the buttonImage.
+--------------------------------------------------------------------------------
+function SheetButton:_createButtonImage()
+    if self._buttonImage then
+        return
+    end
+    
+    local textureSheets = assert(self:getStyle(SheetButton.STYLE_TEXTURE_SHEETS))
+    self._buttonImage = SheetImage(textureSheets .. ".png")
+    self._buttonImage:setTextureAtlas(textureSheets .. ".lua")
+    self:addChild(self._buttonImage)
+end
+
+--------------------------------------------------------------------------------
+-- Update the buttonImage.
+--------------------------------------------------------------------------------
+function SheetButton:updateButtonImage()
+    local imagePath = assert(self:getImagePath())
+
+    self._buttonImage:setIndexByName(imagePath)
+    self:setSize(self._buttonImage:getSize())
+end
+
+--------------------------------------------------------------------------------
+-- Sets the sheet texture's file.
+-- @param sheet texture
+--------------------------------------------------------------------------------
+function SheetButton:setTextureSheets(filename)
+    self:setStyle(SheetButton.STYLE_TEXTURE_SHEETS, filename)
+    self._buttonImage:setTextureAtlas(filename .. ".lua", filename .. ".png")
+    self:updateButtonImage()
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type CheckBox
+-- This class is an checkbox.
+----------------------------------------------------------------------------------------------------
+CheckBox = class(ImageButton)
+M.CheckBox = CheckBox
+
+--------------------------------------------------------------------------------
+-- Initializes the internal variables.
+--------------------------------------------------------------------------------
+function CheckBox:_initInternal()
+    CheckBox.__super._initInternal(self)
+    self._themeName = "CheckBox"
+    self._toggle = true
+end
+
+--------------------------------------------------------------------------------
+-- Update the buttonImage.
+--------------------------------------------------------------------------------
+function CheckBox:updateButtonImage()
+    local buttonImage = self._buttonImage
+    buttonImage:setTexture(self:getImagePath())
+end
+
+--------------------------------------------------------------------------------
+-- Returns the label content rect.
+-- @return content rect
+--------------------------------------------------------------------------------
+function CheckBox:getLabelContentRect()
+    local buttonImage = self._buttonImage
+    local textLabel = self._textLabel
+    local left, top = buttonImage:getRight(), buttonImage:getTop()
+    local right, bottom = left + textLabel:getWidth(), top + buttonImage:getHeight()
+    return left, top, right, bottom
+end
+
+--------------------------------------------------------------------------------
+-- Update the textLabel.
+--------------------------------------------------------------------------------
+function CheckBox:updateTextLabel()
+    CheckBox.__super.updateTextLabel(self)
+    
+    self._textLabel:fitWidth()
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1652,6 +1872,7 @@ function Joystick:onTouchCancel(e)
     self._touchIndex = nil
     self:setCenterKnob()
 end
+
 
 ----------------------------------------------------------------------------------------------------
 -- @type Panel
@@ -1961,6 +2182,28 @@ function TextBox:onResize(e)
     local textWidth, textHeight = xMax - xMin, yMax - yMin
     textLabel:setSize(textWidth, textHeight)
     textLabel:setPos(xMin, yMin)
+end
+
+--------------------------------------------------------------------------------
+-- Set textbox padding by label's setRect method, it will set 4 direction padding
+-- @param padding pixecls
+--------------------------------------------------------------------------------
+function TextBox:setPadding(padding)
+    if self._textLabel then
+        local x1, y1, x2, y2 = self._textLabel:getRect()
+        self._textLabel:setRect(x1 + padding, y1 + padding, x2 - padding, y2 - padding)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Set textbox padding-top by label's setRect method
+-- @param padding pixecls
+--------------------------------------------------------------------------------
+function TextBox:setPaddingTop(padding)
+    if self._textLabel then
+        local x1, y1, x2, y2 = self._textLabel:getRect()
+        self._textLabel:setRect(x1, padding, x2, y2)
+    end
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -2850,6 +3093,250 @@ function ListItem:onTouchDown(e)
     else
         listBox:setSelectedItem(self)
     end
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type Slider
+-- This class is an slider that can be pressed and dragged.
+----------------------------------------------------------------------------------------------------
+Slider = class(UIComponent)
+M.Slider = Slider
+
+--- Style: backgroundTexture
+Slider.STYLE_BACKGROUND_TEXTURE = "backgroundTexture"
+
+--- Style: progressTexture
+Slider.STYLE_PROGRESS_TEXTURE = "progressTexture"
+
+--- Style: thumbTexture
+Slider.STYLE_THUMB_TEXTURE = "thumbTexture"
+
+--------------------------------------------------------------------------------
+-- Initializes the internal variables.
+--------------------------------------------------------------------------------
+function Slider:_initInternal()
+    Slider.__super._initInternal(self)
+    self._themeName = "Slider"
+    self._touchDownIdx = nil
+    self._backgroundImage = nil
+    self._progressImage = nil
+    self._thumbImage = nil
+    self._minValue = 0.0
+    self._maxValue = 1.0
+    self._currValue = 0.4
+end
+
+--------------------------------------------------------------------------------
+-- Initializes the event listener.
+--------------------------------------------------------------------------------
+function Slider:_initEventListeners()
+    Slider.__super._initEventListeners(self)
+    self:addEventListener(Event.RESIZE, self.onResize, self)
+    self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
+    self:addEventListener(Event.TOUCH_UP, self.onTouchUp, self)
+    self:addEventListener(Event.TOUCH_MOVE, self.onTouchMove, self)
+    self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self)
+end
+
+--------------------------------------------------------------------------------
+-- Create children.
+--------------------------------------------------------------------------------
+function Slider:_createChildren()
+    Slider.__super._createChildren(self)
+    self:_createBackgroundImage()
+    self:_createProgressImage()
+    self:_createThumbImage()
+end
+
+--------------------------------------------------------------------------------
+-- Create the backgroundImage.
+--------------------------------------------------------------------------------
+function Slider:_createBackgroundImage()
+    if self._backgroundImage then
+        return
+    end
+    self._backgroundImage = NineImage(self:getStyle(Slider.STYLE_BACKGROUND_TEXTURE))
+    self:addChild(self._backgroundImage)
+end
+
+--------------------------------------------------------------------------------
+-- Create the progressImage.
+--------------------------------------------------------------------------------
+function Slider:_createProgressImage()
+    if self._progressImage then
+        return
+    end
+    self._progressImage = NineImage(self:getStyle(Slider.STYLE_PROGRESS_TEXTURE))
+    self:addChild(self._progressImage)
+end
+
+--------------------------------------------------------------------------------
+-- Create the progressImage.
+--------------------------------------------------------------------------------
+function Slider:_createThumbImage()
+    if self._thumbImage then
+        return
+    end
+    self._thumbImage = Image(self:getStyle(Slider.STYLE_THUMB_TEXTURE))
+    self:addChild(self._thumbImage)
+end
+
+--------------------------------------------------------------------------------
+-- Update the display.
+--------------------------------------------------------------------------------
+function Slider:updateDisplay()
+    Slider.__super.updateDisplay(self)
+    self:updateBackgroundImage()
+    self:updateProgressImage()
+end
+
+--------------------------------------------------------------------------------
+-- Update the backgroundImage.
+--------------------------------------------------------------------------------
+function Slider:updateBackgroundImage()
+    local width = self:getWidth()
+    local height = self._backgroundImage:getHeight()
+    self._backgroundImage:setSize(width, height)
+end
+
+--------------------------------------------------------------------------------
+-- Update the progressImage.
+--------------------------------------------------------------------------------
+function Slider:updateProgressImage()
+    local width = self:getWidth()
+    local height = self._progressImage:getHeight()
+    self._progressImage:setSize(width * (self._currValue / self._maxValue), height)
+    self._thumbImage:setLoc(width * (self._currValue / self._maxValue), height / 2)
+end
+
+--------------------------------------------------------------------------------
+-- Set the value of the current.
+-- @param value value of the current
+--------------------------------------------------------------------------------
+function Slider:setValue(value)
+    if self._currValue == value then
+        return
+    end
+    
+    self._currValue = value
+    self:updateProgressImage()
+    self:dispatchEvent(UIEvent.VALUE_CHANGED, self._currValue)
+end
+
+--------------------------------------------------------------------------------
+-- Return the value of the current.
+-- @return value of the current
+--------------------------------------------------------------------------------
+function Slider:getValue()
+    return self._currValue
+end
+
+--------------------------------------------------------------------------------
+-- Sets the background texture.
+-- @param texture texture
+--------------------------------------------------------------------------------
+function Slider:setBackgroundTexture(texture)
+    self:setStyle(Slider.STYLE_BACKGROUND_TEXTURE, texture)
+    self._backgroundImage:setImage(self:getStyle(Slider.STYLE_BACKGROUND_TEXTURE))
+end
+
+--------------------------------------------------------------------------------
+-- Sets the progress texture.
+-- @param texture texture
+--------------------------------------------------------------------------------
+function Slider:setProgressTexture(texture)
+    self:setStyle(Slider.STYLE_PROGRESS_TEXTURE, texture)
+    self._progressImage:setImage(self:getStyle(Slider.STYLE_PROGRESS_TEXTURE))
+end
+
+--------------------------------------------------------------------------------
+-- Sets the thumb texture.
+-- @param texture texture
+--------------------------------------------------------------------------------
+function Slider:setThumbTexture(texture)
+    self:setStyle(Slider.STYLE_THUMB_TEXTURE, texture)
+    self._thumbImage:setTexture(self:getStyle(Slider.STYLE_THUMB_TEXTURE))
+end
+
+--------------------------------------------------------------------------------
+-- Set the event listener that is called when the user click the Slider.
+-- @param func click event handler
+--------------------------------------------------------------------------------
+function Slider:setOnValueChanged(func)
+    self:setEventListener(UIEvent.VALUE_CHANGED, func)
+end
+
+--------------------------------------------------------------------------------
+-- Down the Slider.
+-- There is no need to call directly to the basic.
+-- @param idx Touch index
+--------------------------------------------------------------------------------
+function Slider:doSlide(worldX)
+    local width = self:getWidth()
+    local left = self:getLeft()
+    local modelX = worldX - left
+    
+    modelX = math.min(modelX, width)
+    modelX = math.max(modelX, 0)
+    self:setValue(modelX / width)
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when resize.
+-- @param e Touch Event
+--------------------------------------------------------------------------------
+function Slider:onResize(e)
+    self:updateDisplay()
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when you touch the Slider.
+-- @param e Touch Event
+--------------------------------------------------------------------------------
+function Slider:onTouchDown(e)
+    if self._touchDownIdx then
+        return
+    end
+    
+    self._touchDownIdx = e.idx
+    self:doSlide(e.wx)
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when the Slider is released.
+-- @param e Touch Event
+--------------------------------------------------------------------------------
+function Slider:onTouchUp(e)
+    if self._touchDownIdx ~= e.idx then
+        return
+    end
+    self._touchDownIdx = nil
+    self:doSlide(e.wx)
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when you move on the Slider.
+-- @param e Touch Event
+--------------------------------------------------------------------------------
+function Slider:onTouchMove(e)
+    if self._touchDownIdx ~= e.idx then
+        return
+    end
+    if self:inside(e.wx, e.wy, 0) then
+        self:doSlide(e.wx)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- This event handler is called when you cancel the touch.
+-- @param e Touch Event
+--------------------------------------------------------------------------------
+function Slider:onTouchCancel(e)
+    if self._touchDownIdx ~= e.idx then
+        return
+    end
+    self._touchDownIdx = nil
+    self:doSlide(e.wx)
 end
 
 -- widget initialize
