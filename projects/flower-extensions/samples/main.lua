@@ -2,6 +2,7 @@
 flower = require "flower"
 tiled = require "tiled"
 widget = require "widget"
+themes = require "themes"
 Resources = flower.Resources
 
 -- Resources setting

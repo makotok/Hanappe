@@ -23,6 +23,7 @@ local PropertyUtils = flower.PropertyUtils
 local InputMgr = flower.InputMgr
 local ClassFactory = flower.ClassFactory
 local Event = flower.Event
+local EventDispatcher = flower.EventDispatcher
 local DisplayObject = flower.DisplayObject
 local Layer = flower.Layer
 local Group = flower.Group
@@ -47,6 +48,7 @@ local UIGroup
 local UIView
 local Button
 local ImageButton
+local SheetButton
 local CheckBox
 local Joystick
 local Panel
@@ -60,92 +62,6 @@ local Slider
 
 -- interfaces
 local MOAIPropInterface = MOAIProp.getInterfaceTable()
-
-----------------------------------------------------------------------------------------------------
--- Local functions
-----------------------------------------------------------------------------------------------------
-
-local function buildTheme()
-    return {
-        common = {
-            normalColor = {1, 1, 1, 1},
-            disabledColor = {0.5, 0.5, 0.5, 1},
-        },
-        Button = {
-            normalTexture = "skins/button_normal.9.png",
-            selectedTexture = "skins/button_selected.9.png",
-            disabledTexture = "skins/button_normal.9.png",
-            fontName = "VL-PGothic.ttf",
-            textSize = 20,
-            textColor = {0, 0, 0, 1},
-            textDisabledColor = {0.5, 0.5, 0.5, 1},
-            textAlign = {"center", "center"},
-        },
-        CheckBox = {
-            normalTexture = "skins/checkbox_normal.png",
-            selectedTexture = "skins/checkbox_selected.png",
-            disabledTexture = "skins/checkbox_normal.png",
-            fontName = "VL-PGothic.ttf",
-            textSize = 20,
-            textColor = {1, 1, 1, 1},
-            textDisabledColor = {0.5, 0.5, 0.5, 1},
-            textAlign = {"left", "center"},
-        },
-        Joystick = {
-            baseTexture = "skins/joystick_base.png",
-            knobTexture = "skins/joystick_knob.png",
-        },
-        Slider = {
-            backgroundTexture = "skins/slider_background.9.png",
-            progressTexture = "skins/slider_progress.9.png",
-            thumbTexture = "skins/slider_thumb.png",
-        },
-        Panel = {
-            backgroundTexture = "skins/panel.9.png",
-        },
-        TextBox = {
-            backgroundTexture = "skins/panel.9.png",
-            fontName = "VL-PGothic.ttf",
-            textSize = 18,
-            textColor = {1, 1, 1, 1},
-            textAlign = {"left", "top"},
-        },
-        TextInput = {
-            backgroundTexture = "skins/textinput_normal.9.png",
-            focusTexture = "skins/textinput_focus.9.png",
-            fontName = "VL-PGothic.ttf",
-            textSize = 20,
-            textColor = {0, 0, 0, 1},
-            textAlign = {"left", "center"},
-        },
-        MsgBox = {
-            backgroundTexture = "skins/panel.9.png",
-            pauseTexture = "skins/msgbox_pause.png",
-            fontName = "VL-PGothic.ttf",
-            textSize = 18,
-            textColor = {1, 1, 1, 1},
-            textAlign = {"left", "top"},
-            animShowFunction = MsgBox.ANIM_SHOW_FUNCTION,
-            animHideFunction = MsgBox.ANIM_HIDE_FUNCTION,
-        },
-        ListBox = {
-            backgroundTexture = "skins/panel.9.png",
-            rowHeight = 35,
-            listItemFactory = ClassFactory(ListItem),
-        },
-        ListItem = {
-            backgroundTexture = "skins/listitem_background.9.png",
-            backgroundVisible = false,
-            fontName = "VL-PGothic.ttf",
-            textSize = 20,
-            textColor = {1, 1, 1, 1},
-            textAlign = {"left", "top"},
-        },
-        PictureBox = {
-            backgroundTexture = "skins/panel.9.png",
-        },
-    }
-end
 
 ----------------------------------------------------------------------------------------------------
 -- Public functions
@@ -217,14 +133,15 @@ end
 -- This is a class to manage the Theme.
 -- Please get an instance from the widget module.
 ----------------------------------------------------------------------------------------------------
-ThemeMgr = class()
+ThemeMgr = class(EventDispatcher)
 M.ThemeMgr = ThemeMgr
 
 --------------------------------------------------------------------------------
 -- Constructor.
 --------------------------------------------------------------------------------
 function ThemeMgr:init()
-    self.theme = buildTheme()
+    ThemeMgr.__super.init(self)
+    self.theme = nil
 end
 
 --------------------------------------------------------------------------------
@@ -251,13 +168,14 @@ end
 -- This is a class to manage the focus of the widget.
 -- Please get an instance from the widget module.
 ----------------------------------------------------------------------------------------------------
-FocusMgr = class()
+FocusMgr = class(EventDispatcher)
 M.FocusMgr = FocusMgr
 
 --------------------------------------------------------------------------------
 -- Constructor.
 --------------------------------------------------------------------------------
 function FocusMgr:init()
+    FocusMgr.__super.init(self)
     self.focusObject = nil
 end
 
@@ -990,6 +908,13 @@ function UIView:onSceneStop(e)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Skin
+-- This class is an image that can be pressed.
+-- It is a simple button.
+----------------------------------------------------------------------------------------------------
+
+
+----------------------------------------------------------------------------------------------------
 -- @type Button
 -- This class is an image that can be pressed.
 -- It is a simple button.
@@ -1120,7 +1045,7 @@ function Button:updateTextLabel()
 end
 
 --------------------------------------------------------------------------------
--- Returns the imageDeck.
+-- Returns the image path.
 -- @return imageDeck
 --------------------------------------------------------------------------------
 function Button:getImagePath()
@@ -1497,28 +1422,13 @@ function ImageButton:_createButtonImage()
 end
 
 --------------------------------------------------------------------------------
--- Deprecated.
---------------------------------------------------------------------------------
-function ImageButton:_createTextLabel()
-    -- Nop
-end
-
---------------------------------------------------------------------------------
 -- Update the imageDeck.
 --------------------------------------------------------------------------------
 function ImageButton:updateButtonImage()
     local imagePath = assert(self:getImagePath())
-    local sheetImage = assert(self:getStyle(ImageButton.STYLE_SHEET_IMAGE))
 
     self._buttonImage:setIndexByName(imagePath)
     self:setSize(self._buttonImage:getSize())
-end
-
---------------------------------------------------------------------------------
--- Deprecated.
---------------------------------------------------------------------------------
-function ImageButton:updateTextLabel()
-    -- Nop
 end
 
 --------------------------------------------------------------------------------
@@ -1527,8 +1437,61 @@ end
 --------------------------------------------------------------------------------
 function ImageButton:setSheetImage(filename)
     self:setStyle(ImageButton.STYLE_SHEET_IMAGE, filename)
+    self._buttonImage:setTextureAtlas(filename .. ".lua", filename .. ".png")
 end
 
+----------------------------------------------------------------------------------------------------
+-- @type SheetButton
+-- This class is an image that can be pressed.
+-- It is a image button not have text
+----------------------------------------------------------------------------------------------------
+SheetButton = class(Button)
+M.SheetButton = SheetButton
+
+--- Style: textureSheets
+SheetButton.STYLE_TEXTURE_SHEETS = "textureSheets"
+
+--------------------------------------------------------------------------------
+-- Initializes the internal variables.
+--------------------------------------------------------------------------------
+function SheetButton:_initInternal()
+    SheetButton.__super._initInternal(self)
+    self._themeName = "SheetButton"
+end
+
+--------------------------------------------------------------------------------
+-- Create the buttonImage.
+--------------------------------------------------------------------------------
+function SheetButton:_createButtonImage()
+    if self._buttonImage then
+        return
+    end
+    
+    local sheetImage = assert(self:getStyle(SheetButton.STYLE_TEXTURE_SHEETS))
+    self._buttonImage = SheetImage(sheetImage .. ".png")
+    self._buttonImage:setTextureAtlas(sheetImage .. ".lua")
+    self:addChild(self._buttonImage)
+end
+
+--------------------------------------------------------------------------------
+-- Update the buttonImage.
+--------------------------------------------------------------------------------
+function SheetButton:updateButtonImage()
+    local imagePath = assert(self:getImagePath())
+
+    self._buttonImage:setIndexByName(imagePath)
+    self:setSize(self._buttonImage:getSize())
+end
+
+--------------------------------------------------------------------------------
+-- Sets the sheet texture's file.
+-- @param sheet texture
+--------------------------------------------------------------------------------
+function SheetButton:setTextureSheets(filename)
+    self:setStyle(SheetButton.STYLE_TEXTURE_SHEETS, filename)
+    self._buttonImage:setTextureAtlas(filename .. ".lua", filename .. ".png")
+    self:updateButtonImage()
+end
 
 ----------------------------------------------------------------------------------------------------
 -- @type CheckBox
@@ -3356,8 +3319,6 @@ function Slider:onTouchCancel(e)
     self._touchDownIdx = nil
     self:doSlide(e.wx)
 end
-
-
 
 -- widget initialize
 M.initialize()
