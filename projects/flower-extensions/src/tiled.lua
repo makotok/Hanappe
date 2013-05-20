@@ -1157,6 +1157,7 @@ function TileLayerRenderer:createRenderer(tileset)
     local spacing, margin = tileset.spacing, tileset.margin
 
     local renderer = TileMapImage(texture, mapWidth, mapHeight, tileWidth, tileHeight, spacing, margin)
+    renderer:setPriority(self:getPriority())
     renderer.tileset = tileset
     self.tilesetToRendererMap[tileset] = renderer
 
@@ -1333,6 +1334,7 @@ function IsometricLayerRenderer:createRenderer(x, y, gid)
 
     -- TODO:Flip, rotation not implemented.
     local renderer = SheetImage(texture)
+    renderer:setPriority(self:getPriority())
     renderer:setIndex(tileNo)
 
     local deck = self.deckCache[tileset]
@@ -1435,6 +1437,7 @@ function TileObjectRenderer:init(tileObject)
     self:setTileSize(tileWidth, tileHeight, spacing, margin)
     self:setIndex(tileset:getTileIndexByGid(self.gid))
     self:setPos(0, -self:getHeight())
+    self:setPriority(self:getPriority())
 end
 
 --------------------------------------------------------------------------------
