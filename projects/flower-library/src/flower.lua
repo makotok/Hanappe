@@ -1790,6 +1790,16 @@ function DisplayObject:getVisible()
 end
 
 --------------------------------------------------------------------------------
+-- Sets the visibility.
+-- TODO:I avoid the bug of display settings MOAIProp.(2013/05/20 last build)
+-- @param value visible
+--------------------------------------------------------------------------------
+function DisplayObject:setVisible(visible)
+    MOAIPropInterface.setVisible(self, visible)
+    self:forceUpdate()
+end
+
+--------------------------------------------------------------------------------
 -- Sets the object's parent, inheriting its color and transform.
 -- @param parent parent
 --------------------------------------------------------------------------------
@@ -2061,7 +2071,7 @@ end
 -- @param value visible
 --------------------------------------------------------------------------------
 function Group:setVisible(value)
-    MOAIPropInterface.setVisible(self, value)
+    DisplayObject.setVisible(self, value)
     
     -- Compatibility
     if not MOAIProp.INHERIT_VISIBLE then

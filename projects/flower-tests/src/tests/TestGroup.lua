@@ -62,6 +62,14 @@ function TestGroup:test3_visible()
     group:setVisible(false)
     assertEquals(group:getVisible(), false)
     assertEquals(prop:getVisible(), false)
+
+    group:setVisible(true)
+    assertEquals(group:getVisible(), true)
+    assertEquals(prop:getVisible(), true)
+
+    prop:setVisible(false)
+    assertEquals(group:getVisible(), true)
+    assertEquals(prop:getVisible(), false)
 end
 
 function TestGroup:test4_layer()

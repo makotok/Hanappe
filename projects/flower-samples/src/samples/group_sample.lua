@@ -32,6 +32,12 @@ function onCreate(e)
     image3:setPos(100, 100)
     group1:addChild(image3)
     group1:removeChild(image3)
+    
+    -- image4
+    image4 = flower.Image("cathead.png")
+    image4:setPos(120, 120)
+    image4:setVisible(false)
+    group2:addChild(image4)
 end
 
 function onStart(e)
@@ -42,5 +48,8 @@ function onStart(e)
 
         local action2 = group1:moveRot(0, 0, 360, 3)
         MOAICoroutine.blockOnAction(action2)
+        
+        group2:setVisible(false)
+        --group2:forceUpdate()
     end)
 end
