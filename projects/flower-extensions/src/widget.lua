@@ -344,6 +344,8 @@ function UIComponent:init(params)
     self:setProperties(params)
     self:updateDisplay()
     self:setPivToCenter()
+    
+    self._initialized = true
 end
 
 --------------------------------------------------------------------------------
@@ -353,6 +355,7 @@ end
 function UIComponent:_initInternal()
     self.isUIComponent = true
     
+    self._initialized = false
     self._enabled = true
     self._focusEnabled = true
     self._theme = nil
@@ -693,7 +696,6 @@ end
 
 --------------------------------------------------------------------------------
 -- This event handler is called when touch.
--- TODO:I should do in TouchHandler.
 -- @param e Touch Event
 --------------------------------------------------------------------------------
 function UIComponent:onTouchCommon(e)
@@ -810,7 +812,10 @@ end
 
 --------------------------------------------------------------------------------
 -- Change the size of the viewport.
--- TODO:There is room for consideration.
+-- @param screenX X of the Screen.
+-- @param screenY Y of the Screen.
+-- @param screenWidth Width of the Screen.
+-- @param screenHeight Height of the Screen.
 --------------------------------------------------------------------------------
 function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
     local viewScale = flower.viewScale
@@ -908,13 +913,6 @@ function UIView:onSceneStop(e)
 end
 
 ----------------------------------------------------------------------------------------------------
--- @type Skin
--- This class is an image that can be pressed.
--- It is a simple button.
-----------------------------------------------------------------------------------------------------
-
-
-----------------------------------------------------------------------------------------------------
 -- @type Button
 -- This class is an image that can be pressed.
 -- It is a simple button.
@@ -937,11 +935,14 @@ Button.STYLE_FONT_NAME = "fontName"
 --- Style: textSize
 Button.STYLE_TEXT_SIZE = "textSize"
 
---- Style: textSize
+--- Style: textColor
 Button.STYLE_TEXT_COLOR = "textColor"
 
---- Style: horizotalAlign
+--- Style: textAlign
 Button.STYLE_TEXT_ALIGN = "textAlign"
+
+--- Style: textPadding
+Button.STYLE_TEXT_PADDING = "textPadding"
 
 --------------------------------------------------------------------------------
 -- Initializes the internal variables.
@@ -1064,10 +1065,14 @@ end
 --------------------------------------------------------------------------------
 function Button:getLabelContentRect()
     local buttonImage = self._buttonImage
-    if buttonImage and buttonImage.getContentRect then
-        return buttonImage:getContentRect()
+    local paddingLeft, paddingTop, paddingRight, paddingBottom = self:getTextPadding()
+    if buttonImage.getContentRect then
+        local xMin, yMin, xMax, yMax = buttonImage:getContentRect()
+        return xMin + paddingLeft, yMin + paddingTop, xMax - paddingRight, yMax - paddingBottom
+    else
+        local xMin, yMin, xMax, yMax = 0, 0, buttonImage:getSize()
+        return xMin + paddingLeft, yMin + paddingTop, xMax - paddingRight, yMax - paddingBottom
     end
-    return 0, 0, 0, 0
 end
 
 --------------------------------------------------------------------------------
@@ -1114,6 +1119,9 @@ end
 --------------------------------------------------------------------------------
 function Button:setNormalTexture(texture)
     self:setStyle(Button.STYLE_NORMAL_TEXTURE, texture)
+    if self._initialized then
+        self:updateDisplay()
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1122,6 +1130,9 @@ end
 --------------------------------------------------------------------------------
 function Button:setSelectedTexture(texture)
     self:setStyle(Button.STYLE_SELECTED_TEXTURE, texture)
+    if self._initialized then
+        self:updateDisplay()
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1130,6 +1141,9 @@ end
 --------------------------------------------------------------------------------
 function Button:setDisabledTexture(texture)
     self:setStyle(Button.STYLE_DISABLED_TEXTURE, texture)
+    if self._initialized then
+        self:updateDisplay()
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -1229,7 +1243,7 @@ function Button:getAlignment()
 end
 
 --------------------------------------------------------------------------------
--- Sets the text align.
+-- Sets the text color.
 -- @param red red(0 ... 1)
 -- @param green green(0 ... 1)
 -- @param blue blue(0 ... 1)
@@ -1253,6 +1267,36 @@ end
 --------------------------------------------------------------------------------
 function Button:getTextColor()
     return unpack(self:getStyle(Button.STYLE_TEXT_COLOR))
+end
+
+--------------------------------------------------------------------------------
+-- Sets the text padding.
+-- @param paddingLeft padding left
+-- @param paddingTop padding top
+-- @param paddingRight padding right
+-- @param paddingBottom padding bottom
+--------------------------------------------------------------------------------
+function Button:setTextPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
+    local style = {paddingLeft or 0, paddingTop or 0, paddingRight or 0, paddingBottom or 0}
+    self:setStyle(Button.STYLE_TEXT_PADDING, style)
+    if self._initialized then
+        self:updateTextLabel()
+    end
+end
+
+--------------------------------------------------------------------------------
+-- Returns the text padding.
+-- @return paddingLeft
+-- @return paddingTop
+-- @return paddingRight
+-- @return paddingBottom
+--------------------------------------------------------------------------------
+function Button:getTextPadding()
+    local padding = self:getStyle(Button.STYLE_TEXT_PADDING)
+    if padding then
+        return unpack(padding)
+    end
+    return 0, 0, 0, 0
 end
 
 --------------------------------------------------------------------------------
@@ -1393,14 +1437,10 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type ImageButton
--- This class is an image that can be pressed.
--- It is a image button not have text
+-- This class is an Image that can be pressed.
 ----------------------------------------------------------------------------------------------------
 ImageButton = class(Button)
 M.ImageButton = ImageButton
-
---- Style: sheetImage
-ImageButton.STYLE_SHEET_IMAGE = "sheetImage"
 
 --------------------------------------------------------------------------------
 -- Initializes the internal variables.
@@ -1410,14 +1450,15 @@ function ImageButton:_initInternal()
     self._themeName = "ImageButton"
 end
 
+--------------------------------------------------------------------------------
+-- Create the buttonImage.
+--------------------------------------------------------------------------------
 function ImageButton:_createButtonImage()
     if self._buttonImage then
         return
     end
-    
-    local sheetImage = assert(self:getStyle(ImageButton.STYLE_SHEET_IMAGE))
-    self._buttonImage = SheetImage(sheetImage .. ".png")
-    self._buttonImage:setTextureAtlas(sheetImage .. ".lua")
+    local imagePath = assert(self:getImagePath())
+    self._buttonImage = Image(imagePath)
     self:addChild(self._buttonImage)
 end
 
@@ -1427,23 +1468,13 @@ end
 function ImageButton:updateButtonImage()
     local imagePath = assert(self:getImagePath())
 
-    self._buttonImage:setIndexByName(imagePath)
+    self._buttonImage:setTexture(imagePath)
     self:setSize(self._buttonImage:getSize())
-end
-
---------------------------------------------------------------------------------
--- Sets the sheet texture's file.
--- @param sheet texture
---------------------------------------------------------------------------------
-function ImageButton:setSheetImage(filename)
-    self:setStyle(ImageButton.STYLE_SHEET_IMAGE, filename)
-    self._buttonImage:setTextureAtlas(filename .. ".lua", filename .. ".png")
 end
 
 ----------------------------------------------------------------------------------------------------
 -- @type SheetButton
--- This class is an image that can be pressed.
--- It is a image button not have text
+-- This class is an SheetImage that can be pressed.
 ----------------------------------------------------------------------------------------------------
 SheetButton = class(Button)
 M.SheetButton = SheetButton
@@ -1467,9 +1498,9 @@ function SheetButton:_createButtonImage()
         return
     end
     
-    local sheetImage = assert(self:getStyle(SheetButton.STYLE_TEXTURE_SHEETS))
-    self._buttonImage = SheetImage(sheetImage .. ".png")
-    self._buttonImage:setTextureAtlas(sheetImage .. ".lua")
+    local textureSheets = assert(self:getStyle(SheetButton.STYLE_TEXTURE_SHEETS))
+    self._buttonImage = SheetImage(textureSheets .. ".png")
+    self._buttonImage:setTextureAtlas(textureSheets .. ".lua")
     self:addChild(self._buttonImage)
 end
 
@@ -1497,7 +1528,7 @@ end
 -- @type CheckBox
 -- This class is an checkbox.
 ----------------------------------------------------------------------------------------------------
-CheckBox = class(Button)
+CheckBox = class(ImageButton)
 M.CheckBox = CheckBox
 
 --------------------------------------------------------------------------------
@@ -1507,18 +1538,6 @@ function CheckBox:_initInternal()
     CheckBox.__super._initInternal(self)
     self._themeName = "CheckBox"
     self._toggle = true
-end
-
---------------------------------------------------------------------------------
--- Create the buttonImage.
---------------------------------------------------------------------------------
-function CheckBox:_createButtonImage()
-    if self._buttonImage then
-        return
-    end
-    local imagePath = assert(self:getImagePath())
-    self._buttonImage = Image(imagePath)
-    self:addChild(self._buttonImage)
 end
 
 --------------------------------------------------------------------------------
