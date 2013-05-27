@@ -1034,11 +1034,13 @@ function Button:updateTextLabel()
     end
     
     local textLabel = self._textLabel
+    local text = self:getText()
     local xMin, yMin, xMax, yMax = self:getLabelContentRect()
     local textWidth, textHeight = xMax - xMin, yMax - yMin    
     textLabel:setSize(textWidth, textHeight)
     textLabel:setPos(xMin, yMin)
-    textLabel:setString(self:getText())
+    textLabel:setString(text)
+    textLabel:setReveal(text and #text or 0)
     textLabel:setTextSize(self:getTextSize())
     textLabel:setColor(self:getTextColor())
     textLabel:setAlignment(self:getAlignment())
@@ -1153,6 +1155,7 @@ end
 function Button:setText(text)
     self._text = text
     self._textLabel:setString(text)
+    self._textLabel:setReveal(self._text and #self._text or 0)
 end
 
 --------------------------------------------------------------------------------
