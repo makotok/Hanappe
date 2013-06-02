@@ -40,13 +40,13 @@ end
 --------------------------------------------------------------------------------
 function string.hexToRGB( s, returnAsTable )
     if returnAsTable then
-        return  { tonumber ( "0x"..string.sub( s, 2, 3 ) )/255.0,
-                tonumber ( "0x"..string.sub( s, 4, 5 ) )/255.0,
-                tonumber ( "0x"..string.sub( s, 6, 7 ) )/255.0 }
+        return  { tonumber ( string.sub( s, 2, 3 ),16 )/255.0,
+                tonumber ( string.sub( s, 4, 5 ),16 )/255.0,
+                tonumber ( string.sub( s, 6, 7 ),16 )/255.0 }
     else
-        return  tonumber ( "0x"..string.sub( s, 2, 3 ) )/255.0,
-                tonumber ( "0x"..string.sub( s, 4, 5 ) )/255.0,
-                tonumber ( "0x"..string.sub( s, 6, 7 ) )/255.0
+        return  tonumber ( string.sub( s, 2, 3 ),16 )/255.0,
+                tonumber ( string.sub( s, 4, 5 ),16 )/255.0,
+                tonumber ( string.sub( s, 6, 7 ),16 )/255.0
     end
 end
 
