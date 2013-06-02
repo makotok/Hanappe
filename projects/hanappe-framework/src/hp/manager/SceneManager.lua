@@ -239,6 +239,7 @@ function M:openScene(sceneName, params)
     -- create scene
     local scene = sceneFactory.createScene(sceneName, params)
     scene:onCreate(params)
+    scene:setVisible(false)
     addScene(scene)
     nextScene = scene
     
