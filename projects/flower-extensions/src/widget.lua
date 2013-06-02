@@ -2681,6 +2681,7 @@ end
 --------------------------------------------------------------------------------
 function ListBox:setListData(listData)
     self._listData = listData or {}
+    self:_clearListItems()
     self:updateDisplay()
 end
 
