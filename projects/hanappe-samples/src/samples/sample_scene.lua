@@ -24,7 +24,7 @@ local SCENE_ITEMS = {
     {text = "input",            scene = "samples/display/input_sample",         animation = "crossFade"},
     {text = "touch",            scene = "samples/display/touch_sample",         animation = "fade"},
     {text = "animation",        scene = "samples/display/animation_sample",     animation = "fade"},
-    {text = "scene",            scene = "samples/display/scene_sample",         animation = "popIn"},
+    {text = "scene",            scene = "samples/display/scene_sample",         animation = "popIn", backAnimation = "popOut"},
     {text = "moai",             scene = "samples/display/moai_sample",          animation = nil},
     {text = "hittest",          scene = "samples/display/hittest_sample",       animation = "slideToLeft"},
     {text = "drag1",            scene = "samples/display/drag1_sample",         animation = "slideToLeft"},
@@ -70,6 +70,7 @@ function onButtonClick(e)
 
     local target = e.target
     local item = target and target.item or nil
+    selectedItem = item
     if item then
         local childScene = SceneManager:openScene(item.scene, {animation = item.animation})
         createBackButton(childScene)
@@ -77,7 +78,7 @@ function onButtonClick(e)
 end
 
 function onBackButtonClick(e)
-    SceneManager:closeScene({animation = "slideToRight"})
+    SceneManager:closeScene({animation = selectedItem.backAnimation or "slideToRight"})
 
     MOAISim.forceGarbageCollection()
     MOAISim.reportHistogram()
