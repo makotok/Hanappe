@@ -1378,8 +1378,11 @@ function Button:onTouchDown(e)
     self._touchDownIdx = e.idx
     
     if self:isToggle() then
-        self:setSelected(not self:isSelected())
-    else
+        self._buttonImage:setColor(0.8, 0.8, 0.8, 1)
+        return
+    end
+    
+    if not self:isToggle() then
         self:setSelected(true)
     end
 end
@@ -1394,9 +1397,19 @@ function Button:onTouchUp(e)
     end
     self._touchDownIdx = nil
     
-    if not self:isToggle() then
-       self:setSelected(false)
-       self:dispatchEvent(UIEvent.CLICK)
+    if self:isToggle() then
+        if self:inside(e.wx, e.wy, 0) then
+            self:setSelected(not self:isSelected())
+        end
+        self._buttonImage:setColor(1, 1, 1, 1)
+        return    
+    end
+
+    if self:isSelected() then
+        self:setSelected(false)
+        self:dispatchEvent(UIEvent.CLICK)
+    else
+        self:dispatchEvent(UIEvent.CANCEL)
     end
 end
 
@@ -1408,16 +1421,13 @@ function Button:onTouchMove(e)
     if self._touchDownIdx ~= e.idx then
         return
     end
-    if self:inside(e.wx, e.wy, 0) then
+    
+    if self:isToggle() then
         return
     end
     
-    self._touchDownIdx = nil
+    self:setSelected(self:inside(e.wx, e.wy, 0))
     
-    if not self:isToggle() then
-       self:setSelected(false)
-       self:dispatchEvent(UIEvent.CANCEL)
-    end
 end
 
 --------------------------------------------------------------------------------
@@ -1431,10 +1441,13 @@ function Button:onTouchCancel(e)
 
     self._touchDownIdx = nil
     
-    if not self:isToggle() then
-       self:setSelected(false)
-       self:dispatchEvent(UIEvent.CANCEL)
+    if self:isToggle() then
+        self._buttonImage:setColor(1, 1, 1, 1)
+        return
     end
+    
+   self:setSelected(false)
+   self:dispatchEvent(UIEvent.CANCEL)
 end
 
 
