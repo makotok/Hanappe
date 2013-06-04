@@ -2524,8 +2524,8 @@ function SheetImage:setTextureAtlas(atlas, texture)
         boundsDeck = MOAIBoundsDeck.new()
         boundsDeck:reserveBounds(self.sheetSize)
         boundsDeck:reserveIndices(self.sheetSize)
-        deck:setBoundsDeck(boundsDeck)
     end
+    deck:setBoundsDeck(boundsDeck)
 
     for i, frame in ipairs ( atlas.frames ) do
         if not self.grid then
