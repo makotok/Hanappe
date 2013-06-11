@@ -2321,6 +2321,9 @@ function TextInput:onFocusIn(e)
     if MOAIKeyboard then
         MOAIKeyboard.setListener(MOAIKeyboard.EVENT_INPUT, self._onKeyboardInput)
         MOAIKeyboard.setListener(MOAIKeyboard.EVENT_RETURN, self._onKeyboardReturn)
+        if MOAIKeyboard.setText then
+            MOAIKeyboard.setText(self:getText())
+        end
         MOAIKeyboard.showKeyboard(self:getText())
     else
         InputMgr:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
@@ -2335,8 +2338,12 @@ end
 function TextInput:onFocusOut(e)
     TextInput.__super.onFocusOut(self, e)
 
-    if MOAIKeyboard and MOAIKeyboard.hideKeyboard then
-        MOAIKeyboard.hideKeyboard()
+    if MOAIKeyboard then
+        MOAIKeyboard.setListener(MOAIKeyboard.EVENT_INPUT, nil)
+        MOAIKeyboard.setListener(MOAIKeyboard.EVENT_RETURN, nil)
+        if MOAIKeyboard.hideKeyboard then
+            MOAIKeyboard.hideKeyboard()
+        end
     else
         InputMgr:removeEventListener(Event.KEY_DOWN, self.onKeyDown, self)
         InputMgr:removeEventListener(Event.KEY_UP, self.onKeyUp, self)
