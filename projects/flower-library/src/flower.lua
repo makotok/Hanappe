@@ -1928,7 +1928,7 @@ M.Camera = Camera
 -- @param far (option)far plane
 --------------------------------------------------------------------------------
 function Camera:init(ortho, near, far)
-    ortho = ortho ~= nil and ortho or true
+    ortho = ortho == nil and true or ortho
     near = near or 1
     far = far or -1
 
