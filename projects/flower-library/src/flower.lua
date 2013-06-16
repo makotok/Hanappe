@@ -3116,6 +3116,7 @@ end
 Font = class()
 Font.__index = MOAIFontInterface
 Font.__moai_class = MOAIFont
+M.Font = Font
 
 --- Default font
 Font.DEFAULT_FONT = "VL-PGothic.ttf"
