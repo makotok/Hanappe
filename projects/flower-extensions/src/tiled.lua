@@ -623,6 +623,7 @@ function Tileset:loadTexture()
     if not self.texture then
         local path = self.tileMap.resourceDirectory .. self.image
         self.texture = flower.getTexture(path)
+        self.texture:setFilter(MOAITexture.GL_NEAREST)
     end
     return self.texture
 end
