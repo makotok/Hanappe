@@ -20,12 +20,29 @@ MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_WORLD_BOUNDS, 2, 0.75, 0.75, 0.75 
 -- Screen setting
 local screenWidth = MOAIEnvironment.horizontalResolution or 320
 local screenHeight = MOAIEnvironment.verticalResolution or 480
-local screenDpi = MOAIEnvironment.screenDpi or 120
-local viewScale = math.floor(screenDpi / 240) + 1
-print(screenWidth, screenHeight)
+local screenDpi = MOAIEnvironment.screenDpi or 90
+local viewScale = math.max(screenWidth, screenHeight) > 1024 and 2 or 1
+
+-- MOAISim settings
+MOAISim.setHistogramEnabled(true) -- debug
+MOAISim.setStep(1 / 60)
+MOAISim.clearLoopFlags()
+MOAISim.setLoopFlags(MOAISim.SIM_LOOP_ALLOW_BOOST)
+MOAISim.setLoopFlags(MOAISim.SIM_LOOP_LONG_DELAY)
+MOAISim.setBoostThreshold(0)
 
 -- open window
-flower.openWindow("Flower extensions", screenWidth, screenHeight)--, viewScale)
+flower.openWindow("Flower extensions", screenWidth, screenHeight, viewScale)
 
 -- open scene
 flower.openScene("main_scene")
+
+local timer = MOAITimer.new()
+timer:setMode(MOAITimer.LOOP)
+timer:setSpan(5)
+timer:setListener(MOAITimer.EVENT_TIMER_LOOP,
+    function()
+        local fps = MOAISim.getPerformance()
+        print("FPS:", fps)
+    end)
+timer:start()
