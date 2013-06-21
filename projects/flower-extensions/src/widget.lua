@@ -1,13 +1,14 @@
 ----------------------------------------------------------------------------------------------------
--- GUI Library.
+-- Widget Library.
 -- There are still some problems.
--- 
+--
 -- TODO:Require refactoring of some of the classes.
 -- TODO:TextInput does not support multi-byte.
 -- TODO:TextInput can not move the cursor.
 -- TODO:Does not have a scroll bar in ListBox.
--- 
+--
 -- @author Makoto
+-- @release V2.1.2
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -78,7 +79,7 @@ function M.initialize()
 
     M.themeMgr = ThemeMgr()
     M.focusMgr = FocusMgr()
-    
+
     M.initialized = true
 end
 
@@ -114,15 +115,8 @@ function M.getFocusMgr()
 end
 
 ----------------------------------------------------------------------------------------------------
--- @type function showDialog
 -- This class is an dialog or IOS and Android.
--- @param string title, 
--- @param string message, 
--- @param string positive, 
--- @param string neutral, 
--- @param string negative, 
--- @param bool cancelable 
--- @param [, function callback ]
+-- @param ... title, message, positive, neutral, negative, cancelable, callback
 ----------------------------------------------------------------------------------------------------
 function M.showDialog(...)
     MOAIDialog.showDialog(...)
@@ -187,10 +181,10 @@ function FocusMgr:setFocusObject(object)
     if self.focusObject == object then
         return
     end
-    
+
     local oldFocusObject = self.focusObject
     self.focusObject = object
-    
+
     if oldFocusObject then
         oldFocusObject:dispatchEvent(UIEvent.FOCUS_OUT)
     end
@@ -340,11 +334,11 @@ function UIComponent:init(params)
     self:_initInternal()
     self:_initEventListeners()
     self:_createChildren()
-    
+
     self:setProperties(params)
     self:updateDisplay()
     self:setPivToCenter()
-    
+
     self._initialized = true
 end
 
@@ -354,7 +348,7 @@ end
 --------------------------------------------------------------------------------
 function UIComponent:_initInternal()
     self.isUIComponent = true
-    
+
     self._initialized = false
     self._enabled = true
     self._focusEnabled = true
@@ -456,7 +450,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the height.
--- @param width Width
+-- @param height Height
 --------------------------------------------------------------------------------
 function UIComponent:setHeight(height)
     local w, h = self:getSize()
@@ -473,7 +467,7 @@ function UIComponent:setSize(width, height)
     height = height < 0 and 0 or height
 
     local oldWidth, oldHeight =  self:getSize()
-    
+
     if oldWidth ~= width or oldHeight ~= height then
         UIComponent.__super.setSize(self, width, height)
         self:dispatchEvent(UIEvent.RESIZE)
@@ -489,17 +483,17 @@ function UIComponent:setParent(parent)
     if parent == self.parent then
         return
     end
-    
+
     -- remove
     local oldParent = self.parent
     self.parent = parent
     if oldParent and oldParent.isGroup then
         oldParent:removeChild(self)
     end
-    
+
     -- set
     UIComponent.__super.setParent(self, parent)
-    
+
     -- add
     if parent and parent.isGroup then
         parent:addChild(self)
@@ -508,7 +502,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Set the enabled state.
--- @param value enabled
+-- @param enabled enabled
 --------------------------------------------------------------------------------
 function UIComponent:setEnabled(enabled)
     self._enabled = enabled
@@ -531,7 +525,7 @@ function UIComponent:isComponentEnabled()
     if not self._enabled then
         return false
     end
-    
+
     local parent = self.parent
     if parent and parent.isComponentEnabled then
         return parent:isComponentEnabled()
@@ -564,8 +558,8 @@ function UIComponent:isFocus()
 end
 
 --------------------------------------------------------------------------------
--- Sets the focus.
--- @param focus
+-- Sets the focus enabled.
+-- @param focusEnabled focusEnabled
 --------------------------------------------------------------------------------
 function UIComponent:setFocusEnabled(focusEnabled)
     if self._focusEnabled ~= focusEnabled then
@@ -573,7 +567,7 @@ function UIComponent:setFocusEnabled(focusEnabled)
         if not self._focusEnabled then
             self:setFocus(false)
         end
-    end    
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -604,7 +598,7 @@ function UIComponent:getTheme()
     if self._theme then
         return self._theme
     end
-    
+
     if self._themeName then
         local globalTheme = M.getTheme()
         return globalTheme[self._themeName]
@@ -632,12 +626,12 @@ function UIComponent:getStyle(name)
     if self._styles[name] ~= nil then
         return self._styles[name]
     end
-    
+
     local theme = self:getTheme()
     if theme and theme[name] ~= nil then
         return theme[name]
     end
-    
+
     local globalTheme = M.getTheme()
     return globalTheme["common"][name]
 end
@@ -654,13 +648,13 @@ function UIComponent:setEventListener(eventName, func)
     if self[propertyName] == func then
         return
     end
-    
+
     if self[propertyName] then
         self:removeEventListener(eventName, self[propertyName])
     end
 
     self[propertyName] = func
-    
+
     if self[propertyName] then
         self:addEventListener(eventName, self[propertyName])
     end
@@ -786,7 +780,7 @@ function UIView:_initInternal()
     self.isUIView = true
     self._scene = nil
     self._lastPriority = 0
-    
+
     self:_initLayer()
 end
 
@@ -798,7 +792,7 @@ function UIView:_initLayer()
     layer:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
     layer:setTouchEnabled(true)
     layer:addEventListener(Event.TOUCH_DOWN, self.onLayerTouchDown, self, 10)
-    
+
     self:setSize(layer:getSize())
     self:setLayer(layer)
 end
@@ -821,7 +815,7 @@ function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
     local viewScale = flower.viewScale
     local viewWidth = screenWidth / viewScale
     local viewHeight = screenHeight / viewScale
-    
+
     local viewport = MOAIViewport.new()
     viewport:setSize(screenX, screenY, screenX + screenWidth, screenY + screenHeight)
     viewport:setScale(viewWidth, -viewHeight)
@@ -868,12 +862,12 @@ end
 function UIView:setPriority(priority)
     priority = priority or 0
     MOAIPropInterface.setPriority(self, priority)
-    
+
     for i, child in ipairs(self.children) do
         priority = priority + UIView.PRIORITY_MARGIN
         child:setPriority(priority)
     end
-    
+
     self._lastPriority = priority
     return priority
 end
@@ -886,9 +880,9 @@ function UIView:setScene(scene)
     if self.layer.scene then
         self.layer.scene:removeEventListener(Event.STOP, self.onSceneStop, self, -10)
     end
-    
+
     self.layer:setScene(scene)
-    
+
     if self.layer.scene then
         self.layer.scene:addEventListener(Event.STOP, self.onSceneStop, self, -10)
     end
@@ -976,10 +970,10 @@ end
 --------------------------------------------------------------------------------
 function Button:_createChildren()
     Button.__super._createChildren(self)
-    
+
     self:_createButtonImage()
     self:_createTextLabel()
-    
+
     if self._buttonImage then
         self:setSize(self._buttonImage:getSize())
     end
@@ -1032,11 +1026,11 @@ function Button:updateTextLabel()
     if not self._textLabel then
         return
     end
-    
+
     local textLabel = self._textLabel
     local text = self:getText()
     local xMin, yMin, xMax, yMax = self:getLabelContentRect()
-    local textWidth, textHeight = xMax - xMin, yMax - yMin    
+    local textWidth, textHeight = xMax - xMin, yMax - yMin
     textLabel:setSize(textWidth, textHeight)
     textLabel:setPos(xMin, yMin)
     textLabel:setString(text)
@@ -1093,7 +1087,7 @@ function Button:setSelected(selected)
     if self._selected == selected then
         return
     end
-    
+
     self._selected = selected
     self:updateButtonImage()
     self:dispatchEvent(UIEvent.SELECTED_CHANGED, selected)
@@ -1184,8 +1178,8 @@ function Button:getTextSize()
 end
 
 --------------------------------------------------------------------------------
--- Sets the textSize.
--- @param textSize textSize
+-- Sets the fontName.
+-- @param fontName fontName
 --------------------------------------------------------------------------------
 function Button:setFontName(fontName)
     self:setStyle(Button.STYLE_FONT_NAME, font)
@@ -1314,7 +1308,7 @@ end
 -- Set the event listener that is called when the user pressed the button.
 -- @param func button down event handler
 --------------------------------------------------------------------------------
-function Button:setOnDown(func, obj)
+function Button:setOnDown(func)
     self:setEventListener(UIEvent.DOWN, func)
 end
 
@@ -1330,7 +1324,7 @@ end
 -- Set the event listener that is called when selected changed.
 -- @param func selected changed event handler
 --------------------------------------------------------------------------------
-function Button:setOnSelectedChanged(func, obj)
+function Button:setOnSelectedChanged(func)
     self:setEventListener(UIEvent.SELECTED_CHANGED, func)
 end
 
@@ -1341,7 +1335,7 @@ end
 function Button:onEnabledChanged(e)
     Button.__super.onEnabledChanged(self, e)
     self:updateButtonImage()
-    
+
     if not self:isEnabled() and not self:isToggle() then
         self:setSelected(false)
     end
@@ -1376,12 +1370,12 @@ function Button:onTouchDown(e)
         return
     end
     self._touchDownIdx = e.idx
-    
+
     if self:isToggle() then
         self._buttonImage:setColor(0.8, 0.8, 0.8, 1)
         return
     end
-    
+
     if not self:isToggle() then
         self:setSelected(true)
     end
@@ -1396,13 +1390,13 @@ function Button:onTouchUp(e)
         return
     end
     self._touchDownIdx = nil
-    
+
     if self:isToggle() then
         if self:inside(e.wx, e.wy, 0) then
             self:setSelected(not self:isSelected())
         end
         self._buttonImage:setColor(1, 1, 1, 1)
-        return    
+        return
     end
 
     if self:isSelected() then
@@ -1421,13 +1415,13 @@ function Button:onTouchMove(e)
     if self._touchDownIdx ~= e.idx then
         return
     end
-    
+
     if self:isToggle() then
         return
     end
-    
+
     self:setSelected(self:inside(e.wx, e.wy, 0))
-    
+
 end
 
 --------------------------------------------------------------------------------
@@ -1440,14 +1434,14 @@ function Button:onTouchCancel(e)
     end
 
     self._touchDownIdx = nil
-    
+
     if self:isToggle() then
         self._buttonImage:setColor(1, 1, 1, 1)
         return
     end
-    
-   self:setSelected(false)
-   self:dispatchEvent(UIEvent.CANCEL)
+
+    self:setSelected(false)
+    self:dispatchEvent(UIEvent.CANCEL)
 end
 
 
@@ -1513,7 +1507,7 @@ function SheetButton:_createButtonImage()
     if self._buttonImage then
         return
     end
-    
+
     local textureSheets = assert(self:getStyle(SheetButton.STYLE_TEXTURE_SHEETS))
     self._buttonImage = SheetImage(textureSheets .. ".png")
     self._buttonImage:setTextureAtlas(textureSheets .. ".lua")
@@ -1532,7 +1526,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Sets the sheet texture's file.
--- @param sheet texture
+-- @param filename filename
 --------------------------------------------------------------------------------
 function SheetButton:setTextureSheets(filename)
     self:setStyle(SheetButton.STYLE_TEXTURE_SHEETS, filename)
@@ -1581,7 +1575,7 @@ end
 --------------------------------------------------------------------------------
 function CheckBox:updateTextLabel()
     CheckBox.__super.updateTextLabel(self)
-    
+
     self._textLabel:fitWidth()
 end
 
@@ -1652,7 +1646,7 @@ end
 --------------------------------------------------------------------------------
 function Joystick:_createChildren()
     Joystick.__super._createChildren(self)
-    
+
     self._baseImage = Image(self:getStyle(Joystick.STYLE_BASE_TEXTURE))
     self._knobImage = Image(self:getStyle(Joystick.STYLE_KNOB_TEXTURE))
 
@@ -1679,7 +1673,7 @@ function Joystick:updateKnob(x, y)
 
     if oldX ~= newX or oldY ~= newY then
         self._knobImage:setLoc(newX, newY, 0)
-    
+
         local e = self._changedEvent
         e.oldX, e.oldY = self:getKnobInputRate(oldX, oldY)
         e.newX, e.newY = self:getKnobInputRate(newX, newY)
@@ -1735,12 +1729,12 @@ function Joystick:getKnobNewLocForAnalog(x, y)
     local radian = math.atan2(math.abs(ry), math.abs(rx))
     local maxX, maxY =  math.cos(radian) * cx + cx,  math.sin(radian) * cy + cy
     local minX, minY = -math.cos(radian) * cx + cx, -math.sin(radian) * cy + cy
-    
+
     x = x < minX and minX or x
     x = x > maxX and maxX or x
     y = y < minY and minY or y
     y = y > maxY and maxY or y
-    
+
     return x, y
 end
 
@@ -1760,7 +1754,7 @@ function Joystick:getKnobNewLocForDigital(x, y)
     local cRate = self._rangeOfCenterRate
     local cMinX, cMinY = cx - cx * cRate, cy - cy * cRate
     local cMaxX, cMaxY = cx + cx * cRate, cy + cy * cRate
-    
+
     if cMinX < x and x < cMaxX and cMinY < y and y < cMaxY then
         x = cx
         y = cy
@@ -1875,7 +1869,7 @@ function Joystick:onTouchMove(e)
     if e.idx ~= self._touchIndex then
         return
     end
-    
+
     local mx, my = self:worldToModel(e.wx, e.wy, 0)
     self:updateKnob(mx, my)
 end
@@ -1934,7 +1928,7 @@ function Panel:_createBackgroundImage()
     if self._backgroundImage then
         return
     end
-    
+
     local texture = self:getBackgroundTexture()
     self._backgroundImage = NineImage(texture)
     self:addChild(self._backgroundImage)
@@ -1956,7 +1950,7 @@ end
 --------------------------------------------------------------------------------
 function Panel:setBackgroundTexture(texture)
     self:setStyle(Panel.STYLE_BACKGROUND_TEXTURE, texture)
-    self._backgroundImage:setImage(self:getBackgroundTexture())    
+    self._backgroundImage:setImage(self:getBackgroundTexture())
 end
 
 --------------------------------------------------------------------------------
@@ -1968,8 +1962,8 @@ function Panel:getBackgroundTexture()
 end
 
 --------------------------------------------------------------------------------
--- Sets the background texture path.
--- @param texture background texture path
+-- Set the visible of the background.
+-- @param visible visible
 --------------------------------------------------------------------------------
 function Panel:setBackgroundVisible(visible)
     self:setStyle(Panel.STYLE_BACKGROUND_VISIBLE, visible)
@@ -1977,8 +1971,8 @@ function Panel:setBackgroundVisible(visible)
 end
 
 --------------------------------------------------------------------------------
--- Returns the background texture path.
--- @param texture background texture path
+-- Returns the visible of the background.
+-- @return visible
 --------------------------------------------------------------------------------
 function Panel:getBackgroundVisible()
     local visible = self:getStyle(Panel.STYLE_BACKGROUND_VISIBLE)
@@ -2031,7 +2025,7 @@ end
 --------------------------------------------------------------------------------
 function TextBox:_createChildren()
     TextBox.__super._createChildren(self)
-    
+
     self._textLabel = Label(self._text, 100, 30)
     self._textLabel:setWordBreak(MOAITextBox.WORD_BREAK_CHAR)
     self:addChild(self._textLabel)
@@ -2045,7 +2039,7 @@ function TextBox:updateDisplay()
 
     local textLabel = self._textLabel
     local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
-    local textWidth, textHeight = xMax - xMin, yMax - yMin    
+    local textWidth, textHeight = xMax - xMin, yMax - yMin
     textLabel:setSize(textWidth, textHeight)
     textLabel:setPos(xMin, yMin)
     textLabel:setString(self:getText())
@@ -2098,8 +2092,8 @@ function TextBox:getTextSize()
 end
 
 --------------------------------------------------------------------------------
--- Sets the textSize.
--- @param textSize textSize
+-- Sets the fontName.
+-- @param fontName fontName
 --------------------------------------------------------------------------------
 function TextBox:setFontName(fontName)
     self:setStyle(TextBox.STYLE_FONT_NAME, font)
@@ -2192,7 +2186,7 @@ end
 --------------------------------------------------------------------------------
 function TextBox:onResize(e)
     TextBox.__super.onResize(self, e)
-    
+
     local textLabel = self._textLabel
     local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
     local textWidth, textHeight = xMax - xMin, yMax - yMin
@@ -2245,7 +2239,7 @@ function TextInput:_initInternal()
     self._onKeyboardReturn = function()
         self:onKeyboardReturn()
     end
-    
+
 end
 
 --------------------------------------------------------------------------------
@@ -2260,7 +2254,7 @@ end
 --------------------------------------------------------------------------------
 function TextInput:_createChildren()
     TextInput.__super._createChildren(self)
-    
+
     self._textAllow = Rect(1, self:getTextSize())
     self._textAllow:setColor(0, 0, 0, 1)
     self._textAllow:setVisible(false)
@@ -2292,7 +2286,7 @@ function TextInput:drawTextAllow()
     local tWidth, tHeight = textLabel:getSize()
     local textSize = self:getTextSize()
     txMin, tyMin, txMax, tyMax = txMin or 0, tyMin or 0, txMax or 0, tyMax or 0
-    
+
     local textAllow = self._textAllow
     local allowLeft, allowTop = txMax + tLeft, (tHeight - textSize) / 2 + tTop
     textAllow:setSize(1, self:getTextSize())
@@ -2317,7 +2311,7 @@ end
 --------------------------------------------------------------------------------
 function TextInput:onFocusIn(e)
     TextInput.__super.onFocusIn(self, e)
-    
+
     if MOAIKeyboard then
         MOAIKeyboard.setListener(MOAIKeyboard.EVENT_INPUT, self._onKeyboardInput)
         MOAIKeyboard.setListener(MOAIKeyboard.EVENT_RETURN, self._onKeyboardReturn)
@@ -2356,13 +2350,13 @@ end
 --------------------------------------------------------------------------------
 function TextInput:onKeyDown(e)
     local key = e.key
-    
+
     if key == KeyCode.DEL or key == KeyCode.BACKSPACE then
         local text = self:getText()
         text = #text > 0 and text:sub(1, #text - 1) or text
         self:setText(text)
     elseif key == KeyCode.ENTER then
-        -- TODO: LF
+    -- TODO: LF
     else
         self:addText(string.char(key))
     end
@@ -2414,7 +2408,7 @@ MsgBox.STYLE_ANIM_HIDE_FUNCTION = "animHideFunction"
 MsgBox.ANIM_SHOW_FUNCTION = function(self)
     self:setColor(0, 0, 0, 0)
     self:setScl(0.8, 0.8, 1)
-    
+
     local action1 = self:seekColor(1, 1, 1, 1, 0.5)
     local action2 = self:seekScl(1, 1, 1, 0.5)
     MOAICoroutine.blockOnAction(action1)
@@ -2435,7 +2429,7 @@ function MsgBox:_initInternal()
     self._themeName = "MsgBox"
     self._popupShowing = false
     self._spoolingEnabled = true
-    
+
     -- TODO: inherit visibility
     self:setColor(0, 0, 0, 0)
 end
@@ -2456,7 +2450,7 @@ function MsgBox:showPopup()
         return
     end
     self._popupShowing = true
-    
+
     -- text label setting
     self:setText(self._text)
     if self._spoolingEnabled then
@@ -2464,7 +2458,7 @@ function MsgBox:showPopup()
     else
         self._textLabel:revealAll()
     end
-    
+
     -- show animation
     Executors.callOnce(function()
         local showFunc = self:getStyle(MsgBox.STYLE_ANIM_SHOW_FUNCTION)
@@ -2473,7 +2467,7 @@ function MsgBox:showPopup()
         if self._spoolingEnabled then
             self._textLabel:spool()
         end
-        
+
         self:dispatchEvent(UIEvent.MSG_SHOW)
     end)
 end
@@ -2486,11 +2480,11 @@ function MsgBox:hidePopup()
         return
     end
     self._textLabel:stop()
-    
+
     Executors.callOnce(function()
         local hideFunc = self:getStyle(MsgBox.STYLE_ANIM_HIDE_FUNCTION)
         hideFunc(self)
-        
+
         self:dispatchEvent(UIEvent.MSG_HIDE)
         self._popupShowing = false
     end)
@@ -2531,10 +2525,9 @@ end
 
 --------------------------------------------------------------------------------
 -- Turns spooling ON or OFF.
--- If self is currently spooling and enable is false, stop spooling and reveal 
--- entire page. 
--- @param enable Boolean for new state
--- @return none
+-- If self is currently spooling and enable is false, stop spooling and reveal
+-- entire page.
+-- @param enabled Boolean for new state
 -------------------------------------------------------------------------------
 function MsgBox:setSpoolingEnabled(enabled)
     self._spoolingEnabled = enabled
@@ -2634,7 +2627,7 @@ function ListBox:_createListItem(index)
     listItem:setSize(itemWidth, itemHeight)
     listItem:setPos(itemX, itemY)
     listItem:setSelected(index == self._selectedIndex)
-    
+
     return listItem
 end
 
@@ -2667,7 +2660,7 @@ end
 --------------------------------------------------------------------------------
 function ListBox:updateDisplay()
     ListBox.__super.updateDisplay(self)
-    
+
     -- listItems
     local vsp = self:getVerticalScrollPosition()
     local rowCount = self:getRowCount()
@@ -2691,7 +2684,7 @@ function ListBox:updateSize()
     local rowCount = self:getRowCount()
     local rowHeight = self:getRowHeight()
     local pLeft, pTop, pRight, pBottom = self._backgroundImage:getContentPadding()
-    
+
     self:setHeight(rowCount * rowHeight + pTop + pBottom)
 end
 
@@ -2767,19 +2760,19 @@ function ListBox:setSelectedIndex(index)
     if index == self._selectedIndex then
         return
     end
-    
+
     local oldItem = self:getSelectedItem()
     if oldItem then
         oldItem:setSelected(false)
     end
 
     self._selectedIndex = index
-    
+
     local newItem = self:getSelectedItem()
     if newItem then
         newItem:setSelected(true)
     end
-    
+
     local data = newItem and  newItem:getData() or nil
     self:dispatchEvent(UIEvent.ITEM_CHANGED, data)
 end
@@ -2900,7 +2893,7 @@ end
 --------------------------------------------------------------------------------
 function ListBox:setColumnCount(columnCount)
     assert(columnCount >= 1, "columnCount property error!")
-    
+
     self._columnCount = columnCount
     self:updateDisplay()
 end
@@ -2992,9 +2985,9 @@ end
 --------------------------------------------------------------------------------
 function ListBox:onResize(e)
     ListBox.__super.onResize(self, e)
-    
+
     local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
-    local contentWidth, contentHeight = xMax - xMin, yMax - yMin    
+    local contentWidth, contentHeight = xMax - xMin, yMax - yMin
     local rowHeight = self:getRowHeight()
     self._rowCount = math.floor(contentHeight / rowHeight)
     self:updateDisplay()
@@ -3241,7 +3234,7 @@ function Slider:setValue(value)
     if self._currValue == value then
         return
     end
-    
+
     self._currValue = value
     self:updateProgressImage()
     self:dispatchEvent(UIEvent.VALUE_CHANGED, self._currValue)
@@ -3293,13 +3286,13 @@ end
 --------------------------------------------------------------------------------
 -- Down the Slider.
 -- There is no need to call directly to the basic.
--- @param idx Touch index
+-- @param worldX Touch worldX
 --------------------------------------------------------------------------------
 function Slider:doSlide(worldX)
     local width = self:getWidth()
     local left = self:getLeft()
     local modelX = worldX - left
-    
+
     modelX = math.min(modelX, width)
     modelX = math.max(modelX, 0)
     self:setValue(modelX / width)
@@ -3321,7 +3314,7 @@ function Slider:onTouchDown(e)
     if self._touchDownIdx then
         return
     end
-    
+
     self._touchDownIdx = e.idx
     self:doSlide(e.wx)
 end

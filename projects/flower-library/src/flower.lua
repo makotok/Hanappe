@@ -1,12 +1,13 @@
 ----------------------------------------------------------------------------------------------------
 -- Flower library is a lightweight library for Moai SDK.
+-- https://github.com/makotok/Hanappe
 --
 -- MEMO:
--- English documentation has been updated.  Please contact github://Cloven with 
+-- English documentation has been updated.  Please contact github://Cloven with
 -- issues, questions, or problems regarding the documentation.
 --
 -- @author Makoto
--- @release V2.1.1
+-- @release V2.1.2
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -91,9 +92,9 @@ function M.openWindow(title, width, height, scale)
     width = width or M.DEFAULT_SCREEN_WIDTH
     height = height or M.DEFAULT_SCREEN_HEIGHT
     scale = scale or M.DEFAULT_VIEWPORT_SCALE
-    
+
     M.updateDisplaySize(width, height, scale)
-    
+
     Runtime:initialize()
     InputMgr:initialize()
     RenderMgr:initialize()
@@ -115,7 +116,7 @@ function M.updateDisplaySize(width, height, scale)
     M.viewScale = scale or M.viewScale
     M.viewWidth = M.screenWidth / M.viewScale
     M.viewHeight = M.screenHeight / M.viewScale
-    
+
     M.viewport = M.viewport or MOAIViewport.new()
     M.viewport:setSize(M.screenWidth, M.screenHeight)
     M.viewport:setScale(M.viewWidth, -M.viewHeight)
@@ -211,7 +212,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Executes a function in a MOAICoroutine.
--- This variant of the function family will run the func immediately 
+-- This variant of the function family will run the func immediately
 -- upon the next coroutine.yield().
 -- @param func function object
 -- @param ... (option)function arguments
@@ -222,7 +223,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type class
--- 
+--
 -- This implements object-oriented style classes in Lua, including multiple inheritance.
 -- This particular variation of class implementation copies the base class
 -- functions into this class, which improves speed over other implementations
@@ -235,7 +236,7 @@ setmetatable(class, class)
 M.class = class
 
 --------------------------------------------------------------------------------
--- This allows you to define a class by calling 'class' as a function, 
+-- This allows you to define a class by calling 'class' as a function,
 -- specifying the superclasses as a list.  For example:
 -- mynewclass = class(superclass1, superclass2)
 -- @param ... Base class list.
@@ -261,11 +262,11 @@ end
 --------------------------------------------------------------------------------
 function class:__new(...)
     local obj = self:__object_factory()
-    
+
     if obj.init then
         obj:init(...)
     end
-    
+
     return obj
 end
 
@@ -275,21 +276,21 @@ end
 --------------------------------------------------------------------------------
 function class:__object_factory()
     local moai_class = self.__moai_class
-    
+
     if moai_class then
         local obj = moai_class.new()
         obj.__class = self
         obj:setInterface(self)
         return obj
     end
-    
+
     local obj = {__index = self, __class = self}
     return setmetatable(obj, obj)
 end
 
 ----------------------------------------------------------------------------------------------------
 -- @type table
--- 
+--
 -- The next group of functions extends the default lua table implementation
 -- to include some additional useful methods.
 ----------------------------------------------------------------------------------------------------
@@ -399,7 +400,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type math
--- 
+--
 -- This set of functions extends the native lua 'math' function set with
 -- additional useful methods.
 ----------------------------------------------------------------------------------------------------
@@ -445,7 +446,7 @@ end
 function math.distance( x0, y0, x1, y1 )
     if not x1 then x1 = 0 end
     if not y1 then y1 = 0 end
-    
+
     local dX = x1 - x0
     local dY = y1 - y0
     local dist = math.sqrt((dX * dX) + (dY * dY))
@@ -453,8 +454,8 @@ function math.distance( x0, y0, x1, y1 )
 end
 
 --------------------------------------------------------------------------------
--- Get the normal vector 
--- @param x 
+-- Get the normal vector
+-- @param x
 -- @param y
 -- @return x/d, y/d
 --------------------------------------------------------------------------------
@@ -465,7 +466,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Executors
--- 
+--
 -- This is a utility class for asynchronous (coroutine-style) execution.
 ----------------------------------------------------------------------------------------------------
 Executors = {}
@@ -482,14 +483,14 @@ function Executors.callLoop(func, ...)
     local thread = MOAICoroutine.new()
     local args = {...}
     thread:run(
-        function()
-            while true do
-                if func(unpack(args)) then
-                    break
-                end
-                coroutine.yield()
+    function()
+        while true do
+            if func(unpack(args)) then
+                break
             end
+            coroutine.yield()
         end
+    end
     )
     return thread
 end
@@ -517,13 +518,13 @@ function Executors.callLaterFrame(frame, func, ...)
     local args = {...}
     local count = 0
     thread:run(
-        function()
-            while count < frame do
-                count = count + 1
-                coroutine.yield()
-            end
-            func(unpack(args))
+    function()
+        while count < frame do
+            count = count + 1
+            coroutine.yield()
         end
+        func(unpack(args))
+    end
     )
     return thread
 end
@@ -563,7 +564,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Resources
--- 
+--
 -- A resource management system that caches loaded resources to maximize performance.
 ----------------------------------------------------------------------------------------------------
 Resources = {}
@@ -588,7 +589,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Returns the filePath from fileName.
--- @param fileName 
+-- @param fileName
 -- @return file path
 --------------------------------------------------------------------------------
 function Resources.getResourceFilePath(fileName)
@@ -614,7 +615,7 @@ function Resources.getTexture(path)
     if type(path) == "userdata" then
         return path
     end
-    
+
     local cache = Resources.textureCache
     local filepath = Resources.getResourceFilePath(path)
     if cache[filepath] == nil then
@@ -636,7 +637,7 @@ function Resources.getFont(path, charcodes, points, dpi)
     if type(path) == "userdata" then
         return path
     end
-    
+
     local cache = Resources.fontCache
     path = path or Font.DEFAULT_FONT
     path = Resources.getResourceFilePath(path)
@@ -653,7 +654,7 @@ function Resources.getFont(path, charcodes, points, dpi)
 end
 
 --------------------------------------------------------------------------------
--- Reads TexturePacker output files (or obtains the result from its cache) 
+-- Reads TexturePacker output files (or obtains the result from its cache)
 -- and returns the texture atlas.
 -- @param luaFilePath TexturePacker lua file path
 -- @param texture (option)Path of the texture or Texture instance
@@ -721,7 +722,7 @@ function Resources.createNineImageDeck(fileName)
 
     local image = MOAIImage.new()
     image:load(filePath)
-    
+
     local imageWidth, imageHeight = image:getSize()
     local displayWidth, displayHeight = imageWidth - 2, imageHeight - 2
     local stretchRows = Resources.createStretchRowsOrColumns(image, true)
@@ -742,14 +743,14 @@ function Resources.createNineImageDeck(fileName)
     deck:setUVRect(1, unpack(uvRect))
     deck:reserveRows(#stretchRows)
     deck:reserveColumns(#stretchColumns)
-    
+
     for i, row in ipairs(stretchRows) do
         deck:setRow(i, row.weight, row.stretch)
     end
     for i, column in ipairs(stretchColumns) do
         deck:setColumn(i, column.weight, column.stretch)
     end
-    
+
     return deck
 end
 
@@ -759,11 +760,11 @@ function Resources.createStretchRowsOrColumns(image, isRow)
     local targetSize = isRow and imageHeight or imageWidth
     local stretchSize = 0
     local pr, pg, pb, pa = image:getRGBA(0, 1)
-    
+
     for i = 1, targetSize - 2 do
         local r, g, b, a = image:getRGBA(isRow and 0 or i, isRow and i or 0)
         stretchSize = stretchSize + 1
-        
+
         if pa ~= a then
             table.insert(stretchs, {weight = stretchSize / (targetSize - 2), stretch = pa > 0})
             pa, stretchSize = a, 0
@@ -772,7 +773,7 @@ function Resources.createStretchRowsOrColumns(image, isRow)
     if stretchSize > 0 then
         table.insert(stretchs, {weight = stretchSize / (targetSize - 2), stretch = pa > 0})
     end
-    
+
     return stretchs
 end
 
@@ -782,7 +783,7 @@ function Resources.getNineImageContentPadding(image)
     local paddingTop = 0
     local paddingRight = 0
     local paddingBottom = 0
-    
+
     for x = 0, imageWidth - 2 do
         local r, g, b, a = image:getRGBA(x + 1, imageHeight - 1)
         if a > 0 then
@@ -811,7 +812,7 @@ function Resources.getNineImageContentPadding(image)
             break
         end
     end
-    
+
     return {paddingLeft, paddingTop, paddingRight, paddingBottom}
 end
 
@@ -896,7 +897,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type ClassFactory
--- 
+--
 -- Factory that creates an instance of the Class.
 ----------------------------------------------------------------------------------------------------
 ClassFactory = class()
@@ -934,7 +935,7 @@ function ClassFactory:copyPropertiesToObject(properties, obj, fieldAccess)
     for k, v in pairs(properties) do
         local setterName = "set" .. k:sub(1, 1):upper() .. (#k > 1 and k:sub(2) or "")
         local setter = obj[setterName]
-        
+
         if not fieldAccess and setter then
             setter(obj, v)
         else
@@ -946,9 +947,9 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Event
--- 
+--
 -- A class for events, which are communicated to, and handled by, event handlers
--- Holds the data of the Event. 
+-- Holds the data of the Event.
 ----------------------------------------------------------------------------------------------------
 Event = class()
 M.Event = Event
@@ -987,7 +988,7 @@ function Event:init(eventType)
 end
 
 --------------------------------------------------------------------------------
--- INTERNAL USE ONLY -- Sets the event listener via EventDispatcher. 
+-- INTERNAL USE ONLY -- Sets the event listener via EventDispatcher.
 --------------------------------------------------------------------------------
 function Event:setListener(callback, source)
     self.callback = callback
@@ -1003,7 +1004,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type EventListener
--- 
+--
 -- A virtual superclass for EventListeners.
 -- Classes which inherit from this class become able to receive events.
 -- Currently intended for internal use only.
@@ -1039,7 +1040,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type EventDispatcher
--- 
+--
 -- This class is responsible for event notifications.
 ----------------------------------------------------------------------------------------------------
 EventDispatcher = class()
@@ -1056,8 +1057,8 @@ function EventDispatcher:init()
 end
 
 --------------------------------------------------------------------------------
--- Adds an event listener. 
--- will now catch the events that are sent in the dispatchEvent. 
+-- Adds an event listener.
+-- will now catch the events that are sent in the dispatchEvent.
 -- @param eventType Target event type.
 -- @param callback The callback function.
 -- @param source (option)The first argument passed to the callback function.
@@ -1098,9 +1099,9 @@ end
 function EventDispatcher:removeEventListener(eventType, callback, source)
     assert(eventType)
     assert(callback)
-    
+
     local listeners = self.eventListenersMap[eventType] or {}
-    
+
     for i, listener in ipairs(listeners) do
         if listener.type == eventType and listener.callback == callback and listener.source == source then
             table.remove(listeners, i)
@@ -1119,16 +1120,16 @@ end
 --------------------------------------------------------------------------------
 function EventDispatcher:hasEventListener(eventType, callback, source)
     assert(eventType)
-    
+
     local listeners = self.eventListenersMap[eventType]
     if not listeners or #listeners == 0 then
         return false
     end
-    
+
     if callback == nil and source == nil then
         return true
     end
-    
+
     for i, listener in ipairs(listeners) do
         if listener.callback == callback and listener.source == source then
             return true
@@ -1148,7 +1149,7 @@ function EventDispatcher:dispatchEvent(event, data)
         event = EventDispatcher.EVENT_CACHE[eventName] or Event(eventName)
         EventDispatcher.EVENT_CACHE[eventName] = nil
     end
-    
+
     assert(event.type)
 
     event.stopFlag = false
@@ -1156,9 +1157,9 @@ function EventDispatcher:dispatchEvent(event, data)
     if data ~= nil then
         event.data = data
     end
-    
+
     local listeners = self.eventListenersMap[event.type] or {}
-    
+
     for key, obj in ipairs(listeners) do
         if obj.type == event.type then
             event:setListener(obj.callback, obj.source)
@@ -1168,7 +1169,7 @@ function EventDispatcher:dispatchEvent(event, data)
             end
         end
     end
-    
+
     if eventName then
         EventDispatcher.EVENT_CACHE[eventName] = event
     end
@@ -1183,7 +1184,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Runtime
--- 
+--
 -- This is a utility class which starts immediately upon library load
 -- and acts as the single handler for ENTER_FRAME events (which occur
 -- whenever Moai yields control to the Lua subsystem on each frame).
@@ -1215,7 +1216,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type InputMgr
--- 
+--
 -- This singleton class manages all input events (touch, key, cursor).
 ----------------------------------------------------------------------------------------------------
 InputMgr = EventDispatcher()
@@ -1252,35 +1253,35 @@ function InputMgr:initialize()
         event.x = x
         event.y = y
         event.tapCount = tapCount
-    
+
         self:dispatchEvent(event)
     end
-    
+
     -- Pointer Handler
     local onPointer = function(x, y)
         self.pointer.x = x
         self.pointer.y = y
-    
+
         if self.pointer.down then
             onTouch(MOAITouchSensor.TOUCH_MOVE, 1, x, y, 1)
         end
     end
-    
+
     -- Click Handler
     local onClick = function(down)
         self.pointer.down = down
         local eventType = down and MOAITouchSensor.TOUCH_DOWN or MOAITouchSensor.TOUCH_UP
-        
+
         onTouch(eventType, 1, self.pointer.x, self.pointer.y, 1)
     end
-    
+
     -- Keyboard Handler
     local onKeyboard = function(key, down)
         local event = InputMgr.KEYBOARD_EVENT
         event.type = down and Event.KEY_DOWN or Event.KEY_UP
         event.key = key
         event.down = down
-    
+
         self:dispatchEvent(event)
     end
 
@@ -1311,7 +1312,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type RenderMgr
--- 
+--
 -- This is a singleton class that manages the rendering object.
 ----------------------------------------------------------------------------------------------------
 RenderMgr = EventDispatcher()
@@ -1377,7 +1378,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type SceneMgr
--- 
+--
 -- This is a singleton class to manage the scene object.
 ----------------------------------------------------------------------------------------------------
 SceneMgr = EventDispatcher()
@@ -1406,7 +1407,7 @@ function SceneMgr:initialize()
     InputMgr:addEventListener(Event.TOUCH_CANCEL, self.onTouch, self)
     Runtime:addEventListener(Event.ENTER_FRAME, self.onEnterFrame, self)
     RenderMgr:addChild(self)
-    
+
     self.sceneFactory = self.sceneFactory or ClassFactory(Scene)
 end
 
@@ -1449,35 +1450,35 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
         return
     end
     self.transitioning = true
-    
+
     -- stop
     if self.currentScene then
         self.currentScene:stop(params)
     end
-    
+
     -- create next scene
     self.nextScene = self:createScene(sceneName, params)
     self.nextScene:open(params)
-    
+
     -- scene animation
     Executors.callOnce(
-        function()
-            local animation = self:getSceneAnimationByName(params.animation)
-            animation(self.currentScene or Scene(), self.nextScene, params)
-            
-            if self.currentScene and currentCloseFlag then
-                self.currentScene:close(params)
-            end
-            
-            self.currentScene = self.nextScene
-            self.nextScene = nil
-            self.transitioning = false
-            self.currentScene:start(params)
-            
-            self:dispatchEvent(Event.OPEN_COMPLETE)
+    function()
+        local animation = self:getSceneAnimationByName(params.animation)
+        animation(self.currentScene or Scene(), self.nextScene, params)
+
+        if self.currentScene and currentCloseFlag then
+            self.currentScene:close(params)
         end
+
+        self.currentScene = self.nextScene
+        self.nextScene = nil
+        self.transitioning = false
+        self.currentScene:start(params)
+
+        self:dispatchEvent(Event.OPEN_COMPLETE)
+    end
     )
-    
+
     return self.nextScene
 end
 
@@ -1501,13 +1502,13 @@ function SceneMgr:closeScene(params)
         return
     end
     self.transitioning = true
-    
+
     -- set next scene
     local backSceneName = params.backScene
     local backSceneCount = params.backSceneCount or 1
     self.nextScene = backSceneName and assert(self:getSceneByName(backSceneName)) or self.scenes[#self.scenes - backSceneCount]
     self.nextSceneIndex = table.indexOf(self.scenes, self.nextScene)
-    
+
     -- set closing scenes
     self.closingSceneSize = #self.scenes - self.nextSceneIndex
     self.closingSceneGroup = Scene()
@@ -1515,35 +1516,35 @@ function SceneMgr:closeScene(params)
         local scene = self.scenes[#self.scenes - i]
         self.closingSceneGroup:addChild(scene)
     end
-    
+
     -- stop current scene
     self.currentScene:stop(params)
 
     Executors.callOnce(
-        function()
-            local animation = self:getSceneAnimationByName(params.animation)
-            animation(self.closingSceneGroup, self.nextScene or Scene(), params) 
-            
-            -- close scens
-            for i, scene in ipairs(self.closingSceneGroup.children) do
-                scene:close(params)
-            end
-            
-            self.closingSceneGroup = nil
-            self.closingSceneSize = nil
-            self.currentScene = self.nextScene
-            self.nextScene = nil
-            self.transitioning = false
+    function()
+        local animation = self:getSceneAnimationByName(params.animation)
+        animation(self.closingSceneGroup, self.nextScene or Scene(), params)
 
-            if self.currentScene then
-                self.currentScene:start(params)
-            end
-
-            self:dispatchEvent(Event.CLOSE_COMPLETE)
+        -- close scens
+        for i, scene in ipairs(self.closingSceneGroup.children) do
+            scene:close(params)
         end
+
+        self.closingSceneGroup = nil
+        self.closingSceneSize = nil
+        self.currentScene = self.nextScene
+        self.nextScene = nil
+        self.transitioning = false
+
+        if self.currentScene then
+            self.currentScene:start(params)
+        end
+
+        self:dispatchEvent(Event.CLOSE_COMPLETE)
+    end
     )
-    
-    return true    
+
+    return true
 end
 
 --------------------------------------------------------------------------------
@@ -1640,7 +1641,7 @@ function SceneMgr:onEnterFrame(e)
     if not self.sceneUpdateEnabled then
         return
     end
-    
+
     for i, scene in ipairs(self.scenes) do
         if scene.sceneUpdateEnabled then
             scene:dispatchEvent(Event.UPDATE)
@@ -1650,7 +1651,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type DisplayObject
--- 
+--
 -- The base class of the display object, adding several useful methods.
 ----------------------------------------------------------------------------------------------------
 DisplayObject = class(EventDispatcher)
@@ -1700,7 +1701,7 @@ function DisplayObject:setPos(left, top)
     local xMin, yMin, zMin, xMax, yMax, zMax = self:getBounds()
     xMin = math.min(xMin or 0, xMax or 0)
     yMin = math.min(yMin or 0, yMax or 0)
-    
+
     local pivX, pivY, pivZ = self:getPiv()
     local locX, locY, locZ = self:getLoc()
     self:setLoc(left + pivX - xMin, top + pivY - yMin, locZ)
@@ -1715,7 +1716,7 @@ function DisplayObject:getPos()
     local xMin, yMin, zMin, xMax, yMax, zMax = self:getBounds()
     xMin = math.min(xMin or 0, xMax or 0)
     yMin = math.min(yMin or 0, yMax or 0)
-    
+
     local pivX, pivY, pivZ = self:getPiv()
     local locX, locY, locZ = self:getLoc()
     return locX - pivX + xMin, locY - pivY + yMin
@@ -1805,15 +1806,15 @@ end
 --------------------------------------------------------------------------------
 function DisplayObject:setParent(parent)
     self.parent = parent
- 
+
     self:clearAttrLink(MOAIColor.INHERIT_COLOR)
     self:clearAttrLink(MOAITransform.INHERIT_TRANSFORM)
-    
+
     -- Conditions compatibility
     if MOAIProp.INHERIT_VISIBLE then
         self:clearAttrLink(MOAIProp.INHERIT_VISIBLE)
     end
-    
+
     if parent then
         self:setAttrLink(MOAIColor.INHERIT_COLOR, parent, MOAIColor.COLOR_TRAIT)
         self:setAttrLink(MOAITransform.INHERIT_TRANSFORM, parent, MOAITransform.TRANSFORM_TRAIT)
@@ -1847,7 +1848,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Layer
--- 
+--
 -- This is flower's idea of a Layer, which is a superclass of the MOAI concept of Layer.
 ----------------------------------------------------------------------------------------------------
 Layer = class(DisplayObject)
@@ -1864,7 +1865,7 @@ function Layer:init(viewport)
     local partition = MOAIPartition.new()
     self:setPartition(partition)
     self.partition = partition
-    
+
     self:setViewport(viewport or M.viewport)
     self.touchEnabled = false
     self.touchHandler = nil
@@ -1896,7 +1897,7 @@ function Layer:setScene(scene)
     if self.scene then
         self.scene:removeChild(self)
     end
-    
+
     self.scene = scene
 
     if self.scene then
@@ -1913,7 +1914,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Camera
--- 
+--
 -- flower's idea of a Camera, which is a superclass of the Moai Camera.
 ----------------------------------------------------------------------------------------------------
 Camera = class()
@@ -1939,7 +1940,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Group
--- 
+--
 -- A class to manage and control sets of DisplayObjects.
 ----------------------------------------------------------------------------------------------------
 Group = class(DisplayObject)
@@ -1957,7 +1958,7 @@ function Group:init(layer, width, height)
     self.isGroup = true
     self.layer = layer
     self:setSize(width or 0, height or 0)
-    
+
     self:setPivToCenter()
 end
 
@@ -2004,7 +2005,7 @@ function Group:removeChild(child)
         elseif self.layer then
             self.layer:removeProp(child)
         end
-        
+
         return true
     end
     return false
@@ -2072,7 +2073,7 @@ end
 --------------------------------------------------------------------------------
 function Group:setVisible(value)
     DisplayObject.setVisible(self, value)
-    
+
     -- Compatibility
     if not MOAIProp.INHERIT_VISIBLE then
         for i, v in ipairs(self.children) do
@@ -2088,7 +2089,7 @@ end
 --------------------------------------------------------------------------------
 function Group:setPriority(priority)
     MOAIPropInterface.setPriority(self, priority)
-    
+
     for i, v in ipairs(self.children) do
         v:setPriority(priority)
     end
@@ -2096,7 +2097,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Scene
--- 
+--
 -- A scene class, handling display on one or more layers and receiving events from the EventMgr.
 -- Object is controlled by SceneMgr; use that class to manipulate scenes.
 ----------------------------------------------------------------------------------------------------
@@ -2127,21 +2128,21 @@ function Scene:init(sceneName, params)
     self.controller = self:createController(params)
     self.controller.scene = self
     self:initListeners()
-    
+
     self:dispatchEvent(Event.CREATE, params)
 end
 
 --------------------------------------------------------------------------------
--- INTERNAL USE ONLY -- create the scene controller. 
+-- INTERNAL USE ONLY -- create the scene controller.
 --------------------------------------------------------------------------------
 function Scene:createController(params)
     params = params or {}
-    
+
     local sceneController = params.sceneController
     if sceneController then
         return type(sceneController) == "string" and require(sceneController) or sceneController
     end
-    
+
     local sceneName = self.name
     return sceneName and require(sceneName) or {}
 end
@@ -2176,7 +2177,7 @@ function Scene:open(params)
     if self.opened then
         return
     end
-    
+
     self:dispatchEvent(Event.OPEN, params)
     self.opened = true
     SceneMgr:addScene(self)
@@ -2292,7 +2293,7 @@ function SceneAnimations.fade(currentScene, nextScene, params)
 
     MOAICoroutine.blockOnAction(currentScene:seekColor(0, 0, 0, 0, sec, easeType))
     MOAICoroutine.blockOnAction(nextScene:seekColor(1, 1, 1, 1, sec, easeType))
-    
+
     currentScene:setVisible(false)
 end
 
@@ -2303,11 +2304,11 @@ function SceneAnimations.crossFade(currentScene, nextScene, params)
 
     nextScene:setVisible(true)
     nextScene:setColor(0, 0, 0, 0)
-    
+
     local action1 = currentScene:seekColor(0, 0, 0, 0, sec, easeType)
     local action2 = nextScene:seekColor(1, 1, 1, 1, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
-    
+
     currentScene:setVisible(false)
 end
 
@@ -2315,7 +2316,7 @@ end
 function SceneAnimations.popIn(currentScene, nextScene, params)
     local sec = params.second or 0.5
     local easeType = params.easeType
-    
+
     nextScene:setVisible(true)
     nextScene:setScl(0.5, 0.5, 0.5)
     nextScene:setColor(0, 0, 0, 0)
@@ -2343,7 +2344,7 @@ function SceneAnimations.slideLeft(currentScene, nextScene, params)
 
     nextScene:setVisible(true)
     nextScene:setPos(sw, 0)
-    
+
     local action1 = currentScene:moveLoc(-sw, 0, 0, sec, easeType)
     local action2 = nextScene:moveLoc(-sw, 0, 0, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
@@ -2360,11 +2361,11 @@ function SceneAnimations.slideRight(currentScene, nextScene, params)
 
     nextScene:setVisible(true)
     nextScene:setPos(-sw, 0)
-    
+
     local action1 = currentScene:moveLoc(sw, 0, 0, sec, easeType)
     local action2 = nextScene:moveLoc(sw, 0, 0, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
-    
+
     currentScene:setVisible(false)
     nextScene:setPos(0, 0)
 end
@@ -2377,11 +2378,11 @@ function SceneAnimations.slideTop(currentScene, nextScene, params)
 
     nextScene:setVisible(true)
     nextScene:setPos(0, sh)
-    
+
     local action1 = currentScene:moveLoc(0, -sh, 0, sec, easeType)
     local action2 = nextScene:moveLoc(0, -sh, 0, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
-    
+
     currentScene:setVisible(false)
     nextScene:setPos(0, 0)
 end
@@ -2394,7 +2395,7 @@ function SceneAnimations.slideBottom(currentScene, nextScene, params)
 
     nextScene:setVisible(true)
     nextScene:setPos(0, -sh)
-    
+
     local action1 = currentScene:moveLoc(0, sh, 0, sec, easeType)
     local action2 = nextScene:moveLoc(0, sh, 0, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
@@ -2418,7 +2419,7 @@ M.Image = Image
 --------------------------------------------------------------------------------
 function Image:init(texture, width, height)
     DisplayObject.init(self)
-    
+
     texture = Resources.getTexture(texture)
     local tw, th = texture:getSize()
 
@@ -2429,11 +2430,11 @@ function Image:init(texture, width, height)
     deck:setUVRect(0, 0, 1, 1)
     deck:setRect(0, 0, width, height)
     deck:setTexture(texture)
-    
+
     self:setDeck(deck)
     self.deck = deck
     self.texture = texture
-    
+
     self:setPivToCenter()
 end
 
@@ -2460,7 +2461,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type SheetImage
--- 
+--
 -- Class that displays an image from a sheet of images, supporting TexturePacker's format.
 ----------------------------------------------------------------------------------------------------
 SheetImage = class(DisplayObject)
@@ -2474,18 +2475,18 @@ M.SheetImage = SheetImage
 --------------------------------------------------------------------------------
 function SheetImage:init(texture, sizeX, sizeY)
     DisplayObject.init(self)
-    
+
     texture = Resources.getTexture(texture)
 
     local deck = MOAIGfxQuadDeck2D.new()
     deck:setTexture(texture)
-    
+
     self:setDeck(deck)
     self.deck = deck
     self.texture = texture
     self.sheetSize = 0
     self.sheetNames = {}
-    
+
     if sizeX and sizeY then
         self:setSheetSize(sizeX, sizeY)
     end
@@ -2511,14 +2512,14 @@ function SheetImage:setTextureAtlas(atlas, texture)
     end
     self.sheetSize = #atlas.frames
     self.sheetNames = atlas.names
-    
+
     local deck = self.deck
     deck:reserve(self.sheetSize)
     if atlas.texture then
         deck:setTexture(atlas.texture)
         self.texture = atlas.texture
     end
-    
+
     local boundsDeck = nil
     if atlas.useBounds then
         boundsDeck = MOAIBoundsDeck.new()
@@ -2562,7 +2563,7 @@ end
 function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
     spacing = spacing or 0
     margin = margin or 0
-    
+
     local tw, th = self.texture:getSize()
     local tileX = math.floor((tw - margin) / (tileWidth + spacing))
     local tileY = math.floor((th - margin) / (tileHeight + spacing))
@@ -2570,7 +2571,7 @@ function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
     local deck = self.deck
     self.sheetSize = tileX * tileY
     deck:reserve(self.sheetSize)
-    
+
     local i = 1
     for y = 1, tileY do
         for x = 1, tileX do
@@ -2596,7 +2597,7 @@ end
 --------------------------------------------------------------------------------
 function SheetImage:setIndexByName(name)
     if type(name) == "string" then
-        local index = self.sheetNames[name] or self:getIndex()        
+        local index = self.sheetNames[name] or self:getIndex()
         self:setIndex(index)
     elseif type(name) == "number" then
         self:setIndex(index)
@@ -2614,7 +2615,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type MapImage
--- 
+--
 -- Class that loads a tiled map of images (see MOAIGrid).
 ----------------------------------------------------------------------------------------------------
 MapImage = class(SheetImage)
@@ -2632,10 +2633,10 @@ M.MapImage = MapImage
 --------------------------------------------------------------------------------
 function MapImage:init(texture, gridWidth, gridHeight, tileWidth, tileHeight, spacing, margin)
     SheetImage.init(self, texture)
-    
+
     self.grid = MOAIGrid.new()
     self:setGrid(self.grid)
-    
+
     if gridWidth and gridHeight and tileWidth and tileHeight then
         self:setMapSize(gridWidth, gridHeight, tileWidth, tileHeight, spacing, margin)
     end
@@ -2752,7 +2753,7 @@ function MovieClip:setAnimData(name, data)
     anim:setMode(mode)
     anim:setLink(1, curve, self, MOAIProp.ATTR_INDEX )
     anim:setCurve(curve)
-    
+
     self.animTable[name] = anim
 end
 
@@ -2774,7 +2775,7 @@ end
 function MovieClip:playAnim(name)
     local currentAnim = self.currentAnim
     local animTable = self.animTable
-    
+
     if currentAnim and currentAnim:isBusy() then
         currentAnim:stop()
     end
@@ -2816,11 +2817,11 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type NineImage
--- 
+--
 -- This class displays the NinePatch of Android.
 -- The following restrictions exist.
 -- In many cases, to solve by wrapping it in Group class.
--- 
+--
 -- <ol>
 --   <li>setPiv function does not work.</li>
 --   <li>Scale should not be set directly.<li>
@@ -2858,11 +2859,11 @@ function NineImage:setImage(imagePath, width, height)
     else
         self.deck = imagePath
     end
-    
+
     local orgWidth, orgHeight = self:getSize()
     width = width or orgWidth
     height = height or orgHeight
-    
+
     self:setDeck(self.deck)
     self:setSize(width, height)
 end
@@ -2877,7 +2878,7 @@ function NineImage:setSize(width, height)
     local iw, ih = self.deck.displayWidth, self.deck.displayHeight
     local left, top = self:getPos()
     local sclX, sclY, sclZ = width / iw, height / ih, 1
-    
+
     self._scaledWidth = width
     self._scaledHeight = height
     self:setScl(sclX, sclY, sclZ)
@@ -2944,7 +2945,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Label
--- 
+--
 -- Label for text display.
 -- Based on MOAITextBox.
 ----------------------------------------------------------------------------------------------------
@@ -2975,14 +2976,14 @@ Label.DEFAULT_FIT_PADDING = 2
 --------------------------------------------------------------------------------
 function Label:init(text, width, height, font, textSize)
     DisplayObject.init(self)
-    
+
     font = Resources.getFont(font, nil, textSize)
 
     self:setFont(font)
     self:setRect(0, 0, width or 10, height or 10)
     self:setTextSize(textSize or Font.DEFAULT_POINTS)
     self:setString(text)
-    
+
     if not width or not height then
         self:fitSize(#text)
     end
@@ -3040,7 +3041,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Rect
--- 
+--
 -- Class to fill a rectangle. <br>
 -- NOTE: This uses immediate mode drawing and so has a high performance impact when
 -- used on mobile devices.  You may wish to use a 1-pixel high Image instead if you
@@ -3059,17 +3060,17 @@ function Rect:init(width, height)
 
     local deck = MOAIScriptDeck.new()
     deck:setRect(0, 0, width, height)
-    
+
     self:setDeck(deck)
     self.deck = deck
-    
+
     deck:setDrawCallback(
-        function(index, xOff, yOff, xFlip, yFlip)
-            local w, h, d = self:getSize()
-            
-            MOAIGfxDevice.setPenColor(self:getColor())
-            MOAIDraw.fillRect(0, 0, w, h)
-        end
+    function(index, xOff, yOff, xFlip, yFlip)
+        local w, h, d = self:getSize()
+
+        MOAIGfxDevice.setPenColor(self:getColor())
+        MOAIDraw.fillRect(0, 0, w, h)
+    end
     )
 end
 
@@ -3084,7 +3085,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Texture
--- 
+--
 -- Texture class.
 ----------------------------------------------------------------------------------------------------
 Texture = class()
@@ -3110,7 +3111,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Font
--- 
+--
 -- Font class.
 ----------------------------------------------------------------------------------------------------
 Font = class()
@@ -3140,7 +3141,7 @@ function Font:init(path, charcodes, points, dpi)
     self.charcodes = charcodes
     self.points = points
     self.dpi = dpi
-    
+
     if charcodes and points then
         self:preloadGlyphs(charcodes, points, dpi)
     end
@@ -3148,7 +3149,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type TouchHandler
--- 
+--
 -- Class to perform the handling of touch events emitted from a layer.
 ----------------------------------------------------------------------------------------------------
 TouchHandler = class()
@@ -3164,7 +3165,7 @@ TouchHandler.TOUCH_EVENT = Event()
 function TouchHandler:init(layer)
     self.touchLayer = assert(layer)
     self.touchProps = {}
-    
+
     layer:addEventListener(Event.TOUCH_DOWN, self.onTouch, self)
     layer:addEventListener(Event.TOUCH_UP, self.onTouch, self)
     layer:addEventListener(Event.TOUCH_MOVE, self.onTouch, self)
@@ -3179,21 +3180,21 @@ function TouchHandler:onTouch(e)
     if not self.touchLayer.touchEnabled then
         return
     end
-    
+
     -- screen to world location.
     local prop = self:getTouchableProp(e)
     local prop2 = self.touchProps[e.idx]
-    
+
     -- touch down prop
     if e.type == Event.TOUCH_DOWN then
-        prop2 = nil 
+        prop2 = nil
         self.touchProps[e.idx] = prop
     elseif e.type == Event.TOUCH_UP then
         self.touchProps[e.idx] = nil
     elseif e.type == Event.TOUCH_CANCEL then
         self.touchProps[e.idx] = nil
     end
-    
+
     -- touch event
     local e2 = table.copy(e, self.TOUCH_EVENT)
 
@@ -3244,7 +3245,7 @@ end
 --------------------------------------------------------------------------------
 function TouchHandler:dispose()
     local layer = self.touchLayer
-    
+
     layer:removeEventListener(Event.TOUCH_DOWN, self.onTouch, self)
     layer:removeEventListener(Event.TOUCH_UP, self.onTouch, self)
     layer:removeEventListener(Event.TOUCH_MOVE, self.onTouch, self)

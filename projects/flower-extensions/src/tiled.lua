@@ -242,7 +242,7 @@ end
 
 --------------------------------------------------------------------------------
 -- Create a layer on the map from the given data.
--- @param layerDatas layer data
+-- @param layerData layer data
 --------------------------------------------------------------------------------
 function TileMap:createMapLayer(layerData)
     local mapLayer
@@ -363,7 +363,8 @@ end
 --------------------------------------------------------------------------------
 -- Returns the tile property with the specified gid.
 -- @param gid tile gid
--- @return tile property value
+-- @param key key of the properties
+-- @return property value
 --------------------------------------------------------------------------------
 function TileMap:getTileProperty(gid, key)
     local tileset = self:findTilesetByGid(gid)
@@ -695,7 +696,8 @@ end
 --------------------------------------------------------------------------------
 -- Returns the tile property of the specified id.(0 <= id <= tileid max)
 -- @param id tile id (0 <= id <= tileid max)
--- @return tile
+-- @param key key of the properties
+-- @return property value
 --------------------------------------------------------------------------------
 function Tileset:getTileProperty(id, key)
     local tile = self:getTileById(id)
@@ -1317,6 +1319,9 @@ end
 --------------------------------------------------------------------------------
 -- Create the tile renderer.
 -- @param x x position
+-- @param y y position
+-- @param gid gid
+-- @return renderer
 --------------------------------------------------------------------------------
 function IsometricLayerRenderer:createRenderer(x, y, gid)
     if gid == 0 then
