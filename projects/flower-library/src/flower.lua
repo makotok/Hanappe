@@ -3236,6 +3236,9 @@ function TouchHandler:dispatchTouchEvent(e, o)
         if o.dispatchEvent then
             o:dispatchEvent(e)
         end
+        if e.stopFlag then
+            break
+        end
         o = o.parent
     end
 end
