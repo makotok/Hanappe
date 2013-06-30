@@ -56,7 +56,9 @@ This project will extend the Flower Library.
 Please refer to the following.
 It is okay to freely edit the wiki.
 
-[Wiki](https://github.com/makotok/Hanappe/wiki)
+* [Home](https://github.com/makotok/Hanappe/wiki)
+* [Flower](https://github.com/makotok/Hanappe/wiki/Flower-Library)
+* [Hanappe](https://github.com/makotok/Hanappe/wiki/Hanappe-Framework)
 
 ## Branch
 
