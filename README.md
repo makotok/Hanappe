@@ -28,6 +28,7 @@ You are not necessarily required.
 The terminal work as follows.
 
 * Mac OSX 10.8.2
+* iPhone Simulator
 * Windows 7
 * Android 4.1 (Nexus 7)
 
