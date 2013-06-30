@@ -1,5 +1,55 @@
 # Release notes
 
+## Version 2.1.2 (Update: 2013/06/30)
+
+### Test Version
+Moai SDK Version 1.3 Build 160
+
+Moai SDK Release 1.4p0 + [#660](https://github.com/moai/moai-dev/pull/660)
+
+### Flower Library
+
+* Improved behavior of TouchHandler.
+* Improved to be able to set the initial size of the Window.
+* Improved to release the memory of the scene.
+* Improved to be able to automatically resize the Label.(#67)
+* Improved memory usage of the class.(#57)
+* Improved compatibility with multiple versions.
+* Other, minor bug fixes.
+
+####Change how to extend MOAI Class
+
+If you want to inherit the class of MOAI, you need to be careful.
+Please change as follows.
+
+```Lua
+-- Before
+MyClass = class(SuperClass)
+MyClass.__factory = MOAIProp
+
+-- After
+MyClass = class(SuperClass)
+MyClass.__index = MOAIProp.getInterfraceTable()
+MyClass.__moai_class = MOAIProp
+```
+
+### Flower Extensions
+
+* Add support for Tiled's rotate and flip functions.(#65)
+* Add a convenient function to search for TileObject.(#65)
+* Add a new widget.(#62)
+* Add the audio module.
+* Fixed the behavior of the ListBox.
+* Fixed a bug that visible of TileObject does not reflect(#68)
+* Fixed a bug that setGid of Tiled does not work.(#69)
+* Fixed a bug in the drawing order of Tiled.(#71)
+* Improved performance of the Button.(#73)
+* Other, minor bug fixes.
+
+### Hanappe Framework
+
+* Improved the problem that looks moment is a scene in the latest build.
+
 ## Version 2.1.1 (Update: 2013/04/15)
 
 I've implemented around the extension of the Flower.
