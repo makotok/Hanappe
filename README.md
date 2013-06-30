@@ -78,6 +78,7 @@ It was implemented by TangZero.
 Here is a list of games that Hanappe is used.
 
 * [Gem Collapse 2](http://getmoai.com/forums/gem-collapse-2-made-with-moai-t1822/)
+* [Gem Swipe](http://getmoai.com/forums/gem-swipe-by-meyume-t1908/)
 * [Mahjong Skies](http://getmoai.com/forums/mahjong-skies-t1896/)
 
 ## Contact
