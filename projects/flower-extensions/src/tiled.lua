@@ -824,6 +824,17 @@ function TileObject:setLoc(x, y, z)
 end
 
 --------------------------------------------------------------------------------
+-- Adds a position and update render priority.
+-- @param x x-position
+-- @param y y-position
+-- @param z z-position.
+--------------------------------------------------------------------------------
+function TileObject:addLoc(x, y, z)
+    MOAIPropInterface.addLoc(self, x, y, z)
+    self:updatePriority()
+end
+
+--------------------------------------------------------------------------------
 -- Sets a position for isometric.
 -- @param x x-position
 -- @param y y-position
