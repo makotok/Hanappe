@@ -1061,7 +1061,9 @@ function TileSheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
     local tileX = math.floor((tw - margin) / (tileWidth + spacing))
     local tileY = math.floor((th - margin) / (tileHeight + spacing))
 
-    local deck = self.deck
+    local deck = MOAIGfxQuadDeck2D.new()
+    self.deck = deck
+    self:setDeck(deck)
     self.sheetSize = tileX * tileY
     self.reserveSize = self.sheetSize * 2
     deck:reserve(self.reserveSize)
@@ -1297,7 +1299,6 @@ function IsometricLayerRenderer:init(tileLayer)
     self.tileLayer = assert(tileLayer)
     self.tileMap = tileLayer.tileMap
     self.renderers = {}
-    self.deckCache = {}
 
     self:createRenderers()
 end
@@ -1342,14 +1343,7 @@ function IsometricLayerRenderer:createRenderer(x, y, gid)
     local renderer = SheetImage(texture)
     renderer:setPriority(self:getPriority())
     renderer:setIndex(tileNo)
-
-    local deck = self.deckCache[tileset]
-    if not deck then
-        renderer:setTileSize(tileWidth, tileHeight, spacing, margin)
-        deck = renderer.deck
-        self.deckCache[tileset] = deck
-    end
-    renderer:setDeck(deck)
+    renderer:setTileSize(tileWidth, tileHeight, spacing, margin)
 
     local posX = x * (tileMap.tileWidth / 2) - y * (tileMap.tileWidth / 2)
     local posY = x * (tileMap.tileHeight / 2) + y * (tileMap.tileHeight / 2)
