@@ -28,6 +28,7 @@ local Runtime
 local InputMgr
 local RenderMgr
 local SceneMgr
+local DeckMgr
 local DisplayObject
 local Group
 local Scene
@@ -50,10 +51,10 @@ local TouchHandler
 ----------------------------------------------------------------------------------------------------
 
 -- Sensors
-local pointerSensor     = MOAIInputMgr.device.pointer
-local mouseLeftSensor   = MOAIInputMgr.device.mouseLeft
-local touchSensor       = MOAIInputMgr.device.touch
-local keyboardSensor    = MOAIInputMgr.device.keyboard
+local pointerSensor = MOAIInputMgr.device.pointer
+local mouseLeftSensor = MOAIInputMgr.device.mouseLeft
+local touchSensor = MOAIInputMgr.device.touch
+local keyboardSensor = MOAIInputMgr.device.keyboard
 
 -- interfaces
 local MOAIPropInterface = MOAIProp.getInterfaceTable()
@@ -156,16 +157,6 @@ end
 --------------------------------------------------------------------------------
 function M.getTexture(path)
     return Resources.getTexture(path)
-end
-
---------------------------------------------------------------------------------
--- Reads TexturePacker output files and returns a texture atlas.
--- @param luaFilePath TexturePacker lua file path
--- @param texture (option)Path of the texture or Texture instance
--- @return Texture atlas
---------------------------------------------------------------------------------
-function M.getTextureAtlas(luaFilePath, texture)
-    return Resources.getTextureAtlas(luaFilePath, texture)
 end
 
 --------------------------------------------------------------------------------
@@ -651,169 +642,6 @@ function Resources.getFont(path, charcodes, points, dpi)
         cache[uid] = font
     end
     return cache[uid]
-end
-
---------------------------------------------------------------------------------
--- Reads TexturePacker output files (or obtains the result from its cache)
--- and returns the texture atlas.
--- @param luaFilePath TexturePacker lua file path
--- @param texture (option)Path of the texture or Texture instance
--- @return Texture atlas
---------------------------------------------------------------------------------
-function Resources.getTextureAtlas(luaFilePath, texture)
-    local filePath = Resources.getResourceFilePath(luaFilePath)
-    local cache = Resources.atlasCache
-    if cache[filePath] then
-        return cache[filePath]
-    end
-
-    local frames = dofile(filePath).frames
-    local data = {}
-    data.frames = {}
-    data.names = {}
-    data.texture = texture and Resources.getTexture(texture)
-    data.useBounds = false
-
-    for i, frame in ipairs(frames) do
-        data.names[frame.name] = i
-        data.frames[i] = {}
-
-        local uv = frame.uvRect
-        local r = frame.spriteColorRect
-        local b = frame.spriteSourceSize
-        local dataFrame = data.frames[i]
-        if frame.textureRotated then
-            dataFrame.quad = {uv.u0, uv.v0, uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0}
-        else
-            dataFrame.quad = {uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0, uv.u0, uv.v0}
-        end
-        dataFrame.rect = {r.x, r.y, r.x + r.width, r.y + r.height}
-        dataFrame.bounds = {0, 0, 0, b.width, b.height, 0}
-        data.useBounds = data.useBounds or frame.spriteTrimmed
-    end
-    cache[filePath] = data
-    return data
-end
-
---------------------------------------------------------------------------------
--- Returns the Deck to draw NineImage.
--- For caching, you must not change the Deck.
--- @param fileName fileName
--- @return MOAIStretchPatch2D instance
---------------------------------------------------------------------------------
-function Resources.getNineImageDeck(fileName)
-    local filePath = Resources.getResourceFilePath(fileName)
-    local cache = Resources.nineImageDeckCache
-
-    if not cache[filePath] then
-        cache[filePath] = Resources.createNineImageDeck(filePath)
-    end
-
-    return cache[filePath]
-end
-
---------------------------------------------------------------------------------
--- Create the Deck to draw NineImage.
--- @param fileName fileName
--- @return MOAIStretchPatch2D instance
---------------------------------------------------------------------------------
-function Resources.createNineImageDeck(fileName)
-    local filePath = Resources.getResourceFilePath(fileName)
-
-    local image = MOAIImage.new()
-    image:load(filePath)
-
-    local imageWidth, imageHeight = image:getSize()
-    local displayWidth, displayHeight = imageWidth - 2, imageHeight - 2
-    local stretchRows = Resources.createStretchRowsOrColumns(image, true)
-    local stretchColumns = Resources.createStretchRowsOrColumns(image, false)
-    local contentPadding = Resources.getNineImageContentPadding(image)
-    local texture = Resources.getTexture(filePath)
-    local uvRect = {1 / imageWidth, 1 / imageHeight, (imageWidth - 1) / imageWidth, (imageHeight - 1) / imageHeight}
-
-    local deck = MOAIStretchPatch2D.new()
-    deck.imageWidth = imageWidth
-    deck.imageHeight = imageHeight
-    deck.displayWidth = displayWidth
-    deck.displayHeight = displayHeight
-    deck.contentPadding = contentPadding
-    deck:reserveUVRects(1)
-    deck:setTexture(texture)
-    deck:setRect(0, 0, displayWidth, displayHeight)
-    deck:setUVRect(1, unpack(uvRect))
-    deck:reserveRows(#stretchRows)
-    deck:reserveColumns(#stretchColumns)
-
-    for i, row in ipairs(stretchRows) do
-        deck:setRow(i, row.weight, row.stretch)
-    end
-    for i, column in ipairs(stretchColumns) do
-        deck:setColumn(i, column.weight, column.stretch)
-    end
-
-    return deck
-end
-
-function Resources.createStretchRowsOrColumns(image, isRow)
-    local stretchs = {}
-    local imageWidth, imageHeight = image:getSize()
-    local targetSize = isRow and imageHeight or imageWidth
-    local stretchSize = 0
-    local pr, pg, pb, pa = image:getRGBA(0, 1)
-
-    for i = 1, targetSize - 2 do
-        local r, g, b, a = image:getRGBA(isRow and 0 or i, isRow and i or 0)
-        stretchSize = stretchSize + 1
-
-        if pa ~= a then
-            table.insert(stretchs, {weight = stretchSize / (targetSize - 2), stretch = pa > 0})
-            pa, stretchSize = a, 0
-        end
-    end
-    if stretchSize > 0 then
-        table.insert(stretchs, {weight = stretchSize / (targetSize - 2), stretch = pa > 0})
-    end
-
-    return stretchs
-end
-
-function Resources.getNineImageContentPadding(image)
-    local imageWidth, imageHeight = image:getSize()
-    local paddingLeft = 0
-    local paddingTop = 0
-    local paddingRight = 0
-    local paddingBottom = 0
-
-    for x = 0, imageWidth - 2 do
-        local r, g, b, a = image:getRGBA(x + 1, imageHeight - 1)
-        if a > 0 then
-            paddingLeft = x
-            break
-        end
-    end
-    for x = 0, imageWidth - 2 do
-        local r, g, b, a = image:getRGBA(imageWidth - x - 2, imageHeight - 1)
-        if a > 0 then
-            paddingRight = x
-            break
-        end
-    end
-    for y = 0, imageHeight - 2 do
-        local r, g, b, a = image:getRGBA(imageWidth - 1, y + 1)
-        if a > 0 then
-            paddingTop = y
-            break
-        end
-    end
-    for y = 0, imageHeight - 2 do
-        local r, g, b, a = image:getRGBA(imageWidth - 1, imageHeight - y - 2)
-        if a > 0 then
-            paddingBottom = y
-            break
-        end
-    end
-
-    return {paddingLeft, paddingTop, paddingRight, paddingBottom}
 end
 
 --------------------------------------------------------------------------------
@@ -1650,6 +1478,284 @@ function SceneMgr:onEnterFrame(e)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type DeckMgr
+--
+-- This is a singleton class that manages MOAIDeck.
+----------------------------------------------------------------------------------------------------
+DeckMgr = {}
+M.DeckMgr = DeckMgr
+
+-- Deck Caches
+DeckMgr.imageDecks = setmetatable({}, {__mode = "v"})
+DeckMgr.tileImageDecks = setmetatable({}, {__mode = "v"})
+DeckMgr.atlasDecks = setmetatable({}, {__mode = "v"})
+DeckMgr.nineImageDecks = {} -- setmetatable({}, {__mode = "v"})
+
+--------------------------------------------------------------------------------
+-- Return the Deck to be used in the Image.
+-- @param width width
+-- @param height height
+-- @return deck
+--------------------------------------------------------------------------------
+function DeckMgr:getImageDeck(width, height)
+    local key = width .. "$" .. height
+    local cache = DeckMgr.imageDecks
+
+    if not cache[key] then
+        cache[key] = self:createImageDeck(width, height)
+    end
+    return cache[key]
+end
+
+--------------------------------------------------------------------------------
+-- Create the Deck to be used in the Image.
+-- @param width width
+-- @param height height
+-- @return deck
+--------------------------------------------------------------------------------
+function DeckMgr:createImageDeck(width, height)
+    local deck = MOAIGfxQuad2D.new()
+    deck:setUVRect(0, 0, 1, 1)
+    deck:setRect(0, 0, width, height)
+    return deck
+end
+
+--------------------------------------------------------------------------------
+-- Return the Deck to be used in the SheetImage.
+-- @param textureWidth texture width
+-- @param textureHeight texture height
+-- @param tileWidth tile width
+-- @param tileHeight tile height
+-- @param spacing spacing
+-- @param margin margin
+-- @param gridFlag grid flag
+-- @return deck
+--------------------------------------------------------------------------------
+function DeckMgr:getTileImageDeck(textureWidth, textureHeight, tileWidth, tileHeight, spacing, margin, gridFlag)
+    local tw, th = textureWidth, textureHeight
+    local key = tw .. "$" .. th .. "$" .. tileWidth .. "$" .. tileHeight .. "$" .. spacing .. "$" .. margin .. "$" .. tostring(gridFlag)
+    local cache = DeckMgr.tileImageDecks
+
+    if not cache[key] then
+        cache[key] = self:createTileImageDeck(tw, th, tileWidth, tileHeight, spacing, margin, gridFlag)
+    end
+    return cache[key]
+end
+
+--------------------------------------------------------------------------------
+-- Create the Deck to be used in the SheetImage.
+-- @param textureWidth texture width
+-- @param textureHeight texture height
+-- @param tileWidth tile width
+-- @param tileHeight tile height
+-- @param spacing spacing
+-- @param margin margin
+-- @param gridFlag grid flag
+-- @return deck
+--------------------------------------------------------------------------------
+function DeckMgr:createTileImageDeck(textureWidth, textureHeight, tileWidth, tileHeight, spacing, margin, gridFlag)
+    local tw, th = textureWidth, textureHeight
+    local tileX = math.floor((tw - margin) / (tileWidth + spacing))
+    local tileY = math.floor((th - margin) / (tileHeight + spacing))
+
+    local deck = MOAIGfxQuadDeck2D.new()
+    deck.sheetSize = tileX * tileY
+    deck:reserve(deck.sheetSize)
+
+    local i = 1
+    for y = 1, tileY do
+        for x = 1, tileX do
+            local sx = (x - 1) * (tileWidth + spacing) + margin
+            local sy = (y - 1) * (tileHeight + spacing) + margin
+            local ux0 = sx / tw
+            local uy0 = sy / th
+            local ux1 = (sx + tileWidth) / tw
+            local uy1 = (sy + tileHeight) / th
+
+            if not gridFlag then
+                deck:setRect(i, 0, 0, tileWidth, tileHeight)
+            end
+            deck:setUVRect(i, ux0, uy0, ux1, uy1)
+            i = i + 1
+        end
+    end
+
+    return deck
+end
+
+--------------------------------------------------------------------------------
+-- Return the Deck for displaying TextureAtlas.
+-- @param luaFilePath TexturePacker lua file path
+-- @return Texture atlas deck
+--------------------------------------------------------------------------------
+function DeckMgr:getAtlasDeck(luaFilePath)
+    local key = luaFilePath
+    local cache = DeckMgr.atlasDecks
+
+    if not cache[key] then
+        cache[key] = self:createAtlasDeck(luaFilePath)
+    end
+    return cache[key]
+end
+
+--------------------------------------------------------------------------------
+-- Create the Deck for displaying TextureAtlas.
+-- @param luaFilePath TexturePacker lua file path
+-- @return Texture atlas deck
+--------------------------------------------------------------------------------
+function DeckMgr:createAtlasDeck(luaFilePath)
+    local frames = Resources.dofile(luaFilePath).frames
+    local boundsDeck = MOAIBoundsDeck.new()
+    boundsDeck:reserveBounds(#frames)
+    boundsDeck:reserveIndices(#frames)
+
+    local deck = MOAIGfxQuadDeck2D.new()
+    deck:setBoundsDeck(boundsDeck)
+    deck:reserve(#frames)
+    deck.frames = frames
+    deck.names = {}
+
+    for i, frame in ipairs(frames) do
+        local uv = frame.uvRect
+        local r = frame.spriteColorRect
+        local b = frame.spriteSourceSize
+
+        if frame.textureRotated then
+            deck:setUVQuad(i, uv.u0, uv.v0, uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0)
+        else
+            deck:setUVQuad(i, uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0, uv.u0, uv.v0)
+        end
+
+        deck.names[frame.name] = i
+        deck:setRect(i, r.x, r.y, r.x + r.width, r.y + r.height)
+        boundsDeck:setBounds(i, 0, 0, 0, b.width, b.height, 0)
+        boundsDeck:setIndex(i, i)
+    end
+
+    return deck
+end
+
+--------------------------------------------------------------------------------
+-- Returns the Deck to draw NineImage.
+-- For caching, you must not change the Deck.
+-- @param fileName fileName
+-- @return MOAIStretchPatch2D instance
+--------------------------------------------------------------------------------
+function DeckMgr:getNineImageDeck(fileName)
+    local filePath = Resources.getResourceFilePath(fileName)
+    local cache = DeckMgr.nineImageDecks
+
+    if not cache[filePath] then
+        cache[filePath] = self:createNineImageDeck(filePath)
+    end
+    return cache[filePath]
+end
+
+--------------------------------------------------------------------------------
+-- Create the Deck to draw NineImage.
+-- @param fileName fileName
+-- @return MOAIStretchPatch2D instance
+--------------------------------------------------------------------------------
+function DeckMgr:createNineImageDeck(fileName)
+    local filePath = Resources.getResourceFilePath(fileName)
+
+    local image = MOAIImage.new()
+    image:load(filePath)
+
+    local imageWidth, imageHeight = image:getSize()
+    local displayWidth, displayHeight = imageWidth - 2, imageHeight - 2
+    local stretchRows = self:_createStretchRowsOrColumns(image, true)
+    local stretchColumns = self:_createStretchRowsOrColumns(image, false)
+    local contentPadding = self:_getNineImageContentPadding(image)
+    local texture = Resources.getTexture(filePath)
+    local uvRect = {1 / imageWidth, 1 / imageHeight, (imageWidth - 1) / imageWidth, (imageHeight - 1) / imageHeight}
+
+    local deck = MOAIStretchPatch2D.new()
+    deck.imageWidth = imageWidth
+    deck.imageHeight = imageHeight
+    deck.displayWidth = displayWidth
+    deck.displayHeight = displayHeight
+    deck.contentPadding = contentPadding
+    deck:reserveUVRects(1)
+    deck:setTexture(texture)
+    deck:setRect(0, 0, displayWidth, displayHeight)
+    deck:setUVRect(1, unpack(uvRect))
+    deck:reserveRows(#stretchRows)
+    deck:reserveColumns(#stretchColumns)
+
+    for i, row in ipairs(stretchRows) do
+        deck:setRow(i, row.weight, row.stretch)
+    end
+    for i, column in ipairs(stretchColumns) do
+        deck:setColumn(i, column.weight, column.stretch)
+    end
+
+    return deck
+end
+
+function DeckMgr:_createStretchRowsOrColumns(image, isRow)
+    local stretchs = {}
+    local imageWidth, imageHeight = image:getSize()
+    local targetSize = isRow and imageHeight or imageWidth
+    local stretchSize = 0
+    local pr, pg, pb, pa = image:getRGBA(0, 1)
+
+    for i = 1, targetSize - 2 do
+        local r, g, b, a = image:getRGBA(isRow and 0 or i, isRow and i or 0)
+        stretchSize = stretchSize + 1
+
+        if pa ~= a then
+            table.insert(stretchs, {weight = stretchSize / (targetSize - 2), stretch = pa > 0})
+            pa, stretchSize = a, 0
+        end
+    end
+    if stretchSize > 0 then
+        table.insert(stretchs, {weight = stretchSize / (targetSize - 2), stretch = pa > 0})
+    end
+
+    return stretchs
+end
+
+function DeckMgr:_getNineImageContentPadding(image)
+    local imageWidth, imageHeight = image:getSize()
+    local paddingLeft = 0
+    local paddingTop = 0
+    local paddingRight = 0
+    local paddingBottom = 0
+
+    for x = 0, imageWidth - 2 do
+        local r, g, b, a = image:getRGBA(x + 1, imageHeight - 1)
+        if a > 0 then
+            paddingLeft = x
+            break
+        end
+    end
+    for x = 0, imageWidth - 2 do
+        local r, g, b, a = image:getRGBA(imageWidth - x - 2, imageHeight - 1)
+        if a > 0 then
+            paddingRight = x
+            break
+        end
+    end
+    for y = 0, imageHeight - 2 do
+        local r, g, b, a = image:getRGBA(imageWidth - 1, y + 1)
+        if a > 0 then
+            paddingTop = y
+            break
+        end
+    end
+    for y = 0, imageHeight - 2 do
+        local r, g, b, a = image:getRGBA(imageWidth - 1, imageHeight - y - 2)
+        if a > 0 then
+            paddingBottom = y
+            break
+        end
+    end
+
+    return {paddingLeft, paddingTop, paddingRight, paddingBottom}
+end
+
+----------------------------------------------------------------------------------------------------
 -- @type DisplayObject
 --
 -- The base class of the display object, adding several useful methods.
@@ -2421,21 +2527,12 @@ function Image:init(texture, width, height)
     DisplayObject.init(self)
 
     texture = Resources.getTexture(texture)
-    local tw, th = texture:getSize()
+    self:setTexture(texture)
 
-    width = width or tw
-    height = height or th
-
-    local deck = MOAIGfxQuad2D.new()
-    deck:setUVRect(0, 0, 1, 1)
-    deck:setRect(0, 0, width, height)
-    deck:setTexture(texture)
-
-    self:setDeck(deck)
-    self.deck = deck
-    self.texture = texture
-
-    self:setPivToCenter()
+    if width or height then
+        local tw, th = texture:getSize()
+        self:setSize(width or tw, height or th)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -2444,7 +2541,8 @@ end
 -- @param height Height of image.
 --------------------------------------------------------------------------------
 function Image:setSize(width, height)
-    self.deck:setRect(0, 0, width, height)
+    self.deck = DeckMgr:getImageDeck(width, height)
+    self:setDeck(self.deck)
     self:setPivToCenter()
 end
 
@@ -2454,7 +2552,7 @@ end
 --------------------------------------------------------------------------------
 function Image:setTexture(texture)
     self.texture = Resources.getTexture(texture)
-    self.deck:setTexture(self.texture)
+    MOAIPropInterface.setTexture(self, self.texture)
     local tw, th = self.texture:getSize()
     self:setSize(tw, th)
 end
@@ -2477,13 +2575,7 @@ function SheetImage:init(texture, sizeX, sizeY)
     DisplayObject.init(self)
 
     texture = Resources.getTexture(texture)
-
-    local deck = MOAIGfxQuadDeck2D.new()
-    deck:setTexture(texture)
-
-    self:setDeck(deck)
-    self.deck = deck
-    self.texture = texture
+    self:setTexture(texture)
     self.sheetSize = 0
     self.sheetNames = {}
 
@@ -2498,46 +2590,18 @@ end
 --------------------------------------------------------------------------------
 function SheetImage:setTexture(texture)
     self.texture = Resources.getTexture(texture)
-    self.deck:setTexture(self.texture)
+    MOAIPropInterface.setTexture(self, texture)
 end
 
 --------------------------------------------------------------------------------
 -- Parses TexturePacker atlases and sets up the texture as a deck of images in the atlas.
 -- @param atlas Texture atlas
--- @param texture Texture path, or texture
 --------------------------------------------------------------------------------
-function SheetImage:setTextureAtlas(atlas, texture)
-    if type(atlas) == "string" then
-        atlas = Resources.getTextureAtlas(atlas, texture)
-    end
-    self.sheetSize = #atlas.frames
-    self.sheetNames = atlas.names
-
-    local deck = self.deck
-    deck:reserve(self.sheetSize)
-    if atlas.texture then
-        deck:setTexture(atlas.texture)
-        self.texture = atlas.texture
-    end
-
-    local boundsDeck = nil
-    if atlas.useBounds then
-        boundsDeck = MOAIBoundsDeck.new()
-        boundsDeck:reserveBounds(self.sheetSize)
-        boundsDeck:reserveIndices(self.sheetSize)
-    end
-    deck:setBoundsDeck(boundsDeck)
-
-    for i, frame in ipairs ( atlas.frames ) do
-        if not self.grid then
-            deck:setRect(i, unpack(frame.rect))
-        end
-        deck:setUVQuad(i, unpack(frame.quad))
-        if boundsDeck then
-            boundsDeck:setBounds(i, unpack(frame.bounds))
-            boundsDeck:setIndex(i, i)
-        end
-    end
+function SheetImage:setTextureAtlas(atlas)
+    self.deck = DeckMgr:getAtlasDeck(atlas)
+    self:setDeck(self.deck)
+    self.sheetSize = #self.deck.frames
+    self.sheetNames = self.deck.names
 end
 
 --------------------------------------------------------------------------------
@@ -2561,34 +2625,12 @@ end
 -- @param margin (option)Margin of the sheet
 --------------------------------------------------------------------------------
 function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
-    spacing = spacing or 0
-    margin = margin or 0
-
     local tw, th = self.texture:getSize()
-    local tileX = math.floor((tw - margin) / (tileWidth + spacing))
-    local tileY = math.floor((th - margin) / (tileHeight + spacing))
-
-    local deck = self.deck
-    self.sheetSize = tileX * tileY
-    deck:reserve(self.sheetSize)
-
-    local i = 1
-    for y = 1, tileY do
-        for x = 1, tileX do
-            local sx = (x - 1) * (tileWidth + spacing) + margin
-            local sy = (y - 1) * (tileHeight + spacing) + margin
-            local ux0 = sx / tw
-            local uy0 = sy / th
-            local ux1 = (sx + tileWidth) / tw
-            local uy1 = (sy + tileHeight) / th
-
-            if not self.grid then
-                deck:setRect(i, 0, 0, tileWidth, tileHeight)
-            end
-            deck:setUVRect(i, ux0, uy0, ux1, uy1)
-            i = i + 1
-        end
-    end
+    local gridFlag = self.grid and true or false
+    self.deck = DeckMgr:getTileImageDeck(tw, th, tileWidth, tileHeight, spacing or 0, margin or 0, gridFlag)
+    self:setDeck(self.deck)
+    self.sheetSize = self.deck.sheetSize
+    self.sheetNames = {}
 end
 
 --------------------------------------------------------------------------------
@@ -2602,15 +2644,6 @@ function SheetImage:setIndexByName(name)
     elseif type(name) == "number" then
         self:setIndex(index)
     end
-end
-
---------------------------------------------------------------------------------
--- Sets the sheet's image width and height.
--- @param width
--- @param height
---------------------------------------------------------------------------------
-function SheetImage:setSize(width, height)
-    self.deck:setRect(self:getIndex(), 0, 0, width, height)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -2855,7 +2888,7 @@ end
 --------------------------------------------------------------------------------
 function NineImage:setImage(imagePath, width, height)
     if type(imagePath) == "string" then
-        self.deck = Resources.getNineImageDeck(imagePath)
+        self.deck = DeckMgr:getNineImageDeck(imagePath)
     else
         self.deck = imagePath
     end
