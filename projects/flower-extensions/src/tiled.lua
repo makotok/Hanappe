@@ -1073,7 +1073,6 @@ function TileSheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
     local tileY = math.floor((th - margin) / (tileHeight + spacing))
 
     local deck = MOAIGfxQuadDeck2D.new()
-    self.deck = deck
     self:setDeck(deck)
     self.sheetSize = tileX * tileY
     self.reserveSize = self.sheetSize * 2

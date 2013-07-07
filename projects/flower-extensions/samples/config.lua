@@ -47,9 +47,11 @@ timer:setMode(MOAITimer.LOOP)
 timer:setSpan(5)
 timer:setListener(MOAITimer.EVENT_TIMER_LOOP,
     function()
-        local fps = MOAISim.getPerformance()
-        print("FPS:", fps)
+        print("-------------------------------------------")
+        print("FPS:", MOAISim.getPerformance())
         print("Draw:", MOAIRenderMgr.getPerformanceDrawCount())
+        MOAISim.forceGarbageCollection()
+        MOAISim.reportHistogram()
     end)
 timer:start()
 

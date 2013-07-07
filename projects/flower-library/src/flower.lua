@@ -2541,8 +2541,8 @@ end
 -- @param height Height of image.
 --------------------------------------------------------------------------------
 function Image:setSize(width, height)
-    self.deck = DeckMgr:getImageDeck(width, height)
-    self:setDeck(self.deck)
+    local deck = DeckMgr:getImageDeck(width, height)
+    self:setDeck(deck)
     self:setPivToCenter()
 end
 
@@ -2598,10 +2598,10 @@ end
 -- @param atlas Texture atlas
 --------------------------------------------------------------------------------
 function SheetImage:setTextureAtlas(atlas)
-    self.deck = DeckMgr:getAtlasDeck(atlas)
-    self:setDeck(self.deck)
-    self.sheetSize = #self.deck.frames
-    self.sheetNames = self.deck.names
+    local deck = DeckMgr:getAtlasDeck(atlas)
+    self:setDeck(deck)
+    self.sheetSize = #deck.frames
+    self.sheetNames = deck.names
 end
 
 --------------------------------------------------------------------------------
@@ -2627,9 +2627,9 @@ end
 function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
     local tw, th = self.texture:getSize()
     local gridFlag = self.grid and true or false
-    self.deck = DeckMgr:getTileImageDeck(tw, th, tileWidth, tileHeight, spacing or 0, margin or 0, gridFlag)
-    self:setDeck(self.deck)
-    self.sheetSize = self.deck.sheetSize
+    local deck = DeckMgr:getTileImageDeck(tw, th, tileWidth, tileHeight, spacing or 0, margin or 0, gridFlag)
+    self:setDeck(deck)
+    self.sheetSize = deck.sheetSize
     self.sheetNames = {}
 end
 
@@ -2876,7 +2876,7 @@ function NineImage:init(imagePath, width, height)
 
     self:setImage(imagePath, width, height)
     if not width or not height then
-        self:setSize(width or self.deck.displayWidth, height or self.deck.displayHeight)
+        self:setSize(width or self.displayWidth, height or self.displayHeight)
     end
 end
 
@@ -2887,17 +2887,20 @@ end
 -- @param height (option) Height of image.
 --------------------------------------------------------------------------------
 function NineImage:setImage(imagePath, width, height)
-    if type(imagePath) == "string" then
-        self.deck = DeckMgr:getNineImageDeck(imagePath)
-    else
-        self.deck = imagePath
+    local deck = imagePath
+    if type(deck) == "string" then
+        deck = DeckMgr:getNineImageDeck(imagePath)
     end
 
     local orgWidth, orgHeight = self:getSize()
     width = width or orgWidth
     height = height or orgHeight
 
-    self:setDeck(self.deck)
+    self:setDeck(deck)
+    self.displayWidth = deck.displayWidth
+    self.displayHeight = deck.displayHeight
+    self.contentPadding = deck.contentPadding
+    
     self:setSize(width, height)
 end
 
@@ -2908,7 +2911,7 @@ end
 -- @param height Height of image.
 --------------------------------------------------------------------------------
 function NineImage:setSize(width, height)
-    local iw, ih = self.deck.displayWidth, self.deck.displayHeight
+    local iw, ih = self.displayWidth, self.displayHeight
     local left, top = self:getPos()
     local sclX, sclY, sclZ = width / iw, height / ih, 1
 
@@ -2956,7 +2959,7 @@ end
 --------------------------------------------------------------------------------
 function NineImage:getContentRect()
     local width, height = self:getSize()
-    local padding = self.deck.contentPadding
+    local padding = self.contentPadding
     local xMin = padding[1]
     local yMin = padding[2]
     local xMax = width - padding[3]
@@ -2972,7 +2975,7 @@ end
 -- @return paddingBottom
 --------------------------------------------------------------------------------
 function NineImage:getContentPadding()
-    local padding = self.deck.contentPadding
+    local padding = self.contentPadding
     return unpack(padding)
 end
 
