@@ -27,3 +27,18 @@ MOAISim.setBoostThreshold(0)
 -- open scene
 flower.openWindow("Flower samples", screenWidth, screenHeight, viewScale)
 flower.openScene("main_scene")
+
+
+-- Performance measurement.
+local timer = MOAITimer.new()
+timer:setMode(MOAITimer.LOOP)
+timer:setSpan(5)
+timer:setListener(MOAITimer.EVENT_TIMER_LOOP,
+    function()
+        print("-------------------------------------------")
+        print("FPS:", MOAISim.getPerformance())
+        print("Draw:", MOAIRenderMgr.getPerformanceDrawCount())
+        MOAISim.forceGarbageCollection()
+        MOAISim.reportHistogram()
+    end)
+timer:start()
