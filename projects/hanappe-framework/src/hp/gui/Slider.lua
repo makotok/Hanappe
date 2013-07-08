@@ -31,11 +31,11 @@ function M:initInternal()
     self._touching = false
     self._touchIndex = nil
     self._themeName = "Slider"
-	self._beginChangeEvent = Event(M.EVENT_SLIDER_BEGIN)
-	self._changedEvent = Event(M.EVENT_SLIDER_CHANGED)
-	self._endChangeEvent = Event(M.EVENT_SLIDER_END)
-	self._value = 0
-	self._accuracy = 0.1
+    self._beginChangeEvent = Event(M.EVENT_SLIDER_BEGIN)
+    self._changedEvent = Event(M.EVENT_SLIDER_CHANGED)
+    self._endChangeEvent = Event(M.EVENT_SLIDER_END)
+    self._value = 0
+    self._accuracy = 0.1
 end
 
 --------------------------------------------------------------------------------
@@ -44,16 +44,16 @@ end
 function M:createChildren()
     self._background = NinePatch(self:getStyle("bg"))
     self._progress = NinePatch(self:getStyle("progress"))
-	self._thumb = Sprite { texture = self:getStyle("thumb"), left = 0, top = 0 }
-	
+    self._thumb = Sprite { texture = self:getStyle("thumb"), left = 0, top = 0 }
+
     self:addChild(self._background)
-	self:addChild(self._progress)
+    self:addChild(self._progress)
     self:addChild(self._thumb)
 
-	local _,bh = self._background:getSize()
+    local _,bh = self._background:getSize()
     self:setSize(200, bh)
-	
-	self._thumb_width = self._thumb:getWidth()
+
+    self._thumb_width = self._thumb:getWidth()
 end
 
 --------------------------------------------------------------------------------
@@ -70,19 +70,19 @@ function M:updateDisplay()
 
     local thumb = self._thumb
     thumb:setColor(unpack(self:getStyle("color")))
-	thumb:setTexture(self:getStyle("thumb"))
+    thumb:setTexture(self:getStyle("thumb"))
 
-	local thumbLoc = self:_valueToLoc(self._value)
-	thumb:setLoc(thumbLoc, self:getHeight() * 0.5)
-	progress:setSize(thumbLoc + self._thumb_width * 0.5, self:getHeight())
+    local thumbLoc = self:_valueToLoc(self._value)
+    thumb:setLoc(thumbLoc, self:getHeight() * 0.5)
+    progress:setSize(thumbLoc + self._thumb_width * 0.5, self:getHeight())
 end
 
 function M:_valueToLoc(value)
-	return self._thumb_width * 0.5 + (self:getWidth() - self._thumb_width) * value
+    return self._thumb_width * 0.5 + (self:getWidth() - self._thumb_width) * value
 end
 
 function M:_locToValue(x)
-	return (x - self._thumb_width * 0.5) / (self:getWidth() - self._thumb_width)
+    return (x - self._thumb_width * 0.5) / (self:getWidth() - self._thumb_width)
 end
 
 --------------------------------------------------------------------------------
@@ -90,33 +90,33 @@ end
 -- @param value value
 --------------------------------------------------------------------------------
 function M:setValue(value)
-	if value < 0 or value >= 1 + self._accuracy then
-		return
-	end
-	
-	-- round to 4 decimal places = value
-	value = math.floor(value * 10000) / 10000
-	
-	-- snap to accuracy
-	local invsnap = 1 / self._accuracy
-	value = math.floor(value * invsnap) / invsnap
-	
-	-- if value has not changed, abort
-	if value == self._value then
-		return
-	end
-	
-	local old_value = self._value
+    if value < 0 or value >= 1 + self._accuracy then
+        return
+    end
+
+    -- round to 4 decimal places = value
+    value = math.floor(value * 10000) / 10000
+
+    -- snap to accuracy
+    local invsnap = 1 / self._accuracy
+    value = math.floor(value * invsnap) / invsnap
+
+    -- if value has not changed, abort
+    if value == self._value then
+        return
+    end
+
+    local old_value = self._value
     self._value = value
-	
-	local thumbLoc = self:_valueToLoc(value)
+
+    local thumbLoc = self:_valueToLoc(value)
     self._thumb:setLoc(thumbLoc, self._background:getHeight() * 0.5)
-	self._progress:setSize(thumbLoc + self._thumb_width * 0.5, self:getHeight())
-	
-	local event = self._changedEvent
-	event.oldValue = old_value
-	event.value = value
-	self:dispatchEvent(event)
+    self._progress:setSize(thumbLoc + self._thumb_width * 0.5, self:getHeight())
+
+    local event = self._changedEvent
+    event.oldValue = old_value
+    event.value = value
+    self:dispatchEvent(event)
 end
 
 --------------------------------------------------------------------------------
@@ -141,7 +141,7 @@ end
 --------------------------------------------------------------------------------
 function M:setAccuracy(accuracy)
     self._accuracy = accuracy
-	self:setValue(self._value)
+    self:setValue(self._value)
 end
 
 --------------------------------------------------------------------------------
@@ -182,14 +182,14 @@ function M:touchDownHandler(e)
     end
     e:stop()
 
-	if self._thumb:hitTestWorld(e.x, e.y) then
-		self._touchIndex = e.idx
-		self._touching = true
-	
-		local event = self._beginChangeEvent
-		event.value = self._value
-		self:dispatchEvent(event)
-	end
+    if self._thumb:hitTestWorld(e.x, e.y) then
+        self._touchIndex = e.idx
+        self._touching = true
+
+        local event = self._beginChangeEvent
+        event.value = self._value
+        self:dispatchEvent(event)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -201,13 +201,13 @@ function M:touchUpHandler(e)
         return
     end
     e:stop()
-    
-	self._touching = false
-	self._touchIndex = nil
-	
-	local event = self._endChangeEvent
-	event.value = self._value
-	self:dispatchEvent(event)
+
+    self._touching = false
+    self._touchIndex = nil
+
+    local event = self._endChangeEvent
+    event.value = self._value
+    self:dispatchEvent(event)
 end
 
 --------------------------------------------------------------------------------
@@ -220,16 +220,16 @@ function M:touchMoveHandler(e)
     end
     e:stop()
 
-	if self._touching then
-		local mx, my = self:worldToModel(e.x, e.y, 0)
-		local v = self:_locToValue(mx)
-		if v < 0 then
-			v = 0
-		elseif v > 1 then
-			v = 1
-		end
-		self:setValue(v)
-	end
+    if self._touching then
+        local mx, my = self:worldToModel(e.x, e.y, 0)
+        local v = self:_locToValue(mx)
+        if v < 0 then
+            v = 0
+        elseif v > 1 then
+            v = 1
+        end
+        self:setValue(v)
+    end
 end
 
 --------------------------------------------------------------------------------
@@ -252,8 +252,8 @@ function M:resizeHandler(e)
     background:setSize(self:getWidth(), self:getHeight())
 
     local thumb = self._thumb
-	local w = self:getWidth()
-	thumb:setLoc(w * self._value, self._background:getHeight() * 0.5)
+    local w = self:getWidth()
+    thumb:setLoc(w * self._value, self._background:getHeight() * 0.5)
 end
 
 --------------------------------------------------------------------------------
