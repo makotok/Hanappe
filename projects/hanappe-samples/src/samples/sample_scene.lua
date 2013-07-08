@@ -43,6 +43,7 @@ local SCENE_ITEMS = {
     {text = "panel",            scene = "samples/gui/panel_sample",             animation = "fade"},
     {text = "messagebox",       scene = "samples/gui/messagebox_sample",        animation = "fade"},
     {text = "scroller",         scene = "samples/gui/scroller_sample",          animation = "fade"},
+    {text = "slider",           scene = "samples/gui/slider_sample",            animation = "fade"},
     {text = "game1",            scene = "samples/game/game1_sample",            animation = "fade"},
 }
 

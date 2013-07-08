@@ -72,4 +72,16 @@ M.MessageBox = {
     },
 }
 
+M.Slider = {
+    normal = {
+        bg = "skins/slider_background.png",
+		thumb = "skins/slider_thumb.png",
+		progress = "skins/slider_progress.png",
+		color = {1, 1, 1, 1},
+    },
+    disabled = {
+        color = {0.5, 0.5, 0.5, 1},
+    },
+}
+
 return M
