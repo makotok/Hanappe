@@ -2526,11 +2526,10 @@ M.Image = Image
 function Image:init(texture, width, height)
     DisplayObject.init(self)
 
-    texture = Resources.getTexture(texture)
     self:setTexture(texture)
 
     if width or height then
-        local tw, th = texture:getSize()
+        local tw, th = self.texture:getSize()
         self:setSize(width or tw, height or th)
     end
 end
@@ -2574,7 +2573,6 @@ M.SheetImage = SheetImage
 function SheetImage:init(texture, sizeX, sizeY)
     DisplayObject.init(self)
 
-    texture = Resources.getTexture(texture)
     self:setTexture(texture)
     self.sheetSize = 0
     self.sheetNames = {}
@@ -2590,7 +2588,7 @@ end
 --------------------------------------------------------------------------------
 function SheetImage:setTexture(texture)
     self.texture = Resources.getTexture(texture)
-    MOAIPropInterface.setTexture(self, texture)
+    MOAIPropInterface.setTexture(self, self.texture)
 end
 
 --------------------------------------------------------------------------------
