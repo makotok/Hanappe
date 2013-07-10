@@ -35,6 +35,7 @@ function M:initInternal()
     self._changedEvent = Event(M.EVENT_SLIDER_CHANGED)
     self._endChangeEvent = Event(M.EVENT_SLIDER_END)
     self._value = 0
+    self._bounds = {min=0, max=1, span=1}
     self._accuracy = 0.1
 end
 
@@ -78,11 +79,15 @@ function M:updateDisplay()
 end
 
 function M:_valueToLoc(value)
-    return self._thumb_width * 0.5 + (self:getWidth() - self._thumb_width) * value
+    -- normalize value
+    local v = (value - self._bounds.min) / self._bounds.span
+    return self._thumb_width * 0.5 + (self:getWidth() - self._thumb_width) * v
 end
 
 function M:_locToValue(x)
-    return (x - self._thumb_width * 0.5) / (self:getWidth() - self._thumb_width)
+    -- normalized
+    local v = (x - self._thumb_width * 0.5) / (self:getWidth() - self._thumb_width)
+    return self._bounds.min + v * self._bounds.span
 end
 
 --------------------------------------------------------------------------------
@@ -90,33 +95,44 @@ end
 -- @param value value
 --------------------------------------------------------------------------------
 function M:setValue(value)
-    if value < 0 or value >= 1 + self._accuracy then
-        return
+    if value < self._bounds.min then
+        value = self._bounds.min
     end
-
+    if value > self._bounds.max then
+        value = self._bounds.max
+    end
+    
     -- round to 4 decimal places = value
     value = math.floor(value * 10000) / 10000
-
+    
     -- snap to accuracy
     local invsnap = 1 / self._accuracy
     value = math.floor(value * invsnap) / invsnap
-
+    
     -- if value has not changed, abort
     if value == self._value then
         return
     end
-
+    
     local old_value = self._value
     self._value = value
-
-    local thumbLoc = self:_valueToLoc(value)
-    self._thumb:setLoc(thumbLoc, self._background:getHeight() * 0.5)
-    self._progress:setSize(thumbLoc + self._thumb_width * 0.5, self:getHeight())
-
+    self:_updateDrawables()
+    
     local event = self._changedEvent
     event.oldValue = old_value
-    event.value = value
+    event.value = self._value
     self:dispatchEvent(event)
+end
+
+function M:_updateDrawables()
+    -- and indication we 're still initializing (called by resizeHandler)...
+    if self._thumb_width == nil then
+        return
+    end
+    
+    local thumbLoc = self:_valueToLoc(self._value)
+    self._thumb:setLoc(thumbLoc, self._background:getHeight() * 0.5)
+    self._progress:setSize(thumbLoc + self._thumb_width * 0.5, self:getHeight())
 end
 
 --------------------------------------------------------------------------------
@@ -141,6 +157,28 @@ end
 --------------------------------------------------------------------------------
 function M:setAccuracy(accuracy)
     self._accuracy = accuracy
+    self:setValue(self._value)
+end
+
+--------------------------------------------------------------------------------
+-- Returns the minimum and maximum values this slider can hold.
+-- @return minimum and maximum values
+--------------------------------------------------------------------------------
+function M:getValueBounds()
+    return self._bounds.min, self._bounds.max
+end
+
+--------------------------------------------------------------------------------
+-- Returns the minimum and maximum values this slider can hold.
+-- @param minMax table holding {min, max} values
+--------------------------------------------------------------------------------
+function M:setValueBounds(...)
+    local minMax = {...}
+    assert(#minMax >= 2)
+    
+    self._bounds.min = minMax[1]
+    self._bounds.max = minMax[2]
+    self._bounds.span = self._bounds.max - self._bounds.min
     self:setValue(self._value)
 end
 
@@ -223,11 +261,6 @@ function M:touchMoveHandler(e)
     if self._touching then
         local mx, my = self:worldToModel(e.x, e.y, 0)
         local v = self:_locToValue(mx)
-        if v < 0 then
-            v = 0
-        elseif v > 1 then
-            v = 1
-        end
         self:setValue(v)
     end
 end
@@ -248,12 +281,8 @@ end
 -- @param e resize event
 --------------------------------------------------------------------------------
 function M:resizeHandler(e)
-    local background = self._background
-    background:setSize(self:getWidth(), self:getHeight())
-
-    local thumb = self._thumb
-    local w = self:getWidth()
-    thumb:setLoc(w * self._value, self._background:getHeight() * 0.5)
+    self._background:setSize(self:getWidth(), self:getHeight())
+    self:_updateDrawables()
 end
 
 --------------------------------------------------------------------------------
