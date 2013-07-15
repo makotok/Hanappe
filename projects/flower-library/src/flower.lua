@@ -1001,6 +1001,11 @@ function EventDispatcher:dispatchEvent(event, data)
     if eventName then
         EventDispatcher.EVENT_CACHE[eventName] = event
     end
+
+    -- reset properties to free resources used in cached events
+    event.data = nil
+    event.target = nil
+    event:setListener(nil, nil)
 end
 
 --------------------------------------------------------------------------------
