@@ -47,6 +47,8 @@ local UIEvent
 local UIComponent
 local UIGroup
 local UIView
+local UILayout
+local BoxLayout
 local Button
 local ImageButton
 local SheetButton
@@ -68,10 +70,9 @@ local MOAIPropInterface = MOAIProp.getInterfaceTable()
 -- Public functions
 ----------------------------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
+---
 -- Initializes the library.
 -- They are initialized when you request the module.
---------------------------------------------------------------------------------
 function M.initialize()
     if M.initialized then
         return
@@ -83,41 +84,38 @@ function M.initialize()
     M.initialized = true
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the theme of widget.
 -- TODO:Theme can be changed dynamically
 -- @param theme theme of widget
---------------------------------------------------------------------------------
 function M.setTheme(theme)
     M.themeMgr:setTheme(theme)
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the theme of widget.
 -- @return theme
---------------------------------------------------------------------------------
 function M.getTheme()
     return M.themeMgr:getTheme()
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the ThemeMgr.
---------------------------------------------------------------------------------
+-- @return themeMgr
 function M.getThemeMgr()
     return M.themeMgr
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the FocusMgr.
---------------------------------------------------------------------------------
+-- @return focusMgr
 function M.getFocusMgr()
     return M.focusMgr
 end
 
-----------------------------------------------------------------------------------------------------
+---
 -- This class is an dialog or IOS and Android.
 -- @param ... title, message, positive, neutral, negative, cancelable, callback
-----------------------------------------------------------------------------------------------------
 function M.showDialog(...)
     MOAIDialog.showDialog(...)
 end
@@ -130,18 +128,16 @@ end
 ThemeMgr = class(EventDispatcher)
 M.ThemeMgr = ThemeMgr
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
---------------------------------------------------------------------------------
 function ThemeMgr:init()
     ThemeMgr.__super.init(self)
     self.theme = nil
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the theme of widget.
 -- @param theme theme of widget
---------------------------------------------------------------------------------
 function ThemeMgr:setTheme(theme)
     if self.theme ~= theme then
         self.theme = theme
@@ -149,34 +145,30 @@ function ThemeMgr:setTheme(theme)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the theme of widget.
 -- @return theme
---------------------------------------------------------------------------------
 function ThemeMgr:getTheme()
     return self.theme
 end
 
-----------------------------------------------------------------------------------------------------
+---
 -- @type FocusMgr
 -- This is a class to manage the focus of the widget.
 -- Please get an instance from the widget module.
-----------------------------------------------------------------------------------------------------
 FocusMgr = class(EventDispatcher)
 M.FocusMgr = FocusMgr
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
---------------------------------------------------------------------------------
 function FocusMgr:init()
     FocusMgr.__super.init(self)
     self.focusObject = nil
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the focus object.
 -- @param object focus object.
---------------------------------------------------------------------------------
 function FocusMgr:setFocusObject(object)
     if self.focusObject == object then
         return
@@ -193,10 +185,9 @@ function FocusMgr:setFocusObject(object)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the focus object.
 -- @return focus object.
---------------------------------------------------------------------------------
 function FocusMgr:getFocusObject()
     return self.focusObject
 end
@@ -323,12 +314,11 @@ UIComponent.STYLE_NORMAL_COLOR = "normalColor"
 --- Style: disabledColor
 UIComponent.STYLE_DISABLED_COLOR = "disabledColor"
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
 -- Please do not inherit this constructor.
 -- Please have some template functions are inherited.
 -- @param params Parameter table
---------------------------------------------------------------------------------
 function UIComponent:init(params)
     UIComponent.__super.init(self)
     self:_initInternal()
@@ -336,16 +326,15 @@ function UIComponent:init(params)
     self:_createChildren()
 
     self:setProperties(params)
-    self:updateDisplay()
-    self:setPivToCenter()
-
     self._initialized = true
+
+    self:validate()
+    self:setPivToCenter()
 end
 
---------------------------------------------------------------------------------
+---
 -- Initialization is the process of internal variables.
 -- Please to inherit this function if the definition of the variable.
---------------------------------------------------------------------------------
 function UIComponent:_initInternal()
     self.isUIComponent = true
 
@@ -354,13 +343,13 @@ function UIComponent:_initInternal()
     self._focusEnabled = true
     self._theme = nil
     self._styles = {}
+    self._layout = nil
     self._excludeLayout = false
 end
 
---------------------------------------------------------------------------------
+---
 -- Performing the initialization processing of the event listener.
 -- Please to inherit this function if you want to initialize the event listener.
---------------------------------------------------------------------------------
 function UIComponent:_initEventListeners()
     self:addEventListener(UIEvent.ENABLED_CHANGED, self.onEnabledChanged, self)
     self:addEventListener(UIEvent.FOCUS_IN, self.onFocusIn, self)
@@ -371,44 +360,88 @@ function UIComponent:_initEventListeners()
     self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCommon, self, -10)
 end
 
---------------------------------------------------------------------------------
+---
 -- Performing the initialization processing of the component.
 -- Please to inherit this function if you want to change the behavior of the component.
---------------------------------------------------------------------------------
 function UIComponent:_createChildren()
 
 end
 
---------------------------------------------------------------------------------
+---
+-- Validate the all state.
+function UIComponent:validate()
+    self:validateDisplay()
+    self:validateLayout()
+end
+
+---
+-- Validate the display.
+function UIComponent:validateDisplay()
+    if not self._initialized then
+        return
+    end
+    self:updateDisplay()
+end
+
+---
+-- Validate the layout.
+function UIComponent:validateLayout()
+    if not self._initialized then
+        return
+    end
+    self:updateLayout()
+end
+
+---
 -- Update the display.
 -- When called this function, please refresh all.
---------------------------------------------------------------------------------
 function UIComponent:updateDisplay()
 
 end
 
---------------------------------------------------------------------------------
+---
+-- Update the layout.
+function UIComponent:updateLayout()
+    for i, child in ipairs(self:getChildren()) do
+        if child.updateLayout then
+            child:updateLayout()
+        end
+    end
+
+    if self._layout then
+        self._layout:update(self)
+    end
+end
+
+---
 -- Draw focus object.
 -- Called at a timing that is configured with focus.
 -- @param focus focus
---------------------------------------------------------------------------------
 function UIComponent:drawFocus(focus)
 
 end
 
-----------------------------------------------------------------
+---
 -- Returns the children object.
 -- If you want to use this function with caution.
 -- @return children
-----------------------------------------------------------------
 function UIComponent:getChildren()
     return self.children
 end
 
---------------------------------------------------------------------------------
+---
+-- Sets the children object.
+-- @param children
+function UIComponent:setChildren(children)
+    self:removeChildren()
+    for i, child in ipairs(children) do
+        self:addChild(child)
+    end
+end
+
+---
 -- Adds the specified child.
 -- @param child DisplayObject
---------------------------------------------------------------------------------
 function UIComponent:addChild(child)
     if UIComponent.__super.addChild(self, child) then
         child:setPriority(self:getPriority())
@@ -417,10 +450,9 @@ function UIComponent:addChild(child)
     return false
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the nest level.
 -- @return nest level
---------------------------------------------------------------------------------
 function UIComponent:getNestLevel()
     local parent = self.parent
     if parent and parent.getNestLevel then
@@ -429,39 +461,35 @@ function UIComponent:getNestLevel()
     return 1
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the properties
 -- @param properties properties
---------------------------------------------------------------------------------
 function UIComponent:setProperties(properties)
     if properties then
         PropertyUtils.setProperties(self, properties, true)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the width.
 -- @param width Width
---------------------------------------------------------------------------------
 function UIComponent:setWidth(width)
     local w, h = self:getSize()
     self:setSize(width, h)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the height.
 -- @param height Height
---------------------------------------------------------------------------------
 function UIComponent:setHeight(height)
     local w, h = self:getSize()
     self:setSize(w, height)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the size.
 -- @param width Width
 -- @param height Height
---------------------------------------------------------------------------------
 function UIComponent:setSize(width, height)
     width  = width  < 0 and 0 or width
     height = height < 0 and 0 or height
@@ -474,53 +502,54 @@ function UIComponent:setSize(width, height)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the object's parent, inheriting its color and transform.
 -- If you set a parent, you want to add itself to the parent.
 -- @param parent parent
---------------------------------------------------------------------------------
 function UIComponent:setParent(parent)
     if parent == self.parent then
         return
     end
 
-    -- remove
     local oldParent = self.parent
     self.parent = parent
     if oldParent and oldParent.isGroup then
         oldParent:removeChild(self)
     end
 
-    -- set
     UIComponent.__super.setParent(self, parent)
 
-    -- add
     if parent and parent.isGroup then
         parent:addChild(self)
     end
 end
 
---------------------------------------------------------------------------------
+---
+-- Set the layout.
+-- @param layout layout
+function UIComponent:setLayout(layout)
+    self._layout = layout
+    self:validate()
+end
+
+---
 -- Set the enabled state.
 -- @param enabled enabled
---------------------------------------------------------------------------------
 function UIComponent:setEnabled(enabled)
     self._enabled = enabled
     self:dispatchEvent(UIEvent.ENABLED_CHANGED)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the enabled.
 -- @return enabled
---------------------------------------------------------------------------------
 function UIComponent:isEnabled()
     return self._enabled
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the parent enabled.
 -- @return enabled
---------------------------------------------------------------------------------
 function UIComponent:isComponentEnabled()
     if not self._enabled then
         return false
@@ -533,10 +562,9 @@ function UIComponent:isComponentEnabled()
     return true
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the focus.
 -- @param focus focus
---------------------------------------------------------------------------------
 function UIComponent:setFocus(focus)
     if self:isFocus() ~= focus then
         local focusMgr = self:getFocusMgr()
@@ -548,19 +576,17 @@ function UIComponent:setFocus(focus)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the focus.
 -- @return focus
---------------------------------------------------------------------------------
 function UIComponent:isFocus()
     local focusMgr = self:getFocusMgr()
     return focusMgr:getFocusObject() == self
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the focus enabled.
 -- @param focusEnabled focusEnabled
---------------------------------------------------------------------------------
 function UIComponent:setFocusEnabled(focusEnabled)
     if self._focusEnabled ~= focusEnabled then
         self._focusEnabled = focusEnabled
@@ -570,30 +596,27 @@ function UIComponent:setFocusEnabled(focusEnabled)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the focus.
 -- @return focus
---------------------------------------------------------------------------------
 function UIComponent:isFocusEnabled()
     return self._focusEnabled
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the theme.
 -- @param theme theme
---------------------------------------------------------------------------------
 function UIComponent:setTheme(theme)
     if self._theme ~= theme then
         self._theme = theme
-        self:updateDisplay()
+        self:validate()
         self:dispatchEvent(UIEvent.THEME_CHANGED)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the theme.
 -- @return theme
---------------------------------------------------------------------------------
 function UIComponent:getTheme()
     if self._theme then
         return self._theme
@@ -605,11 +628,10 @@ function UIComponent:getTheme()
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the style of the component.
 -- @param name style name
 -- @param value style value
---------------------------------------------------------------------------------
 function UIComponent:setStyle(name, value)
     if self._styles[name] ~= value then
         self._styles[name] = value
@@ -617,11 +639,10 @@ function UIComponent:setStyle(name, value)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the style.
 -- @param name style name
 -- @return style value
---------------------------------------------------------------------------------
 function UIComponent:getStyle(name)
     if self._styles[name] ~= nil then
         return self._styles[name]
@@ -636,12 +657,11 @@ function UIComponent:getStyle(name)
     return globalTheme["common"][name]
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the event listener.
 -- Event listener that you set in this function is one.
 -- @param eventName event name
 -- @param func event listener
---------------------------------------------------------------------------------
 function UIComponent:setEventListener(eventName, func)
     local propertyName = "_event_" .. eventName
 
@@ -660,26 +680,23 @@ function UIComponent:setEventListener(eventName, func)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the focusMgr.
 -- @return focusMgr
---------------------------------------------------------------------------------
 function UIComponent:getFocusMgr()
     return M.getFocusMgr()
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the focusMgr.
 -- @return focusMgr
---------------------------------------------------------------------------------
 function UIComponent:getFocusMgr()
     return M.getFocusMgr()
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called enabled changed.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function UIComponent:onEnabledChanged(e)
     if self:isEnabled() then
         self:setColor(unpack(self:getStyle(UIComponent.STYLE_NORMAL_COLOR)))
@@ -688,10 +705,9 @@ function UIComponent:onEnabledChanged(e)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when touch.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function UIComponent:onTouchCommon(e)
     if not self:isComponentEnabled() then
         e:stop()
@@ -705,18 +721,16 @@ function UIComponent:onTouchCommon(e)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when focus.
 -- @param e focus Event
---------------------------------------------------------------------------------
 function UIComponent:onFocusIn(e)
     self:drawFocus(true)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when focus.
 -- @param e focus Event
---------------------------------------------------------------------------------
 function UIComponent:onFocusOut(e)
     self:drawFocus(false)
 end
@@ -728,20 +742,18 @@ end
 UIGroup = class(UIComponent)
 M.UIGroup = UIGroup
 
---------------------------------------------------------------------------------
+---
 -- Initialization is the process of internal variables.
 -- Please to inherit this function if the definition of the variable.
---------------------------------------------------------------------------------
 function UIGroup:_initInternal()
     UIGroup.__super._initInternal(self)
     self.isUIGroup = true
     self._focusEnabled = false
 end
 
---------------------------------------------------------------------------------
+---
 -- Adds the specified child.
 -- @param child DisplayObject
---------------------------------------------------------------------------------
 function UIGroup:addChild(child)
     if UIGroup.__super.addChild(self, child) then
         child:setPriority(self:getPriority())
@@ -750,9 +762,8 @@ function UIGroup:addChild(child)
     return false
 end
 
---------------------------------------------------------------------------------
+---
 -- Updates the display of child components.
---------------------------------------------------------------------------------
 function UIGroup:updateDisplay()
     for i, child in ipairs(self:getChildren()) do
         if child.updateDisplay then
@@ -771,10 +782,9 @@ M.UIView = UIView
 
 UIView.PRIORITY_MARGIN = 100
 
---------------------------------------------------------------------------------
+---
 -- Initialization is the process of internal variables.
 -- Please to inherit this function if the definition of the variable.
---------------------------------------------------------------------------------
 function UIView:_initInternal()
     UIView.__super._initInternal(self)
     self.isUIView = true
@@ -784,9 +794,8 @@ function UIView:_initInternal()
     self:_initLayer()
 end
 
---------------------------------------------------------------------------------
+---
 -- Initializes the layer to display the view.
---------------------------------------------------------------------------------
 function UIView:_initLayer()
     local layer = Layer()
     layer:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
@@ -797,20 +806,18 @@ function UIView:_initLayer()
     self:setLayer(layer)
 end
 
---------------------------------------------------------------------------------
--- Initializes the event listener.
---------------------------------------------------------------------------------
+---
+-- Initializes the event listeners.
 function UIView:_initEventListeners()
     UIView.__super._initEventListeners(self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Change the size of the viewport.
 -- @param screenX X of the Screen.
 -- @param screenY Y of the Screen.
 -- @param screenWidth Width of the Screen.
 -- @param screenHeight Height of the Screen.
---------------------------------------------------------------------------------
 function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
     local viewScale = flower.viewScale
     local viewWidth = screenWidth / viewScale
@@ -825,10 +832,9 @@ function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
     self:setSize(viewWidth, viewHeight)
 end
 
---------------------------------------------------------------------------------
+---
 -- Adds the specified child.
 -- @param child DisplayObject
---------------------------------------------------------------------------------
 function UIView:addChild(child)
     if UIView.__super.addChild(self, child) then
         self._lastPriority = self._lastPriority + UIView.PRIORITY_MARGIN
@@ -838,27 +844,24 @@ function UIView:addChild(child)
     return false
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the visible to layer.
 -- @param visible visible
---------------------------------------------------------------------------------
 function UIView:setVisible(visible)
     self.layer:setVisible(visible)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the visible from layer.
 -- @return visible
---------------------------------------------------------------------------------
 function UIView:getVisible()
     self.layer:getVisible()
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the group's priority.
 -- Also sets the priority of any children.
 -- @param priority priority
---------------------------------------------------------------------------------
 function UIView:setPriority(priority)
     priority = priority or 0
     MOAIPropInterface.setPriority(self, priority)
@@ -872,10 +875,9 @@ function UIView:setPriority(priority)
     return priority
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the scene for layer.
 -- @param scene scene
---------------------------------------------------------------------------------
 function UIView:setScene(scene)
     if self.layer.scene then
         self.layer.scene:removeEventListener(Event.STOP, self.onSceneStop, self, -10)
@@ -888,22 +890,284 @@ function UIView:setScene(scene)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when you touch the layer.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function UIView:onLayerTouchDown(e)
     local focusMgr = self:getFocusMgr()
     focusMgr:setFocusObject(nil)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when you stop the scene.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function UIView:onSceneStop(e)
     local focusMgr = self:getFocusMgr()
     focusMgr:setFocusObject(nil)
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type UILayout
+-- This is a class to set the layout of UIComponent.
+----------------------------------------------------------------------------------------------------
+UILayout = class()
+M.UILayout = UILayout
+
+---
+-- Constructor.
+function UILayout:init(params)
+    self:_initInternal()
+    self:setProperties(params)
+end
+
+---
+-- Initialize the internal variables.
+function UILayout:_initInternal()
+    
+end
+
+---
+-- Update the layout.
+-- @param parent parent component.
+function UILayout:update(parent)
+
+end
+
+---
+-- Sets the properties.
+-- @param properties properties
+function UILayout:setProperties(properties)
+    if properties then
+        PropertyUtils.setProperties(self, properties, true)
+    end
+end
+
+--------------------------------------------------------------------------------
+-- @type BoxLayout
+-- This is the class that sets the layout of the box.
+--------------------------------------------------------------------------------
+BoxLayout = class(UILayout)
+M.BoxLayout = BoxLayout
+
+--- Horizotal Align: left
+BoxLayout.HORIZOTAL_LEFT            = "left"
+
+--- Horizotal Align: center
+BoxLayout.HORIZOTAL_CENTER          = "center"
+
+--- Horizotal Align: right
+BoxLayout.HORIZOTAL_RIGHT           = "right"
+
+--- Vertical Align: top
+BoxLayout.VERTICAL_TOP              = "top"
+
+--- Vertical Align: center
+BoxLayout.VERTICAL_CENTER           = "center"
+
+--- Vertical Align: bottom
+BoxLayout.VERTICAL_BOTTOM           = "bottom"
+
+--- Layout Direction: vertical
+BoxLayout.DIRECTION_VERTICAL        = "vertical"
+
+--- Layout Direction: horizotal
+BoxLayout.DIRECTION_HORIZOTAL       = "horizotal"
+
+---
+-- Initializes the internal variables.
+function BoxLayout:_initInternal()
+    self._horizotalAlign = BoxLayout.HORIZOTAL_LEFT
+    self._horizotalGap = 0
+    self._verticalAlign = BoxLayout.VERTICAL_TOP
+    self._verticalGap = 0
+    self._paddingTop = 0
+    self._paddingBottom = 0
+    self._paddingLeft = 0
+    self._paddingRight = 0
+    self._direction = BoxLayout.DIRECTION_VERTICAL
+end
+
+---
+-- Update the layout.
+-- @param parent parent
+function BoxLayout:update(parent)
+    if self._direction == BoxLayout.DIRECTION_VERTICAL then
+        self:updateVertical(parent)
+    elseif self._direction == BoxLayout.DIRECTION_HORIZOTAL then
+        self:updateHorizotal(parent)
+    end
+end
+
+---
+-- Sets the position of an objects in the vertical direction.
+-- @param parent
+function BoxLayout:updateVertical(parent)
+    local children = parent.children
+    local childrenWidth, childrenHeight = self:calcVerticalLayoutSize(children)
+    
+    local parentWidth, parentHeight = parent:getSize()
+    local parentWidth = math.max(parentWidth, childrenWidth)
+    local parentHeight = math.max(parentHeight, childrenHeight)
+    parent:setSize(parentWidth, parentHeight)
+    
+    local childY = self:calcChildY(parentHeight, childrenHeight)
+    for i, child in ipairs(children) do
+        if not child._excludeLayout then
+            local childWidth, childHeight = child:getSize()
+            local childX = self:calcChildX(parentWidth, childWidth)
+            child:setPos(childX, childY)
+            childY = childY + childHeight + self._verticalGap
+        end
+    end
+end
+
+---
+-- Sets the position of an objects in the horizotal direction.
+-- @param parent
+function BoxLayout:updateHorizotal(parent)
+    local children = parent.children
+    local childrenWidth, childrenHeight = self:calcHorizotalLayoutSize(children)
+
+    local parentWidth, parentHeight = parent:getSize()
+    local parentWidth = math.max(parentWidth, childrenWidth)
+    local parentHeight = math.max(parentHeight, childrenHeight)
+    parent:setSize(parentWidth, parentHeight)
+    
+    local childX = self:calcChildX(parentWidth, childrenWidth)
+    for i, child in ipairs(children) do
+        if not child._excludeLayout then
+            local childWidth, childHeight = child:getSize()
+            local childY = self:calcChildY(parentHeight, childHeight)
+            child:setPos(childX, childY)
+            childX = childX + childWidth + self._horizotalGap
+        end
+    end
+end
+
+---
+-- Calculates the x position of the child object.
+-- @param parentWidth parent width.
+-- @param childWidth child width.
+-- @return x position.
+function BoxLayout:calcChildX(parentWidth, childWidth)
+    local diffWidth = parentWidth - childWidth
+
+    local x = 0
+    if self._horizotalAlign == BoxLayout.HORIZOTAL_LEFT then
+        x = self._paddingLeft
+    elseif self._horizotalAlign == BoxLayout.HORIZOTAL_CENTER then
+        x = math.floor((diffWidth + self._paddingLeft - self._paddingRight) / 2)
+    elseif self._horizotalAlign == BoxLayout.HORIZOTAL_RIGHT then
+        x = diffWidth - self._paddingRight
+    else
+        error("Not found direction!")
+    end
+    return x
+end
+
+---
+-- Calculates the y position of the child object.
+-- @param parentWidth parent width.
+-- @param childWidth child width.
+-- @return y position.
+function BoxLayout:calcChildY(parentHeight, childHeight)
+    local diffHeight = parentHeight - childHeight
+
+    local y = 0
+    if self._verticalAlign == BoxLayout.VERTICAL_TOP then
+        y = self._paddingTop
+    elseif self._verticalAlign == BoxLayout.VERTICAL_CENTER then
+        y = math.floor((diffHeight + self._paddingTop - self._paddingBottom) / 2)
+    elseif self._verticalAlign == BoxLayout.VERTICAL_BOTTOM then
+        y = diffHeight - self._paddingBottom
+    else
+        error("Not found direction!")
+    end
+    return y
+end
+
+---
+-- Calculate the layout size in the vertical direction.
+-- @param children children
+-- @return layout width
+-- @return layout height
+function BoxLayout:calcVerticalLayoutSize(children)
+    local width = self._paddingLeft + self._paddingRight
+    local height = self._paddingTop + self._paddingBottom
+    local count = 0
+    for i, child in ipairs(children) do
+        if not child._excludeLayout then
+            local cWidth, cHeight = child:getSize()
+            height = height + cHeight + self._verticalGap
+            width = math.max(width, cWidth + self._paddingLeft + self._paddingRight)
+            count = count + 1
+        end
+    end
+    if count > 1 then
+        height = height - self._verticalGap
+    end
+    return width, height
+end
+
+---
+-- Calculate the layout size in the horizotal direction.
+-- @param children children
+-- @return layout width
+-- @return layout height
+function BoxLayout:calcHorizotalLayoutSize(children)
+    local width = self._paddingLeft + self._paddingRight
+    local height = self._paddingTop + self._paddingBottom
+    local count = 0
+    for i, child in ipairs(children) do
+        if not child._excludeLayout then
+            local cWidth, cHeight = child:getSize()
+            width = width + cWidth + self._horizotalGap
+            height = math.max(height, cHeight + self._paddingTop + self._paddingBottom)
+            count = count + 1
+        end
+    end
+    if count > 1 then
+        width = width - self._horizotalGap
+    end
+    return width, height
+end
+
+---
+-- Set the padding.
+-- @param left left padding
+-- @param top top padding
+-- @param right right padding
+-- @param bottom bottom padding
+function BoxLayout:setPadding(left, top, right, bottom)
+    self._paddingLeft = left or self._paddingTop
+    self._paddingTop = top or self._paddingTop
+    self._paddingRight = right or self._paddingRight
+    self._paddingBottom = bottom or self._paddingBottom
+end
+
+---
+-- Set the alignment.
+-- @param horizotalAlign horizotal align
+-- @param verticalAlign vertical align
+function BoxLayout:setAlign(horizotalAlign, verticalAlign)
+    self._horizotalAlign = horizotalAlign
+    self._verticalAlign = verticalAlign
+end
+
+---
+-- Set the direction.
+-- @param direction direction("horizotal" or "vertical")
+function BoxLayout:setDirection(direction)
+    self._direction = direction
+end
+
+---
+-- Set the gap.
+-- @param horizotalGap horizotal gap
+-- @param verticalGap vertical gap
+function BoxLayout:setGap(horizotalGap, verticalGap)
+    self._horizotalGap = horizotalGap
+    self._verticalGap = verticalGap
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -938,9 +1202,8 @@ Button.STYLE_TEXT_ALIGN = "textAlign"
 --- Style: textPadding
 Button.STYLE_TEXT_PADDING = "textPadding"
 
---------------------------------------------------------------------------------
+---
 -- Initializes the internal variables.
---------------------------------------------------------------------------------
 function Button:_initInternal()
     Button.__super._initInternal(self)
     self._themeName = "Button"
@@ -952,9 +1215,8 @@ function Button:_initInternal()
     self._toggle = false
 end
 
---------------------------------------------------------------------------------
+---
 -- Initializes the event listener.
---------------------------------------------------------------------------------
 function Button:_initEventListeners()
     Button.__super._initEventListeners(self)
     self:addEventListener(Event.RESIZE, self.onResize, self)
@@ -965,9 +1227,8 @@ function Button:_initEventListeners()
     self:addEventListener(UIEvent.SELECTED_CHANGED, self.onSelectedChanged, self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Create children.
---------------------------------------------------------------------------------
 function Button:_createChildren()
     Button.__super._createChildren(self)
 
@@ -979,9 +1240,8 @@ function Button:_createChildren()
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the buttonImage.
---------------------------------------------------------------------------------
 function Button:_createButtonImage()
     if self._buttonImage then
         return
@@ -991,9 +1251,8 @@ function Button:_createButtonImage()
     self:addChild(self._buttonImage)
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the textLabel.
---------------------------------------------------------------------------------
 function Button:_createTextLabel()
     if self._textLabel then
         return
@@ -1002,26 +1261,23 @@ function Button:_createTextLabel()
     self:addChild(self._textLabel)
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the display.
---------------------------------------------------------------------------------
 function Button:updateDisplay()
     self:updateButtonImage()
     self:updateTextLabel()
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the buttonImage.
---------------------------------------------------------------------------------
 function Button:updateButtonImage()
     local buttonImage = self._buttonImage
     buttonImage:setImage(self:getImagePath())
     buttonImage:setSize(self:getSize())
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the buttonImage.
---------------------------------------------------------------------------------
 function Button:updateTextLabel()
     if not self._textLabel then
         return
@@ -1041,10 +1297,9 @@ function Button:updateTextLabel()
     textLabel:setFont(self:getFont())
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the image path.
 -- @return imageDeck
---------------------------------------------------------------------------------
 function Button:getImagePath()
     if not self:isEnabled() then
         return self:getStyle(Button.STYLE_DISABLED_TEXTURE)
@@ -1055,10 +1310,9 @@ function Button:getImagePath()
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the label content rect.
 -- @return content rect
---------------------------------------------------------------------------------
 function Button:getLabelContentRect()
     local buttonImage = self._buttonImage
     local paddingLeft, paddingTop, paddingRight, paddingBottom = self:getTextPadding()
@@ -1071,18 +1325,16 @@ function Button:getLabelContentRect()
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- If the selected the button returns True.
 -- @return If the selected the button returns True
---------------------------------------------------------------------------------
 function Button:isSelected()
     return self._selected
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the selected.
 -- @param selected selected
---------------------------------------------------------------------------------
 function Button:setSelected(selected)
     if self._selected == selected then
         return
@@ -1093,122 +1345,103 @@ function Button:setSelected(selected)
     self:dispatchEvent(UIEvent.SELECTED_CHANGED, selected)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the toggle.
 -- @param toggle toggle
---------------------------------------------------------------------------------
 function Button:setToggle(toggle)
     self._toggle = toggle
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the toggle.
 -- @return toggle
---------------------------------------------------------------------------------
 function Button:isToggle()
     return self._toggle
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the normal texture.
 -- @param texture texture
---------------------------------------------------------------------------------
 function Button:setNormalTexture(texture)
     self:setStyle(Button.STYLE_NORMAL_TEXTURE, texture)
-    if self._initialized then
-        self:updateDisplay()
-    end
+    self:validate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the selected texture.
 -- @param texture texture
---------------------------------------------------------------------------------
 function Button:setSelectedTexture(texture)
     self:setStyle(Button.STYLE_SELECTED_TEXTURE, texture)
-    if self._initialized then
-        self:updateDisplay()
-    end
+    self:validate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the selected texture.
 -- @param texture texture
---------------------------------------------------------------------------------
 function Button:setDisabledTexture(texture)
     self:setStyle(Button.STYLE_DISABLED_TEXTURE, texture)
-    if self._initialized then
-        self:updateDisplay()
-    end
+    self:validate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the text.
 -- @param text text
---------------------------------------------------------------------------------
 function Button:setText(text)
     self._text = text
     self._textLabel:setString(text)
     self._textLabel:setReveal(self._text and #self._text or 0)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the text.
 -- @return text
---------------------------------------------------------------------------------
 function Button:getText()
     return self._text
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the textSize.
 -- @param textSize textSize
---------------------------------------------------------------------------------
 function Button:setTextSize(textSize)
     self:setStyle(Button.STYLE_TEXT_SIZE, textSize)
     self._textLabel:setTextSize(self:getTextSize())
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the textSize.
 -- @param textSize textSize
---------------------------------------------------------------------------------
 function Button:getTextSize()
     return self:getStyle(Button.STYLE_TEXT_SIZE)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the fontName.
 -- @param fontName fontName
---------------------------------------------------------------------------------
 function Button:setFontName(fontName)
     self:setStyle(Button.STYLE_FONT_NAME, font)
     self._textLabel:setFont(self:getFont())
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the textSize.
 -- @param textSize textSize
---------------------------------------------------------------------------------
 function Button:getFontName()
     return self:getStyle(Button.STYLE_FONT_NAME)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the font.
 -- @return font
---------------------------------------------------------------------------------
 function Button:getFont()
     local fontName = self:getFontName()
     local font = Resources.getFont(fontName, nil, self:getTextSize())
     return font
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the text align.
 -- @param horizotalAlign horizotal align(left, center, top)
 -- @param verticalAlign vertical align(top, center, bottom)
---------------------------------------------------------------------------------
 function Button:setTextAlign(horizotalAlign, verticalAlign)
     if horizotalAlign or verticalAlign then
         self:setStyle(Button.STYLE_TEXT_ALIGN, {horizotalAlign or "center", verticalAlign or "center"})
@@ -1218,20 +1451,18 @@ function Button:setTextAlign(horizotalAlign, verticalAlign)
     self._textLabel:setAlignment(self:getAlignment())
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the text align.
 -- @return horizotal align(left, center, top)
 -- @return vertical align(top, center, bottom)
---------------------------------------------------------------------------------
 function Button:getTextAlign()
     return unpack(self:getStyle(Button.STYLE_TEXT_ALIGN))
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the text align for MOAITextBox.
 -- @return horizotal align
 -- @return vertical align
---------------------------------------------------------------------------------
 function Button:getAlignment()
     local h, v = self:getTextAlign()
     h = assert(TextAlign[h])
@@ -1239,13 +1470,12 @@ function Button:getAlignment()
     return h, v
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the text color.
 -- @param red red(0 ... 1)
 -- @param green green(0 ... 1)
 -- @param blue blue(0 ... 1)
 -- @param alpha alpha(0 ... 1)
---------------------------------------------------------------------------------
 function Button:setTextColor(red, green, blue, alpha)
     if red == nil and green == nil and blue == nil and alpha == nil then
         self:setStyle(Button.STYLE_TEXT_COLOR, nil)
@@ -1255,24 +1485,22 @@ function Button:setTextColor(red, green, blue, alpha)
     self._textLabel:setColor(self:getTextColor())
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the text color.
 -- @return red(0 ... 1)
 -- @return green(0 ... 1)
 -- @return blue(0 ... 1)
 -- @return alpha(0 ... 1)
---------------------------------------------------------------------------------
 function Button:getTextColor()
     return unpack(self:getStyle(Button.STYLE_TEXT_COLOR))
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the text padding.
 -- @param paddingLeft padding left
 -- @param paddingTop padding top
 -- @param paddingRight padding right
 -- @param paddingBottom padding bottom
---------------------------------------------------------------------------------
 function Button:setTextPadding(paddingLeft, paddingTop, paddingRight, paddingBottom)
     local style = {paddingLeft or 0, paddingTop or 0, paddingRight or 0, paddingBottom or 0}
     self:setStyle(Button.STYLE_TEXT_PADDING, style)
@@ -1281,13 +1509,12 @@ function Button:setTextPadding(paddingLeft, paddingTop, paddingRight, paddingBot
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the text padding.
 -- @return paddingLeft
 -- @return paddingTop
 -- @return paddingRight
 -- @return paddingBottom
---------------------------------------------------------------------------------
 function Button:getTextPadding()
     local padding = self:getStyle(Button.STYLE_TEXT_PADDING)
     if padding then
@@ -1296,42 +1523,37 @@ function Button:getTextPadding()
     return 0, 0, 0, 0
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the event listener that is called when the user click the button.
 -- @param func click event handler
---------------------------------------------------------------------------------
 function Button:setOnClick(func)
     self:setEventListener(UIEvent.CLICK, func)
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the event listener that is called when the user pressed the button.
 -- @param func button down event handler
---------------------------------------------------------------------------------
 function Button:setOnDown(func)
     self:setEventListener(UIEvent.DOWN, func)
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the event listener that is called when the user released the button.
 -- @param func button up event handler
---------------------------------------------------------------------------------
 function Button:setOnUp(func)
     self:setEventListener(UIEvent.UP, func)
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the event listener that is called when selected changed.
 -- @param func selected changed event handler
---------------------------------------------------------------------------------
 function Button:setOnSelectedChanged(func)
     self:setEventListener(UIEvent.SELECTED_CHANGED, func)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when enabled Changed.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Button:onEnabledChanged(e)
     Button.__super.onEnabledChanged(self, e)
     self:updateButtonImage()
@@ -1341,10 +1563,9 @@ function Button:onEnabledChanged(e)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when selected changed.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Button:onSelectedChanged(e)
     if self:isSelected() then
         self:dispatchEvent(UIEvent.DOWN)
@@ -1353,18 +1574,16 @@ function Button:onSelectedChanged(e)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when resize.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Button:onResize(e)
-    self:updateDisplay()
+    self:validate()
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when you touch the button.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Button:onTouchDown(e)
     if self._touchDownIdx ~= nil then
         return
@@ -1381,10 +1600,9 @@ function Button:onTouchDown(e)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when the button is released.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Button:onTouchUp(e)
     if self._touchDownIdx ~= e.idx then
         return
@@ -1407,10 +1625,9 @@ function Button:onTouchUp(e)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when you move on the button.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Button:onTouchMove(e)
     if self._touchDownIdx ~= e.idx then
         return
@@ -1424,10 +1641,9 @@ function Button:onTouchMove(e)
 
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when you cancel the touch.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Button:onTouchCancel(e)
     if self._touchDownIdx ~= e.idx then
         return
@@ -1452,17 +1668,15 @@ end
 ImageButton = class(Button)
 M.ImageButton = ImageButton
 
---------------------------------------------------------------------------------
+---
 -- Initializes the internal variables.
---------------------------------------------------------------------------------
 function ImageButton:_initInternal()
     ImageButton.__super._initInternal(self)
     self._themeName = "ImageButton"
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the buttonImage.
---------------------------------------------------------------------------------
 function ImageButton:_createButtonImage()
     if self._buttonImage then
         return
@@ -1472,9 +1686,8 @@ function ImageButton:_createButtonImage()
     self:addChild(self._buttonImage)
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the imageDeck.
---------------------------------------------------------------------------------
 function ImageButton:updateButtonImage()
     local imagePath = assert(self:getImagePath())
 
@@ -1492,17 +1705,15 @@ M.SheetButton = SheetButton
 --- Style: textureSheets
 SheetButton.STYLE_TEXTURE_SHEETS = "textureSheets"
 
---------------------------------------------------------------------------------
+---
 -- Initializes the internal variables.
---------------------------------------------------------------------------------
 function SheetButton:_initInternal()
     SheetButton.__super._initInternal(self)
     self._themeName = "SheetButton"
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the buttonImage.
---------------------------------------------------------------------------------
 function SheetButton:_createButtonImage()
     if self._buttonImage then
         return
@@ -1514,9 +1725,8 @@ function SheetButton:_createButtonImage()
     self:addChild(self._buttonImage)
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the buttonImage.
---------------------------------------------------------------------------------
 function SheetButton:updateButtonImage()
     local imagePath = assert(self:getImagePath())
 
@@ -1524,10 +1734,9 @@ function SheetButton:updateButtonImage()
     self:setSize(self._buttonImage:getSize())
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the sheet texture's file.
 -- @param filename filename
---------------------------------------------------------------------------------
 function SheetButton:setTextureSheets(filename)
     self:setStyle(SheetButton.STYLE_TEXTURE_SHEETS, filename)
     self._buttonImage:setTextureAtlas(filename .. ".lua", filename .. ".png")
@@ -1541,27 +1750,24 @@ end
 CheckBox = class(ImageButton)
 M.CheckBox = CheckBox
 
---------------------------------------------------------------------------------
+---
 -- Initializes the internal variables.
---------------------------------------------------------------------------------
 function CheckBox:_initInternal()
     CheckBox.__super._initInternal(self)
     self._themeName = "CheckBox"
     self._toggle = true
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the buttonImage.
---------------------------------------------------------------------------------
 function CheckBox:updateButtonImage()
     local buttonImage = self._buttonImage
     buttonImage:setTexture(self:getImagePath())
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the label content rect.
 -- @return content rect
---------------------------------------------------------------------------------
 function CheckBox:getLabelContentRect()
     local buttonImage = self._buttonImage
     local textLabel = self._textLabel
@@ -1570,9 +1776,8 @@ function CheckBox:getLabelContentRect()
     return left, top, right, bottom
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the textLabel.
---------------------------------------------------------------------------------
 function CheckBox:updateTextLabel()
     CheckBox.__super.updateTextLabel(self)
 
@@ -1616,9 +1821,8 @@ Joystick.STYLE_BASE_TEXTURE  = "baseTexture"
 --- Style: knobTexture
 Joystick.STYLE_KNOB_TEXTURE  = "knobTexture"
 
---------------------------------------------------------------------------------
+---
 -- Initializes the internal variables.
---------------------------------------------------------------------------------
 function Joystick:_initInternal()
     Joystick.__super._initInternal(self)
     self._themeName = "Joystick"
@@ -1628,10 +1832,9 @@ function Joystick:_initInternal()
     self._changedEvent = Event(UIEvent.STICK_CHANGED)
 end
 
---------------------------------------------------------------------------------
+---
 -- Initializes the event listener.
 -- You must not be called directly.
---------------------------------------------------------------------------------
 function Joystick:_initEventListeners()
     Joystick.__super._initEventListeners(self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
@@ -1640,10 +1843,9 @@ function Joystick:_initEventListeners()
     self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Initialize child objects that make up the Joystick.
 -- You must not be called directly.
---------------------------------------------------------------------------------
 function Joystick:_createChildren()
     Joystick.__super._createChildren(self)
 
@@ -1657,16 +1859,17 @@ function Joystick:_createChildren()
     self:setCenterKnob()
 end
 
+---
+-- Update the display.
 function Joystick:updateDisplay()
     self._baseImage:setTexture(self:getStyle(Joystick.STYLE_BASE_TEXTURE))
     self._knobImage:setTexture(self:getStyle(Joystick.STYLE_KNOB_TEXTURE))
 end
 
---------------------------------------------------------------------------------
+---
 -- To update the position of the knob.
 -- @param x The x-position of the knob
 -- @param y The y-position of the knob
---------------------------------------------------------------------------------
 function Joystick:updateKnob(x, y)
     local oldX, oldY = self._knobImage:getLoc()
     local newX, newY = self:getKnobNewLoc(x, y)
@@ -1683,31 +1886,28 @@ function Joystick:updateKnob(x, y)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the position of the center of the knob.
---------------------------------------------------------------------------------
 function Joystick:setCenterKnob()
     local cx, cy = self:getWidth() / 2, self:getHeight() / 2
     self._knobImage:setLoc(cx, cy, 0)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the position of the center of the whole.
 -- Does not depend on the Pivot.
 -- @return Center x-position
 -- @return Center y-position
---------------------------------------------------------------------------------
 function Joystick:getCenterLoc()
     return self:getWidth() / 2, self:getHeight() / 2
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the position that matches the mode of the stick.
 -- @param x X-position of the model
 -- @param y Y-position of the model
 -- @return adjusted x-position
 -- @return adjusted y-position
---------------------------------------------------------------------------------
 function Joystick:getKnobNewLoc(x, y)
     if self:getStickMode() == Joystick.MODE_ANALOG then
         return self:getKnobNewLocForAnalog(x, y)
@@ -1716,13 +1916,12 @@ function Joystick:getKnobNewLoc(x, y)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the position to match the analog mode.
 -- @param x X-position of the model
 -- @param y Y-position of the model
 -- @return adjusted x-position
 -- @return adjusted y-position
---------------------------------------------------------------------------------
 function Joystick:getKnobNewLocForAnalog(x, y)
     local cx, cy = self:getCenterLoc()
     local rx, ry = (x - cx), (y - cy)
@@ -1738,13 +1937,12 @@ function Joystick:getKnobNewLocForAnalog(x, y)
     return x, y
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the position to match the digital mode.
 -- @param x X-position of the model
 -- @param y Y-position of the model
 -- @return adjusted x-position
 -- @return adjusted y-position
---------------------------------------------------------------------------------
 function Joystick:getKnobNewLocForDigital(x, y)
     local cx, cy = self:getCenterLoc()
     local rx, ry = (x - cx), (y - cy)
@@ -1768,23 +1966,21 @@ function Joystick:getKnobNewLocForDigital(x, y)
     return x, y
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the percentage of input.
 -- @param x X-position
 -- @param y Y-position
 -- @return X-ratio(-1 <= x <= 1)
 -- @return Y-ratio(-1 <= y <= 1)
---------------------------------------------------------------------------------
 function Joystick:getKnobInputRate(x, y)
     local cx, cy = self:getCenterLoc()
     local rateX, rateY = (x - cx) / cx, (y - cy) / cy
     return rateX, rateY
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the direction of the stick.
 -- @return direction
---------------------------------------------------------------------------------
 function Joystick:getStickDirection()
     local x, y = self._knobImage:getLoc()
     local cx, cy = self:getCenterLoc()
@@ -1801,42 +1997,37 @@ function Joystick:getStickDirection()
     return dir
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the stick mode
 -- @return stick mode
---------------------------------------------------------------------------------
 function Joystick:getStickMode()
     return self._stickMode
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the mode of the stick.
 -- @param mode mode("analog" or "digital")
---------------------------------------------------------------------------------
 function Joystick:setStickMode(mode)
     self._stickMode = mode
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the touched.
 -- @return stick mode
---------------------------------------------------------------------------------
 function Joystick:isTouchDown()
     return self._touchIndex ~= nil
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the event listener that is called when the stick changed.
 -- @param func stickChanged event handler
---------------------------------------------------------------------------------
 function Joystick:setOnStickChanged(func)
     self:setEventListener(UIEvent.STICK_CHANGED, func)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when touched.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Joystick:onTouchDown(e)
     if self:isTouchDown() then
         return
@@ -1847,10 +2038,9 @@ function Joystick:onTouchDown(e)
     self:updateKnob(mx, my)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when the button is released.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Joystick:onTouchUp(e)
     if e.idx ~= self._touchIndex then
         return
@@ -1861,10 +2051,9 @@ function Joystick:onTouchUp(e)
     self:updateKnob(cx, cy)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when you move on the button.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Joystick:onTouchMove(e)
     if e.idx ~= self._touchIndex then
         return
@@ -1874,10 +2063,9 @@ function Joystick:onTouchMove(e)
     self:updateKnob(mx, my)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when you move on the button.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Joystick:onTouchCancel(e)
     self._touchIndex = nil
     self:setCenterKnob()
@@ -1897,33 +2085,29 @@ Panel.STYLE_BACKGROUND_TEXTURE = "backgroundTexture"
 --- Style: backgroundVisible
 Panel.STYLE_BACKGROUND_VISIBLE = "backgroundVisible"
 
---------------------------------------------------------------------------------
+---
 -- Initializes the internal variables.
---------------------------------------------------------------------------------
 function Panel:_initInternal()
     Panel.__super._initInternal(self)
     self._themeName = "Panel"
 end
 
---------------------------------------------------------------------------------
+---
 -- Initialize the event listeners
---------------------------------------------------------------------------------
 function Panel:_initEventListeners()
     Panel.__super._initEventListeners(self)
     self:addEventListener(UIEvent.RESIZE, self.onResize, self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Create a children object.
---------------------------------------------------------------------------------
 function Panel:_createChildren()
     Panel.__super._createChildren(self)
     self:_createBackgroundImage()
 end
 
---------------------------------------------------------------------------------
+---
 -- Create an image of the background
---------------------------------------------------------------------------------
 function Panel:_createBackgroundImage()
     if self._backgroundImage then
         return
@@ -1934,9 +2118,8 @@ function Panel:_createBackgroundImage()
     self:addChild(self._backgroundImage)
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the display objects.
---------------------------------------------------------------------------------
 function Panel:updateDisplay()
     Panel.__super.updateDisplay(self)
     self._backgroundImage:setImage(self:getBackgroundTexture())
@@ -1944,36 +2127,32 @@ function Panel:updateDisplay()
     self._backgroundImage:setVisible(self:getBackgroundVisible())
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the background texture path.
 -- @param texture background texture path
---------------------------------------------------------------------------------
 function Panel:setBackgroundTexture(texture)
     self:setStyle(Panel.STYLE_BACKGROUND_TEXTURE, texture)
     self._backgroundImage:setImage(self:getBackgroundTexture())
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the background texture path.
 -- @param texture background texture path
---------------------------------------------------------------------------------
 function Panel:getBackgroundTexture()
     return self:getStyle(Panel.STYLE_BACKGROUND_TEXTURE)
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the visible of the background.
 -- @param visible visible
---------------------------------------------------------------------------------
 function Panel:setBackgroundVisible(visible)
     self:setStyle(Panel.STYLE_BACKGROUND_VISIBLE, visible)
     self._backgroundImage:setVisible(self:getBackgroundVisible())
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the visible of the background.
 -- @return visible
---------------------------------------------------------------------------------
 function Panel:getBackgroundVisible()
     local visible = self:getStyle(Panel.STYLE_BACKGROUND_VISIBLE)
     if visible ~= nil then
@@ -1982,10 +2161,9 @@ function Panel:getBackgroundVisible()
     return true
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when resize.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Panel:onResize(e)
     self._backgroundImage:setImage(self:getBackgroundTexture())
     self._backgroundImage:setSize(self:getSize())
@@ -2010,9 +2188,8 @@ TextBox.STYLE_TEXT_COLOR = "textColor"
 --- Style: textSize
 TextBox.STYLE_TEXT_ALIGN = "textAlign"
 
---------------------------------------------------------------------------------
+---
 -- Initialize a variables
---------------------------------------------------------------------------------
 function TextBox:_initInternal()
     TextBox.__super._initInternal(self)
     self._themeName = "TextBox"
@@ -2020,9 +2197,8 @@ function TextBox:_initInternal()
     self._textLabel = nil
 end
 
---------------------------------------------------------------------------------
+---
 -- Create a children object.
---------------------------------------------------------------------------------
 function TextBox:_createChildren()
     TextBox.__super._createChildren(self)
 
@@ -2031,9 +2207,8 @@ function TextBox:_createChildren()
     self:addChild(self._textLabel)
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the display objects.
---------------------------------------------------------------------------------
 function TextBox:updateDisplay()
     TextBox.__super.updateDisplay(self)
 
@@ -2049,80 +2224,71 @@ function TextBox:updateDisplay()
     textLabel:setFont(self:getFont())
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the text.
 -- @param text text
---------------------------------------------------------------------------------
 function TextBox:setText(text)
     self._text = text
     self._textLabel:setString(text)
 end
 
---------------------------------------------------------------------------------
+---
 -- Adds the text.
 -- @param text text
---------------------------------------------------------------------------------
 function TextBox:addText(text)
     self:setText(self._text .. text)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the text.
 -- @return text
---------------------------------------------------------------------------------
 function TextBox:getText()
     return self._text
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the textSize.
 -- @param textSize textSize
---------------------------------------------------------------------------------
 function TextBox:setTextSize(textSize)
     self:setStyle(TextBox.STYLE_TEXT_SIZE, textSize)
     self._textLabel:setTextSize(self:getTextSize())
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the textSize.
 -- @param textSize textSize
---------------------------------------------------------------------------------
 function TextBox:getTextSize()
     return self:getStyle(TextBox.STYLE_TEXT_SIZE)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the fontName.
 -- @param fontName fontName
---------------------------------------------------------------------------------
 function TextBox:setFontName(fontName)
     self:setStyle(TextBox.STYLE_FONT_NAME, font)
     self._textLabel:setFont(self:getFont())
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the textSize.
 -- @param textSize textSize
---------------------------------------------------------------------------------
 function TextBox:getFontName()
     return self:getStyle(TextBox.STYLE_FONT_NAME)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the font.
 -- @return font
---------------------------------------------------------------------------------
 function TextBox:getFont()
     local fontName = self:getFontName()
     local font = Resources.getFont(fontName, nil, self:getTextSize())
     return font
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the text align.
 -- @param horizotalAlign horizotal align(left, center, top)
 -- @param verticalAlign vertical align(top, center, bottom)
---------------------------------------------------------------------------------
 function TextBox:setTextAlign(horizotalAlign, verticalAlign)
     if horizotalAlign or verticalAlign then
         self:setStyle(TextBox.STYLE_TEXT_ALIGN, {horizotalAlign or "center", verticalAlign or "center"})
@@ -2132,20 +2298,18 @@ function TextBox:setTextAlign(horizotalAlign, verticalAlign)
     self._textLabel:setAlignment(self:getAlignment())
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the text align.
 -- @return horizotal align(left, center, top)
 -- @return vertical align(top, center, bottom)
---------------------------------------------------------------------------------
 function TextBox:getTextAlign()
     return unpack(self:getStyle(TextBox.STYLE_TEXT_ALIGN))
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the text align for MOAITextBox.
 -- @return horizotal align
 -- @return vertical align
---------------------------------------------------------------------------------
 function TextBox:getAlignment()
     local h, v = self:getTextAlign()
     h = assert(TextAlign[h])
@@ -2153,13 +2317,12 @@ function TextBox:getAlignment()
     return h, v
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the text align.
 -- @param red red(0 ... 1)
 -- @param green green(0 ... 1)
 -- @param blue blue(0 ... 1)
 -- @param alpha alpha(0 ... 1)
---------------------------------------------------------------------------------
 function TextBox:setTextColor(red, green, blue, alpha)
     if red == nil and green == nil and blue == nil and alpha == nil then
         self:setStyle(TextBox.STYLE_TEXT_COLOR, nil)
@@ -2169,21 +2332,19 @@ function TextBox:setTextColor(red, green, blue, alpha)
     self._textLabel:setColor(self:getTextColor())
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the text color.
 -- @return red(0 ... 1)
 -- @return green(0 ... 1)
 -- @return blue(0 ... 1)
 -- @return alpha(0 ... 1)
---------------------------------------------------------------------------------
 function TextBox:getTextColor()
     return unpack(self:getStyle(TextBox.STYLE_TEXT_COLOR))
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when resize.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function TextBox:onResize(e)
     TextBox.__super.onResize(self, e)
 
@@ -2194,10 +2355,9 @@ function TextBox:onResize(e)
     textLabel:setPos(xMin, yMin)
 end
 
---------------------------------------------------------------------------------
+---
 -- Set textbox padding by label's setRect method, it will set 4 direction padding
 -- @param padding pixecls
---------------------------------------------------------------------------------
 function TextBox:setPadding(padding)
     if self._textLabel then
         local x1, y1, x2, y2 = self._textLabel:getRect()
@@ -2205,10 +2365,9 @@ function TextBox:setPadding(padding)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Set textbox padding-top by label's setRect method
 -- @param padding pixecls
---------------------------------------------------------------------------------
 function TextBox:setPaddingTop(padding)
     if self._textLabel then
         local x1, y1, x2, y2 = self._textLabel:getRect()
@@ -2227,9 +2386,8 @@ M.TextInput = TextInput
 --- Style: focusTexture
 TextInput.STYLE_FOCUS_TEXTURE = "focusTexture"
 
---------------------------------------------------------------------------------
+---
 -- Initialize a variables
---------------------------------------------------------------------------------
 function TextInput:_initInternal()
     TextInput.__super._initInternal(self)
     self._themeName = "TextInput"
@@ -2242,16 +2400,14 @@ function TextInput:_initInternal()
 
 end
 
---------------------------------------------------------------------------------
+---
 -- Initialize the event listeners.
---------------------------------------------------------------------------------
 function TextInput:_initEventListeners()
     TextInput.__super._initEventListeners(self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the children.
---------------------------------------------------------------------------------
 function TextInput:_createChildren()
     TextInput.__super._createChildren(self)
 
@@ -2261,18 +2417,17 @@ function TextInput:_createChildren()
     self:addChild(self._textAllow)
 end
 
---------------------------------------------------------------------------------
+---
 -- Draw the focus object.
---------------------------------------------------------------------------------
+-- @param focus focus
 function TextInput:drawFocus(focus)
     TextInput.__super.drawFocus(self, focus)
     self._backgroundImage:setImage(self:getBackgroundTexture())
     self:drawTextAllow()
 end
 
---------------------------------------------------------------------------------
+---
 -- Draw an arrow in the text.
---------------------------------------------------------------------------------
 function TextInput:drawTextAllow()
     if not self:isFocus() then
         self._textAllow:setVisible(false)
@@ -2294,10 +2449,9 @@ function TextInput:drawTextAllow()
     textAllow:setVisible(self:isFocus())
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the background texture path.
 -- @return background texture path
---------------------------------------------------------------------------------
 function TextInput:getBackgroundTexture()
     if self:isFocus() then
         return self:getStyle(TextInput.STYLE_FOCUS_TEXTURE)
@@ -2305,10 +2459,9 @@ function TextInput:getBackgroundTexture()
     return TextInput.__super.getBackgroundTexture(self)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when focus in.
 -- @param e event
---------------------------------------------------------------------------------
 function TextInput:onFocusIn(e)
     TextInput.__super.onFocusIn(self, e)
 
@@ -2325,10 +2478,9 @@ function TextInput:onFocusIn(e)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when focus in.
 -- @param e event
---------------------------------------------------------------------------------
 function TextInput:onFocusOut(e)
     TextInput.__super.onFocusOut(self, e)
 
@@ -2344,10 +2496,9 @@ function TextInput:onFocusOut(e)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when focus in.
 -- @param e event
---------------------------------------------------------------------------------
 function TextInput:onKeyDown(e)
     local key = e.key
 
@@ -2364,27 +2515,24 @@ function TextInput:onKeyDown(e)
     self:drawTextAllow()
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when key up.
 -- @param e event
---------------------------------------------------------------------------------
 function TextInput:onKeyUp(e)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when keyboard input.
 -- @param start start
 -- @param length length
 -- @param text text
---------------------------------------------------------------------------------
 function TextInput:onKeyboardInput(start, length, text)
     self:setText(MOAIKeyboard.getText())
     self:drawTextAllow()
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when keyboard input.
---------------------------------------------------------------------------------
 function TextInput:onKeyboardReturn()
     self:setText(MOAIKeyboard.getText())
     self:setFocus(false)
@@ -2421,9 +2569,8 @@ MsgBox.ANIM_HIDE_FUNCTION = function(self)
     MOAICoroutine.blockOnAction(action1)
 end
 
---------------------------------------------------------------------------------
+---
 -- Initialize a internal variables.
---------------------------------------------------------------------------------
 function MsgBox:_initInternal()
     MsgBox.__super._initInternal(self)
     self._themeName = "MsgBox"
@@ -2434,17 +2581,15 @@ function MsgBox:_initInternal()
     self:setColor(0, 0, 0, 0)
 end
 
---------------------------------------------------------------------------------
+---
 -- Initialize the event listeners.
---------------------------------------------------------------------------------
 function MsgBox:_initEventListeners()
     MsgBox.__super._initEventListeners(self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Show MsgBox.
---------------------------------------------------------------------------------
 function MsgBox:showPopup()
     if self:isPopupShowing() then
         return
@@ -2472,9 +2617,8 @@ function MsgBox:showPopup()
     end)
 end
 
---------------------------------------------------------------------------------
+---
 -- Hide MsgBox.
---------------------------------------------------------------------------------
 function MsgBox:hidePopup()
     if not self:isPopupShowing() then
         return
@@ -2490,9 +2634,8 @@ function MsgBox:hidePopup()
     end)
 end
 
---------------------------------------------------------------------------------
+---
 -- Displays the next page.
---------------------------------------------------------------------------------
 function MsgBox:nextPage()
     self._textLabel:nextPage()
     if self._spoolingEnabled then
@@ -2500,35 +2643,31 @@ function MsgBox:nextPage()
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Return true if showing.
 -- @return true if showing
---------------------------------------------------------------------------------
 function MsgBox:isPopupShowing()
     return self._popupShowing
 end
 
---------------------------------------------------------------------------------
+---
 -- Return true if textLabel is busy.
---------------------------------------------------------------------------------
 function MsgBox:isSpooling()
     return self._textLabel:isBusy()
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns true if there is a next page.
 -- @return True if there is a next page
---------------------------------------------------------------------------------
 function MsgBox:hasNextPase()
     return self._textLabel:more()
 end
 
---------------------------------------------------------------------------------
+---
 -- Turns spooling ON or OFF.
 -- If self is currently spooling and enable is false, stop spooling and reveal
 -- entire page.
 -- @param enabled Boolean for new state
--------------------------------------------------------------------------------
 function MsgBox:setSpoolingEnabled(enabled)
     self._spoolingEnabled = enabled
     if not self._spoolingEnabled and self:isSpooling() then
@@ -2537,10 +2676,9 @@ function MsgBox:setSpoolingEnabled(enabled)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when you touch the component.
 -- @param e touch event
---------------------------------------------------------------------------------
 function MsgBox:onTouchDown(e)
     if self:isSpooling() then
         self._textLabel:stop()
@@ -2567,9 +2705,8 @@ ListBox.STYLE_LIST_ITEM_FACTORY = "listItemFactory"
 --- Style: rowHeight
 ListBox.STYLE_ROW_HEIGHT = "rowHeight"
 
---------------------------------------------------------------------------------
+---
 -- Initialize a variables
---------------------------------------------------------------------------------
 function ListBox:_initInternal()
     ListBox.__super._initInternal(self)
     self._themeName = "ListBox"
@@ -2582,9 +2719,8 @@ function ListBox:_initInternal()
     self._verticalScrollPosition = 0
 end
 
---------------------------------------------------------------------------------
+---
 -- Initialize the event listeners.
---------------------------------------------------------------------------------
 function ListBox:_initEventListeners()
     ListBox.__super._initEventListeners(self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
@@ -2593,18 +2729,16 @@ function ListBox:_initEventListeners()
     self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the children.
---------------------------------------------------------------------------------
 function ListBox:_createChildren()
     ListBox.__super._createChildren(self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the ListItem.
 -- @param index index of the listItems
 -- @return listItem
---------------------------------------------------------------------------------
 function ListBox:_createListItem(index)
     if not self._listItems[index] then
         local factory = self:getListItemFactory()
@@ -2631,10 +2765,9 @@ function ListBox:_createListItem(index)
     return listItem
 end
 
---------------------------------------------------------------------------------
+---
 -- Delete the ListItem.
 -- @param index index of the listItems
---------------------------------------------------------------------------------
 function ListBox:_deleteListItem(index)
     local listItem = self._listItems[index]
     if listItem then
@@ -2645,9 +2778,8 @@ function ListBox:_deleteListItem(index)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Clears the ListItems.
---------------------------------------------------------------------------------
 function ListBox:_clearListItems()
     for i = 1, #self._listItems do
         self:_deleteListItem(i)
@@ -2655,9 +2787,8 @@ function ListBox:_clearListItems()
     self._freeListItems = {}
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the display.
---------------------------------------------------------------------------------
 function ListBox:updateDisplay()
     ListBox.__super.updateDisplay(self)
 
@@ -2677,9 +2808,8 @@ function ListBox:updateDisplay()
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the size by rowCount.
---------------------------------------------------------------------------------
 function ListBox:updateSize()
     local rowCount = self:getRowCount()
     local rowHeight = self:getRowHeight()
@@ -2688,74 +2818,66 @@ function ListBox:updateSize()
     self:setHeight(rowCount * rowHeight + pTop + pBottom)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the list data.
 -- @param listData listData
---------------------------------------------------------------------------------
 function ListBox:setListData(listData)
     self._listData = listData or {}
     self:_clearListItems()
-    self:updateDisplay()
+    self:validate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the list data.
 -- @return listData
---------------------------------------------------------------------------------
 function ListBox:getListData()
     return self._listData
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the list size.
 -- @return size
---------------------------------------------------------------------------------
 function ListBox:getListSize()
     return #self._listData
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the ListItems.
 -- Care must be taken to use the ListItems.
 -- ListItems is used to cache internally rotate.
 -- Therefore, ListItems should not be accessed from outside too.
 -- @return listItems
---------------------------------------------------------------------------------
 function ListBox:getListItems()
     return self._listItems
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the ListItem.
 -- @param index index of the listItems
 -- @return listItem
---------------------------------------------------------------------------------
 function ListBox:getListItemAt(index)
     return self._listItems[index]
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the ListItemFactory.
 -- @param factory ListItemFactory
---------------------------------------------------------------------------------
 function ListBox:setListItemFactory(factory)
     self:setStyle(ListBox.STYLE_LIST_ITEM_FACTORY, factory)
     self:_clearListItems()
-    self:updateDisplay()
+    self:validate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the ListItemFactory.
 -- @return ListItemFactory
---------------------------------------------------------------------------------
 function ListBox:getListItemFactory()
     return self:getStyle(ListBox.STYLE_LIST_ITEM_FACTORY)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the selectedIndex.
 -- @param index selectedIndex
---------------------------------------------------------------------------------
 function ListBox:setSelectedIndex(index)
     if index == self._selectedIndex then
         return
@@ -2777,18 +2899,16 @@ function ListBox:setSelectedIndex(index)
     self:dispatchEvent(UIEvent.ITEM_CHANGED, data)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the selectedIndex.
 -- @return selectedIndex
---------------------------------------------------------------------------------
 function ListBox:getSelectedIndex()
     return self._selectedIndex
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the selected item.
 -- @param item selected item
---------------------------------------------------------------------------------
 function ListBox:setSelectedItem(item)
     if item then
         self:setSelectedIndex(item:getDataIndex())
@@ -2797,143 +2917,127 @@ function ListBox:setSelectedItem(item)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the selected item.
 -- @return selected item
---------------------------------------------------------------------------------
 function ListBox:getSelectedItem()
     if self._selectedIndex then
         return self._listItems[self._selectedIndex]
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the labelField.
 -- @param labelField labelField
---------------------------------------------------------------------------------
 function ListBox:setLabelField(labelField)
     self._labelField = labelField
-    self:updateDisplay()
+    self:validate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the labelField.
 -- @return labelField
---------------------------------------------------------------------------------
 function ListBox:getLabelField()
     return self._labelField
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the verticalScrollPosition.
 -- @param pos verticalScrollPosition
---------------------------------------------------------------------------------
 function ListBox:setVerticalScrollPosition(pos)
     if self._verticalScrollPosition == pos then
         return
     end
     self._verticalScrollPosition = math.max(0, math.min(self:getMaxVerticalScrollPosition(), pos))
-    self:updateDisplay()
+    self:validate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the verticalScrollPosition.
 -- @return verticalScrollPosition
---------------------------------------------------------------------------------
 function ListBox:getVerticalScrollPosition()
     return self._verticalScrollPosition
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the maxVerticalScrollPosition.
 -- @return maxVerticalScrollPosition
---------------------------------------------------------------------------------
 function ListBox:getMaxVerticalScrollPosition()
     return math.max(math.floor(self:getListSize() / self:getColumnCount()) - self:getRowCount(), 0)
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the height of the row.
 -- @param rowHeight height of the row
---------------------------------------------------------------------------------
 function ListBox:setRowHeight(rowHeight)
     self:setStyle(ListBox.STYLE_ROW_HEIGHT, rowHeight)
-    self:updateDisplay()
+    self:validate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the height of the row.
 -- @return rowHeight
---------------------------------------------------------------------------------
 function ListBox:getRowHeight()
     return self:getStyle(ListBox.STYLE_ROW_HEIGHT)
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the count of the rows.
 -- @param rowCount count of the rows
---------------------------------------------------------------------------------
 function ListBox:setRowCount(rowCount)
     self._rowCount = rowCount
     self:updateSize()
-    self:updateDisplay()
+    self:validate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the count of the rows.
 -- @return rowCount
---------------------------------------------------------------------------------
 function ListBox:getRowCount()
     return self._rowCount
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the count of the columns.
 -- @param columnCount count of the columns
---------------------------------------------------------------------------------
 function ListBox:setColumnCount(columnCount)
     assert(columnCount >= 1, "columnCount property error!")
 
     self._columnCount = columnCount
-    self:updateDisplay()
+    self:validate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the count of the columns.
 -- @return columnCount
---------------------------------------------------------------------------------
 function ListBox:getColumnCount()
     return self._columnCount
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns true if the component has been touched.
 -- @return touching
---------------------------------------------------------------------------------
 function ListBox:isTouching()
     return self._touchedIndex ~= nil
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the event listener that is called when the user item changed.
 -- @param func event handler
---------------------------------------------------------------------------------
 function ListBox:setOnItemChanged(func)
     self:setEventListener(UIEvent.ITEM_CHANGED, func)
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the event listener that is called when the user item changed.
 -- @param func event handler
---------------------------------------------------------------------------------
 function ListBox:setOnItemEnter(func)
     self:setEventListener(UIEvent.ITEM_ENTER, func)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when touch.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function ListBox:onTouchDown(e)
     if self._touchedIndex ~= nil and self._touchedIndex ~= e.idx then
         return
@@ -2943,10 +3047,9 @@ function ListBox:onTouchDown(e)
     self._touchedVsp = self:getVerticalScrollPosition()
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when touch.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function ListBox:onTouchUp(e)
     if self._touchedIndex ~= e.idx then
         return
@@ -2956,10 +3059,9 @@ function ListBox:onTouchUp(e)
     self._touchedVsp = nil
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when touch.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function ListBox:onTouchMove(e)
     if self._touchedIndex ~= e.idx then
         return
@@ -2970,19 +3072,16 @@ function ListBox:onTouchMove(e)
     self:setVerticalScrollPosition(vsp)
 end
 
-
---------------------------------------------------------------------------------
+---
 -- This event handler is called when touch.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function ListBox:onTouchCancel(e)
     self:onTouchUp(e)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when resize.
 -- @param e Event
---------------------------------------------------------------------------------
 function ListBox:onResize(e)
     ListBox.__super.onResize(self, e)
 
@@ -2990,7 +3089,7 @@ function ListBox:onResize(e)
     local contentWidth, contentHeight = xMax - xMin, yMax - yMin
     local rowHeight = self:getRowHeight()
     self._rowCount = math.floor(contentHeight / rowHeight)
-    self:updateDisplay()
+    self:validate()
 end
 
 
@@ -3002,9 +3101,8 @@ end
 ListItem = class(TextBox)
 M.ListItem = ListItem
 
---------------------------------------------------------------------------------
+---
 -- Initialize a variables
---------------------------------------------------------------------------------
 function ListItem:_initInternal()
     ListItem.__super._initInternal(self)
     self._themeName = "ListItem"
@@ -3014,26 +3112,23 @@ function ListItem:_initInternal()
     self._selected = false
 end
 
---------------------------------------------------------------------------------
+---
 -- Initialize the event listeners.
---------------------------------------------------------------------------------
 function ListItem:_initEventListeners()
     ListItem.__super._initEventListeners(self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the children.
---------------------------------------------------------------------------------
 function ListItem:_createChildren()
     ListItem.__super._createChildren(self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the data and rowIndex.
 -- @param data data
 -- @param dataIndex index of the data
---------------------------------------------------------------------------------
 function ListItem:setData(data, dataIndex)
     self._data = data
     self._dataIndex = dataIndex
@@ -3042,42 +3137,37 @@ function ListItem:setData(data, dataIndex)
     textLabel:setString(self:getText())
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the data.
 -- @return data
---------------------------------------------------------------------------------
 function ListItem:getData()
     return self._data
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the data index.
 -- @return data index
---------------------------------------------------------------------------------
 function ListItem:getDataIndex()
     return self._dataIndex
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the selected.
---------------------------------------------------------------------------------
 function ListItem:setSelected(selected)
     self._selected = selected
     self:setBackgroundVisible(selected)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns true if selected.
 -- @return true if selected
---------------------------------------------------------------------------------
 function ListItem:isSelected()
     return self._selected
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the text.
 -- @return text
---------------------------------------------------------------------------------
 function ListItem:getText()
     local data = self._data
     if data then
@@ -3089,20 +3179,18 @@ function ListItem:getText()
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the labelField.
 -- @return labelField
---------------------------------------------------------------------------------
 function ListItem:getLabelField()
     if self.parent then
         return self.parent:getLabelField()
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- The event handler is called when you touch the ListItem.
 -- @param e Touch event
---------------------------------------------------------------------------------
 function ListItem:onTouchDown(e)
     local listBox = self.parent
     if self:isSelected() then
@@ -3128,9 +3216,8 @@ Slider.STYLE_PROGRESS_TEXTURE = "progressTexture"
 --- Style: thumbTexture
 Slider.STYLE_THUMB_TEXTURE = "thumbTexture"
 
---------------------------------------------------------------------------------
+---
 -- Initializes the internal variables.
---------------------------------------------------------------------------------
 function Slider:_initInternal()
     Slider.__super._initInternal(self)
     self._themeName = "Slider"
@@ -3143,9 +3230,8 @@ function Slider:_initInternal()
     self._currValue = 0.4
 end
 
---------------------------------------------------------------------------------
+---
 -- Initializes the event listener.
---------------------------------------------------------------------------------
 function Slider:_initEventListeners()
     Slider.__super._initEventListeners(self)
     self:addEventListener(Event.RESIZE, self.onResize, self)
@@ -3155,9 +3241,8 @@ function Slider:_initEventListeners()
     self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Create children.
---------------------------------------------------------------------------------
 function Slider:_createChildren()
     Slider.__super._createChildren(self)
     self:_createBackgroundImage()
@@ -3165,9 +3250,8 @@ function Slider:_createChildren()
     self:_createThumbImage()
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the backgroundImage.
---------------------------------------------------------------------------------
 function Slider:_createBackgroundImage()
     if self._backgroundImage then
         return
@@ -3176,9 +3260,8 @@ function Slider:_createBackgroundImage()
     self:addChild(self._backgroundImage)
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the progressImage.
---------------------------------------------------------------------------------
 function Slider:_createProgressImage()
     if self._progressImage then
         return
@@ -3187,9 +3270,8 @@ function Slider:_createProgressImage()
     self:addChild(self._progressImage)
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the progressImage.
---------------------------------------------------------------------------------
 function Slider:_createThumbImage()
     if self._thumbImage then
         return
@@ -3198,27 +3280,24 @@ function Slider:_createThumbImage()
     self:addChild(self._thumbImage)
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the display.
---------------------------------------------------------------------------------
 function Slider:updateDisplay()
     Slider.__super.updateDisplay(self)
     self:updateBackgroundImage()
     self:updateProgressImage()
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the backgroundImage.
---------------------------------------------------------------------------------
 function Slider:updateBackgroundImage()
     local width = self:getWidth()
     local height = self._backgroundImage:getHeight()
     self._backgroundImage:setSize(width, height)
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the progressImage.
---------------------------------------------------------------------------------
 function Slider:updateProgressImage()
     local width = self:getWidth()
     local height = self._progressImage:getHeight()
@@ -3226,10 +3305,9 @@ function Slider:updateProgressImage()
     self._thumbImage:setLoc(width * (self._currValue / self._maxValue), height / 2)
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the value of the current.
 -- @param value value of the current
---------------------------------------------------------------------------------
 function Slider:setValue(value)
     if self._currValue == value then
         return
@@ -3240,54 +3318,48 @@ function Slider:setValue(value)
     self:dispatchEvent(UIEvent.VALUE_CHANGED, self._currValue)
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the value of the current.
 -- @return value of the current
---------------------------------------------------------------------------------
 function Slider:getValue()
     return self._currValue
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the background texture.
 -- @param texture texture
---------------------------------------------------------------------------------
 function Slider:setBackgroundTexture(texture)
     self:setStyle(Slider.STYLE_BACKGROUND_TEXTURE, texture)
     self._backgroundImage:setImage(self:getStyle(Slider.STYLE_BACKGROUND_TEXTURE))
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the progress texture.
 -- @param texture texture
---------------------------------------------------------------------------------
 function Slider:setProgressTexture(texture)
     self:setStyle(Slider.STYLE_PROGRESS_TEXTURE, texture)
     self._progressImage:setImage(self:getStyle(Slider.STYLE_PROGRESS_TEXTURE))
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the thumb texture.
 -- @param texture texture
---------------------------------------------------------------------------------
 function Slider:setThumbTexture(texture)
     self:setStyle(Slider.STYLE_THUMB_TEXTURE, texture)
     self._thumbImage:setTexture(self:getStyle(Slider.STYLE_THUMB_TEXTURE))
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the event listener that is called when the user click the Slider.
 -- @param func click event handler
---------------------------------------------------------------------------------
 function Slider:setOnValueChanged(func)
     self:setEventListener(UIEvent.VALUE_CHANGED, func)
 end
 
---------------------------------------------------------------------------------
+---
 -- Down the Slider.
 -- There is no need to call directly to the basic.
 -- @param worldX Touch worldX
---------------------------------------------------------------------------------
 function Slider:doSlide(worldX)
     local width = self:getWidth()
     local left = self:getLeft()
@@ -3298,18 +3370,16 @@ function Slider:doSlide(worldX)
     self:setValue(modelX / width)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when resize.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Slider:onResize(e)
-    self:updateDisplay()
+    self:validate()
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when you touch the Slider.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Slider:onTouchDown(e)
     if self._touchDownIdx then
         return
@@ -3319,10 +3389,9 @@ function Slider:onTouchDown(e)
     self:doSlide(e.wx)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when the Slider is released.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Slider:onTouchUp(e)
     if self._touchDownIdx ~= e.idx then
         return
@@ -3331,10 +3400,9 @@ function Slider:onTouchUp(e)
     self:doSlide(e.wx)
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when you move on the Slider.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Slider:onTouchMove(e)
     if self._touchDownIdx ~= e.idx then
         return
@@ -3344,10 +3412,9 @@ function Slider:onTouchMove(e)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- This event handler is called when you cancel the touch.
 -- @param e Touch Event
---------------------------------------------------------------------------------
 function Slider:onTouchCancel(e)
     if self._touchDownIdx ~= e.idx then
         return
