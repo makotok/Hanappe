@@ -81,14 +81,13 @@ M.DEFAULT_VIEWPORT_SCALE = 1
 -- Public functions
 ----------------------------------------------------------------------------------------------------
 
---------------------------------------------------------------------------------
+---
 -- Open the window.
 -- Initializes the library.
 -- @param title Title of the window
 -- @param width Width of the window
 -- @param height Height of the window
 -- @param scale (Option)Scale of the Viewport to the Screen
---------------------------------------------------------------------------------
 function M.openWindow(title, width, height, scale)
     width = width or M.DEFAULT_SCREEN_WIDTH
     height = height or M.DEFAULT_SCREEN_HEIGHT
@@ -104,13 +103,12 @@ function M.openWindow(title, width, height, scale)
     MOAISim.openWindow(title, M.screenWidth, M.screenHeight)
 end
 
---------------------------------------------------------------------------------
+---
 -- Update the screen and view size.
 -- Please call if you have to recalculate.
 -- @param width Width of the screen
 -- @param height Height of the screen
 -- @param scale (Option)Scale of the Viewport to the Screen
---------------------------------------------------------------------------------
 function M.updateDisplaySize(width, height, scale)
     M.screenWidth = width
     M.screenHeight = height
@@ -124,42 +122,38 @@ function M.updateDisplaySize(width, height, scale)
     M.viewport:setOffset(-1, 1)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the size of the screen.
 -- @return width, height
---------------------------------------------------------------------------------
 function M.getScreenSize()
     return M.screenWidth, M.screenHeight
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the size of the viewport.
 -- @return width, height
---------------------------------------------------------------------------------
 function M.getViewSize()
     return M.viewWidth, M.viewHeight
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the Viewport to be used in layers.
 -- If you change the Viewport, it affects all layers.
 -- @return width, height
---------------------------------------------------------------------------------
 function M.getViewport()
     return M.viewport
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the texture.
 -- Textures are cached.
 -- @param path The path of the texture
 -- @return Texture instance
---------------------------------------------------------------------------------
 function M.getTexture(path)
     return Resources.getTexture(path)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the font.
 -- Fonts are cached.
 -- @param path The path of the font.
@@ -167,47 +161,42 @@ end
 -- @param points (option)Points of the font
 -- @param dpi (option)Dpi of the font
 -- @return Font instance
---------------------------------------------------------------------------------
 function M.getFont(path, charcodes, points, dpi)
     return Resources.getFont(path, charcodes, points, dpi)
 end
 
---------------------------------------------------------------------------------
+---
 -- Opens the scene.  This is a convenience function.
 -- Delegate to SceneMgr.
 -- @param sceneName module name of the Scene
 -- @param params (option)Parameters of the Scene
---------------------------------------------------------------------------------
 function M.openScene(sceneName, params)
     return SceneMgr:openScene(sceneName, params)
 end
 
---------------------------------------------------------------------------------
+---
 -- Goto the Scene.  This is a convenience function.
 -- Delegate to SceneMgr.
 -- @param sceneName module name of the Scene
 -- @param params (option)Parameters of the Scene
---------------------------------------------------------------------------------
 function M.gotoScene(sceneName, params)
     return SceneMgr:gotoScene(sceneName, params)
 end
 
---------------------------------------------------------------------------------
+---
 -- Close the Scene.  This is a convenience function.
 -- Delegate to SceneMgr.
 -- @param params (option)Parameters of the Scene
---------------------------------------------------------------------------------
 function M.closeScene(params)
     return SceneMgr:closeScene(params)
 end
 
---------------------------------------------------------------------------------
+---
 -- Executes a function in a MOAICoroutine.
 -- This variant of the function family will run the func immediately
 -- upon the next coroutine.yield().
 -- @param func function object
 -- @param ... (option)function arguments
---------------------------------------------------------------------------------
 function M.callOnce(func, ...)
     return Executors.callOnce(func, ...)
 end
@@ -226,13 +215,12 @@ class = {}
 setmetatable(class, class)
 M.class = class
 
---------------------------------------------------------------------------------
+---
 -- This allows you to define a class by calling 'class' as a function,
 -- specifying the superclasses as a list.  For example:
 -- mynewclass = class(superclass1, superclass2)
 -- @param ... Base class list.
 -- @return class
---------------------------------------------------------------------------------
 function class:__call(...)
     local clazz = table.copy(self)
     local bases = {...}
@@ -246,11 +234,10 @@ function class:__call(...)
     return setmetatable(clazz, clazz)
 end
 
---------------------------------------------------------------------------------
+---
 -- Generic constructor function for classes.
 -- Note that __new() will call init() if it is available in the class.
 -- @return Instance
---------------------------------------------------------------------------------
 function class:__new(...)
     local obj = self:__object_factory()
 
@@ -261,10 +248,9 @@ function class:__new(...)
     return obj
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the new object.
 -- @return object
---------------------------------------------------------------------------------
 function class:__object_factory()
     local moai_class = self.__moai_class
 
@@ -288,12 +274,11 @@ end
 table = setmetatable({}, {__index = _G.table})
 M.table = table
 
---------------------------------------------------------------------------------
+---
 -- Returns the position found by searching for a matching value from an array.
 -- @param array table array
 -- @param value Search value
 -- @return the index number if the value is found, or 0 if not found.
---------------------------------------------------------------------------------
 function table.indexOf(array, value)
     for i, v in ipairs(array) do
         if v == value then
@@ -303,12 +288,11 @@ function table.indexOf(array, value)
     return 0
 end
 
---------------------------------------------------------------------------------
+---
 -- Same as indexOf, only for key values (slower)
 -- Author:Nenad Katic
---------------------------------------------------------------------------------
-function table.keyOf( src, val )
-    for k, v in pairs( src ) do
+function table.keyOf(src, val)
+    for k, v in pairs(src) do
         if v == val then
             return k
         end
@@ -316,12 +300,11 @@ function table.keyOf( src, val )
     return nil
 end
 
---------------------------------------------------------------------------------
+---
 -- Copy the table shallowly (i.e. do not create recursive copies of values)
 -- @param src copy
 -- @param dest (option)Destination
 -- @return dest
---------------------------------------------------------------------------------
 function table.copy(src, dest)
     dest = dest or {}
     for i, v in pairs(src) do
@@ -330,12 +313,11 @@ function table.copy(src, dest)
     return dest
 end
 
---------------------------------------------------------------------------------
+---
 -- Copy the table deeply (i.e. create recursive copies of values)
 -- @param src copy
 -- @param dest (option)Destination
 -- @return dest
---------------------------------------------------------------------------------
 function table.deepCopy(src, dest)
     dest = dest or {}
     for k, v in pairs(src) do
@@ -348,12 +330,11 @@ function table.deepCopy(src, dest)
     return dest
 end
 
---------------------------------------------------------------------------------
+---
 -- Adds an element to the table if and only if the value did not already exist.
 -- @param t table
 -- @param o element
 -- @return If it already exists, returns false. If it did not previously exist, returns true.
---------------------------------------------------------------------------------
 function table.insertIfAbsent(t, o)
     if table.indexOf(t, o) > 0 then
         return false
@@ -362,25 +343,23 @@ function table.insertIfAbsent(t, o)
     return true
 end
 
---------------------------------------------------------------------------------
+---
 -- Adds an element to the table.
 -- @param t table
 -- @param o element
 -- @return true
---------------------------------------------------------------------------------
 function table.insertElement(t, o)
     t[#t + 1] = o
     return true
 end
 
---------------------------------------------------------------------------------
+---
 -- Removes the element from the table.
 -- If the element existed, then returns its index value.
 -- If the element did not previously exist, then return 0.
 -- @param t table
 -- @param o element
 -- @return index
---------------------------------------------------------------------------------
 function table.removeElement(t, o)
     local i = table.indexOf(t, o)
     if i > 0 then
@@ -398,11 +377,10 @@ end
 math = setmetatable({}, {__index = _G.math})
 M.math = math
 
---------------------------------------------------------------------------------
+---
 -- Calculate the average of the values of the argument.
 -- @param ... a variable number of arguments, all of which should be numbers
 -- @return average
---------------------------------------------------------------------------------
 function math.average(...)
     local total = 0
     local array = {...}
@@ -412,11 +390,10 @@ function math.average(...)
     return total / #array
 end
 
---------------------------------------------------------------------------------
+---
 -- Calculate the total values of the argument
 -- @param ... a variable number of arguments, all of which should be numbers
 -- @return total
---------------------------------------------------------------------------------
 function math.sum(...)
     local total = 0
     local array = {...}
@@ -426,14 +403,13 @@ function math.sum(...)
     return total
 end
 
---------------------------------------------------------------------------------
+---
 -- Calculate the distance.
 -- @param x0 Start position.
 -- @param y0 Start position.
 -- @param x1 (option)End position (note: default value is 0)
 -- @param y1 (option)End position (note: default value is 0)
 -- @return distance
---------------------------------------------------------------------------------
 function math.distance( x0, y0, x1, y1 )
     if not x1 then x1 = 0 end
     if not y1 then y1 = 0 end
@@ -444,12 +420,11 @@ function math.distance( x0, y0, x1, y1 )
     return dist
 end
 
---------------------------------------------------------------------------------
+---
 -- Get the normal vector
 -- @param x
 -- @param y
 -- @return x/d, y/d
---------------------------------------------------------------------------------
 function math.normalize( x, y )
     local d = math.distance( x, y )
     return x/d, y/d
@@ -463,13 +438,12 @@ end
 Executors = {}
 M.Executors = Executors
 
---------------------------------------------------------------------------------
+---
 -- Run the specified function in a loop in a coroutine, forever.
 -- If there is a return value of a function of argument, the loop is terminated.
 -- @param func Target function.
 -- @param ... Arguments to be passed to the function.
 -- @return MOAICoroutine object
---------------------------------------------------------------------------------
 function Executors.callLoop(func, ...)
     local thread = MOAICoroutine.new()
     local args = {...}
@@ -486,24 +460,22 @@ function Executors.callLoop(func, ...)
     return thread
 end
 
---------------------------------------------------------------------------------
+---
 -- Run the specified function once, in a coroutine, immediately
 -- (upon next coroutine.yield())
 -- @param func Target function.
 -- @param ... Arguments.
 -- @return MOAICoroutine object
---------------------------------------------------------------------------------
 function Executors.callOnce(func, ...)
     return Executors.callLaterFrame(0, func, ...)
 end
 
---------------------------------------------------------------------------------
+---
 -- Run the specified function once, in a coroutine, after a specified delay in frames.
 -- @param frame Delay frame count.
 -- @param func Target function.
 -- @param ... Arguments.
 -- @return MOAICoroutine object
---------------------------------------------------------------------------------
 function Executors.callLaterFrame(frame, func, ...)
     local thread = MOAICoroutine.new()
     local args = {...}
@@ -520,13 +492,12 @@ function Executors.callLaterFrame(frame, func, ...)
     return thread
 end
 
---------------------------------------------------------------------------------
+---
 -- Run the specified function once, in a coroutine, after a specified delay in seconds.
 -- @param time Delay seconds.
 -- @param func Target function.
 -- @param ... Arguments.
 -- @return MOAITimer object
---------------------------------------------------------------------------------
 function Executors.callLaterTime(time, func, ...)
     local args = {...}
     local timer = MOAITimer.new()
@@ -536,13 +507,12 @@ function Executors.callLaterTime(time, func, ...)
     return timer
 end
 
---------------------------------------------------------------------------------
+---
 -- Run the specified function in loop by a span time over and over again
 -- @param time loop seconds.
 -- @param func Target function.
 -- @param ... Arguments.
 -- @return MOAITimer object
---------------------------------------------------------------------------------
 function Executors.callLoopTime(time, func, ...)
     local args = {...}
     local timer = MOAITimer.new()
@@ -565,24 +535,20 @@ M.Resources = Resources
 Resources.resourceDirectories = {}
 Resources.textureCache = setmetatable({}, {__mode = "v"})
 Resources.fontCache = {}
-Resources.atlasCache = {}
-Resources.nineImageDeckCache = {}
 
---------------------------------------------------------------------------------
+---
 -- Add the resource directory path.
 -- You can omit the file path by adding.
 -- It is assumed that the file is switched by the resolution and the environment.
 -- @param path resource directory path
---------------------------------------------------------------------------------
 function Resources.addResourceDirectory(path)
     table.insertElement(Resources.resourceDirectories, path)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the filePath from fileName.
 -- @param fileName
 -- @return file path
---------------------------------------------------------------------------------
 function Resources.getResourceFilePath(fileName)
     if MOAIFileSystem.checkFileExists(fileName) then
         return fileName
@@ -596,12 +562,11 @@ function Resources.getResourceFilePath(fileName)
     return fileName
 end
 
---------------------------------------------------------------------------------
+---
 -- Loads (or obtains from its cache) a texture and returns it.
 -- Textures are cached.
 -- @param path The path of the texture
 -- @return Texture instance
---------------------------------------------------------------------------------
 function Resources.getTexture(path)
     if type(path) == "userdata" then
         return path
@@ -616,14 +581,13 @@ function Resources.getTexture(path)
     return cache[filepath]
 end
 
---------------------------------------------------------------------------------
+---
 -- Loads (or obtains from its cache) a font and returns it.
 -- @param path The path of the font.
 -- @param charcodes (option)Charcodes of the font
 -- @param points (option)Points of the font
 -- @param dpi (option)Dpi of the font
 -- @return Font instance
---------------------------------------------------------------------------------
 function Resources.getFont(path, charcodes, points, dpi)
     if type(path) == "userdata" then
         return path
@@ -644,11 +608,10 @@ function Resources.getFont(path, charcodes, points, dpi)
     return cache[uid]
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the file data.
 -- @param fileName file name
 -- @return file data
---------------------------------------------------------------------------------
 function Resources.readFile(fileName)
     local path = Resources.getResourceFilePath(fileName)
     local input = assert(io.input(path))
@@ -657,21 +620,19 @@ function Resources.readFile(fileName)
     return data
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the result of executing the dofile.
 -- Browse to the directory of the resource.
 -- @param fileName lua file name
 -- @return results of running the dofile
---------------------------------------------------------------------------------
 function Resources.dofile(fileName)
     local filePath = Resources.getResourceFilePath(fileName)
     return dofile(filePath)
 end
 
---------------------------------------------------------------------------------
+---
 -- Destroys the reference when the module.
 -- @param m module
---------------------------------------------------------------------------------
 function Resources.destroyModule(m)
     if m and m._M and m._NAME and package.loaded[m._NAME] then
         package.loaded[m._NAME] = nil
@@ -681,32 +642,32 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type PropertyUtils
+-- 
 -- It is a property utility class.
 ----------------------------------------------------------------------------------------------------
 PropertyUtils = {}
 M.PropertyUtils = PropertyUtils
 
+-- Property cache
 PropertyUtils.SETTER_NAMES = {}
 
---------------------------------------------------------------------------------
+---
 -- Sets the properties to object.
 -- @param obj target object
 -- @param properties source properties
 -- @param unpackFlag Expand in the case of a simple table
---------------------------------------------------------------------------------
 function PropertyUtils.setProperties(obj, properties, unpackFlag)
     for name, value in pairs(properties) do
         PropertyUtils.setProperty(obj, name, value, unpackFlag)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the property to object.
 -- @param obj target object
 -- @param name property name
 -- @param value property value
 -- @param unpackFlag Expand in the case of a simple table
---------------------------------------------------------------------------------
 function PropertyUtils.setProperty(obj, name, value, unpackFlag)
     local setterNames = PropertyUtils.SETTER_NAMES
     if not setterNames[name] then
@@ -731,30 +692,27 @@ end
 ClassFactory = class()
 M.ClassFactory = ClassFactory
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
 -- @param generator (option)It is a class to be generated
 -- @param properties (option)Properties that set on the object.
---------------------------------------------------------------------------------
 function ClassFactory:init(generator, properties)
     self.generator = generator
     self.properties = properties
     self.fieldAccess = false
 end
 
---------------------------------------------------------------------------------
+---
 -- Creates an object from generator.
 -- @param ... arguments of generator
 -- @return object
---------------------------------------------------------------------------------
 function ClassFactory:newInstance(...)
     local obj = self.generator(...)
     return self:copyPropertiesToObject(self.properties, obj, self.fieldAccess)
 end
 
---------------------------------------------------------------------------------
+---
 -- INTERNAL USE ONLY
---------------------------------------------------------------------------------
 function ClassFactory:copyPropertiesToObject(properties, obj, fieldAccess)
     if not properties then
         return obj
@@ -806,26 +764,25 @@ Event.TOUCH_CANCEL      = "touchCancel"
 Event.ENTER_FRAME       = "enterFrame"
 Event.RESIZE            = "resize"
 
---------------------------------------------------------------------------------
+---
 -- Event's constructor.
 -- @param eventType (option)The type of event.
---------------------------------------------------------------------------------
 function Event:init(eventType)
     self.type = eventType
     self.stopFlag = false
 end
 
---------------------------------------------------------------------------------
+---
 -- INTERNAL USE ONLY -- Sets the event listener via EventDispatcher.
---------------------------------------------------------------------------------
+-- @param callback callback function
+-- @param source source object.
 function Event:setListener(callback, source)
     self.callback = callback
     self.source = source
 end
 
---------------------------------------------------------------------------------
+---
 -- Stop the propagation of the event.
---------------------------------------------------------------------------------
 function Event:stop()
     self.stopFlag = true
 end
@@ -840,13 +797,12 @@ end
 EventListener = class()
 M.EventListener = EventListener
 
---------------------------------------------------------------------------------
+---
 -- The constructor.
 -- @param eventType The type of event.
 -- @param callback The callback function.
 -- @param source The source.
 -- @param priority The priority.
---------------------------------------------------------------------------------
 function EventListener:init(eventType, callback, source, priority)
     self.type = eventType
     self.callback = callback
@@ -854,10 +810,9 @@ function EventListener:init(eventType, callback, source, priority)
     self.priority = priority or 0
 end
 
---------------------------------------------------------------------------------
+---
 -- Call the event listener.
 -- @param event Event
---------------------------------------------------------------------------------
 function EventListener:call(event)
     if self.source then
         self.callback(self.source, event)
@@ -884,14 +839,13 @@ function EventDispatcher:init()
     self.eventListenersMap = {}
 end
 
---------------------------------------------------------------------------------
+---
 -- Adds an event listener.
 -- will now catch the events that are sent in the dispatchEvent.
 -- @param eventType Target event type.
 -- @param callback The callback function.
 -- @param source (option)The first argument passed to the callback function.
 -- @param priority (option)Notification order.
---------------------------------------------------------------------------------
 function EventDispatcher:addEventListener(eventType, callback, source, priority)
     assert(eventType)
     assert(callback)
@@ -917,13 +871,12 @@ function EventDispatcher:addEventListener(eventType, callback, source, priority)
     return true
 end
 
---------------------------------------------------------------------------------
+---
 -- Removes an event listener.
 -- @param eventType Type of event to be deleted
 -- @param callback Callback function of event to be deleted
 -- @param source (option)Source of event to be deleted
 -- @return True if it can be removed
---------------------------------------------------------------------------------
 function EventDispatcher:removeEventListener(eventType, callback, source)
     assert(eventType)
     assert(callback)
@@ -939,13 +892,12 @@ function EventDispatcher:removeEventListener(eventType, callback, source)
     return false
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns true if you have an event listener.
 -- @param eventType
 -- @param callback
 -- @param source
 -- @return Returns true if you have an event listener matching the criteria.
---------------------------------------------------------------------------------
 function EventDispatcher:hasEventListener(eventType, callback, source)
     assert(eventType)
 
@@ -966,11 +918,10 @@ function EventDispatcher:hasEventListener(eventType, callback, source)
     return false
 end
 
---------------------------------------------------------------------------------
+---
 -- Dispatches the event.
 -- @param event Event object or Event type name.
 -- @param data Data that is set in the event.
---------------------------------------------------------------------------------
 function EventDispatcher:dispatchEvent(event, data)
     local eventName = type(event) == "string" and event
     if eventName then
@@ -1003,9 +954,8 @@ function EventDispatcher:dispatchEvent(event, data)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Remove all event listeners.
---------------------------------------------------------------------------------
 function EventDispatcher:clearEventListeners()
     self.eventlistenersMap = {}
 end
@@ -1067,10 +1017,9 @@ InputMgr.TOUCH_EVENT_KINDS = {
 -- pointer data
 InputMgr.pointer = {x = 0, y = 0, down = false}
 
---------------------------------------------------------------------------------
+---
 -- Initialize.
 -- Called by openWindow function.
---------------------------------------------------------------------------------
 function InputMgr:initialize()
 
     -- Touch Handler
@@ -1127,11 +1076,10 @@ function InputMgr:initialize()
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- If the user has pressed a key returns true.
 -- @param key Key code
 -- @return true is a key is down.
---------------------------------------------------------------------------------
 function InputMgr:keyIsDown(key)
     if keyboardSensor then
         return keyboardSensor:keyIsDown(key)
@@ -1149,34 +1097,30 @@ M.RenderMgr = RenderMgr
 -- variables
 RenderMgr.renders = {}
 
---------------------------------------------------------------------------------
+---
 -- Initialize the RenderMgr.
---------------------------------------------------------------------------------
 function RenderMgr:initialize()
     Runtime:addEventListener(Event.ENTER_FRAME, self.onEnterFrame, self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Add a Render object.
 -- @param render Render object
---------------------------------------------------------------------------------
 function RenderMgr:addChild(render)
     table.insertIfAbsent(self.renders, render)
     self:invalidate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Remove a Render object.
 -- @param render Render object
---------------------------------------------------------------------------------
 function RenderMgr:removeChild(render)
     table.removeElement(self.renders, render)
     self:invalidate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Update Moai's RenderTable with flower's render list.
---------------------------------------------------------------------------------
 function RenderMgr:updateRenderTable()
     local renderTable = {}
     for i, v in ipairs(self.renders) do
@@ -1186,17 +1130,15 @@ function RenderMgr:updateRenderTable()
     MOAIRenderMgr.setRenderTable(renderTable)
 end
 
---------------------------------------------------------------------------------
+---
 -- Invalidate the renderTable.
---------------------------------------------------------------------------------
 function RenderMgr:invalidate()
     self.invalidFlag = true
 end
 
---------------------------------------------------------------------------------
+---
 -- Event handler for the enter frame.  Revalidates the render table if it has
 -- been changed since the last frame.
---------------------------------------------------------------------------------
 function RenderMgr:onEnterFrame()
     if self.invalidFlag then
         self:updateRenderTable()
@@ -1224,10 +1166,9 @@ SceneMgr.sceneUpdateEnabled = true
 SceneMgr.sceneTouchEnabled = true
 SceneMgr.sceneFactory = nil
 
---------------------------------------------------------------------------------
+---
 -- Initialize.
 -- Called by openWindow function.
---------------------------------------------------------------------------------
 function SceneMgr:initialize()
     InputMgr:addEventListener(Event.TOUCH_DOWN, self.onTouch, self)
     InputMgr:addEventListener(Event.TOUCH_UP, self.onTouch, self)
@@ -1239,26 +1180,24 @@ function SceneMgr:initialize()
     self.sceneFactory = self.sceneFactory or ClassFactory(Scene)
 end
 
---------------------------------------------------------------------------------
+---
 -- Goes to a new scene.
 -- Will close the current scene.
 -- @param sceneName module name of the Scene
 -- @param params (option)Parameters of the Scene
---------------------------------------------------------------------------------
 function SceneMgr:gotoScene(sceneName, params)
     return self:internalOpenScene(sceneName, params, true)
 end
 
---------------------------------------------------------------------------------
+---
 -- Open the Scene.
 -- @param sceneName module name of the Scene
 -- @param params (option)Parameters of the Scene
---------------------------------------------------------------------------------
 function SceneMgr:openScene(sceneName, params)
     return self:internalOpenScene(sceneName, params, false)
 end
 
---------------------------------------------------------------------------------
+---
 -- Open the scene for the internal implementation.
 -- variable that can be specified in params are as follows.
 -- <ul>
@@ -1266,7 +1205,6 @@ end
 --   <li>second: Time to scene animation. </li>
 --   <li>easeType: EaseType to animation scene. </li>
 -- </ul>
---------------------------------------------------------------------------------
 function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     params = params or {}
 
@@ -1310,7 +1248,7 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     return self.nextScene
 end
 
---------------------------------------------------------------------------------
+---
 -- Close the Scene.
 -- variable that can be specified in params are as follows.
 -- <ul>
@@ -1321,7 +1259,6 @@ end
 --   <li>backSceneCount: Number of scene you want to back. </li>
 -- </ul>
 -- @param params (option)Parameters of the Scene
---------------------------------------------------------------------------------
 function SceneMgr:closeScene(params)
     params = params or {}
 
@@ -1375,32 +1312,29 @@ function SceneMgr:closeScene(params)
     return true
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the Scene.
 -- NOTE: FOR INTERNAL USE ONLY
---------------------------------------------------------------------------------
 function SceneMgr:createScene(sceneName, params)
     local sceneFactory = params.sceneFactory or self.sceneFactory
     return sceneFactory:newInstance(sceneName, params)
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the scene transition animation with the specified name.
 -- If you do not specify a name, will return to the default animation ('change').
 -- @param name Animation name of the SceneAnimations
 -- @return animation function
---------------------------------------------------------------------------------
 function SceneMgr:getSceneAnimationByName(name)
     local animation = name or "change"
     animation = type(animation) == "string" and SceneAnimations[animation] or animation
     return animation
 end
 
---------------------------------------------------------------------------------
+---
 -- Find a scene by its name.
 -- @param sceneName name of the Scene.
 -- @return Scene object
---------------------------------------------------------------------------------
 function SceneMgr:getSceneByName(sceneName)
     for i, scene in ipairs(self.scenes) do
         if scene.name == sceneName then
@@ -1409,31 +1343,28 @@ function SceneMgr:getSceneByName(sceneName)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Add a scene.
 -- @param scene scene
 -- @return True if this scene didn't already exist in the list.
---------------------------------------------------------------------------------
 function SceneMgr:addScene(scene)
     RenderMgr:invalidate()
     return table.insertIfAbsent(self.scenes, scene)
 end
 
---------------------------------------------------------------------------------
+---
 -- Remove a scene.
 -- @param scene scene
 -- @return a number if the scene was removed; false if it wasn't there in the first place.
---------------------------------------------------------------------------------
 function SceneMgr:removeScene(scene)
     RenderMgr:invalidate()
     return table.removeElement(self.scenes, scene)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the render table.
 -- Used in RenderMgr.
 -- @return Render table
---------------------------------------------------------------------------------
 function SceneMgr:getRenderTable()
     local t = {}
     for i, scene in ipairs(self.scenes) do
@@ -1444,11 +1375,10 @@ function SceneMgr:getRenderTable()
     return t
 end
 
---------------------------------------------------------------------------------
+---
 -- The event handler is called when you touch the screen.
 -- Touch to fire a event to Scene.
 -- @param e Touch event
---------------------------------------------------------------------------------
 function SceneMgr:onTouch(e)
     if not self.sceneTouchEnabled then
         return
@@ -1460,11 +1390,10 @@ function SceneMgr:onTouch(e)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- The event handler is called when enter frame.
 -- Fire a event to Scene.
 -- @param e Enter frame event
---------------------------------------------------------------------------------
 function SceneMgr:onEnterFrame(e)
     if not self.sceneUpdateEnabled then
         return
@@ -1491,12 +1420,11 @@ DeckMgr.tileImageDecks = setmetatable({}, {__mode = "v"})
 DeckMgr.atlasDecks = setmetatable({}, {__mode = "v"})
 DeckMgr.nineImageDecks = {} -- setmetatable({}, {__mode = "v"})
 
---------------------------------------------------------------------------------
+---
 -- Return the Deck to be used in the Image.
 -- @param width width
 -- @param height height
 -- @return deck
---------------------------------------------------------------------------------
 function DeckMgr:getImageDeck(width, height)
     local key = width .. "$" .. height
     local cache = DeckMgr.imageDecks
@@ -1507,12 +1435,11 @@ function DeckMgr:getImageDeck(width, height)
     return cache[key]
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the Deck to be used in the Image.
 -- @param width width
 -- @param height height
 -- @return deck
---------------------------------------------------------------------------------
 function DeckMgr:createImageDeck(width, height)
     local deck = MOAIGfxQuad2D.new()
     deck:setUVRect(0, 0, 1, 1)
@@ -1520,7 +1447,7 @@ function DeckMgr:createImageDeck(width, height)
     return deck
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the Deck to be used in the SheetImage.
 -- @param textureWidth texture width
 -- @param textureHeight texture height
@@ -1530,7 +1457,6 @@ end
 -- @param margin margin
 -- @param gridFlag grid flag
 -- @return deck
---------------------------------------------------------------------------------
 function DeckMgr:getTileImageDeck(textureWidth, textureHeight, tileWidth, tileHeight, spacing, margin, gridFlag)
     local tw, th = textureWidth, textureHeight
     local key = tw .. "$" .. th .. "$" .. tileWidth .. "$" .. tileHeight .. "$" .. spacing .. "$" .. margin .. "$" .. tostring(gridFlag)
@@ -1542,7 +1468,7 @@ function DeckMgr:getTileImageDeck(textureWidth, textureHeight, tileWidth, tileHe
     return cache[key]
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the Deck to be used in the SheetImage.
 -- @param textureWidth texture width
 -- @param textureHeight texture height
@@ -1552,7 +1478,6 @@ end
 -- @param margin margin
 -- @param gridFlag grid flag
 -- @return deck
---------------------------------------------------------------------------------
 function DeckMgr:createTileImageDeck(textureWidth, textureHeight, tileWidth, tileHeight, spacing, margin, gridFlag)
     local tw, th = textureWidth, textureHeight
     local tileX = math.floor((tw - margin) / (tileWidth + spacing))
@@ -1583,11 +1508,10 @@ function DeckMgr:createTileImageDeck(textureWidth, textureHeight, tileWidth, til
     return deck
 end
 
---------------------------------------------------------------------------------
+---
 -- Return the Deck for displaying TextureAtlas.
 -- @param luaFilePath TexturePacker lua file path
 -- @return Texture atlas deck
---------------------------------------------------------------------------------
 function DeckMgr:getAtlasDeck(luaFilePath)
     local key = luaFilePath
     local cache = DeckMgr.atlasDecks
@@ -1598,11 +1522,10 @@ function DeckMgr:getAtlasDeck(luaFilePath)
     return cache[key]
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the Deck for displaying TextureAtlas.
 -- @param luaFilePath TexturePacker lua file path
 -- @return Texture atlas deck
---------------------------------------------------------------------------------
 function DeckMgr:createAtlasDeck(luaFilePath)
     local frames = Resources.dofile(luaFilePath).frames
     local boundsDeck = MOAIBoundsDeck.new()
@@ -1635,12 +1558,11 @@ function DeckMgr:createAtlasDeck(luaFilePath)
     return deck
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the Deck to draw NineImage.
 -- For caching, you must not change the Deck.
 -- @param fileName fileName
 -- @return MOAIStretchPatch2D instance
---------------------------------------------------------------------------------
 function DeckMgr:getNineImageDeck(fileName)
     local filePath = Resources.getResourceFilePath(fileName)
     local cache = DeckMgr.nineImageDecks
@@ -1651,11 +1573,10 @@ function DeckMgr:getNineImageDeck(fileName)
     return cache[filePath]
 end
 
---------------------------------------------------------------------------------
+---
 -- Create the Deck to draw NineImage.
 -- @param fileName fileName
 -- @return MOAIStretchPatch2D instance
---------------------------------------------------------------------------------
 function DeckMgr:createNineImageDeck(fileName)
     local filePath = Resources.getResourceFilePath(fileName)
 
@@ -1765,12 +1686,11 @@ DisplayObject.__index = MOAIPropInterface
 DisplayObject.__moai_class = MOAIProp
 M.DisplayObject = DisplayObject
 
---------------------------------------------------------------------------------
+---
 -- Returns the size.
 -- If there is a function that returns a negative getDims.
 -- getSize function always returns the size of the positive.
 -- @return width, height, depth
---------------------------------------------------------------------------------
 function DisplayObject:getSize()
     local w, h, d = self:getDims()
     w = w or 0
@@ -1779,30 +1699,27 @@ function DisplayObject:getSize()
     return math.abs(w), math.abs(h), math.abs(d)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the width.
 -- @return width
---------------------------------------------------------------------------------
 function DisplayObject:getWidth()
     local w, h, d = self:getSize()
     return w
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the height.
 -- @return height
---------------------------------------------------------------------------------
 function DisplayObject:getHeight()
     local w, h, d = self:getSize()
     return h
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the position.
 -- Without depending on the Pivot, move the top left corner as the origin.
 -- @param left Left position
 -- @param top Top position
---------------------------------------------------------------------------------
 function DisplayObject:setPos(left, top)
     local xMin, yMin, zMin, xMax, yMax, zMax = self:getBounds()
     xMin = math.min(xMin or 0, xMax or 0)
@@ -1813,11 +1730,10 @@ function DisplayObject:setPos(left, top)
     self:setLoc(left + pivX - xMin, top + pivY - yMin, locZ)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the position.
 -- @return Left
 -- @return Top
---------------------------------------------------------------------------------
 function DisplayObject:getPos()
     local xMin, yMin, zMin, xMax, yMax, zMax = self:getBounds()
     xMin = math.min(xMin or 0, xMax or 0)
@@ -1828,48 +1744,43 @@ function DisplayObject:getPos()
     return locX - pivX + xMin, locY - pivY + yMin
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the left position.
 -- @return left
---------------------------------------------------------------------------------
 function DisplayObject:getLeft()
     local left, top = self:getPos()
     return left
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the top position.
 -- @return top
---------------------------------------------------------------------------------
 function DisplayObject:getTop()
     local left, top = self:getPos()
     return top
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the right position.
 -- @return right
---------------------------------------------------------------------------------
 function DisplayObject:getRight()
     local left, top = self:getPos()
     local width, height = self:getDims()
     return left + width
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the bottom position.
 -- @return bottom
---------------------------------------------------------------------------------
 function DisplayObject:getBottom()
     local left, top = self:getPos()
     local width, height = self:getSize()
     return top + height
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the color.
 -- @return red, green, blue, alpha
---------------------------------------------------------------------------------
 function DisplayObject:getColor()
     local r = self:getAttr(MOAIColor.ATTR_R_COL)
     local g = self:getAttr(MOAIColor.ATTR_G_COL)
@@ -1878,9 +1789,8 @@ function DisplayObject:getColor()
     return r, g, b, a
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the piv (the anchor around which the object can 'pivot') to the object's center.
---------------------------------------------------------------------------------
 function DisplayObject:setPivToCenter()
     local w, h, d = self:getSize()
     local left, top = self:getPos()
@@ -1888,28 +1798,25 @@ function DisplayObject:setPivToCenter()
     self:setPos(left, top)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns whether or not the object is currently visible or invisible.
 -- @return visible
---------------------------------------------------------------------------------
 function DisplayObject:getVisible()
     return self:getAttr(MOAIProp.ATTR_VISIBLE) > 0
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the visibility.
 -- TODO:I avoid the bug of display settings MOAIProp.(2013/05/20 last build)
 -- @param value visible
---------------------------------------------------------------------------------
 function DisplayObject:setVisible(visible)
     MOAIPropInterface.setVisible(self, visible)
     self:forceUpdate()
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the object's parent, inheriting its color and transform.
 -- @param parent parent
---------------------------------------------------------------------------------
 function DisplayObject:setParent(parent)
     self.parent = parent
 
@@ -1932,10 +1839,9 @@ function DisplayObject:setParent(parent)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Insert the DisplayObject's prop into a given Moai layer.
 -- @param layer
---------------------------------------------------------------------------------
 function DisplayObject:setLayer(layer)
     if self.layer == layer then
         return
@@ -1962,9 +1868,9 @@ Layer.__index = MOAILayerInterface
 Layer.__moai_class = MOAILayer
 M.Layer = Layer
 
---------------------------------------------------------------------------------
+---
 -- The constructor.
---------------------------------------------------------------------------------
+-- @param viewport (option)viewport
 function Layer:init(viewport)
     DisplayObject.init(self)
 
@@ -1977,10 +1883,9 @@ function Layer:init(viewport)
     self.touchHandler = nil
 end
 
---------------------------------------------------------------------------------
+---
 -- Enables this layer for touch events.
 -- @param value enabled
---------------------------------------------------------------------------------
 function Layer:setTouchEnabled(value)
     if self.touchEnabled == value then
         return
@@ -1991,10 +1896,9 @@ function Layer:setTouchEnabled(value)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the scene for this layer.
 -- @param scene scene
---------------------------------------------------------------------------------
 function Layer:setScene(scene)
     if self.scene == scene then
         return
@@ -2011,10 +1915,9 @@ function Layer:setScene(scene)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Unsupport nested layer.
 -- @param layer layer
---------------------------------------------------------------------------------
 function Layer:setLayer(layer)
 end
 
@@ -2028,12 +1931,11 @@ Camera.__index = MOAICameraInterface
 Camera.__moai_class = MOAICamera
 M.Camera = Camera
 
---------------------------------------------------------------------------------
+---
 -- The constructor.
 -- @param ortho (option)ortho
 -- @param near (option)near plane
 -- @param far (option)far plane
---------------------------------------------------------------------------------
 function Camera:init(ortho, near, far)
     ortho = ortho == nil and true or ortho
     near = near or 1
@@ -2052,12 +1954,11 @@ end
 Group = class(DisplayObject)
 M.Group = Group
 
---------------------------------------------------------------------------------
+---
 -- The constructor.
 -- @param layer (option)layer object
 -- @param width (option)width
 -- @param height (option)height
---------------------------------------------------------------------------------
 function Group:init(layer, width, height)
     DisplayObject.init(self)
     self.children = {}
@@ -2068,20 +1969,18 @@ function Group:init(layer, width, height)
     self:setPivToCenter()
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the size.
 -- This is the size of a Group, rather than of the children.
 -- @param width width
 -- @param height height
---------------------------------------------------------------------------------
 function Group:setSize(width, height)
     self:setBounds(0, 0, 0, width, height, 0)
 end
 
---------------------------------------------------------------------------------
+---
 -- Adds the specified child.
 -- @param child DisplayObject
---------------------------------------------------------------------------------
 function Group:addChild(child)
     if table.insertIfAbsent(self.children, child) then
         child:setParent(self)
@@ -2097,11 +1996,10 @@ function Group:addChild(child)
     return false
 end
 
---------------------------------------------------------------------------------
+---
 -- Removes a child.
 -- @param child DisplayObject
 -- @return True if removed.
---------------------------------------------------------------------------------
 function Group:removeChild(child)
     if table.removeElement(self.children, child) then
         child:setParent(nil)
@@ -2117,9 +2015,8 @@ function Group:removeChild(child)
     return false
 end
 
---------------------------------------------------------------------------------
+---
 -- Remove the children.
---------------------------------------------------------------------------------
 function Group:removeChildren()
     local children = table.copy(self.children)
     for i, child in ipairs(children) do
@@ -2127,11 +2024,10 @@ function Group:removeChildren()
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns a child by name.
 -- @param name child's name
 -- @return child
---------------------------------------------------------------------------------
 function Group:getChildByName(name)
     for i, child in ipairs(self.children) do
         if child.name == name then
@@ -2140,10 +2036,9 @@ function Group:getChildByName(name)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the layer for this group to use.
 -- @param layer MOAILayer object
---------------------------------------------------------------------------------
 function Group:setLayer(layer)
     if self.layer == layer then
         return
@@ -2172,11 +2067,10 @@ function Group:setLayer(layer)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the group's visibility.
 -- Also sets the visibility of any children.
 -- @param value visible
---------------------------------------------------------------------------------
 function Group:setVisible(value)
     DisplayObject.setVisible(self, value)
 
@@ -2188,11 +2082,10 @@ function Group:setVisible(value)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the group's priority.
 -- Also sets the priority of any children.
 -- @param priority priority
---------------------------------------------------------------------------------
 function Group:setPriority(priority)
     MOAIPropInterface.setPriority(self, priority)
 
@@ -2217,11 +2110,10 @@ Scene.TOUCH_EVENT = Event()
 Scene.DEFAULT_DESTROY_ENABLED = true
 
 
---------------------------------------------------------------------------------
+---
 -- The constructor.
 -- @param sceneName Module name
 -- @param params Scene parameters
---------------------------------------------------------------------------------
 function Scene:init(sceneName, params)
     Group.init(self, nil, M.screenWidth, M.screenHeight)
     self.name = sceneName
@@ -2238,9 +2130,8 @@ function Scene:init(sceneName, params)
     self:dispatchEvent(Event.CREATE, params)
 end
 
---------------------------------------------------------------------------------
+---
 -- INTERNAL USE ONLY -- create the scene controller.
---------------------------------------------------------------------------------
 function Scene:createController(params)
     params = params or {}
 
@@ -2253,9 +2144,8 @@ function Scene:createController(params)
     return sceneName and require(sceneName) or {}
 end
 
---------------------------------------------------------------------------------
+---
 -- INTERNAL USE ONLY -- initialize event listeners.
---------------------------------------------------------------------------------
 function Scene:initListeners()
     local addEventListener = function(type, func, obj)
         if func then
@@ -2274,11 +2164,10 @@ function Scene:initListeners()
     addEventListener(Event.TOUCH_CANCEL, self.onTouch, self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Open the scene.
 -- Scenes add themselves to the SceneMgr when opened.
 -- @param params Scene event parameters.(event.data)
---------------------------------------------------------------------------------
 function Scene:open(params)
     if self.opened then
         return
@@ -2289,10 +2178,9 @@ function Scene:open(params)
     SceneMgr:addScene(self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Close the scene, removing it from the SceneMgr.
 -- @param params Scene event parameters.(event.data)
---------------------------------------------------------------------------------
 function Scene:close(params)
     if not self.opened then
         return
@@ -2307,11 +2195,10 @@ function Scene:close(params)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Start the scene.
 -- Start event is issued.
 -- @param params Scene event parameters.(event.data)
---------------------------------------------------------------------------------
 function Scene:start(params)
     if self.started or not self.opened then
         return
@@ -2323,11 +2210,10 @@ function Scene:start(params)
     self.sceneTouchEnabled = true
 end
 
---------------------------------------------------------------------------------
+---
 -- Stop the scene.
 -- Stop event is issued.
 -- @param params Scene event parameters.(event.data)
---------------------------------------------------------------------------------
 function Scene:stop(params)
     if not self.started then
         return
@@ -2338,9 +2224,9 @@ function Scene:stop(params)
     self.sceneTouchEnabled = false
 end
 
---------------------------------------------------------------------------------
+---
 -- Handle touch events sent by the EventMgr.
---------------------------------------------------------------------------------
+-- @param e Event
 function Scene:onTouch(e)
     local e2 = table.copy(e, Scene.TOUCH_EVENT)
     for i = #self.children, 1, -1 do
@@ -2356,11 +2242,10 @@ function Scene:onTouch(e)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the rendering table.
 -- Used by RenderMgr.
 -- @return rendering table
---------------------------------------------------------------------------------
 function Scene:getRenderTable()
     return self.children
 end
@@ -2517,12 +2402,11 @@ end
 Image = class(DisplayObject)
 M.Image = Image
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
 -- @param texture Texture path, or texture.
 -- @param width (option) Width of image.
 -- @param height (option) Height of image.
---------------------------------------------------------------------------------
 function Image:init(texture, width, height)
     DisplayObject.init(self)
 
@@ -2534,21 +2418,19 @@ function Image:init(texture, width, height)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the size.
 -- @param width Width of image.
 -- @param height Height of image.
---------------------------------------------------------------------------------
 function Image:setSize(width, height)
     local deck = DeckMgr:getImageDeck(width, height)
     self:setDeck(deck)
     self:setPivToCenter()
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the texture.
 -- @param texture Texture path, or texture
---------------------------------------------------------------------------------
 function Image:setTexture(texture)
     self.texture = Resources.getTexture(texture)
     MOAIPropInterface.setTexture(self, self.texture)
@@ -2564,12 +2446,11 @@ end
 SheetImage = class(DisplayObject)
 M.SheetImage = SheetImage
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
 -- @param texture Texture path, or texture
 -- @param sizeX (option) The size of the sheet
 -- @param sizeY (option) The size of the sheet
---------------------------------------------------------------------------------
 function SheetImage:init(texture, sizeX, sizeY)
     DisplayObject.init(self)
 
@@ -2582,19 +2463,17 @@ function SheetImage:init(texture, sizeX, sizeY)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the texture.
 -- @param texture Texture path, or texture
---------------------------------------------------------------------------------
 function SheetImage:setTexture(texture)
     self.texture = Resources.getTexture(texture)
     MOAIPropInterface.setTexture(self, self.texture)
 end
 
---------------------------------------------------------------------------------
+---
 -- Parses TexturePacker atlases and sets up the texture as a deck of images in the atlas.
 -- @param atlas Texture atlas
---------------------------------------------------------------------------------
 function SheetImage:setTextureAtlas(atlas)
     local deck = DeckMgr:getAtlasDeck(atlas)
     self:setDeck(deck)
@@ -2602,26 +2481,24 @@ function SheetImage:setTextureAtlas(atlas)
     self.sheetNames = deck.names
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the size of the sheet (for quad-tiled texture atlas sheets).
 -- @param sizeX The size of the sheet
 -- @param sizeY The size of the sheet
 -- @param spacing (option)Spacing of the tiles
 -- @param margin (option)Margin of the sheet
---------------------------------------------------------------------------------
 function SheetImage:setSheetSize(sizeX, sizeY, spacing, margin)
     local tw, th = self.texture:getSize()
     local cw, ch = tw / sizeX, th / sizeY
     self:setTileSize(cw, ch, spacing, margin)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the sheet depending on the size of the tile.
 -- @param tileWidth The width of the tile
 -- @param tileHeight The height of the tile
 -- @param spacing (option)Spacing of the tiles
 -- @param margin (option)Margin of the sheet
---------------------------------------------------------------------------------
 function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
     local tw, th = self.texture:getSize()
     local gridFlag = self.grid and true or false
@@ -2631,10 +2508,9 @@ function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
     self.sheetNames = {}
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the sheet's image index via a given subtexture name (for TexturePacker).
 -- @param name Sheet name.
---------------------------------------------------------------------------------
 function SheetImage:setIndexByName(name)
     if type(name) == "string" then
         local index = self.sheetNames[name] or self:getIndex()
@@ -2652,7 +2528,7 @@ end
 MapImage = class(SheetImage)
 M.MapImage = MapImage
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
 -- @param texture Texture path, or texture
 -- @param gridWidth (option) The size of the grid
@@ -2661,7 +2537,6 @@ M.MapImage = MapImage
 -- @param tileHeight (option) The size of the tile
 -- @param spacing (option) The spacing of the tile
 -- @param margin (option) The margin of the tile
---------------------------------------------------------------------------------
 function MapImage:init(texture, gridWidth, gridHeight, tileWidth, tileHeight, spacing, margin)
     SheetImage.init(self, texture)
 
@@ -2673,7 +2548,7 @@ function MapImage:init(texture, gridWidth, gridHeight, tileWidth, tileHeight, sp
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the size of the map grid.
 -- @param gridWidth The size of the grid
 -- @param gridHeight The size of the grid
@@ -2681,93 +2556,85 @@ end
 -- @param tileHeight The size of the tile
 -- @param spacing (option) The spacing of the tile
 -- @param margin (option) The margin of the tile
---------------------------------------------------------------------------------
 function MapImage:setMapSize(gridWidth, gridHeight, tileWidth, tileHeight, spacing, margin)
     self.grid:setSize(gridWidth, gridHeight, tileWidth, tileHeight)
     self:setTileSize(tileWidth, tileHeight, spacing, margin)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the map data by rows.
 -- @param rows Multiple rows of data.
---------------------------------------------------------------------------------
 function MapImage:setRows(rows)
     for i, row in ipairs(rows) do
         self:setRow(i, unpack(row))
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the map row data.
 -- @param ... rows of data.
---------------------------------------------------------------------------------
 function MapImage:setRow(...)
     self.grid:setRow(...)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the map value.
 -- @param x x position of the grid
 -- @param y y position of the grid
 -- @param value tile value.
---------------------------------------------------------------------------------
 function MapImage:setTile(x, y, value)
     self.grid:setTile(x, y, value)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the map value.
 -- @param x x position of the grid
 -- @param y y position of the grid
 -- @return tile value.
---------------------------------------------------------------------------------
 function MapImage:getTile(x, y)
     return self.grid:getTile(x, y)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the repeat flag.
 -- @param repeatX
 -- @param repeatY
---------------------------------------------------------------------------------
 function MapImage:setRepeat(repeatX, repeatY)
     self.grid:setRepeat(repeatX, repeatY)
 end
 
 ----------------------------------------------------------------------------------------------------
 -- @type MovieClip
+-- 
 -- Class for animated texture atlases ('MovieClip' is the Adobe Flash terminology)
 ----------------------------------------------------------------------------------------------------
 MovieClip = class(SheetImage)
 M.MovieClip = MovieClip
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
 -- @param texture Texture path, or texture
 -- @param sizeX (option) The size of the sheet
 -- @param sizeY (option) The size of the sheet
---------------------------------------------------------------------------------
 function MovieClip:init(texture, sizeX, sizeY)
     SheetImage.init(self, texture, sizeX, sizeY)
     self.animTable = {}
     self.currentAnim = nil
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the custom animation.
 -- @param name Name of anim
 -- @param anim Anim object
---------------------------------------------------------------------------------
 function MovieClip:setAnim(name, anim)
     self.animTable[name] = anim
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the animation data.
 -- The frame is interpolated from the data.
 -- @param name Name of anim
 -- @param data Animation data
---------------------------------------------------------------------------------
 function MovieClip:setAnimData(name, data)
     local curve = MOAIAnimCurve.new()
     local anim = MOAIAnim.new()
@@ -2788,10 +2655,9 @@ function MovieClip:setAnimData(name, data)
     self.animTable[name] = anim
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets multiple animation data up at the same time (convenience function).
 -- @param datas Multiple data
---------------------------------------------------------------------------------
 function MovieClip:setAnimDatas(datas)
     for i, data in ipairs(datas) do
         local name = data.name or i
@@ -2799,10 +2665,9 @@ function MovieClip:setAnimDatas(datas)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Start the animation.
 -- @param name Name of anim
---------------------------------------------------------------------------------
 function MovieClip:playAnim(name)
     local currentAnim = self.currentAnim
     local animTable = self.animTable
@@ -2819,28 +2684,25 @@ function MovieClip:playAnim(name)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Stop the animation.
---------------------------------------------------------------------------------
 function MovieClip:stopAnim()
     if self.currentAnim then
         self.currentAnim:stop()
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Check the current animation with the specified name.
 -- @param name Animation name.
 -- @return If the current animation is true.
---------------------------------------------------------------------------------
 function MovieClip:isCurrentAnim(name)
     return self.currentAnim == self.animTable[name]
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns whether the running.
 -- @return True if busy
---------------------------------------------------------------------------------
 function MovieClip:isBusy()
     return self.currentAnim and self.currentAnim:isBusy() or false
 end
@@ -2861,12 +2723,11 @@ end
 NineImage = class(DisplayObject)
 M.NineImage = NineImage
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
 -- @param imagePath File path NinePach.
 -- @param width (option) Width of image.
 -- @param height (option) Height of image.
---------------------------------------------------------------------------------
 function NineImage:init(imagePath, width, height)
     DisplayObject.init(self)
     self._scaledWidth = nil
@@ -2878,12 +2739,11 @@ function NineImage:init(imagePath, width, height)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the NineImageDeck.
 -- @param imagePath File path or NineImageDeck.
 -- @param width (option) Width of image.
 -- @param height (option) Height of image.
---------------------------------------------------------------------------------
 function NineImage:setImage(imagePath, width, height)
     local deck = imagePath
     if type(deck) == "string" then
@@ -2902,12 +2762,11 @@ function NineImage:setImage(imagePath, width, height)
     self:setSize(width, height)
 end
 
---------------------------------------------------------------------------------
+---
 -- Set the scale to match the size.
 -- Is set as the size artificially.
 -- @param width Width of image.
 -- @param height Height of image.
---------------------------------------------------------------------------------
 function NineImage:setSize(width, height)
     local iw, ih = self.displayWidth, self.displayHeight
     local left, top = self:getPos()
@@ -2918,17 +2777,16 @@ function NineImage:setSize(width, height)
     self:setScl(sclX, sclY, sclZ)
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the dummey dimensions.
 -- @return sacled width
 -- @return scaled height
 -- @return 0
---------------------------------------------------------------------------------
 function NineImage:getDims()
     return self._scaledWidth, self._scaledHeight, 0
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the dummey bounds.
 -- @return xMin(0)
 -- @return yMin(0)
@@ -2936,25 +2794,22 @@ end
 -- @return xMax(sacled width)
 -- @return yMax(scaled height)
 -- @return 0
---------------------------------------------------------------------------------
 function NineImage:getBounds()
     return 0, 0, 0, self._scaledWidth, self._scaledHeight, 0
 end
 
---------------------------------------------------------------------------------
+---
 -- Unsupported pivot.
---------------------------------------------------------------------------------
 function NineImage:setPiv(xPiv, yPiv, zPiv)
     print("Unsupported!")
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the content rect from NinePatch.
 -- @return xMin
 -- @return yMin
 -- @return xMax
 -- @return yMax
---------------------------------------------------------------------------------
 function NineImage:getContentRect()
     local width, height = self:getSize()
     local padding = self.contentPadding
@@ -2965,13 +2820,12 @@ function NineImage:getContentRect()
     return xMin, yMin, xMax, yMax
 end
 
---------------------------------------------------------------------------------
+---
 -- Returns the content padding from NinePatch.
 -- @return paddingLeft
 -- @return paddingTop
 -- @return paddingRight
 -- @return paddingBottom
---------------------------------------------------------------------------------
 function NineImage:getContentPadding()
     local padding = self.contentPadding
     return unpack(padding)
@@ -3000,14 +2854,13 @@ Label.DEFAULT_FIT_LENGTH = 10000000
 --- default fit padding.
 Label.DEFAULT_FIT_PADDING = 2
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
 -- @param text Text
 -- @param width Width
 -- @param height Height
 -- @param font (option) Font path, or Font object
 -- @param textSize (option) TextSize
---------------------------------------------------------------------------------
 function Label:init(text, width, height, font, textSize)
     DisplayObject.init(self)
 
@@ -3023,22 +2876,20 @@ function Label:init(text, width, height, font, textSize)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the size.
 -- @param width Width
 -- @param height Height
---------------------------------------------------------------------------------
 function Label:setSize(width, height)
     self:setRect(0, 0, width, height)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the fit size.
 -- @param lenfth (Option)Length of the text.
 -- @param maxWidth (Option)maxWidth of the text.
 -- @param maxHeight (Option)maxHeight of the text.
 -- @param padding (Option)padding of the text.
---------------------------------------------------------------------------------
 function Label:fitSize(length, maxWidth, maxHeight, padding)
     length = length or Label.DEFAULT_FIT_LENGTH
     maxWidth = maxWidth or Label.MAX_FIT_WIDTH
@@ -3053,22 +2904,20 @@ function Label:fitSize(length, maxWidth, maxHeight, padding)
     self:setSize(width, height)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the fit height.
 -- @param lenfth (Option)Length of the text.
 -- @param maxHeight (Option)maxHeight of the text.
 -- @param padding (Option)padding of the text.
---------------------------------------------------------------------------------
 function Label:fitHeight(length, maxHeight, padding)
     self:fitSize(length, self:getWidth(), maxHeight, padding)
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the fit height.
 -- @param lenfth (Option)Length of the text.
 -- @param maxWidth (Option)maxWidth of the text.
 -- @param padding (Option)padding of the text.
---------------------------------------------------------------------------------
 function Label:fitWidth(length, maxWidth, padding)
     self:fitSize(length, maxWidth, self:getHeight(), padding)
 end
@@ -3084,11 +2933,10 @@ end
 Rect = class(DisplayObject)
 M.Rect = Rect
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
 -- @param width Width
 -- @param height Height
---------------------------------------------------------------------------------
 function Rect:init(width, height)
     DisplayObject.init(self)
 
@@ -3108,11 +2956,10 @@ function Rect:init(width, height)
     )
 end
 
---------------------------------------------------------------------------------
+---
 -- Sets the size.
 -- @param width Width
 -- @param height Height
---------------------------------------------------------------------------------
 function Rect:setSize(width, height)
     self.deck:setRect(0, 0, width, height)
 end
@@ -3130,10 +2977,9 @@ M.Texture = Texture
 --- Default Texture filter
 Texture.DEFAULT_FILTER = MOAITexture.GL_LINEAR
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
 -- @param path Texture path
---------------------------------------------------------------------------------
 function Texture:init(path)
     self:load(path)
     self.path = path
@@ -3162,13 +3008,12 @@ Font.DEFAULT_CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01
 --- Default font points
 Font.DEFAULT_POINTS = 24
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
 -- @param path Font path
 -- @param charcodes (option) Font charcodes
 -- @param points (option) Font points
 -- @param dpi (option) Font dpi
---------------------------------------------------------------------------------
 function Font:init(path, charcodes, points, dpi)
     self:load(path)
     self.path = path
@@ -3192,10 +3037,9 @@ M.TouchHandler = TouchHandler
 -- Constraints
 TouchHandler.TOUCH_EVENT = Event()
 
---------------------------------------------------------------------------------
+---
 -- The constructor.
 -- @param layer Layer object
---------------------------------------------------------------------------------
 function TouchHandler:init(layer)
     self.touchLayer = assert(layer)
     self.touchProps = {}
@@ -3206,10 +3050,9 @@ function TouchHandler:init(layer)
     layer:addEventListener(Event.TOUCH_CANCEL, self.onTouch, self)
 end
 
---------------------------------------------------------------------------------
+---
 -- Event handler when you touch a layer.
 -- @param e Event object
---------------------------------------------------------------------------------
 function TouchHandler:onTouch(e)
     if not self.touchLayer.touchEnabled then
         return
@@ -3246,6 +3089,9 @@ function TouchHandler:onTouch(e)
     end
 end
 
+---
+-- Return the touchable Prop.
+-- @param e Event object
 function TouchHandler:getTouchableProp(e)
     local layer = self.touchLayer
     local partition = layer:getPartition()
@@ -3259,11 +3105,10 @@ function TouchHandler:getTouchableProp(e)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Fire touch handler events on a given object.
 -- @param e Event object
 -- @param o Display object
---------------------------------------------------------------------------------
 function TouchHandler:dispatchTouchEvent(e, o)
     local layer = self.touchLayer
     while o do
@@ -3277,9 +3122,8 @@ function TouchHandler:dispatchTouchEvent(e, o)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Remove the handler from the layer, and release resources.
---------------------------------------------------------------------------------
 function TouchHandler:dispose()
     local layer = self.touchLayer
 

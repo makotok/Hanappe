@@ -22,20 +22,20 @@ local Interceptor
 Interceptor = class()
 M.Interceptor = Interceptor
 
---------------------------------------------------------------------------------
+---
 -- Constructor.
---------------------------------------------------------------------------------
+-- @param targets target tables
+-- @param filter String to filter function
 function Interceptor:init(targets, filter)
     for i, target in ipairs(targets) do
         self:intercept(target, filter)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- To intercept a function present in the target table, to add a different action.
 -- @param target target table
 -- @param filterPattern filter pattern.
---------------------------------------------------------------------------------
 function Interceptor:intercept(target, filterPattern)
     for key, value in pairs(target) do
         if type(value) == "function" then
@@ -53,11 +53,10 @@ function Interceptor:intercept(target, filterPattern)
     end
 end
 
---------------------------------------------------------------------------------
+---
 -- Processing at the beginning.
 -- @param context target context.
 -- @param ... args
---------------------------------------------------------------------------------
 function Interceptor:invoke(context, ...)
     self:beginProcess(context, ...)
     local returnValues = {context.func(...)}
@@ -65,19 +64,17 @@ function Interceptor:invoke(context, ...)
     return unpack(returnValues)
 end
 
---------------------------------------------------------------------------------
+---
 -- Processing at the beginning.
 -- @param context target context.
 -- @param ... args
---------------------------------------------------------------------------------
 function Interceptor:beginProcess(context, ...)
 end
 
---------------------------------------------------------------------------------
+---
 -- Processing at the end.
 -- @param context target context.
 -- @param ... args
---------------------------------------------------------------------------------
 function Interceptor:endProcess(context, ...)
 end
 
