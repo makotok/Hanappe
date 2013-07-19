@@ -2,7 +2,6 @@
 -- Widget Library.
 -- There are still some problems.
 --
--- TODO:Require refactoring of some of the classes.
 -- TODO:TextInput does not support multi-byte.
 -- TODO:TextInput can not move the cursor.
 -- TODO:Does not have a scroll bar in ListBox.
