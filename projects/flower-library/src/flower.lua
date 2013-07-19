@@ -952,6 +952,11 @@ function EventDispatcher:dispatchEvent(event, data)
     if eventName then
         EventDispatcher.EVENT_CACHE[eventName] = event
     end
+
+    -- reset properties to free resources used in cached events
+    event.data = nil
+    event.target = nil
+    event:setListener(nil, nil)
 end
 
 ---
@@ -3087,6 +3092,12 @@ function TouchHandler:onTouch(e)
     if prop or prop2 then
         e:stop()
     end
+
+    -- reset properties to free resources used in cached event
+    e2.data = nil
+    e2.prop = nil
+    e2.target = nil
+    e2:setListener(nil, nil)
 end
 
 ---
