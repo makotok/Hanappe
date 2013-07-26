@@ -14,4 +14,5 @@ return {
     {title = "Widget Layout", scene = "scenes/widget_layout_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Audio", scene = "scenes/audio_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Aspect", scene = "scenes/aspect_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Performance Test1", scene = "scenes/performance1_sample", openAnime = "fade", closeAnime = "fade"},
 }
