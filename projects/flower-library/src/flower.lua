@@ -2291,6 +2291,7 @@ function SceneAnimations.fade(currentScene, nextScene, params)
     MOAICoroutine.blockOnAction(nextScene:seekColor(1, 1, 1, 1, sec, easeType))
 
     currentScene:setVisible(false)
+    currentScene:setColor(1, 1, 1, 1)
 end
 
 --- Scene animation
@@ -2306,6 +2307,7 @@ function SceneAnimations.crossFade(currentScene, nextScene, params)
     MOAICoroutine.blockOnAction(action1)
 
     currentScene:setVisible(false)
+    currentScene:setColor(1, 1, 1, 1)
 end
 
 --- Scene animation
@@ -2330,6 +2332,10 @@ function SceneAnimations.popOut(currentScene, nextScene, params)
     local action1 = currentScene:seekColor(0, 0, 0, 0, sec, easeType)
     local action2 = currentScene:seekScl(0.5, 0.5, 0.5, sec, easeType)
     MOAICoroutine.blockOnAction(action1)
+
+    currentScene:setVisible(false)
+    currentScene:setColor(1, 1, 1, 1)
+    currentScene:setScl(1, 1, 1)
 end
 
 --- Scene animation
@@ -2346,6 +2352,7 @@ function SceneAnimations.slideLeft(currentScene, nextScene, params)
     MOAICoroutine.blockOnAction(action1)
 
     currentScene:setVisible(false)
+    currentScene:setPos(0, 0)
     nextScene:setPos(0, 0)
 end
 
@@ -2363,6 +2370,7 @@ function SceneAnimations.slideRight(currentScene, nextScene, params)
     MOAICoroutine.blockOnAction(action1)
 
     currentScene:setVisible(false)
+    currentScene:setPos(0, 0)
     nextScene:setPos(0, 0)
 end
 
@@ -2380,6 +2388,7 @@ function SceneAnimations.slideTop(currentScene, nextScene, params)
     MOAICoroutine.blockOnAction(action1)
 
     currentScene:setVisible(false)
+    currentScene:setPos(0, 0)
     nextScene:setPos(0, 0)
 end
 
@@ -2397,6 +2406,7 @@ function SceneAnimations.slideBottom(currentScene, nextScene, params)
     MOAICoroutine.blockOnAction(action1)
 
     currentScene:setVisible(false)
+    currentScene:setPos(0, 0)
     nextScene:setPos(0, 0)
 end
 
