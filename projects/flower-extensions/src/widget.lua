@@ -1182,7 +1182,7 @@ end
 -- @param fontName fontName
 --------------------------------------------------------------------------------
 function Button:setFontName(fontName)
-    self:setStyle(Button.STYLE_FONT_NAME, font)
+    self:setStyle(Button.STYLE_FONT_NAME, fontName)
     self._textLabel:setFont(self:getFont())
 end
 
@@ -2096,7 +2096,7 @@ end
 -- @param fontName fontName
 --------------------------------------------------------------------------------
 function TextBox:setFontName(fontName)
-    self:setStyle(TextBox.STYLE_FONT_NAME, font)
+    self:setStyle(TextBox.STYLE_FONT_NAME, fontName)
     self._textLabel:setFont(self:getFont())
 end
 
