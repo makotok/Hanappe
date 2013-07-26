@@ -8,13 +8,13 @@ local ANIM_DATAS = {
 }
 
 -- Test Condition
-local TIME_SPAN = 5
+local TIME_SPAN = 2
 local STATT_SIZE = 200
 local STEP_SIZE = 200
-local MAX_IMAGES_SIZE = 6000
+local MAX_IMAGES_SIZE = 3000
 local MULTI_TEXTURE_ENABLED = false
-local ANIMATION_ENABLD = false
-local UPDATE_LOC_ENABLED = false
+local ANIMATION_ENABLD = true
+local UPDATE_LOC_ENABLED = true
 local UPDATE_CAMERA_ENABLED = false
 local LAYER_SORT_ENABLED = false
 
@@ -31,6 +31,7 @@ function onCreate(e)
     layer = flower.Layer()
     layer:setTouchEnabled(true)
     layer:setScene(scene)
+    layer:setSortMode(MOAILayer.SORT_NONE)
     if LAYER_SORT_ENABLED then
         layer:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
     end
@@ -69,6 +70,7 @@ function onClose(e)
     for i, image in ipairs(images) do
         image:stopAnim()
     end
+    timer:stop()
 end
 
 function onUpdate(e)
