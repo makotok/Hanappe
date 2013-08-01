@@ -2717,7 +2717,7 @@ function ListBox:_initInternal()
     self._rowCount = 5
     self._columnCount = 1
     self._verticalScrollPosition = 0
-    self._verticalScrollBar = nil
+    self._scrollBar = nil
 end
 
 ---
@@ -2740,8 +2740,8 @@ end
 ---
 -- Create the scrollBar
 function ListBox:_createScrollBar()
-    self._verticalScrollBar = NineImage(self:getStyle(ListBox.STYLE_SCROLL_BAR_TEXTURE))
-    self:addChild(self._verticalScrollBar)
+    self._scrollBar = NineImage(self:getStyle(ListBox.STYLE_SCROLL_BAR_TEXTURE))
+    self:addChild(self._scrollBar)
 end
 
 ---
@@ -2832,7 +2832,7 @@ end
 ---
 -- Update the scroll bar.
 function ListBox:updateScrollBar()
-    local bar = self._verticalScrollBar
+    local bar = self._scrollBar
     local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
     local vsp = self:getVerticalScrollPosition()
     local maxVsp = self:getMaxVerticalScrollPosition()
@@ -3054,8 +3054,8 @@ end
 -- @param priority priority
 function ListBox:setPriority(priority)
     ListBox.__super.setPriority(self, priority)
-    if self._verticalScrollBar then
-        self._verticalScrollBar:setPriority((priority or 0) + 5)
+    if self._scrollBar then
+        self._scrollBar:setPriority((priority or 0) + 5)
     end
 end
 
@@ -3065,7 +3065,7 @@ end
 -- @param texture texture path.
 function ListBox:setScrollBarTexture(texture)
     self:setStyle(ListBox.STYLE_SCROLL_BAR_TEXTURE, texture)
-    self._verticalScrollBar:setImage(texture)
+    self._scrollBar:setImage(texture)
     self:updateScrollBar()
 end
 
