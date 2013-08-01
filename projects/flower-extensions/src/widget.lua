@@ -4,7 +4,6 @@
 --
 -- TODO:TextInput does not support multi-byte.
 -- TODO:TextInput can not move the cursor.
--- TODO:Does not have a scroll bar in ListBox.
 --
 -- @author Makoto
 -- @release V2.1.2
@@ -59,7 +58,6 @@ local TextInput
 local MsgBox
 local ListBox
 local ListItem
-local ScrollBar
 local Slider
 
 -- interfaces
@@ -2704,6 +2702,9 @@ ListBox.STYLE_LIST_ITEM_FACTORY = "listItemFactory"
 --- Style: rowHeight
 ListBox.STYLE_ROW_HEIGHT = "rowHeight"
 
+--- Style: scrollBarTexture
+ListBox.STYLE_SCROLL_BAR_TEXTURE = "scrollBarTexture"
+
 ---
 -- Initialize a variables
 function ListBox:_initInternal()
@@ -2716,6 +2717,7 @@ function ListBox:_initInternal()
     self._rowCount = 5
     self._columnCount = 1
     self._verticalScrollPosition = 0
+    self._verticalScrollBar = nil
 end
 
 ---
@@ -2732,6 +2734,14 @@ end
 -- Create the children.
 function ListBox:_createChildren()
     ListBox.__super._createChildren(self)
+    self:_createScrollBar()
+end
+
+---
+-- Create the scrollBar
+function ListBox:_createScrollBar()
+    self._verticalScrollBar = NineImage(self:getStyle(ListBox.STYLE_SCROLL_BAR_TEXTURE))
+    self:addChild(self._verticalScrollBar)
 end
 
 ---
@@ -2805,6 +2815,8 @@ function ListBox:updateDisplay()
             self:_createListItem(i)
         end
     end
+    
+    self:updateScrollBar()
 end
 
 ---
@@ -2815,6 +2827,22 @@ function ListBox:updateSize()
     local pLeft, pTop, pRight, pBottom = self._backgroundImage:getContentPadding()
 
     self:setHeight(rowCount * rowHeight + pTop + pBottom)
+end
+
+---
+-- Update the scroll bar.
+function ListBox:updateScrollBar()
+    local bar = self._verticalScrollBar
+    local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
+    local vsp = self:getVerticalScrollPosition()
+    local maxVsp = self:getMaxVerticalScrollPosition()
+    local step = (yMax - yMin) / (maxVsp + 1)
+
+    bar:setSize(bar:getWidth(), math.floor(math.max(step, bar.displayHeight)))
+    
+    step = step >= bar.displayHeight and step or (yMax - yMin - bar.displayHeight) / (maxVsp + 1)
+    bar:setPos(xMax - bar:getWidth(), yMin + math.floor(step * vsp))
+    bar:setVisible(maxVsp > 0)
 end
 
 ---
@@ -3018,6 +3046,27 @@ end
 -- @return touching
 function ListBox:isTouching()
     return self._touchedIndex ~= nil
+end
+
+---
+-- Set the priority.
+-- Override scroll bar to be drawn last.
+-- @param priority priority
+function ListBox:setPriority(priority)
+    ListBox.__super.setPriority(self, priority)
+    if self._verticalScrollBar then
+        self._verticalScrollBar:setPriority((priority or 0) + 5)
+    end
+end
+
+---
+-- Set the texture path of the scroll bar.
+-- Needs to be NinePatch.
+-- @param texture texture path.
+function ListBox:setScrollBarTexture(texture)
+    self:setStyle(ListBox.STYLE_SCROLL_BAR_TEXTURE, texture)
+    self._verticalScrollBar:setImage(texture)
+    self:updateScrollBar()
 end
 
 ---
