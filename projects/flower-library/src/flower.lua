@@ -148,9 +148,10 @@ end
 -- Returns the texture.
 -- Textures are cached.
 -- @param path The path of the texture
+-- @param filter Texture filter.
 -- @return Texture instance
-function M.getTexture(path)
-    return Resources.getTexture(path)
+function M.getTexture(path, filter)
+    return Resources.getTexture(path, filter)
 end
 
 ---
@@ -566,19 +567,21 @@ end
 -- Loads (or obtains from its cache) a texture and returns it.
 -- Textures are cached.
 -- @param path The path of the texture
+-- @param filter Texture filter.
 -- @return Texture instance
-function Resources.getTexture(path)
+function Resources.getTexture(path, filter)
     if type(path) == "userdata" then
         return path
     end
 
     local cache = Resources.textureCache
     local filepath = Resources.getResourceFilePath(path)
-    if cache[filepath] == nil then
-        local texture = Texture(filepath)
-        cache[filepath] = texture
+    local cacheKey = filepath .. "$" .. tostring(filter)
+    if cache[cacheKey] == nil then
+        local texture = Texture(filepath, filter)
+        cache[cacheKey] = texture
     end
-    return cache[filepath]
+    return cache[cacheKey]
 end
 
 ---
@@ -2995,12 +2998,13 @@ Texture.DEFAULT_FILTER = MOAITexture.GL_LINEAR
 ---
 -- Constructor.
 -- @param path Texture path
-function Texture:init(path)
+function Texture:init(path, filter)
     self:load(path)
     self.path = path
+    self.filter = filter or Texture.DEFAULT_FILTER
 
-    if Texture.DEFAULT_FILTER then
-        self:setFilter(Texture.DEFAULT_FILTER)
+    if self.filter then
+        self:setFilter(self.filter)
     end
 end
 
