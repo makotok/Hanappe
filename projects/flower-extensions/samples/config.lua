@@ -16,7 +16,7 @@ Resources.addResourceDirectory("assets")
 -- Please you set free.
 M.screenWidth = MOAIEnvironment.horizontalResolution or 320
 M.screenHeight = MOAIEnvironment.verticalResolution or 480
-M.viewScale = math.min(M.screenWidth, M.screenHeight) > 640 and 2 or 1
+M.viewScale = math.floor(math.max(math.min(M.screenWidth / 320, M.screenHeight / 480), 1))
 
 -- MOAISim settings
 MOAISim.setStep(1 / 60)
