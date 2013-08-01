@@ -585,13 +585,10 @@ end
 ---
 -- Load the texture of the tile set that is specified.
 -- @return texture
-function Tileset:loadTexture()
-    if not self.texture then
-        local path = self.tileMap.resourceDirectory .. self.image
-        self.texture = flower.getTexture(path)
-        self.texture:setFilter(MOAITexture.GL_NEAREST)
-    end
-    return self.texture
+function Tileset:loadTexture(filter)
+    local path = self.tileMap.resourceDirectory .. self.image
+    local texture = flower.getTexture(path, filter)
+    return texture
 end
 
 ---
@@ -1077,9 +1074,7 @@ function TileLayerRenderer:createRenderers()
     local tilesets = self:getRenderableTilesets()
 
     for key, tileset in pairs(tilesets) do
-        if tileset.texture then
-            self:createRenderer(tileset)
-        end
+        self:createRenderer(tileset)
     end
 end
 
@@ -1092,7 +1087,7 @@ function TileLayerRenderer:createRenderer(tileset)
         return
     end
     
-    local texture = tileset:loadTexture()
+    local texture = tileset:loadTexture(MOAITexture.GL_NEAREST)
     local tw, th = texture:getSize()
 
     local tileLayer = self.tileLayer
@@ -1171,7 +1166,6 @@ function TileLayerRenderer:getRenderableTilesets()
     for i, gid in ipairs(tileLayer.tiles) do
         local tileset = tileMap:findTilesetByGid(gid)
         if tileset and not tilesets[tileset.name] then
-            tileset:loadTexture()
             tilesets[tileset.name] = tileset
         end
     end
@@ -1262,7 +1256,7 @@ function IsometricLayerRenderer:createRenderer(x, y, gid)
     local tileMap = self.tileMap
     local tileset = tileMap:findTilesetByGid(gid)
     local tileNo = tileset:getTileIndexByGid(gid)
-    local texture = tileset:loadTexture()
+    local texture = tileset:loadTexture(MOAITexture.GL_NEAREST)
 
     local tileLayer = self.tileLayer
     local mapWidth, mapHeight = tileLayer.mapWidth, tileLayer.mapHeight
