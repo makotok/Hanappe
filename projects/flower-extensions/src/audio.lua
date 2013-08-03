@@ -14,6 +14,7 @@ local Resources = flower.Resources
 
 -- classes
 local UntzSoundMgr
+local MockSoundMgr
 --local FModSoundMgr
 
 ----------------------------------------------------------------------------------------------------
@@ -25,7 +26,13 @@ local UntzSoundMgr
 -- @param soundMgr (option) soundMgr object.
 function M.init(soundMgr)
     if not M._soundMgr then
-        M._soundMgr = soundMgr or UntzSoundMgr()
+        if soundMgr then
+            M._soundMgr = soundMgrUntzSoundMgr()
+        elseif MOAIUntzSystem then
+            M._soundMgr = UntzSoundMgr()
+        else
+            M._soundMgr = MockSoundMgr()
+        end
     end
 end
 
@@ -184,6 +191,52 @@ end
 -- @return volume
 function UntzSoundMgr:getVolume()
    return MOAIUntzSystem.getVolume()
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type MockSoundMgr
+-- 
+-- Mock for the environment without Sound.
+----------------------------------------------------------------------------------------------------
+MockSoundMgr = class()
+M.MockSoundMgr = MockSoundMgr
+
+---
+-- Constructor.
+function MockSoundMgr:init()
+end
+
+---
+-- Mock function.
+function MockSoundMgr:loadSound(filePath)
+end
+
+---
+-- Mock function.
+function MockSoundMgr:getSound(filePath)
+end
+
+function MockSoundMgr:play(sound, volume, looping)
+end
+
+---
+-- Mock function.
+function MockSoundMgr:pause(sound)
+end
+
+---
+-- Mock function.
+function MockSoundMgr:stop(sound)
+end
+
+---
+-- Mock function.
+function MockSoundMgr:setVolume(volume)
+end
+
+---
+-- Mock function.
+function MockSoundMgr:getVolume()
 end
 
 return M
