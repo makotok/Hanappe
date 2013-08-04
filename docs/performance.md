@@ -1,5 +1,0 @@
-# Performance Hints
-
-## Introduction
-
-## 

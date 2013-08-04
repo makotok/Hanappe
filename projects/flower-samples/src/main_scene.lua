@@ -5,6 +5,7 @@ module(..., package.seeall)
 --------------------------------------------------------------------------------
 
 SAMPLES = require "samples/scene_list"
+ITEM_HEIGHT = 32
 
 --------------------------------------------------------------------------------
 -- Variables
@@ -22,11 +23,11 @@ function createBackButton(childScene)
     layer:setTouchEnabled(true)
     childScene:addChild(layer)
     
-    local rect = flower.Rect(100, 30)
+    local rect = flower.Rect(100, ITEM_HEIGHT)
     rect:setColor(0, 0, 0.5, 1)
     rect:setLayer(layer)
     
-    local label = flower.Label("Back", 100, 30)
+    local label = flower.Label("Back", 100, ITEM_HEIGHT)
     
     backButton = flower.Group(layer)
     backButton:setPos(flower.viewWidth - 100, 0)
@@ -38,7 +39,7 @@ end
 function createMenuList()
     menuList = {}
     local itemWidth = flower.viewWidth - 20
-    local itemHeight = 30
+    local itemHeight = ITEM_HEIGHT
     
     for i, item in ipairs(SAMPLES) do
         local menuItem = createMenuItem(item, itemWidth, itemHeight)
@@ -71,7 +72,7 @@ end
 
 function resizeMenuList()
     local itemWidth = flower.viewWidth - 20
-    local itemHeight = 30
+    local itemHeight = ITEM_HEIGHT
     
     for i, menuItem in ipairs(menuList) do
         menuItem:setSize(itemWidth, itemHeight)

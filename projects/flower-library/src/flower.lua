@@ -2872,6 +2872,9 @@ Label.DEFAULT_FIT_LENGTH = 10000000
 --- default fit padding.
 Label.DEFAULT_FIT_PADDING = 2
 
+--- Whether to high quality automatically drawing the label
+Label.HIGH_QUALITY_ENABLED = true
+
 ---
 -- Constructor.
 -- @param text Text
@@ -2881,12 +2884,17 @@ Label.DEFAULT_FIT_PADDING = 2
 -- @param textSize (option) TextSize
 function Label:init(text, width, height, font, textSize)
     DisplayObject.init(self)
+    
+    self.highQualityEnabled = Label.HIGH_QUALITY_ENABLED
+    self.contentScale = self.highQualityEnabled and flower.viewScale or 1
+    self.textSize = textSize or Font.DEFAULT_POINTS
 
-    font = Resources.getFont(font, nil, textSize)
+    font = Resources.getFont(font, nil, self.textSize * self.contentScale)
 
     self:setFont(font)
     self:setRect(0, 0, width or 10, height or 10)
-    self:setTextSize(textSize or Font.DEFAULT_POINTS)
+    self:setTextSize(self.textSize)
+    self:setTextScale(1 / self.contentScale)
     self:setString(text)
 
     if not width or not height then
@@ -2903,8 +2911,42 @@ function Label:setSize(width, height)
 end
 
 ---
+-- Sets the text size.
+-- @param points points
+-- @param dpi (Option)dpi
+function Label:setTextSize(points, dpi)
+    dpi = dpi or Font.DEFAULT_DPI
+    self.textSize = (points * dpi) / Font.DEFAULT_DPI
+
+    MOAITextBoxInterface.setTextSize(self, self.textSize * self.contentScale)
+end
+
+---
+-- Sets the text scale.
+-- @param scale scale
+function Label:setTextScale(scale)
+    local style = self:affirmStyle ()
+    style:setScale(scale)
+end
+
+---
+-- Set the high quality of the drawing of the string.
+-- This setting is meaningful when the scale of the Viewport does not match the screen.
+-- @param enabled Set true to the high quality
+-- @param viewScale (Option)Scale of the Viewport, which label is displayed.
+function Label:setHighQuality(enabled, contentScale)
+    contentScale = contentScale or flower.viewScale
+    self.highQualityEnabled = enabled
+    self.contentScale = self.highQualityEnabled and contentScale or 1
+    
+    local style = self:affirmStyle ()
+    style:setScale(self.contentScale)
+    self:setTextSize(self.textSize)
+end
+
+---
 -- Sets the fit size.
--- @param lenfth (Option)Length of the text.
+-- @param length (Option)Length of the text.
 -- @param maxWidth (Option)maxWidth of the text.
 -- @param maxHeight (Option)maxHeight of the text.
 -- @param padding (Option)padding of the text.
@@ -2924,7 +2966,7 @@ end
 
 ---
 -- Sets the fit height.
--- @param lenfth (Option)Length of the text.
+-- @param length (Option)Length of the text.
 -- @param maxHeight (Option)maxHeight of the text.
 -- @param padding (Option)padding of the text.
 function Label:fitHeight(length, maxHeight, padding)
@@ -2933,7 +2975,7 @@ end
 
 ---
 -- Sets the fit height.
--- @param lenfth (Option)Length of the text.
+-- @param length (Option)Length of the text.
 -- @param maxWidth (Option)maxWidth of the text.
 -- @param padding (Option)padding of the text.
 function Label:fitWidth(length, maxWidth, padding)
@@ -3026,6 +3068,9 @@ Font.DEFAULT_CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01
 
 --- Default font points
 Font.DEFAULT_POINTS = 24
+
+--- Default font dpi
+Font.DEFAULT_DPI = 72
 
 ---
 -- Constructor.

@@ -28,7 +28,7 @@ function createBackButton(childScene)
     rect:setColor(0, 0, 0.5, 1)
     rect:setLayer(layer)
     
-    local label = flower.Label("Back", 100, 30)
+    local label = flower.Label("Back")
     
     backButton = flower.Group(layer)
     backButton:setPos(flower.viewWidth - 100, 0)
