@@ -2873,7 +2873,7 @@ Label.DEFAULT_FIT_LENGTH = 10000000
 Label.DEFAULT_FIT_PADDING = 2
 
 --- Whether to high quality automatically drawing the label
-Label.HIGH_QUALITY_ENABLED = true
+Label.HIGH_QUALITY_ENABLED = false
 
 ---
 -- Constructor.
