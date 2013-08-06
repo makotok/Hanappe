@@ -39,6 +39,8 @@ local MOAIDialog = MOAIDialogAndroid or MOAIDialogIOS
 -- classes
 local ThemeMgr
 local FocusMgr
+local LayoutMgr
+local PriorityQueue
 local TextAlign
 local KeyCode
 local UIEvent
@@ -77,6 +79,7 @@ function M.initialize()
 
     M.themeMgr = ThemeMgr()
     M.focusMgr = FocusMgr()
+    M.layoutMgr = LayoutMgr()
 
     M.initialized = true
 end
@@ -108,6 +111,13 @@ end
 -- @return focusMgr
 function M.getFocusMgr()
     return M.focusMgr
+end
+
+---
+-- Return the LayoutMgr.
+-- @return LayoutMgr
+function M.getLayoutMgr()
+    return M.layoutMgr
 end
 
 ---
@@ -149,10 +159,11 @@ function ThemeMgr:getTheme()
     return self.theme
 end
 
----
+----------------------------------------------------------------------------------------------------
 -- @type FocusMgr
 -- This is a class to manage the focus of the widget.
 -- Please get an instance from the widget module.
+----------------------------------------------------------------------------------------------------
 FocusMgr = class(EventDispatcher)
 M.FocusMgr = FocusMgr
 
@@ -187,6 +198,171 @@ end
 -- @return focus object.
 function FocusMgr:getFocusObject()
     return self.focusObject
+end
+
+
+----------------------------------------------------------------------------------------------------
+-- @type LayoutMgr
+-- This is a class to manage the layout of the widget.
+-- Please get an instance from the widget module.
+----------------------------------------------------------------------------------------------------
+LayoutMgr = class(EventDispatcher)
+M.LayoutMgr = LayoutMgr
+
+--- Comparetor
+LayoutMgr.ASC_COMPARETOR = function(a, b) 
+    local alevel = a:getNestLevel()
+    local blevel = b:getNestLevel()
+    
+    if alevel < blevel then
+        return -1
+    elseif alevel == blevel then
+        return 0
+    else
+        return 1
+    end
+end
+
+---
+-- Constructor.
+function LayoutMgr:init()
+    LayoutMgr.__super.init(self)
+    self._invalidateDisplayQueue = PriorityQueue(LayoutMgr.ASC_COMPARETOR)
+    self._invalidateLayoutQueue = PriorityQueue(LayoutMgr.ASC_COMPARETOR)
+    self._invalidating = false
+end
+
+---
+-- TODO:LDoc
+function LayoutMgr:invalidateDisplay(object)
+    self._invalidateDisplayQueue:push(object)
+    
+    if not self._invalidating then
+        Executors.callOnce(self.validateAll, self)
+        self._invalidating = true
+    end
+end
+
+---
+-- TODO:LDoc
+function LayoutMgr:invalidateLayout(object)
+    self._invalidateLayoutQueue:push(object)
+
+    if not self._invalidating then
+        Executors.callOnce(self.validateAll, self)
+        self._invalidating = true
+    end
+end
+
+---
+-- TODO:LDoc
+function LayoutMgr:validateAll()
+    self:validateDisplay()
+    self:validateLayout()
+    
+    if self._invalidateDisplayQueue:size() > 0 or self._invalidateLayoutQueue:size() > 0 then
+        self:validateAll()
+    else
+        self._invalidating = false
+        self:dispatchEvent(Event.COMPLETE)
+    end
+end
+
+---
+-- TODO:LDoc
+function LayoutMgr:validateDisplay()
+    local object = self._invalidateDisplayQueue:poll()
+    while object do
+        object:validateDisplay()
+        object = self._invalidateDisplayQueue:poll()
+    end
+end
+
+---
+-- TODO:LDoc
+function LayoutMgr:validateLayout()
+    local object = self._invalidateLayoutQueue:poll()
+    while object do
+        object:validateDisplay()
+        object = self._invalidateLayoutQueue:poll()
+    end
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type PriorityQueue
+-- TODO:LDoc
+----------------------------------------------------------------------------------------------------
+PriorityQueue = class()
+M.PriorityQueue = PriorityQueue
+
+---
+-- コンストラクタです.
+-- @param comparetor
+function PriorityQueue:init(comparetor)
+    assert(comparetor, "comparetor is nil!")
+    self.queue = {}
+    self.comparetor = comparetor
+end
+
+---
+-- オブジェクトを順序付けて追加します.
+-- @param object オブジェクト
+function PriorityQueue:push(object)
+    self:remove(object)
+
+    local comparetor = assert(self.comparetor)
+    local index = 0
+    for i, v in ipairs(self.queue) do
+        index = i
+        if comparetor(object, v) > 0 then
+            break
+        end
+    end
+    index = index + 1
+    table.insert(self.queue, index, object)
+end
+
+---
+-- 優先順位の低い(キューの最後)のオブジェクト削除してから返します.
+-- キューに存在しない場合はnilを返します.
+-- @return object
+function PriorityQueue:poll()
+    if self:size() > 0 then
+        return table.remove(self.queue, #self.queue)
+    end
+    return nil
+end
+
+---
+-- 指定したインデックスのオブジェクトを返します.
+-- @param i インデックス
+-- @return object
+function PriorityQueue:get(i)
+    return self.queue[i]
+end
+
+---
+-- キューの内容をクリアします.
+function PriorityQueue:clear()
+    self.queue = {}
+end
+
+---
+-- 指定したオブジェクトをキューから削除します.
+function PriorityQueue:remove(object)
+    for i, v in ipairs(self.queue) do
+        if object == v then
+            return table.remove(self.queue, i)
+        end
+    end
+    return nil
+end
+
+---
+-- キューのサイズを返します.
+-- @return キューのサイズ.
+function PriorityQueue:size()
+    return #self.queue
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -365,6 +541,28 @@ function UIComponent:_createChildren()
 end
 
 ---
+-- Invalidate the all state.
+function UIComponent:invalidate()
+    self:invalidateDisplay()
+    self:invalidateLayout()
+end
+
+---
+-- Invalidate the display.
+function UIComponent:invalidateDisplay()
+    self:getLayoutMgr():invalidateDisplay(self)
+end
+
+---
+-- Invalidate the layout.
+function UIComponent:invalidateLayout()
+    self:getLayoutMgr():invalidateLayout(self)
+    if self.parent then
+        self.parent:invalidateLayout()
+    end
+end
+
+---
 -- Validate the all state.
 function UIComponent:validate()
     self:validateDisplay()
@@ -442,6 +640,19 @@ end
 function UIComponent:addChild(child)
     if UIComponent.__super.addChild(self, child) then
         child:setPriority(self:getPriority())
+        self:invalidateLayout()
+        return true
+    end
+    return false
+end
+
+---
+-- Removes a child.
+-- @param child DisplayObject
+-- @return True if removed.
+function UIComponent:removeChild(child)
+    if UIComponent.__super.removeChild(self, child) then
+        self:invalidateLayout()
         return true
     end
     return false
@@ -495,6 +706,7 @@ function UIComponent:setSize(width, height)
 
     if oldWidth ~= width or oldHeight ~= height then
         UIComponent.__super.setSize(self, width, height)
+        self:invalidate()
         self:dispatchEvent(UIEvent.RESIZE)
     end
 end
@@ -526,7 +738,7 @@ end
 -- @param layout layout
 function UIComponent:setLayout(layout)
     self._layout = layout
-    self:validate()
+    self:invalidateLayout()
 end
 
 ---
@@ -606,7 +818,7 @@ end
 function UIComponent:setTheme(theme)
     if self._theme ~= theme then
         self._theme = theme
-        self:validate()
+        self:invalidate()
         self:dispatchEvent(UIEvent.THEME_CHANGED)
     end
 end
@@ -685,10 +897,10 @@ function UIComponent:getFocusMgr()
 end
 
 ---
--- Returns the focusMgr.
--- @return focusMgr
-function UIComponent:getFocusMgr()
-    return M.getFocusMgr()
+-- Returns the layoutMgr.
+-- @return layoutMgr
+function UIComponent:getLayoutMgr()
+    return M.getLayoutMgr()
 end
 
 ---
@@ -1361,7 +1573,7 @@ end
 -- @param texture texture
 function Button:setNormalTexture(texture)
     self:setStyle(Button.STYLE_NORMAL_TEXTURE, texture)
-    self:validate()
+    self:invalidateDisplay()
 end
 
 ---
@@ -1369,7 +1581,7 @@ end
 -- @param texture texture
 function Button:setSelectedTexture(texture)
     self:setStyle(Button.STYLE_SELECTED_TEXTURE, texture)
-    self:validate()
+    self:invalidateDisplay()
 end
 
 ---
@@ -1377,7 +1589,7 @@ end
 -- @param texture texture
 function Button:setDisabledTexture(texture)
     self:setStyle(Button.STYLE_DISABLED_TEXTURE, texture)
-    self:validate()
+    self:invalidateDisplay()
 end
 
 ---
@@ -1575,7 +1787,6 @@ end
 -- This event handler is called when resize.
 -- @param e Touch Event
 function Button:onResize(e)
-    self:validate()
 end
 
 ---
@@ -2851,7 +3062,7 @@ end
 function ListBox:setListData(listData)
     self._listData = listData or {}
     self:_clearListItems()
-    self:validate()
+    self:invalidate()
 end
 
 ---
@@ -2892,7 +3103,7 @@ end
 function ListBox:setListItemFactory(factory)
     self:setStyle(ListBox.STYLE_LIST_ITEM_FACTORY, factory)
     self:_clearListItems()
-    self:validate()
+    self:invalidate()
 end
 
 ---
@@ -2958,7 +3169,7 @@ end
 -- @param labelField labelField
 function ListBox:setLabelField(labelField)
     self._labelField = labelField
-    self:validate()
+    self:invalidate()
 end
 
 ---
@@ -2998,7 +3209,7 @@ end
 -- @param rowHeight height of the row
 function ListBox:setRowHeight(rowHeight)
     self:setStyle(ListBox.STYLE_ROW_HEIGHT, rowHeight)
-    self:validate()
+    self:invalidate()
 end
 
 ---
@@ -3014,7 +3225,7 @@ end
 function ListBox:setRowCount(rowCount)
     self._rowCount = rowCount
     self:updateSize()
-    self:validate()
+    self:invalidate()
 end
 
 ---
@@ -3031,7 +3242,7 @@ function ListBox:setColumnCount(columnCount)
     assert(columnCount >= 1, "columnCount property error!")
 
     self._columnCount = columnCount
-    self:validate()
+    self:invalidate()
 end
 
 ---
@@ -3137,7 +3348,6 @@ function ListBox:onResize(e)
     local contentWidth, contentHeight = xMax - xMin, yMax - yMin
     local rowHeight = self:getRowHeight()
     self._rowCount = math.floor(contentHeight / rowHeight)
-    self:validate()
 end
 
 
@@ -3282,7 +3492,6 @@ end
 -- Initializes the event listener.
 function Slider:_initEventListeners()
     Slider.__super._initEventListeners(self)
-    self:addEventListener(Event.RESIZE, self.onResize, self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
     self:addEventListener(Event.TOUCH_UP, self.onTouchUp, self)
     self:addEventListener(Event.TOUCH_MOVE, self.onTouchMove, self)
@@ -3416,13 +3625,6 @@ function Slider:doSlide(worldX)
     modelX = math.min(modelX, width)
     modelX = math.max(modelX, 0)
     self:setValue(modelX / width)
-end
-
----
--- This event handler is called when resize.
--- @param e Touch Event
-function Slider:onResize(e)
-    self:validate()
 end
 
 ---
