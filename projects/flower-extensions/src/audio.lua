@@ -27,7 +27,7 @@ local MockSoundMgr
 function M.init(soundMgr)
     if not M._soundMgr then
         if soundMgr then
-            M._soundMgr = soundMgrUntzSoundMgr()
+            M._soundMgr = soundMgr
         elseif MOAIUntzSystem then
             M._soundMgr = UntzSoundMgr()
         else
