@@ -14,20 +14,29 @@ function onCreate(e)
         scene = scene,
         layout = BoxLayout {
             gap = {5, 5},
-            align = {"right", "center"},
+            align = {"right", "bottom"},
         },
         children = {{
             Button {
                 size = {200, 50},
                 text = "Test1",
+                onClick = function(e)
+                    print("Hello!!!")
+                end,
             },
             Button {
                 size = {100, 50},
                 text = "Test2",
+                onClick = function(e)
+                    print("World!!!")
+                end,
             },
             Button {
                 size = {100, 50},
                 text = "Test3",
+                onClick = function(e)
+                    print("Layout!!")
+                end,
             },
             UIGroup {
                 layout = BoxLayout {
@@ -48,6 +57,4 @@ function onCreate(e)
             },
         }},
     }
-    
-    view:updateLayout()
 end

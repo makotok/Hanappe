@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- Widget Library.
+-- This is a library to build an advanced widget.
 -- There are still some problems.
 --
 -- TODO:TextInput does not support multi-byte.
@@ -40,7 +40,6 @@ local MOAIDialog = MOAIDialogAndroid or MOAIDialogIOS
 local ThemeMgr
 local FocusMgr
 local LayoutMgr
-local PriorityQueue
 local TextAlign
 local KeyCode
 local UIEvent
@@ -61,9 +60,6 @@ local MsgBox
 local ListBox
 local ListItem
 local Slider
-
--- interfaces
-local MOAIPropInterface = MOAIProp.getInterfaceTable()
 
 ----------------------------------------------------------------------------------------------------
 -- Public functions
@@ -209,44 +205,21 @@ end
 LayoutMgr = class(EventDispatcher)
 M.LayoutMgr = LayoutMgr
 
---- Comparetor
-LayoutMgr.ASC_COMPARETOR = function(a, b) 
-    local alevel = a:getNestLevel()
-    local blevel = b:getNestLevel()
-    
-    if alevel < blevel then
-        return -1
-    elseif alevel == blevel then
-        return 0
-    else
-        return 1
-    end
-end
-
 ---
 -- Constructor.
 function LayoutMgr:init()
     LayoutMgr.__super.init(self)
-    self._invalidateDisplayQueue = PriorityQueue(LayoutMgr.ASC_COMPARETOR)
-    self._invalidateLayoutQueue = PriorityQueue(LayoutMgr.ASC_COMPARETOR)
+    self._invalidateDisplayQueue = {}
+    self._invalidateLayoutQueue = {}
+    self._invalidateViews = {}
     self._invalidating = false
 end
 
 ---
--- TODO:LDoc
-function LayoutMgr:invalidateDisplay(object)
-    self._invalidateDisplayQueue:push(object)
-    
-    if not self._invalidating then
-        Executors.callOnce(self.validateAll, self)
-        self._invalidating = true
-    end
-end
-
----
--- TODO:LDoc
-function LayoutMgr:invalidateLayout(object)
-    self._invalidateLayoutQueue:push(object)
+-- Invalidate the display of the component.
+-- @param component component
+function LayoutMgr:invalidateDisplay(component)
+    table.insertElement(self._invalidateDisplayQueue, component)
 
     if not self._invalidating then
         Executors.callOnce(self.validateAll, self)
@@ -255,114 +228,67 @@ function LayoutMgr:invalidateLayout(object)
 end
 
 ---
--- TODO:LDoc
+-- Invalidate the layout of the component.
+-- @param component component
+function LayoutMgr:invalidateLayout(component)
+    table.insertElement(self._invalidateLayoutQueue, component)
+
+    if component.isUIView then
+        table.insertElement(self._invalidateViews, component)
+    end
+
+    if not self._invalidating then
+        Executors.callOnce(self.validateAll, self)
+        self._invalidating = true
+    end
+end
+
+---
+-- Validate the all components.
 function LayoutMgr:validateAll()
     self:validateDisplay()
     self:validateLayout()
-    
-    if self._invalidateDisplayQueue:size() > 0 or self._invalidateLayoutQueue:size() > 0 then
+
+    if #self._invalidateDisplayQueue > 0 or #self._invalidateLayoutQueue > 0 then
         self:validateAll()
-    else
-        self._invalidating = false
-        self:dispatchEvent(Event.COMPLETE)
+        return
     end
+
+    self:validatePriority()
+
+    self._invalidating = false
+    self:dispatchEvent(Event.COMPLETE)
+
 end
 
 ---
--- TODO:LDoc
+-- Validate the display of the all components.
 function LayoutMgr:validateDisplay()
-    local object = self._invalidateDisplayQueue:poll()
-    while object do
-        object:validateDisplay()
-        object = self._invalidateDisplayQueue:poll()
+    local component = table.remove(self._invalidateDisplayQueue, #self._invalidateDisplayQueue)
+    while component do
+        component:validateDisplay()
+        component = table.remove(self._invalidateDisplayQueue, #self._invalidateDisplayQueue)
     end
 end
 
 ---
--- TODO:LDoc
+-- Validate the layout of the all components.
 function LayoutMgr:validateLayout()
-    local object = self._invalidateLayoutQueue:poll()
-    while object do
-        object:validateLayout()
-        object = self._invalidateLayoutQueue:poll()
+    local component = table.remove(self._invalidateLayoutQueue, #self._invalidateLayoutQueue)
+    while component do
+        component:validateLayout()
+        component = table.remove(self._invalidateLayoutQueue, #self._invalidateLayoutQueue)
     end
 end
 
-----------------------------------------------------------------------------------------------------
--- @type PriorityQueue
--- TODO:LDoc
-----------------------------------------------------------------------------------------------------
-PriorityQueue = class()
-M.PriorityQueue = PriorityQueue
-
 ---
--- コンストラクタです.
--- @param comparetor
-function PriorityQueue:init(comparetor)
-    assert(comparetor, "comparetor is nil!")
-    self.queue = {}
-    self.comparetor = comparetor
-end
-
----
--- オブジェクトを順序付けて追加します.
--- @param object オブジェクト
-function PriorityQueue:push(object)
-    self:remove(object)
-
-    local comparetor = assert(self.comparetor)
-    local index = 0
-    for i, v in ipairs(self.queue) do
-        index = i
-        if comparetor(object, v) > 0 then
-            break
-        end
+-- Validate the priority of the views.
+function LayoutMgr:validatePriority()
+    local view = table.remove(self._invalidateViews, #self._invalidateViews)
+    while view do
+        view:updatePriority()
+        view = table.remove(self._invalidateViews, #self._invalidateViews)
     end
-    index = index + 1
-    table.insert(self.queue, index, object)
-end
-
----
--- 優先順位の低い(キューの最後)のオブジェクト削除してから返します.
--- キューに存在しない場合はnilを返します.
--- @return object
-function PriorityQueue:poll()
-    if self:size() > 0 then
-        return table.remove(self.queue, #self.queue)
-    end
-    return nil
-end
-
----
--- 指定したインデックスのオブジェクトを返します.
--- @param i インデックス
--- @return object
-function PriorityQueue:get(i)
-    return self.queue[i]
-end
-
----
--- キューの内容をクリアします.
-function PriorityQueue:clear()
-    self.queue = {}
-end
-
----
--- 指定したオブジェクトをキューから削除します.
-function PriorityQueue:remove(object)
-    for i, v in ipairs(self.queue) do
-        if object == v then
-            return table.remove(self.queue, i)
-        end
-    end
-    return nil
-end
-
----
--- キューのサイズを返します.
--- @return キューのサイズ.
-function PriorityQueue:size()
-    return #self.queue
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -551,23 +477,27 @@ end
 
 ---
 -- Invalidate the display.
+-- Schedule the validate the display.
 function UIComponent:invalidateDisplay()
-    self:getLayoutMgr():invalidateDisplay(self)
-    self._invalidateDisplayFlag = true
+    if not self._invalidateDisplayFlag then
+        self:getLayoutMgr():invalidateDisplay(self)
+        self._invalidateDisplayFlag = true
+    end
 end
 
 ---
 -- Invalidate the layout.
+-- Schedule the validate the layout.
 function UIComponent:invalidateLayout()
-    self:getLayoutMgr():invalidateLayout(self)
-    self._invalidateLayoutFlag = true
-    if self.parent then
-        self.parent:invalidateLayout()
+    if not self._invalidateLayoutFlag then
+        self:getLayoutMgr():invalidateLayout(self)
+        self._invalidateLayoutFlag = true
     end
 end
 
 ---
 -- Validate the all state.
+-- For slow, it should not call this process as much as possible.
 function UIComponent:validate()
     self:validateDisplay()
     self:validateLayout()
@@ -575,6 +505,7 @@ end
 
 ---
 -- Validate the display.
+-- If you need to update the display, call the updateDisplay.
 function UIComponent:validateDisplay()
     if self._invalidateDisplayFlag then
         self:updateDisplay()
@@ -584,31 +515,33 @@ end
 
 ---
 -- Validate the layout.
+-- If you need to update the layout, call the updateLayout.
 function UIComponent:validateLayout()
-    for i, child in ipairs(self:getChildren()) do
-        if child.validateLayout then
-            child:validateLayout()
-        end
-    end
-
-    -- Fixed a bug where the coordinates of the MOAI SDK V1.4p0 does not reflect
+    -- Fixed a bug where the position of the MOAI SDK V1.4p0 does not reflect
     self:forceUpdate()
-    
+
     if self._invalidateLayoutFlag then
         self:updateLayout()
         self._invalidateLayoutFlag = false
+    end
+
+    if self.parent then
+        self.parent:invalidateLayout()
     end
 end
 
 ---
 -- Update the display.
--- When called this function, please refresh all.
+-- Do not call this function directly.
+-- Instead, please consider invalidateDisplay whether available.
 function UIComponent:updateDisplay()
 
 end
 
 ---
 -- Update the layout.
+-- Do not call this function directly.
+-- Instead, please consider invalidateLayout whether available.
 function UIComponent:updateLayout()
     if self._layout then
         self._layout:update(self)
@@ -616,13 +549,14 @@ function UIComponent:updateLayout()
 end
 
 ---
--- Update the priority.
+-- Update the order of rendering.
+-- It is called by LayoutMgr.
 -- @param priority priority.
 -- @return last priority
 function UIComponent:updatePriority(priority)
     priority = priority or 0
     DisplayObject.setPriority(self, priority)
-    
+
     for i, child in ipairs(self:getChildren()) do
         if child.updatePriority then
             priority = child:updatePriority(priority)
@@ -631,7 +565,7 @@ function UIComponent:updatePriority(priority)
         end
         priority = priority + 10
     end
-    
+
     return priority
 end
 
@@ -773,15 +707,6 @@ end
 function UIComponent:setLayout(layout)
     self._layout = layout
     self:invalidateLayout()
-end
-
----
--- Sets the group's priority.
--- Also sets the priority of any children.
--- @param priority priority
-function UIComponent:setPriority(priority)
-    priority = priority or 0
-    self:updatePriority(priority)
 end
 
 ---
@@ -1003,16 +928,6 @@ function UIGroup:_initInternal()
     self._focusEnabled = false
 end
 
----
--- Updates the display of child components.
-function UIGroup:updateDisplay()
-    for i, child in ipairs(self:getChildren()) do
-        if child.updateDisplay then
-            child:updateDisplay()
-        end
-    end
-end
-
 ----------------------------------------------------------------------------------------------------
 -- @type UIView
 -- This is a view class that displays the component.
@@ -1049,13 +964,6 @@ end
 -- Initializes the event listeners.
 function UIView:_initEventListeners()
     UIView.__super._initEventListeners(self)
-end
-
----
--- Update the layout.
-function UIView:updateLayout()
-    UIView.__super.updateLayout(self)
-    self:updatePriority()
 end
 
 ---
@@ -1140,7 +1048,7 @@ end
 ---
 -- Initialize the internal variables.
 function UILayout:_initInternal()
-    
+
 end
 
 ---
@@ -1167,28 +1075,28 @@ BoxLayout = class(UILayout)
 M.BoxLayout = BoxLayout
 
 --- Horizotal Align: left
-BoxLayout.HORIZOTAL_LEFT            = "left"
+BoxLayout.HORIZOTAL_LEFT = "left"
 
 --- Horizotal Align: center
-BoxLayout.HORIZOTAL_CENTER          = "center"
+BoxLayout.HORIZOTAL_CENTER = "center"
 
 --- Horizotal Align: right
-BoxLayout.HORIZOTAL_RIGHT           = "right"
+BoxLayout.HORIZOTAL_RIGHT = "right"
 
 --- Vertical Align: top
-BoxLayout.VERTICAL_TOP              = "top"
+BoxLayout.VERTICAL_TOP = "top"
 
 --- Vertical Align: center
-BoxLayout.VERTICAL_CENTER           = "center"
+BoxLayout.VERTICAL_CENTER = "center"
 
 --- Vertical Align: bottom
-BoxLayout.VERTICAL_BOTTOM           = "bottom"
+BoxLayout.VERTICAL_BOTTOM = "bottom"
 
 --- Layout Direction: vertical
-BoxLayout.DIRECTION_VERTICAL        = "vertical"
+BoxLayout.DIRECTION_VERTICAL = "vertical"
 
 --- Layout Direction: horizotal
-BoxLayout.DIRECTION_HORIZOTAL       = "horizotal"
+BoxLayout.DIRECTION_HORIZOTAL = "horizotal"
 
 ---
 -- Initializes the internal variables.
@@ -1221,12 +1129,12 @@ end
 function BoxLayout:updateVertical(parent)
     local children = parent.children
     local childrenWidth, childrenHeight = self:calcVerticalLayoutSize(children)
-    
+
     local parentWidth, parentHeight = parent:getSize()
     local parentWidth = math.max(parentWidth, childrenWidth)
     local parentHeight = math.max(parentHeight, childrenHeight)
     parent:setSize(parentWidth, parentHeight)
-    
+
     local childY = self:calcChildY(parentHeight, childrenHeight)
     for i, child in ipairs(children) do
         if not child._excludeLayout then
@@ -1250,7 +1158,7 @@ function BoxLayout:updateHorizotal(parent)
     local parentWidth = math.max(parentWidth, childrenWidth)
     local parentHeight = math.max(parentHeight, childrenHeight)
     parent:setSize(parentWidth, parentHeight)
-    
+
     local childX = self:calcChildX(parentWidth, childrenWidth)
     for i, child in ipairs(children) do
         if not child._excludeLayout then
@@ -1286,8 +1194,8 @@ end
 
 ---
 -- Calculates the y position of the child object.
--- @param parentWidth parent width.
--- @param childWidth child width.
+-- @param parentHeight parent width.
+-- @param childHeight child width.
 -- @return y position.
 function BoxLayout:calcChildY(parentHeight, childHeight)
     local diffHeight = parentHeight - childHeight
@@ -2010,34 +1918,34 @@ Joystick = class(UIComponent)
 M.Joystick = Joystick
 
 --- Direction of the stick
-Joystick.STICK_CENTER          = "center"
+Joystick.STICK_CENTER = "center"
 
 --- Direction of the stick
-Joystick.STICK_LEFT            = "left"
+Joystick.STICK_LEFT = "left"
 
 --- Direction of the stick
-Joystick.STICK_TOP             = "top"
+Joystick.STICK_TOP = "top"
 
 --- Direction of the stick
-Joystick.STICK_RIGHT           = "right"
+Joystick.STICK_RIGHT = "right"
 
 --- Direction of the stick
-Joystick.STICK_BOTTOM          = "bottom"
+Joystick.STICK_BOTTOM = "bottom"
 
 --- Mode of the stick
-Joystick.MODE_ANALOG           = "analog"
+Joystick.MODE_ANALOG = "analog"
 
 --- Mode of the stick
-Joystick.MODE_DIGITAL          = "digital"
+Joystick.MODE_DIGITAL = "digital"
 
 --- The ratio of the center
-Joystick.RANGE_OF_CENTER_RATE  = 0.5
+Joystick.RANGE_OF_CENTER_RATE = 0.5
 
 --- Style: baseTexture
-Joystick.STYLE_BASE_TEXTURE  = "baseTexture"
+Joystick.STYLE_BASE_TEXTURE = "baseTexture"
 
 --- Style: knobTexture
-Joystick.STYLE_KNOB_TEXTURE  = "knobTexture"
+Joystick.STYLE_KNOB_TEXTURE = "knobTexture"
 
 ---
 -- Initializes the internal variables.
@@ -2615,7 +2523,6 @@ function TextInput:_initInternal()
     self._onKeyboardReturn = function()
         self:onKeyboardReturn()
     end
-
 end
 
 ---
@@ -3037,8 +2944,18 @@ function ListBox:updateDisplay()
             self:_createListItem(i)
         end
     end
-    
+
     self:updateScrollBar()
+end
+
+---
+-- Update the priority.
+-- @param priority priority
+-- @return last priority
+function ListBox:updatePriority(priority)
+    priority = ListBox.__super.updatePriority(self, priority)
+    self._scrollBar:setPriority(priority + 1)
+    return priority + 10
 end
 
 ---
@@ -3061,7 +2978,7 @@ function ListBox:updateScrollBar()
     local step = (yMax - yMin) / (maxVsp + 1)
 
     bar:setSize(bar:getWidth(), math.floor(math.max(step, bar.displayHeight)))
-    
+
     step = step >= bar.displayHeight and step or (yMax - yMin - bar.displayHeight) / (maxVsp + 1)
     bar:setPos(xMax - bar:getWidth(), yMin + math.floor(step * vsp))
     bar:setVisible(maxVsp > 0 and self._scrollBarVisible)
