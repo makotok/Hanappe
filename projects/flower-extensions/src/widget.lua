@@ -283,7 +283,7 @@ end
 function LayoutMgr:validateLayout()
     local object = self._invalidateLayoutQueue:poll()
     while object do
-        object:validateDisplay()
+        object:validateLayout()
         object = self._invalidateLayoutQueue:poll()
     end
 end
@@ -518,6 +518,8 @@ function UIComponent:_initInternal()
     self._styles = {}
     self._layout = nil
     self._excludeLayout = false
+    self._invalidateDisplayFlag = true
+    self._invalidateLayoutFlag = true
 end
 
 ---
@@ -551,12 +553,14 @@ end
 -- Invalidate the display.
 function UIComponent:invalidateDisplay()
     self:getLayoutMgr():invalidateDisplay(self)
+    self._invalidateDisplayFlag = true
 end
 
 ---
 -- Invalidate the layout.
 function UIComponent:invalidateLayout()
     self:getLayoutMgr():invalidateLayout(self)
+    self._invalidateLayoutFlag = true
     if self.parent then
         self.parent:invalidateLayout()
     end
@@ -572,19 +576,28 @@ end
 ---
 -- Validate the display.
 function UIComponent:validateDisplay()
-    if not self._initialized then
-        return
+    if self._invalidateDisplayFlag then
+        self:updateDisplay()
+        self._invalidateDisplayFlag = false
     end
-    self:updateDisplay()
 end
 
 ---
 -- Validate the layout.
 function UIComponent:validateLayout()
-    if not self._initialized then
-        return
+    for i, child in ipairs(self:getChildren()) do
+        if child.validateLayout then
+            child:validateLayout()
+        end
     end
-    self:updateLayout()
+
+    -- Fixed a bug where the coordinates of the MOAI SDK V1.4p0 does not reflect
+    self:forceUpdate()
+    
+    if self._invalidateLayoutFlag then
+        self:updateLayout()
+        self._invalidateLayoutFlag = false
+    end
 end
 
 ---
@@ -597,15 +610,29 @@ end
 ---
 -- Update the layout.
 function UIComponent:updateLayout()
-    for i, child in ipairs(self:getChildren()) do
-        if child.updateLayout then
-            child:updateLayout()
-        end
-    end
-
     if self._layout then
         self._layout:update(self)
     end
+end
+
+---
+-- Update the priority.
+-- @param priority priority.
+-- @return last priority
+function UIComponent:updatePriority(priority)
+    priority = priority or 0
+    DisplayObject.setPriority(self, priority)
+    
+    for i, child in ipairs(self:getChildren()) do
+        if child.updatePriority then
+            priority = child:updatePriority(priority)
+        else
+            child:setPriority(priority)
+        end
+        priority = priority + 10
+    end
+    
+    return priority
 end
 
 ---
@@ -639,7 +666,6 @@ end
 -- @param child DisplayObject
 function UIComponent:addChild(child)
     if UIComponent.__super.addChild(self, child) then
-        child:setPriority(self:getPriority())
         self:invalidateLayout()
         return true
     end
@@ -676,6 +702,13 @@ function UIComponent:setProperties(properties)
     if properties then
         PropertyUtils.setProperties(self, properties, true)
     end
+end
+
+---
+-- Sets the name.
+-- @param name name
+function UIComponent:setName(name)
+    self.name = name
 end
 
 ---
@@ -726,6 +759,7 @@ function UIComponent:setParent(parent)
         oldParent:removeChild(self)
     end
 
+    self:invalidateLayout()
     UIComponent.__super.setParent(self, parent)
 
     if parent and parent.isGroup then
@@ -739,6 +773,15 @@ end
 function UIComponent:setLayout(layout)
     self._layout = layout
     self:invalidateLayout()
+end
+
+---
+-- Sets the group's priority.
+-- Also sets the priority of any children.
+-- @param priority priority
+function UIComponent:setPriority(priority)
+    priority = priority or 0
+    self:updatePriority(priority)
 end
 
 ---
@@ -961,17 +1004,6 @@ function UIGroup:_initInternal()
 end
 
 ---
--- Adds the specified child.
--- @param child DisplayObject
-function UIGroup:addChild(child)
-    if UIGroup.__super.addChild(self, child) then
-        child:setPriority(self:getPriority())
-        return true
-    end
-    return false
-end
-
----
 -- Updates the display of child components.
 function UIGroup:updateDisplay()
     for i, child in ipairs(self:getChildren()) do
@@ -988,8 +1020,6 @@ end
 ----------------------------------------------------------------------------------------------------
 UIView = class(UIGroup)
 M.UIView = UIView
-
-UIView.PRIORITY_MARGIN = 100
 
 ---
 -- Initialization is the process of internal variables.
@@ -1022,6 +1052,13 @@ function UIView:_initEventListeners()
 end
 
 ---
+-- Update the layout.
+function UIView:updateLayout()
+    UIView.__super.updateLayout(self)
+    self:updatePriority()
+end
+
+---
 -- Change the size of the viewport.
 -- @param screenX X of the Screen.
 -- @param screenY Y of the Screen.
@@ -1042,18 +1079,6 @@ function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
 end
 
 ---
--- Adds the specified child.
--- @param child DisplayObject
-function UIView:addChild(child)
-    if UIView.__super.addChild(self, child) then
-        self._lastPriority = self._lastPriority + UIView.PRIORITY_MARGIN
-        child:setPriority(self._lastPriority)
-        return true
-    end
-    return false
-end
-
----
 -- Sets the visible to layer.
 -- @param visible visible
 function UIView:setVisible(visible)
@@ -1065,23 +1090,6 @@ end
 -- @return visible
 function UIView:getVisible()
     self.layer:getVisible()
-end
-
----
--- Sets the group's priority.
--- Also sets the priority of any children.
--- @param priority priority
-function UIView:setPriority(priority)
-    priority = priority or 0
-    MOAIPropInterface.setPriority(self, priority)
-
-    for i, child in ipairs(self.children) do
-        priority = priority + UIView.PRIORITY_MARGIN
-        child:setPriority(priority)
-    end
-
-    self._lastPriority = priority
-    return priority
 end
 
 ---
@@ -1225,6 +1233,7 @@ function BoxLayout:updateVertical(parent)
             local childWidth, childHeight = child:getSize()
             local childX = self:calcChildX(parentWidth, childWidth)
             child:setPos(childX, childY)
+            print("Layout Child:", child.name, childX, childY, child:getPos())
             childY = childY + childHeight + self._verticalGap
         end
     end
@@ -1248,6 +1257,7 @@ function BoxLayout:updateHorizotal(parent)
             local childWidth, childHeight = child:getSize()
             local childY = self:calcChildY(parentHeight, childHeight)
             child:setPos(childX, childY)
+            print("Layout Child:", child.name, childX, childY, child:getPos())
             childX = childX + childWidth + self._horizotalGap
         end
     end
@@ -1974,6 +1984,14 @@ function CheckBox:updateButtonImage()
 end
 
 ---
+-- Update the textLabel.
+function CheckBox:updateTextLabel()
+    CheckBox.__super.updateTextLabel(self)
+
+    self._textLabel:fitWidth()
+end
+
+---
 -- Returns the label content rect.
 -- @return content rect
 function CheckBox:getLabelContentRect()
@@ -1982,14 +2000,6 @@ function CheckBox:getLabelContentRect()
     local left, top = buttonImage:getRight(), buttonImage:getTop()
     local right, bottom = left + textLabel:getWidth(), top + buttonImage:getHeight()
     return left, top, right, bottom
-end
-
----
--- Update the textLabel.
-function CheckBox:updateTextLabel()
-    CheckBox.__super.updateTextLabel(self)
-
-    self._textLabel:fitWidth()
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -2929,6 +2939,7 @@ function ListBox:_initInternal()
     self._columnCount = 1
     self._verticalScrollPosition = 0
     self._scrollBar = nil
+    self._scrollBarVisible = true
 end
 
 ---
@@ -3053,7 +3064,7 @@ function ListBox:updateScrollBar()
     
     step = step >= bar.displayHeight and step or (yMax - yMin - bar.displayHeight) / (maxVsp + 1)
     bar:setPos(xMax - bar:getWidth(), yMin + math.floor(step * vsp))
-    bar:setVisible(maxVsp > 0)
+    bar:setVisible(maxVsp > 0 and self._scrollBarVisible)
 end
 
 ---
@@ -3062,7 +3073,7 @@ end
 function ListBox:setListData(listData)
     self._listData = listData or {}
     self:_clearListItems()
-    self:invalidate()
+    self:invalidateDisplay()
 end
 
 ---
@@ -3103,7 +3114,7 @@ end
 function ListBox:setListItemFactory(factory)
     self:setStyle(ListBox.STYLE_LIST_ITEM_FACTORY, factory)
     self:_clearListItems()
-    self:invalidate()
+    self:invalidateDisplay()
 end
 
 ---
@@ -3156,6 +3167,14 @@ function ListBox:setSelectedItem(item)
 end
 
 ---
+-- Set the scrollBar visible.
+-- @param visible scrollBar visible
+function ListBox:setScrollBarVisible(visible)
+    self._scrollBarVisible = visible
+    self._scrollBar:setVisible(maxVsp > 0 and self._scrollBarVisible)
+end
+
+---
 -- Return the selected item.
 -- @return selected item
 function ListBox:getSelectedItem()
@@ -3169,7 +3188,7 @@ end
 -- @param labelField labelField
 function ListBox:setLabelField(labelField)
     self._labelField = labelField
-    self:invalidate()
+    self:invalidateDisplay()
 end
 
 ---
@@ -3187,7 +3206,7 @@ function ListBox:setVerticalScrollPosition(pos)
         return
     end
     self._verticalScrollPosition = math.max(0, math.min(self:getMaxVerticalScrollPosition(), pos))
-    self:validate()
+    self:invalidateDisplay()
 end
 
 ---
@@ -3209,7 +3228,7 @@ end
 -- @param rowHeight height of the row
 function ListBox:setRowHeight(rowHeight)
     self:setStyle(ListBox.STYLE_ROW_HEIGHT, rowHeight)
-    self:invalidate()
+    self:invalidateDisplay()
 end
 
 ---
@@ -3225,7 +3244,7 @@ end
 function ListBox:setRowCount(rowCount)
     self._rowCount = rowCount
     self:updateSize()
-    self:invalidate()
+    self:invalidateDisplay()
 end
 
 ---
@@ -3242,7 +3261,7 @@ function ListBox:setColumnCount(columnCount)
     assert(columnCount >= 1, "columnCount property error!")
 
     self._columnCount = columnCount
-    self:invalidate()
+    self:invalidateDisplay()
 end
 
 ---
@@ -3257,17 +3276,6 @@ end
 -- @return touching
 function ListBox:isTouching()
     return self._touchedIndex ~= nil
-end
-
----
--- Set the priority.
--- Override scroll bar to be drawn last.
--- @param priority priority
-function ListBox:setPriority(priority)
-    ListBox.__super.setPriority(self, priority)
-    if self._scrollBar then
-        self._scrollBar:setPriority((priority or 0) + 5)
-    end
 end
 
 ---

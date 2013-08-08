@@ -1,5 +1,6 @@
 -- import
 local flower = require "flower"
+local aspect = require "aspect"
 
 -- module
 local M = {}
@@ -84,5 +85,13 @@ timer:setListener(MOAITimer.EVENT_TIMER_LOOP,
         MOAISim.reportLeaks()
     end)
 timer:start()
+
+local traceInterpector = aspect.Interceptor({widget.Button, widget.UIGroup, widget.UIView, widget.UIComponent, widget.LayoutMgr})
+
+function traceInterpector:beginProcess(context, ...)
+    local info = debug.getinfo(4)
+    local msg = string.format("[Trace][%s:%s][%s] Args = ", info.short_src, info.currentline, context.name)
+    print(msg, ...)
+end
 
 return M
