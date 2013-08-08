@@ -988,10 +988,10 @@ function EventDispatcher:dispatchEvent(event, data)
 
     local listeners = self.eventListenersMap[event.type] or {}
 
-    for key, obj in ipairs(listeners) do
-        if obj.type == event.type then
-            event:setListener(obj.callback, obj.source)
-            obj:call(event)
+    for i, listener in ipairs(listeners) do
+        if listener.type == event.type then
+            event:setListener(listener.callback, listener.source)
+            listener:call(event)
             if event.stopFlag == true then
                 break
             end
