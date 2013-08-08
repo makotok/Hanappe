@@ -1,7 +1,9 @@
 ----------------------------------------------------------------------------------------------------
 -- It is a library to display Tiled Map Editor.(Support:V0.9)
+-- http://www.mapeditor.org/
 -- 
 -- @author Makoto
+-- @release V2.1.2
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -321,7 +323,7 @@ end
 
 ---
 -- Finds and returns the tileset from the specified gid.
--- @param gid
+-- @param gid gid
 -- @return TMXTileset
 function TileMap:findTilesetByGid(gid)
     gid = TileFlag.clearFlags(gid)
@@ -584,6 +586,7 @@ end
 
 ---
 -- Load the texture of the tile set that is specified.
+-- @param filter texture filter
 -- @return texture
 function Tileset:loadTexture(filter)
     local path = self.tileMap.resourceDirectory .. self.image
@@ -593,7 +596,6 @@ end
 
 ---
 -- Returns the tile index of the specified gid.
--- TODO:LDoc
 -- @param gid gid.
 -- @return If has gid return true.
 function Tileset:hasTile(gid)
@@ -1333,6 +1335,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type TileObjectRenderer
+-- 
 -- This class is the renderer to draw TileObject.
 ----------------------------------------------------------------------------------------------------
 TileObjectRenderer = class(MovieClip)

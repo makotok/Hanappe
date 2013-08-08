@@ -1133,7 +1133,7 @@ function RenderMgr:updateRenderTable()
     local renderTable = {}
     for i, v in ipairs(self.renders) do
         local render = v.getRenderTable and v:getRenderTable() or v
-        table.insertIfAbsent(renderTable, render)
+        table.insertElement(renderTable, render)
     end
     MOAIRenderMgr.setRenderTable(renderTable)
 end
@@ -1377,7 +1377,7 @@ function SceneMgr:getRenderTable()
     local t = {}
     for i, scene in ipairs(self.scenes) do
         if scene.opened then
-            table.insertIfAbsent(t, scene:getRenderTable())
+            table.insertElement(t, scene:getRenderTable())
         end
     end
     return t
@@ -1816,7 +1816,7 @@ end
 ---
 -- Sets the visibility.
 -- TODO:I avoid the bug of display settings MOAIProp.(2013/05/20 last build)
--- @param value visible
+-- @param visible visible
 function DisplayObject:setVisible(visible)
     MOAIPropInterface.setVisible(self, visible)
     self:forceUpdate()
@@ -2933,7 +2933,7 @@ end
 -- Set the high quality of the drawing of the string.
 -- This setting is meaningful when the scale of the Viewport does not match the screen.
 -- @param enabled Set true to the high quality
--- @param viewScale (Option)Scale of the Viewport, which label is displayed.
+-- @param contentScale (Option)Scale of the Viewport, which label is displayed.
 function Label:setHighQuality(enabled, contentScale)
     contentScale = contentScale or flower.viewScale
     self.highQualityEnabled = enabled
@@ -3040,6 +3040,7 @@ Texture.DEFAULT_FILTER = MOAITexture.GL_LINEAR
 ---
 -- Constructor.
 -- @param path Texture path
+-- @param filter Texture filter
 function Texture:init(path, filter)
     self:load(path)
     self.path = path

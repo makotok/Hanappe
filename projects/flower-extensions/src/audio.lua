@@ -1,7 +1,9 @@
 ----------------------------------------------------------------------------------------------------
 -- Audio library.
+-- This allows the change of the flexible implementation.
 -- 
 -- @author Makoto
+-- @release V2.1.2
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -39,8 +41,8 @@ end
 ---
 -- Play the sound.
 -- @param sound file path or object.
--- @param (Optional)volume. Default value is 1.
--- @param (Optional)looping flag. Default value is 'false'.
+-- @param volume (Optional)volume. Default value is 1.
+-- @param looping (Optional)looping flag. Default value is 'false'.
 -- @return Sound object
 function M.play(sound, volume, looping)
     return M._soundMgr:play(sound, volume, looping)
@@ -149,8 +151,8 @@ end
 ---
 -- Play the sound.
 -- @param sound file path or object.
--- @param (Optional)volume. Default value is 1.
--- @param (Optional)looping flag. Default value is 'false'.
+-- @param volume (Optional)volume. Default value is 1.
+-- @param looping (Optional)looping flag. Default value is 'false'.
 -- @return Sound object
 function UntzSoundMgr:play(sound, volume, looping)
     sound = type(sound) == "string" and self:getSound(sound) or sound
@@ -206,36 +208,24 @@ M.MockSoundMgr = MockSoundMgr
 function MockSoundMgr:init()
 end
 
----
--- Mock function.
 function MockSoundMgr:loadSound(filePath)
 end
 
----
--- Mock function.
 function MockSoundMgr:getSound(filePath)
 end
 
 function MockSoundMgr:play(sound, volume, looping)
 end
 
----
--- Mock function.
 function MockSoundMgr:pause(sound)
 end
 
----
--- Mock function.
 function MockSoundMgr:stop(sound)
 end
 
----
--- Mock function.
 function MockSoundMgr:setVolume(volume)
 end
 
----
--- Mock function.
 function MockSoundMgr:getVolume()
 end
 
