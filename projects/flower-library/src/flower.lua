@@ -816,14 +816,6 @@ function Event:init(eventType)
 end
 
 --------------------------------------------------------------------------------
--- INTERNAL USE ONLY -- Sets the event listener via EventDispatcher.
---------------------------------------------------------------------------------
-function Event:setListener(callback, source)
-    self.callback = callback
-    self.source = source
-end
-
---------------------------------------------------------------------------------
 -- Stop the propagation of the event.
 --------------------------------------------------------------------------------
 function Event:stop()
@@ -990,7 +982,6 @@ function EventDispatcher:dispatchEvent(event, data)
 
     for i, listener in ipairs(listeners) do
         if listener.type == event.type then
-            event:setListener(listener.callback, listener.source)
             listener:call(event)
             if event.stopFlag == true then
                 break
@@ -1005,7 +996,6 @@ function EventDispatcher:dispatchEvent(event, data)
     -- reset properties to free resources used in cached events
     event.data = nil
     event.target = nil
-    event:setListener(nil, nil)
 end
 
 --------------------------------------------------------------------------------
@@ -3264,7 +3254,6 @@ function TouchHandler:onTouch(e)
     e2.data = nil
     e2.prop = nil
     e2.target = nil
-    e2:setListener(nil, nil)
 end
 
 function TouchHandler:getTouchableProp(e)
