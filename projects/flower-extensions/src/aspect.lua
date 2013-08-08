@@ -2,6 +2,7 @@
 -- Library to support the aspect-oriented.
 --
 -- @author Makoto
+-- @release V2.1.2
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -27,8 +28,10 @@ M.Interceptor = Interceptor
 -- @param targets target tables
 -- @param filter String to filter function
 function Interceptor:init(targets, filter)
-    for i, target in ipairs(targets) do
-        self:intercept(target, filter)
+    for key, target in pairs(targets) do
+        if type(target) == "table" then
+            self:intercept(target, filter)
+        end
     end
 end
 

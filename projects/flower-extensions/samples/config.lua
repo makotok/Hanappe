@@ -86,7 +86,7 @@ timer:setListener(MOAITimer.EVENT_TIMER_LOOP,
     end)
 timer:start()
 
-local traceInterpector = aspect.Interceptor({widget.Button, widget.UIGroup, widget.UIView, widget.UIComponent, widget.LayoutMgr})
+local traceInterpector = aspect.Interceptor(widget)
 
 function traceInterpector:beginProcess(context, ...)
     local info = debug.getinfo(4)
