@@ -956,7 +956,7 @@ function UIView:_initLayer()
     layer:setTouchEnabled(true)
     layer:addEventListener(Event.TOUCH_DOWN, self.onLayerTouchDown, self, 10)
 
-    self:setSize(layer:getSize())
+    self:setSize(flower.getViewSize())
     self:setLayer(layer)
 end
 

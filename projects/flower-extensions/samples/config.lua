@@ -86,6 +86,7 @@ timer:setListener(MOAITimer.EVENT_TIMER_LOOP,
     end)
 timer:start()
 
+--[[
 local traceInterpector = aspect.Interceptor(widget)
 
 function traceInterpector:beginProcess(context, ...)
@@ -93,5 +94,6 @@ function traceInterpector:beginProcess(context, ...)
     local msg = string.format("[Trace][%s:%s][%s] Args = ", info.short_src, info.currentline, context.name)
     print(msg, ...)
 end
+]]
 
 return M
