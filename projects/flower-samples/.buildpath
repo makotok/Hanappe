@@ -2,5 +2,5 @@
 <buildpath>
 	<buildpathentry kind="src" path="src"/>
 	<buildpathentry kind="src" path="assets"/>
-	<buildpathentry combineaccessrules="false" kind="prj" path="/flower"/>
+	<buildpathentry combineaccessrules="false" kind="prj" path="/flower-library"/>
 </buildpath>
