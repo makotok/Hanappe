@@ -45,7 +45,7 @@ function M:new(...)
 
     obj.new = nil
     obj.init = nil
-    
+
     return obj
 end
 
@@ -88,16 +88,16 @@ function M:setParent(parent)
     if parent == self:getParent() then
         return
     end
-    
+
     -- remove
     if self._parent and self._parent.isGroup then
         self._parent:removeChild(self)
     end
-    
+
     -- set
     MOAIPropInterface.setParent(self, parent)
     self._parent = parent
-    
+
     -- add
     if parent and parent.isGroup then
         parent:addChild(self)
@@ -122,10 +122,10 @@ function M:copyParams(params)
         end
         PropertyUtil.setProperties(self, priorityParams, true)
     end
-    
+
     -- priority properties
     PropertyUtil.setProperties(self, params, true)
-    
+
     -- reset params
     if self.PRIORITY_PROPERTIES then
         for i, v in ipairs(self.PRIORITY_PROPERTIES) do
@@ -196,7 +196,7 @@ function M:dispose()
     if parent and parent.isGroup then
         parent:removeChild(self)
     end
-    
+
     self:setLayer(nil)
 end
 
@@ -213,11 +213,11 @@ function M:hitTestObject(prop)
 
     local left, top = MOAIPropUtil.getLeft(prop) + diffX, MOAIPropUtil.getTop(prop) + diffY
     local right, bottom = MOAIPropUtil.getRight(prop) + diffX, MOAIPropUtil.getBottom(prop) + diffY
-    
+
     if self:inside(left, top, 0) then
         return true
     end
-    if self:inside(right, bottom, 0) then
+    if self:inside(right, top, 0) then
         return true
     end
     if self:inside(left, bottom, 0) then
@@ -238,9 +238,9 @@ end
 --------------------------------------------------------------------------------
 function M:hitTestScreen(screenX, screenY, screenZ)
     assert(self.layer)
-    
+
     screenZ = screenZ or 0
-    
+
     local worldX, worldY, worldZ = self.layer:wndToWorld(screenX, screenY, screenZ)
     return self:inside(worldX, worldY, worldZ)
 end
