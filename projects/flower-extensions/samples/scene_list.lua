@@ -1,4 +1,5 @@
 return {
+    {title = "Particles", scene = "scenes/particles_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Tiled Basic 1", scene = "scenes/tiled_basic_1_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Tiled Basic 2", scene = "scenes/tiled_basic_2_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Tiled Isometric 1", scene = "scenes/tiled_iso_1_sample", openAnime = "fade", closeAnime = "fade"},
