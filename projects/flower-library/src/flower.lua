@@ -645,7 +645,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type PropertyUtils
--- 
+--
 -- It is a property utility class.
 ----------------------------------------------------------------------------------------------------
 PropertyUtils = {}
@@ -1432,13 +1432,17 @@ DeckMgr.nineImageDecks = {} -- setmetatable({}, {__mode = "v"})
 -- Return the Deck to be used in the Image.
 -- @param width width
 -- @param height height
+-- @param flipX (Optional)flipX
+-- @param flipY (Optional)flipY
 -- @return deck
-function DeckMgr:getImageDeck(width, height)
-    local key = width .. "$" .. height
+function DeckMgr:getImageDeck(width, height, flipX, flipY)
+    flipX = flipX and true or false
+    flipY = flipY and true or false
+    local key = width .. "$" .. height .. "$" .. tostring(flipX) .. "$" .. tostring(flipY)
     local cache = DeckMgr.imageDecks
 
     if not cache[key] then
-        cache[key] = self:createImageDeck(width, height)
+        cache[key] = self:createImageDeck(width, height, flipX, flipY)
     end
     return cache[key]
 end
@@ -1447,11 +1451,19 @@ end
 -- Create the Deck to be used in the Image.
 -- @param width width
 -- @param height height
+-- @param flipX (Optional)flipX
+-- @param flipY (Optional)flipY
 -- @return deck
-function DeckMgr:createImageDeck(width, height)
+function DeckMgr:createImageDeck(width, height, flipX, flipY)
+    local u0 = flipX and 1 or 0
+    local v0 = flipY and 1 or 0
+    local u1 = flipX and 0 or 1
+    local v1 = flipY and 0 or 1
     local deck = MOAIGfxQuad2D.new()
-    deck:setUVRect(0, 0, 1, 1)
+    deck:setUVRect(u0, v0, u1, v1)
     deck:setRect(0, 0, width, height)
+    deck.flipX = flipX
+    deck.flipY = flipY
     return deck
 end
 
@@ -1464,14 +1476,19 @@ end
 -- @param spacing spacing
 -- @param margin margin
 -- @param gridFlag grid flag
+-- @param flipX (option)flipX
+-- @param flipY (option)flipY
 -- @return deck
-function DeckMgr:getTileImageDeck(textureWidth, textureHeight, tileWidth, tileHeight, spacing, margin, gridFlag)
+function DeckMgr:getTileImageDeck(textureWidth, textureHeight, tileWidth, tileHeight, spacing, margin, gridFlag, flipX, flipY)
+    flipX = flipX and true or false
+    flipY = flipY and true or false
+    
     local tw, th = textureWidth, textureHeight
-    local key = tw .. "$" .. th .. "$" .. tileWidth .. "$" .. tileHeight .. "$" .. spacing .. "$" .. margin .. "$" .. tostring(gridFlag)
+    local key = tw .. "$" .. th .. "$" .. tileWidth .. "$" .. tileHeight .. "$" .. spacing .. "$" .. margin .. "$" .. tostring(gridFlag) .. "$" .. tostring(flipX) .. "$" .. tostring(flipY)
     local cache = DeckMgr.tileImageDecks
 
     if not cache[key] then
-        cache[key] = self:createTileImageDeck(tw, th, tileWidth, tileHeight, spacing, margin, gridFlag)
+        cache[key] = self:createTileImageDeck(tw, th, tileWidth, tileHeight, spacing, margin, gridFlag, flipX, flipY)
     end
     return cache[key]
 end
@@ -1485,8 +1502,10 @@ end
 -- @param spacing spacing
 -- @param margin margin
 -- @param gridFlag grid flag
+-- @param flipX (option)flipX
+-- @param flipY (option)flipY
 -- @return deck
-function DeckMgr:createTileImageDeck(textureWidth, textureHeight, tileWidth, tileHeight, spacing, margin, gridFlag)
+function DeckMgr:createTileImageDeck(textureWidth, textureHeight, tileWidth, tileHeight, spacing, margin, gridFlag, flipX, flipY)
     local tw, th = textureWidth, textureHeight
     local tileX = math.floor((tw - margin) / (tileWidth + spacing))
     local tileY = math.floor((th - margin) / (tileHeight + spacing))
@@ -1494,6 +1513,9 @@ function DeckMgr:createTileImageDeck(textureWidth, textureHeight, tileWidth, til
     local deck = MOAIGfxQuadDeck2D.new()
     deck.sheetSize = tileX * tileY
     deck:reserve(deck.sheetSize)
+    deck.type = "TileImageDeck"
+    deck.flipX = flipX
+    deck.flipY = flipY
 
     local i = 1
     for y = 1, tileY do
@@ -1508,7 +1530,7 @@ function DeckMgr:createTileImageDeck(textureWidth, textureHeight, tileWidth, til
             if not gridFlag then
                 deck:setRect(i, 0, 0, tileWidth, tileHeight)
             end
-            deck:setUVRect(i, ux0, uy0, ux1, uy1)
+            deck:setUVRect(i, flipX and ux1 or ux0, flipY and uy1 or uy0, flipX and ux0 or ux1, flipY and uy0 or uy1)
             i = i + 1
         end
     end
@@ -1519,13 +1541,18 @@ end
 ---
 -- Return the Deck for displaying TextureAtlas.
 -- @param luaFilePath TexturePacker lua file path
+-- @param flipX (option)flipX
+-- @param flipY (option)flipY
 -- @return Texture atlas deck
-function DeckMgr:getAtlasDeck(luaFilePath)
-    local key = luaFilePath
+function DeckMgr:getAtlasDeck(luaFilePath, flipX, flipY)
+    flipX = flipX and true or false
+    flipY = flipY and true or false
+
+    local key = luaFilePath .. "$" .. tostring(flipX) .. "$" .. tostring(flipY)
     local cache = DeckMgr.atlasDecks
 
     if not cache[key] then
-        cache[key] = self:createAtlasDeck(luaFilePath)
+        cache[key] = self:createAtlasDeck(luaFilePath, flipX, flipY)
     end
     return cache[key]
 end
@@ -1534,7 +1561,7 @@ end
 -- Create the Deck for displaying TextureAtlas.
 -- @param luaFilePath TexturePacker lua file path
 -- @return Texture atlas deck
-function DeckMgr:createAtlasDeck(luaFilePath)
+function DeckMgr:createAtlasDeck(luaFilePath, flipX, flipY)
     local frames = Resources.dofile(luaFilePath).frames
     local boundsDeck = MOAIBoundsDeck.new()
     boundsDeck:reserveBounds(#frames)
@@ -1545,18 +1572,26 @@ function DeckMgr:createAtlasDeck(luaFilePath)
     deck:reserve(#frames)
     deck.frames = frames
     deck.names = {}
+    deck.flipX = flipX
+    deck.flipY = flipY
 
     for i, frame in ipairs(frames) do
-        local uv = frame.uvRect
+        local uvRect = frame.uvRect
+        local uv = {uvRect.u0, uvRect.v1, uvRect.u1, uvRect.v1, uvRect.u1, uvRect.v0, uvRect.u0, uvRect.v0}
         local r = frame.spriteColorRect
         local b = frame.spriteSourceSize
 
         if frame.textureRotated then
-            deck:setUVQuad(i, uv.u0, uv.v0, uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0)
-        else
-            deck:setUVQuad(i, uv.u0, uv.v1, uv.u1, uv.v1, uv.u1, uv.v0, uv.u0, uv.v0)
+            uv = {uv[7], uv[8], uv[1], uv[2], uv[3], uv[4], uv[5], uv[6]}
+        end
+        if flipX then
+            uv = {uv[3], uv[4], uv[1], uv[2], uv[7], uv[8], uv[5], uv[6]}
+        end
+        if flipY then
+            uv = {uv[7], uv[8], uv[5], uv[6], uv[3], uv[4], uv[1], uv[2]}
         end
 
+        deck:setUVQuad(i, unpack(uv))
         deck.names[frame.name] = i
         deck:setRect(i, r.x, r.y, r.x + r.width, r.y + r.height)
         boundsDeck:setBounds(i, 0, 0, 0, b.width, b.height, 0)
@@ -2425,7 +2460,9 @@ M.Image = Image
 -- @param texture Texture path, or texture.
 -- @param width (option) Width of image.
 -- @param height (option) Height of image.
-function Image:init(texture, width, height)
+-- @param flipX (option)flipX
+-- @param flipY (option)flipY
+function Image:init(texture, width, height, flipX, flipY)
     DisplayObject.init(self)
 
     self:setTexture(texture)
@@ -2434,6 +2471,9 @@ function Image:init(texture, width, height)
         local tw, th = self.texture:getSize()
         self:setSize(width or tw, height or th)
     end
+    if flipX or flipY then
+        self:setFlip(flipX, flipY)
+    end
 end
 
 ---
@@ -2441,7 +2481,9 @@ end
 -- @param width Width of image.
 -- @param height Height of image.
 function Image:setSize(width, height)
-    local deck = DeckMgr:getImageDeck(width, height)
+    local flipX = self.deck and self.deck.flipX or false
+    local flipY = self.deck and self.deck.flipY or false
+    local deck = DeckMgr:getImageDeck(width, height, flipX, flipY)
     self:setDeck(deck)
     self:setPivToCenter()
 end
@@ -2454,6 +2496,16 @@ function Image:setTexture(texture)
     MOAIPropInterface.setTexture(self, self.texture)
     local tw, th = self.texture:getSize()
     self:setSize(tw, th)
+end
+
+---
+-- Sets the texture flip.
+-- @param flipX (option)flipX
+-- @param flipY (option)flipY
+function Image:setFlip(flipX, flipY)
+    local width, height = self:getSize()
+    local deck = DeckMgr:getImageDeck(width, height, flipX, flipY)
+    self:setDeck(deck)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -2469,7 +2521,11 @@ M.SheetImage = SheetImage
 -- @param texture Texture path, or texture
 -- @param sizeX (option) The size of the sheet
 -- @param sizeY (option) The size of the sheet
-function SheetImage:init(texture, sizeX, sizeY)
+-- @param spacing (option)Spacing of the tiles
+-- @param margin (option)Margin of the sheet
+-- @param flipX (option)flipX
+-- @param flipY (option)flipY
+function SheetImage:init(texture, sizeX, sizeY, spacing, margin, flipX, flipY)
     DisplayObject.init(self)
 
     self:setTexture(texture)
@@ -2477,7 +2533,7 @@ function SheetImage:init(texture, sizeX, sizeY)
     self.sheetNames = {}
 
     if sizeX and sizeY then
-        self:setSheetSize(sizeX, sizeY)
+        self:setSheetSize(sizeX, sizeY, spacing, margin, flipX, flipY)
     end
 end
 
@@ -2492,8 +2548,10 @@ end
 ---
 -- Parses TexturePacker atlases and sets up the texture as a deck of images in the atlas.
 -- @param atlas Texture atlas
-function SheetImage:setTextureAtlas(atlas)
-    local deck = DeckMgr:getAtlasDeck(atlas)
+-- @param flipX (option)flipX
+-- @param flipY (option)flipY
+function SheetImage:setTextureAtlas(atlas, flipX, flipY)
+    local deck = DeckMgr:getAtlasDeck(atlas, flipX, flipY)
     self:setDeck(deck)
     self.sheetSize = #deck.frames
     self.sheetNames = deck.names
@@ -2505,10 +2563,12 @@ end
 -- @param sizeY The size of the sheet
 -- @param spacing (option)Spacing of the tiles
 -- @param margin (option)Margin of the sheet
-function SheetImage:setSheetSize(sizeX, sizeY, spacing, margin)
+-- @param flipX (option)flipX
+-- @param flipY (option)flipY
+function SheetImage:setSheetSize(sizeX, sizeY, spacing, margin, flipX, flipY)
     local tw, th = self.texture:getSize()
     local cw, ch = tw / sizeX, th / sizeY
-    self:setTileSize(cw, ch, spacing, margin)
+    self:setTileSize(cw, ch, spacing, margin, flipX, flipY)
 end
 
 ---
@@ -2517,10 +2577,12 @@ end
 -- @param tileHeight The height of the tile
 -- @param spacing (option)Spacing of the tiles
 -- @param margin (option)Margin of the sheet
-function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin)
+-- @param flipX (option)flipX
+-- @param flipY (option)flipY
+function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin, flipX, flipY)
     local tw, th = self.texture:getSize()
     local gridFlag = self.grid and true or false
-    local deck = DeckMgr:getTileImageDeck(tw, th, tileWidth, tileHeight, spacing or 0, margin or 0, gridFlag)
+    local deck = DeckMgr:getTileImageDeck(tw, th, tileWidth, tileHeight, spacing or 0, margin or 0, gridFlag, flipX, flipY)
     self:setDeck(deck)
     self.sheetSize = deck.sheetSize
     self.sheetNames = {}
@@ -2623,7 +2685,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type MovieClip
--- 
+--
 -- Class for animated texture atlases ('MovieClip' is the Adobe Flash terminology)
 ----------------------------------------------------------------------------------------------------
 MovieClip = class(SheetImage)
@@ -2634,8 +2696,12 @@ M.MovieClip = MovieClip
 -- @param texture Texture path, or texture
 -- @param sizeX (option) The size of the sheet
 -- @param sizeY (option) The size of the sheet
-function MovieClip:init(texture, sizeX, sizeY)
-    SheetImage.init(self, texture, sizeX, sizeY)
+-- @param spacing (option)Spacing of the tiles
+-- @param margin (option)Margin of the sheet
+-- @param flipX (option)flipX
+-- @param flipY (option)flipY
+function MovieClip:init(texture, sizeX, sizeY, spacing, margin, flipX, flipY)
+    SheetImage.init(self, texture, sizeX, sizeY, spacing, margin, flipX, flipY)
     self.animTable = {}
     self.currentAnim = nil
 end
@@ -2776,7 +2842,7 @@ function NineImage:setImage(imagePath, width, height)
     self.displayWidth = deck.displayWidth
     self.displayHeight = deck.displayHeight
     self.contentPadding = deck.contentPadding
-    
+
     self:setSize(width, height)
 end
 
@@ -2884,7 +2950,7 @@ Label.HIGH_QUALITY_ENABLED = false
 -- @param textSize (option) TextSize
 function Label:init(text, width, height, font, textSize)
     DisplayObject.init(self)
-    
+
     self.highQualityEnabled = Label.HIGH_QUALITY_ENABLED
     self.contentScale = self.highQualityEnabled and flower.viewScale or 1
     self.textSize = textSize or Font.DEFAULT_POINTS
@@ -2938,7 +3004,7 @@ function Label:setHighQuality(enabled, contentScale)
     contentScale = contentScale or flower.viewScale
     self.highQualityEnabled = enabled
     self.contentScale = self.highQualityEnabled and contentScale or 1
-    
+
     local style = self:affirmStyle ()
     style:setScale(self.contentScale)
     self:setTextSize(self.textSize)

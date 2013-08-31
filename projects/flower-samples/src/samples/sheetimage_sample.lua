@@ -54,4 +54,35 @@ function onCreate(e)
     sheetImage5Cropped:setIndex(3)
     sheetImage5Cropped:setPos(sheetImage4Cropped:getRight(), sheetImage4Cropped:getTop())
     sheetImage5Cropped:setLayer(layer)
+
+    -- image6
+    sheetImage6 = flower.SheetImage("texturepack1.png")
+    sheetImage6:setTextureAtlas("texturepack1.lua", true, false)
+    sheetImage6:setIndex(2)
+    sheetImage6:setPos(0, sheetImage4Cropped:getBottom() + 10)
+    sheetImage6:setLayer(layer)
+
+    -- image6 cropped
+    sheetImage6Cropped = flower.SheetImage("texturepack1.png")
+    sheetImage6Cropped:setTextureAtlas("texturepack1-cropped.lua", true, true)
+    sheetImage6Cropped:setIndex(2)
+    sheetImage6Cropped:setPos(sheetImage6:getRight(), sheetImage6:getTop())
+    sheetImage6Cropped:setLayer(layer)
+    
+    
+    printDebugSize(sheetImage1)
+    printDebugSize(sheetImage2)
+    printDebugSize(sheetImage3)
+    printDebugSize(sheetImage4)
+    printDebugSize(sheetImage4Cropped)
+    printDebugSize(sheetImage5)
+    printDebugSize(sheetImage5Cropped)
+    printDebugSize(sheetImage6)
+    printDebugSize(sheetImage6Cropped)
+end
+
+
+function printDebugSize(object)
+    print("pos", object:getPos())
+    print("size", object:getSize())
 end

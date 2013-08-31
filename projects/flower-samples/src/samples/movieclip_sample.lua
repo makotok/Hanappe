@@ -51,6 +51,39 @@ function onCreate(e)
     movie4:setPos(movie3:getRight(), 0)
     movie4:setLayer(layer)
     movie4:addEventListener("touchDown", prop_onTouchDown)
+
+    -- image5
+    movie5 = flower.MovieClip("actor.png", 3, 4, 0, 0, false, false)
+    movie5:setAnimDatas(ANIM_DATAS)
+    movie5:setIndex(2)
+    movie5:setPos(0, 50)
+    movie5:setLayer(layer)
+    movie5:addEventListener("touchDown", prop_onTouchDown)
+    
+    -- image6
+    movie6 = flower.MovieClip("actor.png", 3, 4, 0, 0, false, true)
+    movie6:setAnimDatas(ANIM_DATAS)
+    movie6:setIndex(5)
+    movie6:setPos(movie5:getRight(), movie5:getTop())
+    movie6:setLayer(layer)
+    movie6:addEventListener("touchDown", prop_onTouchDown)
+    
+    -- image7
+    movie7 = flower.MovieClip("actor.png", 3, 4, 0, 0, true, false)
+    movie7:setAnimDatas(ANIM_DATAS)
+    movie7:setIndex(8)
+    movie7:setPos(movie6:getRight(), movie5:getTop())
+    movie7:setLayer(layer)
+    movie7:addEventListener("touchDown", prop_onTouchDown)
+
+    -- image8
+    movie8 = flower.MovieClip("actor.png", 3, 4, 0, 0, true, true)
+    movie8:setAnimDatas(ANIM_DATAS)
+    movie8:setIndex(11)
+    movie8:setPos(movie7:getRight(), movie5:getTop())
+    movie8:setLayer(layer)
+    movie8:addEventListener("touchDown", prop_onTouchDown)
+
 end
 
 function onStart(e)
@@ -58,6 +91,21 @@ function onStart(e)
     movie2:playAnim("walkLeft")
     movie3:playAnim("walkRight")
     movie4:playAnim("walkUp")
+    movie5:playAnim("walkDown")
+    movie6:playAnim("walkLeft")
+    movie7:playAnim("walkRight")
+    movie8:playAnim("walkUp")
+end
+
+function onStop(e)
+    movie1:stopAnim()
+    movie2:stopAnim()
+    movie3:stopAnim()
+    movie4:stopAnim()
+    movie5:stopAnim()
+    movie6:stopAnim()
+    movie7:stopAnim()
+    movie8:stopAnim()
 end
 
 function prop_onTouchDown(e)

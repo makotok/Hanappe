@@ -16,6 +16,18 @@ function onCreate(e)
     image2 = flower.Image("cathead.png", 64, 64)
     image2:setPos(0, image1:getBottom())
     image2:setLayer(layer)
+
+    -- image3
+    image3 = flower.Image("cathead.png", nil, nil, true, true)
+    image3:setPos(0, image2:getBottom())
+    image3:setLayer(layer)
+
+    -- image4
+    image4 = flower.Image("cathead.png")
+    image4:setFlip(true, false)
+    image4:setPos(0, image3:getBottom())
+    image4:setLayer(layer)
+
 end
 
 function onStart(e)
