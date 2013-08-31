@@ -5,6 +5,7 @@ widget = require "widget"
 themes = require "themes"
 audio = require "audio"
 config = require "config"
+spine = require "spine"
 
 -- audio initialize
 audio.init()

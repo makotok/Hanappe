@@ -15,4 +15,7 @@ return {
     {title = "Audio", scene = "scenes/audio_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Aspect", scene = "scenes/aspect_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Performance Test1", scene = "scenes/performance1_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Spine Skeletal Animation", scene = "scenes/spine_boy_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Spine Atlas", scene = "scenes/spine_boy_atlas_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Spine Skins", scene = "scenes/spine_goblins_sample", openAnime = "fade", closeAnime = "fade"},
 }
