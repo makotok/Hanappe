@@ -3,6 +3,7 @@ require "tests.TestDisplayObject"
 require "tests.TestGroup"
 require "tests.TestImage"
 require "tests.TestLayer"
+require "tests.TestSheetImage"
 
 -- test cases
 local testCases = {
@@ -10,6 +11,7 @@ local testCases = {
     "TestGroup",
     "TestImage",
     "TestLayer",
+    "TestSheetImage",
 }
 
 

@@ -1,26 +1,26 @@
 
 --- test target
-local SheetImage = flower.SheetImage
+local MovieClip = flower.MovieClip
 
 --- test case
-local TestSheetImage = {}
-_G.TestSheetImage = TestSheetImage
+local TestMovieClip = {}
+_G.TestMovieClip = TestMovieClip
 
 ---
 -- setUp
-function TestSheetImage:setUp()
-    self.prop = SheetImage("actor.png")
+function TestMovieClip:setUp()
+    self.prop = MovieClip("actor.png")
 end
 
 ---
 -- tearDown
-function TestSheetImage:tearDown()
+function TestMovieClip:tearDown()
 
 end
 
 ---
 -- test: setTexture
-function TestSheetImage:test1_texture()
+function TestMovieClip:test1_texture()
     local prop = self.prop
     assertEquals(prop.texture, flower.getTexture("actor.png"))
     
@@ -30,7 +30,7 @@ end
 
 ---
 -- test: setTextureAtlas
-function TestSheetImage:test2_textureAtlas()
+function TestMovieClip:test2_textureAtlas()
     local prop = self.prop
     prop:setTextureAtlas("texturepack1.lua", "texturepack1.png")
     prop:setIndexByName("one")
@@ -42,7 +42,7 @@ end
 
 ---
 -- test: setSheetSize
-function TestSheetImage:test3_sheetSize()
+function TestMovieClip:test3_sheetSize()
     local prop = self.prop
     prop:setSheetSize(3, 4)
     

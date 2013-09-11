@@ -6,6 +6,8 @@ local DisplayObject = flower.DisplayObject
 local TestDisplayObject = {}
 _G.TestDisplayObject = TestDisplayObject
 
+---
+-- setUp
 function TestDisplayObject:setUp()
     self.deck = MOAIGfxQuad2D.new()
     self.deck:setUVRect(0, 0, 1, 1)
@@ -18,10 +20,14 @@ function TestDisplayObject:setUp()
     self.prop:setPos(20, 30)
 end
 
+---
+-- tearDown
 function TestDisplayObject:tearDown()
 
 end
 
+---
+-- test: size
 function TestDisplayObject:test1_size()
     local w, h, d = self.prop:getSize()
     assertEquals(w, 100)
@@ -39,6 +45,8 @@ function TestDisplayObject:test1_size()
     assertEquals(d, 0)
 end
 
+---
+-- test: pos
 function TestDisplayObject:test2_pos()
     local left, top = self.prop:getPos()
     local right, bottom = self.prop:getRight(), self.prop:getBottom()
@@ -56,6 +64,8 @@ function TestDisplayObject:test2_pos()
     assertEquals(bottom, 40 + 120)
 end
 
+---
+-- test: color
 function TestDisplayObject:test3_color()
     local r, g, b, a = self.prop:getColor()
     assertEquals(r, 1)
@@ -71,6 +81,8 @@ function TestDisplayObject:test3_color()
     assertEquals(a, 4/256)
 end
 
+---
+-- test: visible
 function TestDisplayObject:test4_visible()
     local visible = self.prop:getVisible()
     assertEquals(visible, true)
@@ -80,6 +92,8 @@ function TestDisplayObject:test4_visible()
     assertEquals(visible, false)
 end
 
+---
+-- test: layer
 function TestDisplayObject:test5_layer()
     local layer = flower.Layer()
     local prop = self.prop

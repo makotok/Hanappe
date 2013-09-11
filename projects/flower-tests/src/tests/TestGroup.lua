@@ -6,6 +6,8 @@ local Group = flower.Group
 local TestGroup = {}
 _G.TestGroup = TestGroup
 
+---
+-- setUp
 function TestGroup:setUp()
     self.group = Group()
     self.group:setSize(100, 100)
@@ -16,10 +18,14 @@ function TestGroup:setUp()
     self.group:addChild(self.prop)
 end
 
+---
+-- tearDown
 function TestGroup:tearDown()
 
 end
 
+---
+-- test: size
 function TestGroup:test1_size()
     local group = self.group
     local w, h, d
@@ -33,6 +39,8 @@ function TestGroup:test1_size()
     assertEquals(d, 0)
 end
 
+---
+-- test: children
 function TestGroup:test2_children()
     local group = self.group
     
@@ -52,6 +60,8 @@ function TestGroup:test2_children()
     assertEquals(group:getChildByName("cathead"), nil)
 end
 
+---
+-- test: visible
 function TestGroup:test3_visible()
     local group = self.group
     local prop = self.prop
@@ -72,6 +82,8 @@ function TestGroup:test3_visible()
     assertEquals(prop:getVisible(), false)
 end
 
+---
+-- test: layer
 function TestGroup:test4_layer()
     local layer = flower.Layer()
     local group = self.group
@@ -89,6 +101,8 @@ function TestGroup:test4_layer()
     assertEquals(prop.layer, nil)
 end
 
+---
+-- test: priority
 function TestGroup:test5_priority()
     local group = self.group
     local prop = self.prop
