@@ -60,6 +60,12 @@ local MsgBox
 local ListBox
 local ListItem
 local Slider
+----------------------------------------------------------------------------------------------------
+-- Public Const
+----------------------------------------------------------------------------------------------------
+
+--- Fixed a bug where the position of the MOAI SDK V1.4p0 does not reflect.(Last build fixed)
+M.USE_TRANSFORM_BUGFIX = true
 
 ----------------------------------------------------------------------------------------------------
 -- Public functions
@@ -518,7 +524,9 @@ end
 -- If you need to update the layout, call the updateLayout.
 function UIComponent:validateLayout()
     -- Fixed a bug where the position of the MOAI SDK V1.4p0 does not reflect
-    self:forceUpdate()
+    if M.USE_TRANSFORM_BUGFIX then
+        self:forceUpdate()
+    end
 
     if self._invalidateLayoutFlag then
         self:updateLayout()
@@ -1141,7 +1149,6 @@ function BoxLayout:updateVertical(parent)
             local childWidth, childHeight = child:getSize()
             local childX = self:calcChildX(parentWidth, childWidth)
             child:setPos(childX, childY)
-            print("Layout Child:", child.name, childX, childY, child:getPos())
             childY = childY + childHeight + self._verticalGap
         end
     end
@@ -1165,7 +1172,6 @@ function BoxLayout:updateHorizotal(parent)
             local childWidth, childHeight = child:getSize()
             local childY = self:calcChildY(parentHeight, childHeight)
             child:setPos(childX, childY)
-            print("Layout Child:", child.name, childX, childY, child:getPos())
             childX = childX + childWidth + self._horizotalGap
         end
     end
