@@ -41,6 +41,7 @@ local MapImage
 local MovieClip
 local NineImage
 local Label
+local DrawableObject
 local Rect
 local Font
 local Texture
@@ -3049,21 +3050,18 @@ function Label:fitWidth(length, maxWidth, padding)
 end
 
 ----------------------------------------------------------------------------------------------------
--- @type Rect
+-- @type DrawableObject
 --
--- Class to fill a rectangle. <br>
--- NOTE: This uses immediate mode drawing and so has a high performance impact when
--- used on mobile devices.  You may wish to use a 1-pixel high Image instead if you
--- wish to minimize draw calls.
+-- Class for drawing using the MOAIDraw.
 ----------------------------------------------------------------------------------------------------
-Rect = class(DisplayObject)
-M.Rect = Rect
+DrawableObject = class(DisplayObject)
+M.DrawableObject = DrawableObject
 
 ---
 -- Constructor.
 -- @param width Width
 -- @param height Height
-function Rect:init(width, height)
+function DrawableObject:init(width, height)
     DisplayObject.init(self)
 
     local deck = MOAIScriptDeck.new()
@@ -3074,20 +3072,53 @@ function Rect:init(width, height)
 
     deck:setDrawCallback(
     function(index, xOff, yOff, xFlip, yFlip)
-        local w, h, d = self:getSize()
-
-        MOAIGfxDevice.setPenColor(self:getColor())
-        MOAIDraw.fillRect(0, 0, w, h)
+        self:onDraw(index, xOff, yOff, xFlip, yFlip)
     end
     )
+end
+
+---
+-- This is the function called when drawing.
+-- @param index index of DrawCallback.
+-- @param xOff xOff of DrawCallback.
+-- @param yOff yOff of DrawCallback.
+-- @param xFlip xFlip of DrawCallback.
+-- @param yFlip yFlip of the Prop.
+function DrawableObject:onDraw(index, xOff, yOff, xFlip, yFlip)
+    -- Nop
 end
 
 ---
 -- Sets the size.
 -- @param width Width
 -- @param height Height
-function Rect:setSize(width, height)
+function DrawableObject:setSize(width, height)
     self.deck:setRect(0, 0, width, height)
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type Rect
+--
+-- Class to fill a rectangle. <br>
+-- NOTE: This uses immediate mode drawing and so has a high performance impact when
+-- used on mobile devices.  You may wish to use a 1-pixel high Image instead if you
+-- wish to minimize draw calls.
+----------------------------------------------------------------------------------------------------
+Rect = class(DrawableObject)
+M.Rect = Rect
+
+---
+-- This is the function called when drawing.
+-- @param index index of DrawCallback.
+-- @param xOff xOff of DrawCallback.
+-- @param yOff yOff of DrawCallback.
+-- @param xFlip xFlip of DrawCallback.
+-- @param yFlip yFlip of the Prop.
+function Rect:onDraw(index, xOff, yOff, xFlip, yFlip)
+    local w, h, d = self:getSize()
+
+    MOAIGfxDevice.setPenColor(self:getColor())
+    MOAIDraw.fillRect(0, 0, w, h)
 end
 
 ----------------------------------------------------------------------------------------------------
