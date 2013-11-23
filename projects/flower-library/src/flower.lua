@@ -2953,7 +2953,7 @@ function Label:init(text, width, height, font, textSize)
     DisplayObject.init(self)
 
     self.highQualityEnabled = Label.HIGH_QUALITY_ENABLED
-    self.contentScale = self.highQualityEnabled and flower.viewScale or 1
+    self.contentScale = self.highQualityEnabled and M.viewScale or 1
     self.textSize = textSize or Font.DEFAULT_POINTS
 
     font = Resources.getFont(font, nil, self.textSize * self.contentScale)
@@ -3002,7 +3002,7 @@ end
 -- @param enabled Set true to the high quality
 -- @param contentScale (Option)Scale of the Viewport, which label is displayed.
 function Label:setHighQuality(enabled, contentScale)
-    contentScale = contentScale or flower.viewScale
+    contentScale = contentScale or M.viewScale
     self.highQualityEnabled = enabled
     self.contentScale = self.highQualityEnabled and contentScale or 1
 
