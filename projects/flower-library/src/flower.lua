@@ -503,7 +503,7 @@ function Executors.callLaterTime(time, func, ...)
     local args = {...}
     local timer = MOAITimer.new()
     timer:setSpan(time)
-    timer:setListener(MOAITimer.EVENT_STOP, function() func(unpack(args)) end)
+    timer:setListener(MOAITimer.EVENT_TIMER_END_SPAN, function() func(unpack(args)) end)
     timer:start()
     return timer
 end
