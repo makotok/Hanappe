@@ -1,5 +1,24 @@
 # Release notes
 
+## Version 2.1.3 (Update: 2014/01/20)
+
+### Test Version
+Moai SDK Release 1.4p0 + [#660](https://github.com/moai/moai-dev/pull/660)
+
+However, the version of the current MOAI SDK is unclear. 
+And still retains compatibility, MOAI SDK V1.5 would be necessary soon.
+
+### Flower Library
+
+* Improvement to be able to supplement the mouse events from InputMgr.(#104)
+* Added the Spine Runtime.(#99)
+* Added the ability to invert the image class.
+* Improvement of performance.
+* Add library to support aspect-oriented.
+* Added the ability to automatically adjust the layout of Widget.
+* Added an option to improve the quality of text rendering.(#90)
+* Other Fixed minor bug.
+
 ## Version 2.1.2 (Update: 2013/06/30)
 
 ### Test Version
