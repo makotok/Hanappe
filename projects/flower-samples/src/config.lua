@@ -40,6 +40,13 @@ flower.Font.DEFAULT_POINTS = 24
 --flower.Texture.DEFAULT_FILTER = MOAITexture.GL_LINEAR
 flower.Texture.DEFAULT_FILTER = MOAITexture.GL_NEAREST
 
+-- Setting of the behavior of the InputMgr
+-- Whether to fire a touch event on the desktop environment
+flower.InputMgr.TOUCH_EVENT_ENABLED = true
+
+-- Whether to fire a mouse event on the desktop environment
+flower.InputMgr.MOUSE_EVENT_ENABLED = true
+
 --------------------------------------------------------------------------------
 -- MOAI SDK
 --------------------------------------------------------------------------------
