@@ -53,6 +53,8 @@ local TouchHandler
 -- Sensors
 local pointerSensor = MOAIInputMgr.device.pointer
 local mouseLeftSensor = MOAIInputMgr.device.mouseLeft
+local mouseRightSensor = MOAIInputMgr.device.mouseRight
+local mouseMiddleSensor = MOAIInputMgr.device.mouseMiddle
 local touchSensor = MOAIInputMgr.device.touch
 local keyboardSensor = MOAIInputMgr.device.keyboard
 
@@ -756,6 +758,10 @@ Event.DOWN              = "down"
 Event.UP                = "up"
 Event.MOVE              = "move"
 Event.CLICK             = "click"
+Event.RIGHT_CLICK       = "rightClick"
+Event.MIDDLE_CLICK      = "middleClick"
+Event.RIGHT_MOVE        = "rightMove"
+Event.MIDDLE_MOVE       = "middleMove"
 Event.CANCEL            = "cancel"
 Event.KEY_DOWN          = "keyDown"
 Event.KEY_UP            = "keyUp"
@@ -1014,6 +1020,9 @@ InputMgr.TOUCH_EVENT = Event()
 -- Keyboard
 InputMgr.KEYBOARD_EVENT = Event()
 
+-- Mouse Buttons or Button + Move
+InputMgr.MOUSE_EVENT = Event()
+
 -- Touch Event Kinds
 InputMgr.TOUCH_EVENT_KINDS = {
     [MOAITouchSensor.TOUCH_DOWN]    = Event.TOUCH_DOWN,
@@ -1023,7 +1032,7 @@ InputMgr.TOUCH_EVENT_KINDS = {
 }
 
 -- pointer data
-InputMgr.pointer = {x = 0, y = 0, down = false}
+InputMgr.pointer = {x = 0, y = 0, down = false, rdown = false, mdown = false}
 
 ---
 -- Initialize.
@@ -1049,6 +1058,13 @@ function InputMgr:initialize()
 
         if self.pointer.down then
             onTouch(MOAITouchSensor.TOUCH_MOVE, 1, x, y, 1)
+        elseif self.pointer.mdown or self.pointer.rdown then
+            local event = InputMgr.MOUSE_EVENT
+            event.type = self.pointer.mdown and Event.MIDDLE_MOVE or Event.RIGHT_MOVE 
+            event.down = self.pointer.mdown or self.pointer.rdown
+            event.x = x
+            event.y = y
+            self:dispatchEvent(event)
         end
     end
 
@@ -1058,6 +1074,24 @@ function InputMgr:initialize()
         local eventType = down and MOAITouchSensor.TOUCH_DOWN or MOAITouchSensor.TOUCH_UP
 
         onTouch(eventType, 1, self.pointer.x, self.pointer.y, 1)
+    end
+
+    -- Right Click Handler
+    local onRClick = function(down)
+        self.pointer.rdown = down
+        local event = InputMgr.MOUSE_EVENT
+        event.type = Event.RIGHT_CLICK
+        event.down = down
+        self:dispatchEvent(event)
+    end
+
+    -- Middle Click Handler
+    local onMClick = function(down)
+        self.pointer.mdown = down
+        local event = InputMgr.MOUSE_EVENT
+        event.type = Event.MIDDLE_CLICK
+        event.down = down
+        self:dispatchEvent(event)
     end
 
     -- Keyboard Handler
@@ -1074,6 +1108,8 @@ function InputMgr:initialize()
     if pointerSensor then
         pointerSensor:setCallback(onPointer)
         mouseLeftSensor:setCallback(onClick)
+        mouseRightSensor:setCallback(onRClick)
+        mouseMiddleSensor:setCallback(onMClick)
     else
         touchSensor:setCallback(onTouch)
     end
