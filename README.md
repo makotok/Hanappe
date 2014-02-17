@@ -22,13 +22,13 @@ Tool version being used by the Hanappe is as follows.
 You are not necessarily required.
 
 * [Lua Development Tools 0.9](http://www.eclipse.org/koneki/ldt/)
-* [Apache Ant version 1.8.2](http://ant.apache.org/)
+* [Apache Ant version 1.9.3](http://ant.apache.org/)
 * [LDoc version 1.3.3](https://github.com/stevedonovan/LDoc)
 
 ## Tests
 The terminal work as follows.
 
-* Mac OSX 10.8.2
+* Mac OSX 10.9.1
 * iPhone Simulator
 * Windows 7
 * Android 4.1 (Nexus 7)

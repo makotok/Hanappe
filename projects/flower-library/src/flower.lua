@@ -41,6 +41,7 @@ local MapImage
 local MovieClip
 local NineImage
 local Label
+local DrawableObject
 local Rect
 local Font
 local Texture
@@ -53,6 +54,8 @@ local TouchHandler
 -- Sensors
 local pointerSensor = MOAIInputMgr.device.pointer
 local mouseLeftSensor = MOAIInputMgr.device.mouseLeft
+local mouseRightSensor = MOAIInputMgr.device.mouseRight
+local mouseMiddleSensor = MOAIInputMgr.device.mouseMiddle
 local touchSensor = MOAIInputMgr.device.touch
 local keyboardSensor = MOAIInputMgr.device.keyboard
 
@@ -744,28 +747,34 @@ Event = class()
 M.Event = Event
 
 -- Constraints
-Event.CREATE            = "create"
-Event.OPEN              = "open"
-Event.CLOSE             = "close"
-Event.OPEN_COMPLETE     = "openComplete"
-Event.CLOSE_COMPLETE    = "closeComplete"
-Event.START             = "start"
-Event.STOP              = "stop"
-Event.UPDATE            = "update"
-Event.DOWN              = "down"
-Event.UP                = "up"
-Event.MOVE              = "move"
-Event.CLICK             = "click"
-Event.CANCEL            = "cancel"
-Event.KEY_DOWN          = "keyDown"
-Event.KEY_UP            = "keyUp"
-Event.COMPLETE          = "complete"
-Event.TOUCH_DOWN        = "touchDown"
-Event.TOUCH_UP          = "touchUp"
-Event.TOUCH_MOVE        = "touchMove"
-Event.TOUCH_CANCEL      = "touchCancel"
-Event.ENTER_FRAME       = "enterFrame"
-Event.RESIZE            = "resize"
+Event.CREATE                = "create"
+Event.OPEN                  = "open"
+Event.CLOSE                 = "close"
+Event.OPEN_COMPLETE         = "openComplete"
+Event.CLOSE_COMPLETE        = "closeComplete"
+Event.START                 = "start"
+Event.STOP                  = "stop"
+Event.UPDATE                = "update"
+Event.DOWN                  = "down"
+Event.UP                    = "up"
+Event.MOVE                  = "move"
+Event.CLICK                 = "click"
+Event.CANCEL                = "cancel"
+Event.KEY_DOWN              = "keyDown"
+Event.KEY_UP                = "keyUp"
+Event.COMPLETE              = "complete"
+Event.TOUCH_DOWN            = "touchDown"
+Event.TOUCH_UP              = "touchUp"
+Event.TOUCH_MOVE            = "touchMove"
+Event.TOUCH_CANCEL          = "touchCancel"
+Event.MOUSE_CLICK           = "mouseClick"
+Event.MOUSE_RIGHT_CLICK     = "mouseRightClick"
+Event.MOUSE_MIDDLE_CLICK    = "mouseMiddleClick"
+Event.MOUSE_MOVE            = "mouseMove"
+Event.MOUSE_OVER            = "mouseOver"
+Event.MOUSE_OUT             = "mouseOut"
+Event.ENTER_FRAME           = "enterFrame"
+Event.RESIZE                = "resize"
 
 ---
 -- Event's constructor.
@@ -1008,11 +1017,14 @@ end
 InputMgr = EventDispatcher()
 M.InputMgr = InputMgr
 
--- Touch Events
+-- Touch Event
 InputMgr.TOUCH_EVENT = Event()
 
--- Keyboard
+-- Keyboard Event
 InputMgr.KEYBOARD_EVENT = Event()
+
+-- Mouse Event
+InputMgr.MOUSE_EVENT = Event()
 
 -- Touch Event Kinds
 InputMgr.TOUCH_EVENT_KINDS = {
@@ -1022,8 +1034,14 @@ InputMgr.TOUCH_EVENT_KINDS = {
     [MOAITouchSensor.TOUCH_CANCEL]  = Event.TOUCH_CANCEL,
 }
 
--- pointer data
-InputMgr.pointer = {x = 0, y = 0, down = false}
+-- Touch event enabled. It is used for compatibility.
+InputMgr.TOUCH_EVENT_ENABLED = true
+
+-- Mouse event enabled. It is used for compatibility.
+InputMgr.MOUSE_EVENT_ENABLED = true
+
+-- mouse pointer data
+InputMgr.pointer = {x = 0, y = 0, leftDown = false, rightDown = false, middleDown = false}
 
 ---
 -- Initialize.
@@ -1042,22 +1060,78 @@ function InputMgr:initialize()
         self:dispatchEvent(event)
     end
 
-    -- Pointer Handler
+    -- Mouse Pointer Handler
     local onPointer = function(x, y)
         self.pointer.x = x
         self.pointer.y = y
 
-        if self.pointer.down then
+        -- touch event
+        if InputMgr.TOUCH_EVENT_ENABLED and self.pointer.leftDown then
             onTouch(MOAITouchSensor.TOUCH_MOVE, 1, x, y, 1)
+        end
+        
+        -- mouse event
+        if InputMgr.MOUSE_EVENT_ENABLED then
+            local event = InputMgr.MOUSE_EVENT
+            event.type = Event.MOUSE_MOVE
+            event.leftDown = self.pointer.leftDown
+            event.rightDown = self.pointer.rightDown
+            event.middleDown = self.pointer.middleDown
+            event.x = x
+            event.y = y
+            self:dispatchEvent(event)
         end
     end
 
-    -- Click Handler
-    local onClick = function(down)
-        self.pointer.down = down
-        local eventType = down and MOAITouchSensor.TOUCH_DOWN or MOAITouchSensor.TOUCH_UP
+    -- Mouse left click handler
+    local onLeftClick = function(down)
+        self.pointer.leftDown = down
+        
+        -- touch event
+        if InputMgr.TOUCH_EVENT_ENABLED then
+            local eventType = down and MOAITouchSensor.TOUCH_DOWN or MOAITouchSensor.TOUCH_UP
+            onTouch(eventType, 1, self.pointer.x, self.pointer.y, 1)
+        end
+        
+        -- mouse event
+        if InputMgr.MOUSE_EVENT_ENABLED then
+            local event = InputMgr.MOUSE_EVENT
+            event.type = Event.MOUSE_CLICK
+            event.x = self.pointer.x
+            event.y = self.pointer.y
+            event.down = down
+            self:dispatchEvent(event)
+        end
+    end
 
-        onTouch(eventType, 1, self.pointer.x, self.pointer.y, 1)
+    -- Mouse right Click Handler
+    local onRightClick = function(down)
+        self.pointer.rightDown = down
+        
+        -- mouse event
+        if InputMgr.MOUSE_EVENT_ENABLED then
+            local event = InputMgr.MOUSE_EVENT
+            event.type = Event.MOUSE_RIGHT_CLICK
+            event.x = self.pointer.x
+            event.y = self.pointer.y
+            event.down = down
+            self:dispatchEvent(event)
+        end
+    end
+
+    -- Middle Click Handler
+    local onMiddleClick = function(down)
+        self.pointer.middleDown = down
+        
+        -- mouse event
+        if InputMgr.MOUSE_EVENT_ENABLED then
+            local event = InputMgr.MOUSE_EVENT
+            event.type = Event.MOUSE_MIDDLE_CLICK
+            event.x = self.pointer.x
+            event.y = self.pointer.y
+            event.down = down
+            self:dispatchEvent(event)
+        end
     end
 
     -- Keyboard Handler
@@ -1073,8 +1147,10 @@ function InputMgr:initialize()
     -- mouse or touch input
     if pointerSensor then
         pointerSensor:setCallback(onPointer)
-        mouseLeftSensor:setCallback(onClick)
-    else
+        mouseLeftSensor:setCallback(onLeftClick)
+        mouseRightSensor:setCallback(onRightClick)
+        mouseMiddleSensor:setCallback(onMiddleClick)
+    elseif touchSensor then
         touchSensor:setCallback(onTouch)
     end
 
@@ -1091,6 +1167,72 @@ end
 function InputMgr:keyIsDown(key)
     if keyboardSensor then
         return keyboardSensor:keyIsDown(key)
+    end
+end
+
+---
+-- Returns true if you are down on the left side of the mouse.
+-- @return true or false
+function InputMgr:isMouseLeftDown()
+    return InputMgr.pointer.leftDown
+end
+
+---
+-- Returns true if you are down on the middle side of the mouse.
+-- @return true or false
+function InputMgr:isMouseMiddleDown()
+    return InputMgr.pointer.middleDown
+end
+
+---
+-- Returns true if you are down on the left side of the mouse.
+-- @return true or false
+function InputMgr:isMouseRightDown()
+    return InputMgr.pointer.rightDown
+end
+
+---
+-- Returns the position of the mouse
+-- @return x-position, y-position
+function InputMgr:getMousePoint()
+    return InputMgr.pointer.x, InputMgr.pointer.y
+end
+
+---
+-- Checks to see if the touch status is currently down.
+-- @param idx Index of touch to check.
+-- @return isDown
+function InputMgr:isTouchDown(idx)
+    if touchSensor then
+        return touchSensor:isDown(idx)
+    end
+end
+
+---
+-- Checks to see if there are currently touches being made on the screen.
+-- @return hasTouches
+function InputMgr:hasTouches()
+    if touchSensor then
+        return touchSensor:hasTouches()
+    end
+end
+
+---
+-- Returns the touch data with the specified ID.
+-- @param idx The ID of the touch.
+-- @return x, y, tapCount
+function InputMgr:getTouch(idx)
+    if touchSensor then
+        return touchSensor:getTouch(idx)
+    end
+end
+
+---
+-- Returns the IDs of all of the touches currently occurring (for use with getTouch).
+-- @return idx1, idx2, ..., idxN
+function InputMgr:getActiveTouches()
+    if touchSensor then
+        return touchSensor:getActiveTouches()
     end
 end
 
@@ -3049,21 +3191,18 @@ function Label:fitWidth(length, maxWidth, padding)
 end
 
 ----------------------------------------------------------------------------------------------------
--- @type Rect
+-- @type DrawableObject
 --
--- Class to fill a rectangle. <br>
--- NOTE: This uses immediate mode drawing and so has a high performance impact when
--- used on mobile devices.  You may wish to use a 1-pixel high Image instead if you
--- wish to minimize draw calls.
+-- Class for drawing using the MOAIDraw.
 ----------------------------------------------------------------------------------------------------
-Rect = class(DisplayObject)
-M.Rect = Rect
+DrawableObject = class(DisplayObject)
+M.DrawableObject = DrawableObject
 
 ---
 -- Constructor.
 -- @param width Width
 -- @param height Height
-function Rect:init(width, height)
+function DrawableObject:init(width, height)
     DisplayObject.init(self)
 
     local deck = MOAIScriptDeck.new()
@@ -3074,20 +3213,53 @@ function Rect:init(width, height)
 
     deck:setDrawCallback(
     function(index, xOff, yOff, xFlip, yFlip)
-        local w, h, d = self:getSize()
-
-        MOAIGfxDevice.setPenColor(self:getColor())
-        MOAIDraw.fillRect(0, 0, w, h)
+        self:onDraw(index, xOff, yOff, xFlip, yFlip)
     end
     )
+end
+
+---
+-- This is the function called when drawing.
+-- @param index index of DrawCallback.
+-- @param xOff xOff of DrawCallback.
+-- @param yOff yOff of DrawCallback.
+-- @param xFlip xFlip of DrawCallback.
+-- @param yFlip yFlip of the Prop.
+function DrawableObject:onDraw(index, xOff, yOff, xFlip, yFlip)
+    -- Nop
 end
 
 ---
 -- Sets the size.
 -- @param width Width
 -- @param height Height
-function Rect:setSize(width, height)
+function DrawableObject:setSize(width, height)
     self.deck:setRect(0, 0, width, height)
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type Rect
+--
+-- Class to fill a rectangle. <br>
+-- NOTE: This uses immediate mode drawing and so has a high performance impact when
+-- used on mobile devices.  You may wish to use a 1-pixel high Image instead if you
+-- wish to minimize draw calls.
+----------------------------------------------------------------------------------------------------
+Rect = class(DrawableObject)
+M.Rect = Rect
+
+---
+-- This is the function called when drawing.
+-- @param index index of DrawCallback.
+-- @param xOff xOff of DrawCallback.
+-- @param yOff yOff of DrawCallback.
+-- @param xFlip xFlip of DrawCallback.
+-- @param yFlip yFlip of the Prop.
+function Rect:onDraw(index, xOff, yOff, xFlip, yFlip)
+    local w, h, d = self:getSize()
+
+    MOAIGfxDevice.setPenColor(self:getColor())
+    MOAIDraw.fillRect(0, 0, w, h)
 end
 
 ----------------------------------------------------------------------------------------------------
