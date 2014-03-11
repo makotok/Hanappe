@@ -1,3 +1,5 @@
+local modules = require "modules"
+
 -- MOAISim setting
 MOAISim.setStep ( 1 / 60 )
 MOAISim.clearLoopFlags ()
