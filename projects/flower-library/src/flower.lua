@@ -261,7 +261,12 @@ function class:__object_factory()
     if moai_class then
         local obj = moai_class.new()
         obj.__class = self
-        obj:setInterface(self)
+
+        local interface = { }
+        setmetatable(interface,interface)
+        interface.__index = self
+        obj:setInterface(interface)
+
         return obj
     end
 
@@ -1069,7 +1074,7 @@ function InputMgr:initialize()
         if InputMgr.TOUCH_EVENT_ENABLED and self.pointer.leftDown then
             onTouch(MOAITouchSensor.TOUCH_MOVE, 1, x, y, 1)
         end
-        
+
         -- mouse event
         if InputMgr.MOUSE_EVENT_ENABLED then
             local event = InputMgr.MOUSE_EVENT
@@ -1086,13 +1091,13 @@ function InputMgr:initialize()
     -- Mouse left click handler
     local onLeftClick = function(down)
         self.pointer.leftDown = down
-        
+
         -- touch event
         if InputMgr.TOUCH_EVENT_ENABLED then
             local eventType = down and MOAITouchSensor.TOUCH_DOWN or MOAITouchSensor.TOUCH_UP
             onTouch(eventType, 1, self.pointer.x, self.pointer.y, 1)
         end
-        
+
         -- mouse event
         if InputMgr.MOUSE_EVENT_ENABLED then
             local event = InputMgr.MOUSE_EVENT
@@ -1107,7 +1112,7 @@ function InputMgr:initialize()
     -- Mouse right Click Handler
     local onRightClick = function(down)
         self.pointer.rightDown = down
-        
+
         -- mouse event
         if InputMgr.MOUSE_EVENT_ENABLED then
             local event = InputMgr.MOUSE_EVENT
@@ -1122,7 +1127,7 @@ function InputMgr:initialize()
     -- Middle Click Handler
     local onMiddleClick = function(down)
         self.pointer.middleDown = down
-        
+
         -- mouse event
         if InputMgr.MOUSE_EVENT_ENABLED then
             local event = InputMgr.MOUSE_EVENT
@@ -1624,7 +1629,7 @@ end
 function DeckMgr:getTileImageDeck(textureWidth, textureHeight, tileWidth, tileHeight, spacing, margin, gridFlag, flipX, flipY)
     flipX = flipX and true or false
     flipY = flipY and true or false
-    
+
     local tw, th = textureWidth, textureHeight
     local key = tw .. "$" .. th .. "$" .. tileWidth .. "$" .. tileHeight .. "$" .. spacing .. "$" .. margin .. "$" .. tostring(gridFlag) .. "$" .. tostring(flipX) .. "$" .. tostring(flipY)
     local cache = DeckMgr.tileImageDecks
@@ -3226,7 +3231,7 @@ end
 -- @param xFlip xFlip of DrawCallback.
 -- @param yFlip yFlip of the Prop.
 function DrawableObject:onDraw(index, xOff, yOff, xFlip, yFlip)
-    -- Nop
+-- Nop
 end
 
 ---

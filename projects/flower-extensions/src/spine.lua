@@ -30,6 +30,7 @@ local AtlasAttachmentLoader
 -- Classes
 local Bone
 local Slot
+local AtlasMgr
 local Attachment
 local Skeleton
 local Timeline
