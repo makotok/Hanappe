@@ -3,19 +3,14 @@
 # Hanappe Projects
 
 ## Introduction
-Open source framework for [Moai SDK](http://getmoai.com).
+Open source framework for [Moai SDK](https://github.com/moai/moai-dev).
 
 
 ## SDK Version
 I have been tested on the following versions.
 However, it supports the latest version basically.
 
-* Moai SDK Release 1.4p0
-
-* Moai SDK Last Build
-
-Binary release old.
-At present, it may be better to compile from the source would be better.[moai-dev](https://github.com/moai/moai-dev)
+* Moai SDK Release 1.5
 
 ## Tools Version
 Tool version being used by the Hanappe is as follows.

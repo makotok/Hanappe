@@ -1,5 +1,13 @@
 # Release notes
 
+## Version 2.1.4 (Update: 2014/03/16)
+
+### Test Version
+Moai SDK Release 1.5
+
+Compatible with moai sdk V1.5. 
+No new function.
+
 ## Version 2.1.3 (Update: 2014/01/20)
 
 ### Test Version
