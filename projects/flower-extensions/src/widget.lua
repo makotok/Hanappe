@@ -3609,7 +3609,7 @@ end
 
 ----------------------------------------------------------------------------------------------------
 -- @type ScrollView
--- This class is an slider that can be pressed and dragged.
+-- Scrollable UIView class.
 ----------------------------------------------------------------------------------------------------
 ScrollView = class(UIView)
 M.ScrollView = ScrollView
