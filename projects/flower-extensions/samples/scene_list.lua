@@ -12,6 +12,8 @@ return {
     {title = "Widget MsgBox", scene = "scenes/widget_msgbox_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget ListBox", scene = "scenes/widget_listbox_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget Layout", scene = "scenes/widget_layout_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Widget ScrollView 1", scene = "scenes/widget_scrollview_1_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Widget ScrollView 2", scene = "scenes/widget_scrollview_2_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Audio", scene = "scenes/audio_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Aspect", scene = "scenes/aspect_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Performance Test1", scene = "scenes/performance1_sample", openAnime = "fade", closeAnime = "fade"},

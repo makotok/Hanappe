@@ -2714,7 +2714,8 @@ end
 -- @param flipY (option)flipY
 function SheetImage:setSheetSize(sizeX, sizeY, spacing, margin, flipX, flipY)
     local tw, th = self.texture:getSize()
-    local cw, ch = tw / sizeX, th / sizeY
+    local cw, ch = (tw-(margin or 0)) / sizeX- (spacing or 0), 
+        (th - (margin or 0))/ sizeY - (spacing or 0)
     self:setTileSize(cw, ch, spacing, margin, flipX, flipY)
 end
 
