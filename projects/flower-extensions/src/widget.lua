@@ -16,6 +16,7 @@ local M = {}
 local flower = require "flower"
 local class = flower.class
 local table = flower.table
+local math = flower.math
 local Executors = flower.Executors
 local Resources = flower.Resources
 local PropertyUtils = flower.PropertyUtils
@@ -60,6 +61,8 @@ local MsgBox
 local ListBox
 local ListItem
 local Slider
+local ScrollView
+
 ----------------------------------------------------------------------------------------------------
 -- Public Const
 ----------------------------------------------------------------------------------------------------
@@ -3603,6 +3606,544 @@ function Slider:onTouchCancel(e)
     self._touchDownIdx = nil
     self:doSlide(e.wx)
 end
+
+----------------------------------------------------------------------------------------------------
+-- @type ScrollView
+-- This class is an slider that can be pressed and dragged.
+----------------------------------------------------------------------------------------------------
+ScrollView = class(UIView)
+M.ScrollView = ScrollView
+
+--- Style: friction
+ScrollView.STYLE_FRICTION = "friction"
+
+--- Style: scrollPolicy
+ScrollView.STYLE_SCROLL_POLICY = "scrollPolicy"
+
+--- Style: bouncePolicy
+ScrollView.STYLE_BOUNCE_POLICY = "bouncePolicy"
+
+--- Style: scrollForceBounds
+ScrollView.STYLE_SCROLL_FORCE_BOUNDS = "scrollForceBounds"
+
+---
+-- Initializes the internal variables.
+function ScrollView:_initInternal()
+    ScrollView.__super._initInternal(self)
+    self._themeName = "ScrollView"
+    self._scrollForceX = 0
+    self._scrollForceY = 0
+    self._scrollGroup = nil
+    self._looper = nil
+    self._touchDownIndex = nil
+    self._lastTouchX = nil
+    self._lastTouchY = nil
+    self._scrollToAnim = nil
+end
+
+---
+-- Performing the initialization processing of the event listener.
+function ScrollView:_initEventListeners()
+    ScrollView.__super._initEventListeners(self)
+    self.layer:addEventListener(Event.TOUCH_DOWN, self.onScrollLayerTouchDown, self, -20)
+    self.layer:addEventListener(Event.TOUCH_UP, self.onScrollLayerTouchUp, self, -20)
+    self.layer:addEventListener(Event.TOUCH_MOVE, self.onScrollLayerTouchMove, self, -20)
+    self.layer:addEventListener(Event.TOUCH_CANCEL, self.onScrollLayerTouchCancel, self, -20)
+end
+
+---
+-- Performing the initialization processing of the component.
+function ScrollView:_createChildren()
+    self._scrollGroup = UIGroup {
+        size = {self:getSize()}
+    }
+
+    self:addChild(self._scrollGroup)
+end
+
+---
+-- Adjusted so as to fall within the scope of the scroll.
+function ScrollView:_ajustScrollPosition()
+    local left, top = self:getScrollPos()
+    local clipLeft, clipTop = self:clipScrollPosition(left, top)
+    local hBounceEnabled, vBounceEnabled = self:getBouncePolicy()
+
+    left = hBounceEnabled and left or clipLeft
+    top = vBounceEnabled and top or clipTop
+
+    self:setScrollPos(left, top)
+end
+
+---
+-- Adjust the scroll size.
+function ScrollView:_ajustScrollSize()
+    if not self._autoResizing then
+        return
+    end
+    
+    local width, height = 0, 0
+    local minWidth, minHeight = self.layer:getSize()
+    
+    for i, child in ipairs(self:getChildren()) do
+       width  = math.max(width, child:getRight())
+       height = math.max(height, child:getBottom())
+    end
+
+    width = width >= minWidth and width or minWidth
+    height = height >= minHeight and height or minHeight
+
+    self._scrollGroup:setSize(width, height)
+end
+
+---
+-- If it is out of the boundary, to bounce.
+-- @return True if to bouncing.
+function ScrollView:_doBounce()
+    if self:isScrolling() or self:isScrollAnimating() then
+        return false
+    end
+
+    local left, top = self:getScrollPos()
+    if self:isPositionOutOfBounds(left, top) then
+        local clippedLeft, clippedTop = self:clipScrollPosition(left, top)
+        self:scrollTo(clippedLeft, clippedTop, 0.5, MOAIEaseType.SOFT_EASE_IN)
+        return true
+    end    
+end
+
+---
+-- Update of the scroll processing.
+function ScrollView:_doUpdateScroll()
+    if self:isTouching() then
+        return
+    end
+    if not self:isScrolling() then
+        return
+    end
+
+    local left, top = self:getScrollPos()
+    local scrollX, scrollY = self:getScrollForceVec()
+    local rateX, rateY = (1 - self:getFriction()), (1 - self:getFriction())
+
+    rateX = self:isPositionOutOfHorizontal(left) and rateX * 0.35 or rateX
+    rateY = self:isPositionOutOfVertical(top) and rateY * 0.35 or rateY
+
+    self:addScrollPos(scrollX, scrollY)
+    self:setScrollForceVec(scrollX * rateX, scrollY * rateY)
+end
+
+---
+-- Sets the scene for layer.
+-- @param scene scene
+function ScrollView:setScene(scene)
+    if self.layer.scene then
+        self.layer.scene:removeEventListener(Event.CLOSE, self.onSceneClose, self, -10)
+        self:dispose()
+    end
+
+    ScrollView.__super.setScene(self, scene)
+
+    if self.layer.scene then
+        self.layer.scene:addEventListener(Event.CLOSE, self.onSceneClose, self, -10)
+        self._looper = Executors.callLoop(self.onEnterFrame, self)
+    end
+end
+
+---
+-- Dispose resources.
+function ScrollView:dispose()
+    if self._looper then
+        self._looper:stop()
+        self._looper = nil
+    end
+end
+
+---
+-- Add the content to scrollGroup.
+-- @param content
+function ScrollView:addContent(content)
+    self._scrollGroup:addChild(content)
+end
+
+---
+-- Add the content from scrollGroup.
+-- @param content
+function ScrollView:removeContent(content)
+    self._scrollGroup:removeChild(content)
+end
+
+---
+-- Add the content from scrollGroup.
+-- @param contents
+function ScrollView:setContents(contents)
+    self._scrollGroup:setChildren(contents)
+end
+
+---
+-- Return the scrollGroup.
+-- @return scrollGroup
+function ScrollView:getScrollGroup()
+    return self._scrollGroup
+end
+
+---
+-- Return the scrollGroup.
+-- @return scrollGroup
+function ScrollView:setScrollGroup(scrollGroup)
+    self:removeChild(self._scrollGroup)
+    self._scrollGroup = assert(scrollGroup)
+    self:addChild(self._scrollGroup)
+
+    self:invalidate()
+end
+
+---
+-- Computes attenuation as a function of distance.
+-- @param distance Distance
+-- @return distance^(-2/3)
+function ScrollView:attenuation(distance)
+    distance = distance == 0 and 1 or math.pow(distance, 0.667)
+    return 1 / distance
+end
+
+---
+-- Also changes the size of the scroll container when layout update.
+function ScrollView:updateLayout()
+    ScrollView.__super.updateLayout(self)
+    self:_ajustScrollSize()
+end
+
+---
+-- Set the layout.
+-- @param layout layout
+function ScrollView:setLayout(layout)
+    self._scrollGroup:setLayout(layout)
+end
+
+---
+-- Set the coefficient of friction at the time of scrolling.
+-- @param value friction
+function ScrollView:setFriction(value)
+    self:setStyle(ScrollView.STYLE_FRICTION, value)
+end
+
+---
+-- Returns the coefficient of friction at the time of scrolling.
+-- @return friction
+function ScrollView:getFriction()
+    return self:getStyle(ScrollView.STYLE_FRICTION)
+end
+
+---
+-- Sets the horizontal and vertical scroll enabled.
+-- @param horizontal horizontal scroll is enabled.
+-- @param vertical vertical scroll is enabled.
+function ScrollView:setScrollPolicy(horizontal, vertical)
+    if horizontal == nil then horizontal = true end
+    if vertical == nil then vertical = true end
+
+    self:setStyle(ScrollView.STYLE_SCROLL_POLICY, {horizontal, vertical})
+end
+
+---
+-- Return the scroll policy.
+-- @return horizontal scroll enabled.
+-- @return vertical scroll enabled.
+function ScrollView:getScrollPolicy()
+    return unpack(self:getStyle(ScrollView.STYLE_SCROLL_POLICY))
+end
+
+---
+-- Sets the horizontal and vertical bounce enabled.
+-- @param horizontal horizontal scroll is enabled.
+-- @param vertical vertical scroll is enabled.
+function ScrollView:setBouncePolicy(horizontal, vertical)
+    if horizontal == nil then horizontal = true end
+    if vertical == nil then vertical = true end
+
+    self:setStyle(ScrollView.STYLE_BOUNCE_POLICY, {horizontal, vertical})
+end
+
+---
+-- Returns whether horizontal bouncing is enabled.
+-- @return horizontal bouncing enabled
+-- @return vertical bouncing enabled
+function ScrollView:getBouncePolicy()
+    return unpack(self:getStyle(ScrollView.STYLE_BOUNCE_POLICY))
+end
+
+---
+-- If this component is scrolling returns true.
+-- @return scrolling
+function ScrollView:isScrolling()
+    return self._scrollForceX ~= 0 or self._scrollForceY~= 0
+end
+
+---
+-- Sets the scroll position.
+-- @param x x-position.
+-- @param y y-position.
+function ScrollView:setScrollPos(x, y)
+    self._scrollGroup:setPos(x, y)
+end
+
+---
+-- Sets the scroll position.
+-- @param x x-position.
+-- @param y y-position.
+function ScrollView:addScrollPos(x, y)
+    self._scrollGroup:addLoc(x, y, 0)
+end
+
+---
+-- Returns the scroll position.
+-- @return x-position.
+-- @return y-position.
+function ScrollView:getScrollPos()
+    return self._scrollGroup:getPos()
+end
+
+---
+-- Sets the force to scroll in one frame.
+-- It does not make sense if you're touch.
+-- @param x x force
+-- @param y y force
+function ScrollView:setScrollForceVec(x, y)
+    local hScrollEnabled, vScrollEnabled = self:getScrollPolicy()
+    local minScrollX, minScrollY, maxScrollX, maxScrollY = self:getScrollForceBounds()
+    local scrollX, scrollY = self:getScrollForceVec()
+    
+    scrollX = hScrollEnabled and x or 0
+    scrollX = (-minScrollX < scrollX and scrollX < minScrollX) and 0 or scrollX
+    scrollX = scrollX < -maxScrollX and -maxScrollX or scrollX
+    scrollX = maxScrollX < scrollX  and  maxScrollX or scrollX
+
+    scrollY = vScrollEnabled and y or 0
+    scrollY = (-minScrollY < scrollY and scrollY < minScrollY) and 0 or scrollY
+    scrollY = scrollY < -maxScrollY and -maxScrollY or scrollY
+    scrollY = maxScrollY < scrollY  and  maxScrollY or scrollY
+    
+    self._scrollForceX = scrollX
+    self._scrollForceY = scrollY
+end
+
+---
+-- Returns the force to scroll in one frame.
+-- @return x force
+-- @return y force
+function ScrollView:getScrollForceVec()
+    return self._scrollForceX, self._scrollForceY
+end
+
+---
+-- Sets the scroll force in one frame.
+-- @param minX x force
+-- @param minY y force
+-- @param maxX x force
+-- @param maxY y force
+function ScrollView:setScrollForceBounds(minX, minY, maxX, maxY)
+    self:setStyle(ScrollView.STYLE_SCROLL_FORCE_BOUNDS, {minX, minY, maxX, maxY})
+end
+
+---
+-- Returns the maximum force in one frame.
+-- @param x force
+-- @param y force
+function ScrollView:getScrollForceBounds()
+    return unpack(self:getStyle(ScrollView.STYLE_SCROLL_FORCE_BOUNDS))
+end
+
+---
+-- If the user has touched returns true.
+-- @return If the user has touched returns true.
+function ScrollView:isTouching()
+    return self._touchDownIndex ~= nil
+end
+
+---
+-- Scroll to the specified location.
+-- @param x position of the x
+-- @param y position of the x
+-- @param sec second
+-- @param mode EaseType
+-- @param callback (optional) allows callback notification when animation completes.
+function ScrollView:scrollTo(x, y, sec, mode, callback)
+    local x, y = self:clipScrollPosition(x, y)
+    local px, py, pz = self._scrollGroup:getPiv()
+    mode = mode or MOAIEaseType.SHARP_EASE_IN
+
+    self:stopScrollAnimation()
+    self._scrollToAnim = self._scrollGroup:seekLoc(x + px, y + py, 0, sec, mode)
+end
+
+---
+-- Computes the boundaries of the scroll area.
+-- @return the min and max values of the scroll area
+function ScrollView:getScrollBounds()
+    local childWidth, childHeight = self._scrollGroup:getSize()
+    local parentWidth, parentHeight = self:getSize()
+    local minX, minY = parentWidth - childWidth, parentHeight - childHeight
+    local maxX, maxY = 0, 0
+
+    return minX, minY, maxX, maxY
+end
+
+---
+-- Returns whether the input position is out of bounds.
+-- @param left The x position
+-- @param top The y position
+-- @return boolean
+function ScrollView:isPositionOutOfBounds(left, top)
+    local minX, minY, maxX, maxY = self:getScrollBounds()
+
+    return left < minX or left > maxX or top < minY or top > maxY
+end
+
+---
+-- Returns whether the input position is out of bounds.
+-- @param left The x position
+-- @return boolean
+function ScrollView:isPositionOutOfHorizontal(left)
+    local minX, minY, maxX, maxY = self:getScrollBounds()
+
+    return left < minX or left > maxX
+end
+
+---
+-- Returns whether the input position is out of bounds.
+-- @param left The x position
+-- @return boolean
+function ScrollView:isPositionOutOfVertical(top)
+    local minX, minY, maxX, maxY = self:getScrollBounds()
+
+    return top < minY or top > maxY
+end
+
+---
+-- Clips the input position to the size of the container
+-- @param left The x position
+-- @param top The y position
+-- @return clipped left and top
+function ScrollView:clipScrollPosition(left, top)
+    local minX, minY, maxX, maxY = self:getScrollBounds()
+    left = left < minX and minX or left
+    left = left > maxX and maxX or left
+    top  = top  < minY and minY or top
+    top  = top  > maxY and maxY or top
+
+    return left, top
+end
+
+---
+-- Returns whether the scrollTo animation is running.
+-- @return boolean
+function ScrollView:isScrollAnimating()
+    return self._scrollToAnim and self._scrollToAnim:isBusy()
+end
+
+---
+-- Stops the scrollTo animation if it's running
+-- @return none
+function ScrollView:stopScrollAnimation()
+    if self._scrollToAnim then
+        self._scrollToAnim:stop()
+        self._scrollToAnim = nil
+    end
+end
+
+---
+-- Update frame.
+function ScrollView:onEnterFrame()
+    if self:_doBounce() then
+        return
+    end
+
+    self:_doUpdateScroll()
+end
+
+---
+-- This event handler is called when scene closed.
+-- @param e touch event
+function ScrollView:onSceneClose(e)
+    self:dispose()
+end
+
+---
+-- This event handler is called when you touch the component.
+-- @param e touch event
+function ScrollView:onScrollLayerTouchDown(e)
+    if self:isTouching() then
+        return
+    end
+
+    self._scrollForceX = 0
+    self._scrollForceY = 0
+    self._touchDownIndex = e.idx
+    self._lastTouchX = e.wx
+    self._lastTouchY = e.wy
+
+    self:stopScrollAnimation()
+end
+
+---
+-- This event handler is called when you touch the component.
+-- @param e touch event
+function ScrollView:onScrollLayerTouchUp(e)
+    if self._touchDownIndex ~= e.idx then
+        return
+    end
+    
+    self._touchDownIndex = nil
+    self._lastTouchX = nil
+    self._lastTouchY = nil
+end
+
+---
+-- This event handler is called when you touch the component.
+-- @param e touch event
+function ScrollView:onScrollLayerTouchMove(e)
+    if self._touchDownIndex ~= e.idx then
+        return
+    end
+
+    local moveX, moveY = e.wx - self._lastTouchX , e.wy - self._lastTouchY
+    self:setScrollForceVec(moveX, moveY)
+    moveX, moveY = self:getScrollForceVec()
+
+    local minX, minY, maxX, maxY = self:getScrollBounds()
+    local left, top = self:getScrollPos()
+    local newLeft, newTop = left + moveX, top + moveY
+
+    local clippedLeft, clippedTop = self:clipScrollPosition(newLeft, newTop)
+    local diff = math.distance(clippedLeft, clippedTop, newLeft, newTop)
+    local hBounceEnabled, vBounceEnabled = self:getBouncePolicy()
+
+    if self:isPositionOutOfHorizontal(newLeft) then
+        moveX = hBounceEnabled and (self:attenuation(diff) * moveX) or 0
+    end
+    if self:isPositionOutOfVertical(newTop) then
+        moveY = vBounceEnabled and (self:attenuation(diff) * moveY) or 0
+    end
+
+    self:addScrollPos(moveX, moveY, 0)
+    self._lastTouchX = e.wx
+    self._lastTouchY = e.wy
+
+end
+
+---
+-- This event handler is called when you touch the component.
+-- @param e touch event
+function ScrollView:onScrollLayerTouchCancel(e)
+    if self._touchDownIndex ~= e.idx then
+        return
+    end
+
+    self._touchDownIndex = nil
+    self._lastTouchX = nil
+    self._lastTouchY = nil
+end
+
 
 -- widget initialize
 M.initialize()

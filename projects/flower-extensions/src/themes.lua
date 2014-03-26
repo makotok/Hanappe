@@ -114,6 +114,12 @@ M.NORMAL = {
         textColor = {1, 1, 1, 1},
         textAlign = {"left", "top"},
     },
+    ScrollView = {
+        friction = 0.1,
+        scrollPolicy = {true, true},
+        bouncePolicy = {true, true},
+        scrollForceBounds = {0.1, 0.1, 100, 100},
+    },
 }
 
 -- initial theme
