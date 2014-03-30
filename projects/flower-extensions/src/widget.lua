@@ -4128,7 +4128,6 @@ function ScrollView:onScrollLayerTouchMove(e)
     self:addScrollPos(moveX, moveY, 0)
     self._lastTouchX = e.wx
     self._lastTouchY = e.wy
-
 end
 
 ---

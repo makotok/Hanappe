@@ -1,5 +1,4 @@
 return {
-    {title = "Particles", scene = "scenes/particles_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Tiled Basic 1", scene = "scenes/tiled_basic_1_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Tiled Basic 2", scene = "scenes/tiled_basic_2_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Tiled Isometric 1", scene = "scenes/tiled_iso_1_sample", openAnime = "fade", closeAnime = "fade"},
@@ -15,6 +14,7 @@ return {
     {title = "Widget Layout", scene = "scenes/widget_layout_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget ScrollView 1", scene = "scenes/widget_scrollview_1_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget ScrollView 2", scene = "scenes/widget_scrollview_2_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Particles", scene = "scenes/particles_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Audio", scene = "scenes/audio_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Aspect", scene = "scenes/aspect_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Performance Test1", scene = "scenes/performance1_sample", openAnime = "fade", closeAnime = "fade"},
