@@ -12,6 +12,7 @@
 
 local class = require("hp/lang/class")
 local table = require("hp/lang/table")
+local Logger = require("hp/util/Logger")
 
 local M = class()
 
@@ -42,15 +43,15 @@ end
 --------------------------------------------------------------------------------
 function M:printDebug()
     -- header
-    print("<TMXMap>")
+    Logger.debug("<TMXMap>")
     
     -- attributes
     for i, attr in ipairs(self.ATTRIBUTE_NAMES) do
         local value = self[attr]
         value = value and value or ""
-        print(attr .. " = " .. value)
+        Logger.debug(attr .. " = " .. value)
     end
-    print("</TMXMap>")
+    Logger.debug("</TMXMap>")
 
 end
 

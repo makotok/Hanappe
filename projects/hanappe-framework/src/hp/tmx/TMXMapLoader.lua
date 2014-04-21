@@ -12,6 +12,7 @@ local TMXLayer = require("hp/tmx/TMXLayer")
 local TMXObject = require("hp/tmx/TMXObject")
 local TMXObjectGroup = require("hp/tmx/TMXObjectGroup")
 local ResourceManager = require("hp/manager/ResourceManager")
+local Logger = require("hp/util/Logger")
 
 local M = class()
 
@@ -91,7 +92,7 @@ end
 -- Please do not accessible from the outside.
 --------------------------------------------------------------------------------
 function M:parseNodeMap(node)
-    print("parseNodeMap")
+    Logger.debug("parseNodeMap")
     local map = TMXMap:new()
     self.map = map
 

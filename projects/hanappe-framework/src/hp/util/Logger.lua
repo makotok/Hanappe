@@ -25,7 +25,11 @@ M.selector[M.LEVEL_DEBUG] = true
 -- Is the target output to the console.
 --------------------------------------------------------------------------------
 M.CONSOLE_TARGET = function(...)
-   print(...)
+   local arg = {...}
+   for _,x in ipairs(arg) do
+	  MOAILogMgr.log(tostring(x).." ")
+   end
+   MOAILogMgr.log("\n")
 end
 
 --------------------------------------------------------------------------------
