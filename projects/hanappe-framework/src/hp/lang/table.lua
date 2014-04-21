@@ -3,6 +3,7 @@
 -- modules that extend functionality of the table.
 --
 --------------------------------------------------------------------------------
+local Logger = require("hp/util/Logger")
 
 local M = {}
 setmetatable(M, {__index = table})
@@ -26,7 +27,7 @@ function M.decorate( src, arg1, arg2 )
                 if not src[k] then
                     src[k] = v
                 elseif src[ k ] ~= v then
-                    print( "ERROR (table.decorate): Extension failed because key "..k.." exists.") 
+                    Logger.debug( "ERROR (table.decorate): Extension failed because key "..k.." exists.") 
                 end   
             end
         end
@@ -34,7 +35,7 @@ function M.decorate( src, arg1, arg2 )
         if not src[arg1] then
             src[arg1] = arg2
         elseif src[ arg1 ] ~= arg2 then
-            print( "ERROR (table.decorate): Extension failed because key "..arg1.." exists.") 
+            Logger.debug( "ERROR (table.decorate): Extension failed because key "..arg1.." exists.")
         end      
     end
 end
