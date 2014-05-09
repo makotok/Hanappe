@@ -12,6 +12,7 @@ local M = {}
 local screenWidth = MOAIEnvironment.horizontalResolution or 640
 local screenHeight = MOAIEnvironment.verticalResolution or 480
 local viewScale = math.floor(math.max(math.min(screenWidth / 480, screenHeight / 320), 1))
+viewScale = MOAIEnvironment.iosRetinaDisplay and 2 or viewScale
 
 -- Resources setting
 flower.Resources.addResourceDirectory("assets")
