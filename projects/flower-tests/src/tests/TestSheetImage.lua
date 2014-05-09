@@ -56,7 +56,7 @@ function TestSheetImage:test4_sheetSize()
     local prop = self.prop
     prop:setSheetSize(3, 4, 1, 2, true, true)
     
-    assertEquals(prop.sheetSize, 2 * 3)
+    assertEquals(prop.sheetSize, 3 * 4)
     assertEquals(prop.sheetNames, {})
 end
 

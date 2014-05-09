@@ -62,6 +62,7 @@ end
 
 ---
 -- test: visible
+-- TODO:Group Visibillity
 function TestGroup:test3_visible()
     local group = self.group
     local prop = self.prop
@@ -71,10 +72,14 @@ function TestGroup:test3_visible()
     
     group:setVisible(false)
     assertEquals(group:getVisible(), false)
+    assertEquals(prop:getVisible(), true) -- TODO:Bug?
+
+    prop:forceUpdate()
     assertEquals(prop:getVisible(), false)
 
     group:setVisible(true)
     assertEquals(group:getVisible(), true)
+    prop:forceUpdate()
     assertEquals(prop:getVisible(), true)
 
     prop:setVisible(false)
