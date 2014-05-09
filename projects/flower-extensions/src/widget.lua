@@ -41,6 +41,7 @@ local MOAIDialog = MOAIDialogAndroid or MOAIDialogIOS
 local ThemeMgr
 local FocusMgr
 local LayoutMgr
+local IconMgr
 local TextAlign
 local KeyCode
 local UIEvent
@@ -68,7 +69,7 @@ local ScrollView
 ----------------------------------------------------------------------------------------------------
 
 --- Fixed a bug where the position of the MOAI SDK V1.4p0 does not reflect.(Last build fixed)
-M.USE_TRANSFORM_BUGFIX = true
+M.USE_TRANSFORM_BUGFIX = false
 
 ----------------------------------------------------------------------------------------------------
 -- Public functions
@@ -85,6 +86,7 @@ function M.initialize()
     M.themeMgr = ThemeMgr()
     M.focusMgr = FocusMgr()
     M.layoutMgr = LayoutMgr()
+    M.iconMgr = IconMgr()
 
     M.initialized = true
 end
@@ -123,6 +125,13 @@ end
 -- @return LayoutMgr
 function M.getLayoutMgr()
     return M.layoutMgr
+end
+
+---
+-- Return the IconMgr.
+-- @return IconMgr
+function M.getIconMgr()
+    return M.iconMgr
 end
 
 ---
@@ -301,6 +310,46 @@ function LayoutMgr:validatePriority()
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type IconMgr
+-- This is a class to manage the layout of the widget.
+-- Please get an instance from the widget module.
+----------------------------------------------------------------------------------------------------
+IconMgr = class()
+M.IconMgr = IconMgr
+
+---
+-- Constructor.
+function IconMgr:init()
+    self._iconTextureInfos = {}
+    self:addIconTexture("skins/icons.png", 24, 24)
+end
+
+function IconMgr:addIconTexture(textureName, tileWidth, tileHeight)
+    local iconInfo = {}
+    local texture = Resources.getTexture(textureName)
+    local textureW, textureH = texture:getSize()
+    iconInfo.texture = texture
+    iconInfo.tileWidth = tileWidth
+    iconInfo.tileHeight = tileHeight
+    iconInfo.iconSize = math.floor(textureW / tileWidth) * math.floor(textureH / tileHeight)
+
+    table.insertElement(self._iconTextureInfos, iconInfo)
+end
+
+function IconMgr:createIconImage(iconNo)
+    local curIconNo = 0
+    for i, iconInfo in ipairs(self._iconTextureInfos) do
+        if iconNo <= curIconNo + iconInfo.iconSize then
+            local image = SheetImage(iconInfo.texture)
+            image:setTileSize(iconInfo.tileWidth, iconInfo.tileHeight)
+            image:setIndex(iconNo - curIconNo)
+            return image
+        end
+        curIconNo = curIconNo + iconInfo.iconSize
+    end
+end
+
+----------------------------------------------------------------------------------------------------
 -- @type TextAlign
 -- This is a table that defines the alignment of the text.
 ----------------------------------------------------------------------------------------------------
@@ -407,6 +456,9 @@ UIEvent.ITEM_CHANGED = "itemChanged"
 
 --- ListBox: enter
 UIEvent.ITEM_ENTER = "itemEnter"
+
+--- ListBox: itemClick
+UIEvent.ITEM_CLICK = "itemClick"
 
 ----------------------------------------------------------------------------------------------------
 -- @type UIComponent
@@ -2390,8 +2442,8 @@ function TextBox:setTextSize(textSize)
 end
 
 ---
--- Sets the textSize.
--- @param textSize textSize
+-- Returns the textSize.
+-- @return textSize
 function TextBox:getTextSize()
     return self:getStyle(TextBox.STYLE_TEXT_SIZE)
 end
@@ -2405,8 +2457,8 @@ function TextBox:setFontName(fontName)
 end
 
 ---
--- Sets the textSize.
--- @param textSize textSize
+-- Returns the font name.
+-- @return font name
 function TextBox:getFontName()
     return self:getStyle(TextBox.STYLE_FONT_NAME)
 end
@@ -2856,6 +2908,7 @@ function ListBox:_initInternal()
     self._verticalScrollPosition = 0
     self._scrollBar = nil
     self._scrollBarVisible = true
+    self._labelField = nil
 end
 
 ---
@@ -3225,7 +3278,28 @@ end
 -- Set the event listener that is called when the user item changed.
 -- @param func event handler
 function ListBox:setOnItemEnter(func)
-    self:setEventListener(UIEvent.ITEM_ENTER, func)
+    print("Depricated function:setOnItemEnter")
+    self:setOnItemClick(func)
+end
+
+---
+-- Set the event listener that is called when the user item changed.
+-- @param func event handler
+function ListBox:setOnItemClick(func)
+    self:setEventListener(UIEvent.ITEM_CLICK, func)
+end
+
+---
+-- TODO:Doc
+function ListBox:findListItemByPos(x, y)
+    local listSize = self:getListSize()
+
+    for i = 1, listSize do
+        local item = self:getListItemAt(i)
+        if item and item:inside(x, y, 0) then
+            return item
+        end
+    end
 end
 
 ---
@@ -3238,6 +3312,9 @@ function ListBox:onTouchDown(e)
     self._touchedIndex = e.idx
     self._touchedY = e.wy
     self._touchedVsp = self:getVerticalScrollPosition()
+
+    local item = self:findListItemByPos(e.wx, e.wy)
+    self:setSelectedItem(item)
 end
 
 ---
@@ -3247,9 +3324,18 @@ function ListBox:onTouchUp(e)
     if self._touchedIndex ~= e.idx then
         return
     end
+
+    local item = self:getSelectedItem()
+    local oldVsp = self._touchedVsp
+    local nowVsp = self:getVerticalScrollPosition()
+
     self._touchedIndex = nil
     self._touchedY = nil
     self._touchedVsp = nil
+
+    if item and oldVsp == nowVsp then
+        self:dispatchEvent(UIEvent.ITEM_CLICK, item:getData())
+    end
 end
 
 ---
@@ -3261,8 +3347,12 @@ function ListBox:onTouchMove(e)
     end
     local rowHeight = self:getRowHeight()
     local delta = self._touchedY - e.wy
-    local vsp = self._touchedVsp + math.floor(delta / rowHeight)
-    self:setVerticalScrollPosition(vsp)
+    local oldVsp = self:getVerticalScrollPosition()
+    local newVsp = self._touchedVsp + math.floor(delta / rowHeight)
+
+    if oldVsp ~= newVsp then
+        self:setVerticalScrollPosition(newVsp)
+    end
 end
 
 ---
@@ -3293,6 +3383,15 @@ end
 ListItem = class(TextBox)
 M.ListItem = ListItem
 
+--- Style: iconVisible
+ListItem.STYLE_ICON_VISIBLE = "iconVisible"
+
+--- Style: iconTexture
+ListItem.STYLE_ICON_TEXTURE = "iconTexture"
+
+--- Style: iconTileSize
+ListItem.STYLE_ICON_TILE_SIZE = "iconTileSize"
+
 ---
 -- Initialize a variables
 function ListItem:_initInternal()
@@ -3302,19 +3401,50 @@ function ListItem:_initInternal()
     self._dataIndex = nil
     self._focusEnabled = false
     self._selected = false
-end
-
----
--- Initialize the event listeners.
-function ListItem:_initEventListeners()
-    ListItem.__super._initEventListeners(self)
-    self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
+    self._iconImage = nil
 end
 
 ---
 -- Create the children.
 function ListItem:_createChildren()
+    self:_createIconImage()
     ListItem.__super._createChildren(self)
+end
+
+---
+-- Create the iconImage.
+function ListItem:_createIconImage()
+    if self._iconImage then
+        return
+    end
+    if not self:getStyle(ListItem.STYLE_ICON_TEXTURE) then
+        return
+    end
+
+    self._iconImage = SheetImage(self:getStyle(ListItem.STYLE_ICON_TEXTURE))
+    self._iconImage:setTileSize(unpack(self:getStyle(ListItem.STYLE_ICON_TILE_SIZE)))
+    self._iconImage:setVisible(self:getStyle(ListItem.STYLE_ICON_TEXTURE) or false)
+    self:addChild(self._iconImage)
+end
+
+---
+-- Update the display.
+function ListItem:updateDisplay()
+    ListItem.__super.updateDisplay(self)
+
+    if self._iconImage and self._iconImage:getIndex() > 0 then
+        local textLabel = self._textLabel
+        local textW, textH = textLabel:getSize()
+        local textX, textY = textLabel:getPos()
+        local padding = 5
+
+        local icon = self._iconImage
+        local iconW, iconH = icon:getSize()
+        icon:setPos(textX, textY + math.floor((textH - iconH) / 2))
+
+        textLabel:setSize(textW - iconW - padding, textH)
+        textLabel:addLoc(iconW + padding, 0, 0)
+    end
 end
 
 ---
@@ -3327,6 +3457,10 @@ function ListItem:setData(data, dataIndex)
 
     local textLabel = self._textLabel
     textLabel:setString(self:getText())
+
+    if self._iconImage then
+        self._iconImage:setIndex(self:getIconIndex())
+    end
 end
 
 ---
@@ -3341,6 +3475,13 @@ end
 -- @return data index
 function ListItem:getDataIndex()
     return self._dataIndex
+end
+
+---
+-- Return the icon index.
+-- @return icon index
+function ListItem:getIconIndex()
+    return self._data and self._data.iconIndex or self._data.iconNo or 0
 end
 
 ---
@@ -3381,14 +3522,12 @@ function ListItem:getLabelField()
 end
 
 ---
--- The event handler is called when you touch the ListItem.
--- @param e Touch event
-function ListItem:onTouchDown(e)
-    local listBox = self.parent
-    if self:isSelected() then
-        listBox:dispatchEvent(UIEvent.ITEM_ENTER, self._data)
-    else
-        listBox:setSelectedItem(self)
+-- Sets the icon visible.
+function ListItem:setIconVisible(iconVisible)
+    self:setStyle(ListItem.STYLE_ICON_VISIBLE)
+
+    if self._iconImage then
+        self._iconImage:setVisible(iconVisible)
     end
 end
 

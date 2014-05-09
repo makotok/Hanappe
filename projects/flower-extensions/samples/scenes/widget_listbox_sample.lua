@@ -1,8 +1,13 @@
 module(..., package.seeall)
 
-local listData = {}
+local listData1 = {}
 for i = 1, 100 do
-    table.insert(listData, {label = "label" .. i, text = "text" .. i})
+    table.insert(listData1, {iconNo = i, label = "label" .. i, text = "text" .. i})
+end
+
+local listData2 = {}
+for i = 1, 100 do
+    table.insert(listData2, {label = "label" .. i, text = "text" .. i})
 end
 
 --------------------------------------------------------------------------------
@@ -20,9 +25,9 @@ function onCreate(e)
         pos = {5, 5},
         parent = view,
         labelField = "label",
-        listData = {listData},
+        listData = {listData1},
         onItemChanged = listBox_OnItemChanged,
-        onItemEnter = listBox_OnItemEnter,
+        onItemClick = listBox_OnItemClick,
     }
     
     listBox2 = widget.ListBox()
@@ -31,10 +36,10 @@ function onCreate(e)
     listBox2:setColumnCount(2)
     listBox2:setPos(5, listBox1:getBottom() + 5)
     listBox2:setLabelField("label")
-    listBox2:setListData(listData)
+    listBox2:setListData(listData2)
     listBox2:setParent(view)
     listBox2:setOnItemChanged(listBox_OnItemChanged)
-    listBox2:setOnItemEnter(listBox_OnItemEnter)
+    listBox2:setOnItemClick(listBox_OnItemClick)
     
     textbox = widget.TextBox {
         size = {flower.viewWidth - 10, 100},
@@ -67,8 +72,8 @@ function listBox_OnItemChanged(e)
     textbox:setText(text)
 end
 
-function listBox_OnItemEnter(e)
-    print("listBox_OnItemEnter(e)")
+function listBox_OnItemClick(e)
+    print("listBox_OnItemClick(e)")
         
 end
 

@@ -110,9 +110,12 @@ M.NORMAL = {
         backgroundTexture = "skins/listitem_background.9.png",
         backgroundVisible = false,
         fontName = "VL-PGothic.ttf",
-        textSize = 20,
+        textSize = 24,
         textColor = {1, 1, 1, 1},
         textAlign = {"left", "top"},
+        iconVisible = true,
+        iconTexture = "skins/icons.png",
+        iconTileSize = {24, 24},
     },
     ScrollView = {
         friction = 0.1,

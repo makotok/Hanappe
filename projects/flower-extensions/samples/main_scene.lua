@@ -65,7 +65,7 @@ function onCreate(e)
         rowHeight = 35,
         listItemFactory = flower.ClassFactory(widget.ListItem, {textSize = 20}),
         onItemChanged = menuList_OnItemChanged,
-        onItemEnter = menuList_OnItemEnter,
+        onItemClick = menuList_OnItemClick,
     }
     
     flower.Runtime:addEventListener("resize", onResize)
@@ -78,7 +78,7 @@ end
 function menuList_OnItemChanged(e)
 end
 
-function menuList_OnItemEnter(e)
+function menuList_OnItemClick(e)
     local data = e.data
     local childScene = flower.openScene(data.scene, {animation = data.openAnime})
     if childScene then
