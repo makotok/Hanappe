@@ -3402,6 +3402,7 @@ function ListItem:_initInternal()
     self._focusEnabled = false
     self._selected = false
     self._iconImage = nil
+    self._iconDataField = "iconNo"
 end
 
 ---
@@ -3481,7 +3482,7 @@ end
 -- Return the icon index.
 -- @return icon index
 function ListItem:getIconIndex()
-    return self._data and self._data.iconIndex or self._data.iconNo or 0
+    return self._data and self._data[self._iconDataField] or 0
 end
 
 ---
