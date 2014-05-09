@@ -333,12 +333,18 @@ end
 function DungeonMapGenerator:_createObjects(map)
     local objects = {}
 
+    local room = map.rooms[math.random(1, #map.rooms)]
+    local playerSrc = self.objectMaster[self.playerId]
+    local playerObj = self:_createObject(playerSrc, room)
+    table.insertElement(objects, playerObj)
+
     for i, room in ipairs(map.rooms) do
         local size = math.random(0, 3)
 
         if size > 0 then
             for i = 1, size do
-                local obj = self:_createObject(room)
+                local src = self.objectMaster[math.random(1, #self.objectMaster)]
+                local obj = self:_createObject(src, room)
                 table.insertElement(objects, obj)
             end
         end
@@ -347,10 +353,9 @@ function DungeonMapGenerator:_createObjects(map)
     map:setObjects(objects)
 end
 
-function DungeonMapGenerator:_createObject(room)
+function DungeonMapGenerator:_createObject(src, room)
     local x = math.random(room.x + 1, room.x + room.width - 1)
     local y = math.random(room.y + 1, room.y + room.height - 1)
-    local src = self.objectMaster[math.random(1, #self.objectMaster)]
 
     return DungeonObject(src, x, y)
 end
@@ -530,7 +535,7 @@ function DungeonTiledGenerator:_createTileObject(object)
     local firstGid = tileset.firstgid
 
     return {
-        name = "",
+        name = object.objectName,
         type = object.objectType,
         shape = "rectangle",
         x = object.x * self.tileWidth,

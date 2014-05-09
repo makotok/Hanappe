@@ -42,20 +42,14 @@ end
 -- Event Handler
 --------------------------------------------------------------------------------
 
----
--- シーン生成時のイベントハンドラです.
 function onCreate(e)
     createDungeon()
 end
 
----
--- シーン開始時のイベントハンドラです.
 function onStart(e)
 
 end
 
----
--- シーン更新時のイベントハンドラです.
 function onUpdate(e)
 end
 

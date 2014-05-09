@@ -19,9 +19,9 @@ return {
         {itemNo = 4},
     },
     objectMaster = {
-        {objectNo = 1, objectType = "Player", width = 1, height = 1, tileset = "actor1"},
-        {objectNo = 2, objectType = "Enemy", width = 1, height = 1, tileset = "actor50"},
-        {objectNo = 3, objectType = "Enemy", width = 1, height = 1, tileset = "actor51"},
+        {objectNo = 1, objectName = "Player", objectType = "Player", width = 1, height = 1, tileId = 1, tileset = "actor1"},
+        {objectNo = 2, objectName = "Actor1", objectType = "Actor", width = 1, height = 1, tileId = 1, tileset = "actor50"},
+        {objectNo = 3, objectName = "Actor2", objectType = "Actor", width = 1, height = 1, tileId = 1, tileset = "actor51"},
     },
     tilesetMaster = {
         {name = "tile0", image = "tile/tile0.png", tileWidth = 32, tileHeight = 32},
