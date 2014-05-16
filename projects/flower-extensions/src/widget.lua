@@ -2909,6 +2909,7 @@ function ListBox:_initInternal()
     self._scrollBar = nil
     self._scrollBarVisible = true
     self._labelField = nil
+    self._touchedIndex = nil
 end
 
 ---
@@ -3312,6 +3313,7 @@ function ListBox:onTouchDown(e)
     self._touchedIndex = e.idx
     self._touchedY = e.wy
     self._touchedVsp = self:getVerticalScrollPosition()
+    self._itemClickCancelFlg = false
 
     local item = self:findListItemByPos(e.wx, e.wy)
     self:setSelectedItem(item)
@@ -3329,13 +3331,14 @@ function ListBox:onTouchUp(e)
     local oldVsp = self._touchedVsp
     local nowVsp = self:getVerticalScrollPosition()
 
+    if item and item:getData() and not self._itemClickCancelFlg then
+        self:dispatchEvent(UIEvent.ITEM_CLICK, item:getData())
+    end
+
     self._touchedIndex = nil
     self._touchedY = nil
     self._touchedVsp = nil
-
-    if item and oldVsp == nowVsp then
-        self:dispatchEvent(UIEvent.ITEM_CLICK, item:getData())
-    end
+    self._itemClickCancelFlg = false
 end
 
 ---
@@ -3351,6 +3354,7 @@ function ListBox:onTouchMove(e)
     local newVsp = self._touchedVsp + math.floor(delta / rowHeight)
 
     if oldVsp ~= newVsp then
+        self._itemClickCancelFlg = true
         self:setVerticalScrollPosition(newVsp)
     end
 end
