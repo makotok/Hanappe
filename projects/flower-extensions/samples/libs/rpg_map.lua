@@ -119,7 +119,7 @@ function RPGMap:onLoadedData(e)
     self.objectLayer = assert(self:findMapLayerByName("Object"))
     self.playerObject = assert(self.objectLayer:findObjectByName("Player"))
     self.collisionLayer = assert(self:findMapLayerByName("Collision"))
-    self.eventLayer = assert(self:findMapLayerByName("Event"))
+    self.eventLayer = self:findMapLayerByName("Event")
 
     if self.collisionLayer then
         self.collisionLayer:setVisible(false)

@@ -1,6 +1,7 @@
 module(..., package.seeall)
 
-local Particles = require "particles"
+local particles = require "particles"
+local PEXParticle = particles.PEXParticle
 
 --------------------------------------------------------------------------------
 -- Event Handler
@@ -11,7 +12,7 @@ function onCreate(e)
     layer:setScene(scene)
     layer:setTouchEnabled(true)
 
-    particle = Particles.fromPex("deathBlossomCharge.pex")
+    particle = PEXParticle("deathBlossomCharge.pex")
     particle:setLayer(layer)
 
     particle:addEventListener("touchDown", onTouchDown)
@@ -22,13 +23,13 @@ end
 function onStart()
     particle.emitter:setLoc(100, 100)
     particle:start()
-    particle:startParticle()
+    particle:startEmitter()
 end
 
 function onTouchDown(e)
     local wx, wy = layer:wndToWorld(e.x, e.y, 0)
     particle.emitter:setLoc(wx, wy)
-    particle:startParticle()
+    particle:startEmitter()
 end
 
 function onTouchMove(e)
@@ -37,5 +38,5 @@ function onTouchMove(e)
 end
 
 function onTouchUp(e)
-    particle:stopParticle()
+    particle:stopEmitter()
 end

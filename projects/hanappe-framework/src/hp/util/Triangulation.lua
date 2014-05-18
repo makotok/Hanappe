@@ -2,7 +2,7 @@
 -- Triangulation routine is based on code by <br>
 -- JOHN W. RATCLIFF (jratcliff@verant.com), July 22, 2000 <br>
 --------------------------------------------------------------------------------
-
+local Logger = require("hp/util/logger")
 local M = {}
 
 local EPSILON = 0.0000000001
@@ -15,12 +15,12 @@ local function area( contour )
     local q = 1
     
     while q <= n do
-        print( "n, p,q", n, p, q)
+        Logger.debug( "n, p,q", n, p, q)
         A = A + contour[p].x * contour[q].y - contour[q].x * contour[p].y
         p = q
         q = q + 1
     end
-    print("A=", .5 * A )
+    Logger.debug("A=", .5 * A )
     return .5 * A
 end
 
@@ -116,7 +116,7 @@ function M.process( contour )
         -- if we loop, probably it's a non-simple polygon
         -- (it crosses its own boundary)
         if count < 0 then
-            print("ERROR: Polygon is self-intersecting. Can't triangulate.")
+            Logger.error("ERROR: Polygon is self-intersecting. Can't triangulate.")
             --debugger.printTable( contour, "contour" )
             --debugger.printTable( result, "result" )
             return false

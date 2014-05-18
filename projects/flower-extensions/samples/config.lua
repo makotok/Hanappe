@@ -9,9 +9,10 @@ local M = {}
 -- Flower
 --------------------------------------------------------------------------------
 
-local screenWidth = MOAIEnvironment.horizontalResolution or 320
+local screenWidth = MOAIEnvironment.horizontalResolution or 640
 local screenHeight = MOAIEnvironment.verticalResolution or 480
-local viewScale = math.floor(math.max(math.min(screenWidth / 320, screenHeight / 480), 1))
+local viewScale = math.floor(math.max(math.min(screenWidth / 480, screenHeight / 320), 1))
+viewScale = MOAIEnvironment.iosRetinaDisplay and 2 or viewScale
 
 -- Resources setting
 flower.Resources.addResourceDirectory("assets")
@@ -90,7 +91,7 @@ timer:start()
 local traceInterpector = aspect.Interceptor(widget)
 
 function traceInterpector:beginProcess(context, ...)
-    local info = debug.getinfo(4)
+    local info = debug.getinfo(4) or {}
     local msg = string.format("[Trace][%s:%s][%s] Args = ", info.short_src, info.currentline, context.name)
     print(msg, ...)
 end

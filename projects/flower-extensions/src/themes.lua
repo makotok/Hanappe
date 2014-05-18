@@ -113,6 +113,9 @@ M.NORMAL = {
         textSize = 20,
         textColor = {1, 1, 1, 1},
         textAlign = {"left", "top"},
+        iconVisible = true,
+        iconTexture = "skins/icons.png",
+        iconTileSize = {24, 24},
     },
     ScrollView = {
         friction = 0.1,
