@@ -2713,8 +2713,11 @@ end
 -- @param length length
 -- @param text text
 function TextInput:onKeyboardInput(start, length, text)
-    self:setText(MOAIKeyboard.getText())
-    self:drawTextAllow()
+    -- There is the input for the UITextField is not reflected.
+    Executors.callLaterFrame(1, function()
+        self:setText(MOAIKeyboard.getText())
+        self:drawTextAllow()
+    end)
 end
 
 ---
