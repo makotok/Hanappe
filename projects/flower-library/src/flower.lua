@@ -1359,6 +1359,7 @@ end
 --   <li>animation: Scene animation of transition. </li>
 --   <li>second: Time to scene animation. </li>
 --   <li>easeType: EaseType to animation scene. </li>
+--   <li>atomic: Other threads wait until action will finish. </li>
 -- </ul>
 function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     params = params or {}
@@ -1382,8 +1383,7 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     self.nextScene:open(params)
 
     -- scene animation
-    Executors.callOnce(
-    function()
+    local funAnimation = function()
         local animation = self:getSceneAnimationByName(params.animation)
         animation(self.currentScene or Scene(), self.nextScene, params)
 
@@ -1398,7 +1398,12 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
 
         self:dispatchEvent(Event.OPEN_COMPLETE)
     end
-    )
+
+    if params.atomic then
+        funAnimation()
+    else
+        Executors.callOnce(funAnimation)
+    end
 
     return self.nextScene
 end
@@ -1412,6 +1417,7 @@ end
 --   <li>easeType: EaseType to animation scene. </li>
 --   <li>backScene: The name of the scene you want to back. </li>
 --   <li>backSceneCount: Number of scene you want to back. </li>
+--   <li>atomic: Other threads wait until action will finish. </li>
 -- </ul>
 -- @param params (option)Parameters of the Scene
 function SceneMgr:closeScene(params)
@@ -1440,8 +1446,7 @@ function SceneMgr:closeScene(params)
     -- stop current scene
     self.currentScene:stop(params)
 
-    Executors.callOnce(
-    function()
+    local funAnimation = function()
         local animation = self:getSceneAnimationByName(params.animation)
         animation(self.closingSceneGroup, self.nextScene or Scene(), params)
 
@@ -1462,7 +1467,12 @@ function SceneMgr:closeScene(params)
 
         self:dispatchEvent(Event.CLOSE_COMPLETE)
     end
-    )
+
+    if params.atomic then
+        funAnimation()
+    else
+        Executors.callOnce(funAnimation)
+    end
 
     return true
 end
