@@ -1359,7 +1359,7 @@ end
 --   <li>animation: Scene animation of transition. </li>
 --   <li>second: Time to scene animation. </li>
 --   <li>easeType: EaseType to animation scene. </li>
---   <li>atomic: Other threads wait until action will finish. </li>
+--   <li>sync: Other threads wait until action will finish. </li>
 -- </ul>
 function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     params = params or {}
@@ -1399,7 +1399,7 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
         self:dispatchEvent(Event.OPEN_COMPLETE)
     end
 
-    if params.atomic then
+    if params.sync then
         funAnimation()
     else
         Executors.callOnce(funAnimation)
@@ -1417,7 +1417,7 @@ end
 --   <li>easeType: EaseType to animation scene. </li>
 --   <li>backScene: The name of the scene you want to back. </li>
 --   <li>backSceneCount: Number of scene you want to back. </li>
---   <li>atomic: Other threads wait until action will finish. </li>
+--   <li>sync: Other threads wait until action will finish. </li>
 -- </ul>
 -- @param params (option)Parameters of the Scene
 function SceneMgr:closeScene(params)
@@ -1468,7 +1468,7 @@ function SceneMgr:closeScene(params)
         self:dispatchEvent(Event.CLOSE_COMPLETE)
     end
 
-    if params.atomic then
+    if params.sync then
         funAnimation()
     else
         Executors.callOnce(funAnimation)
