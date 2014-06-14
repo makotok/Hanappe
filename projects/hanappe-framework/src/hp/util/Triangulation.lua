@@ -2,7 +2,7 @@
 -- Triangulation routine is based on code by <br>
 -- JOHN W. RATCLIFF (jratcliff@verant.com), July 22, 2000 <br>
 --------------------------------------------------------------------------------
-local Logger = require("hp/util/logger")
+local Logger = require("hp/util/Logger")
 local M = {}
 
 local EPSILON = 0.0000000001
