@@ -231,10 +231,13 @@ function class:__call(...)
     for i = #bases, 1, -1 do
         table.copy(bases[i], clazz)
     end
+    clazz.__class = clazz
     clazz.__super = bases[1]
     clazz.__call = function(self, ...)
         return self:__new(...)
     end
+    clazz.__interface = {__index = clazz}
+    setmetatable(clazz.__interface, clazz.__interface)
     return setmetatable(clazz, clazz)
 end
 
@@ -260,18 +263,11 @@ function class:__object_factory()
 
     if moai_class then
         local obj = moai_class.new()
-        obj.__class = self
-
-        local interface = { }
-        setmetatable(interface,interface)
-        interface.__index = self
-        obj:setInterface(interface)
-
+        obj:setInterface(self.__interface)
         return obj
     end
 
-    local obj = {__index = self, __class = self}
-    return setmetatable(obj, obj)
+    return setmetatable({}, self.__interface)
 end
 
 ----------------------------------------------------------------------------------------------------

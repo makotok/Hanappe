@@ -1,4 +1,5 @@
 -- requires
+require "tests.TestClass"
 require "tests.TestDisplayObject"
 require "tests.TestGroup"
 require "tests.TestImage"
@@ -7,6 +8,7 @@ require "tests.TestSheetImage"
 
 -- test cases
 local testCases = {
+    "TestClass",
     "TestDisplayObject",
     "TestGroup",
     "TestImage",
