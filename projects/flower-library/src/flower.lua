@@ -231,10 +231,13 @@ function class:__call(...)
     for i = #bases, 1, -1 do
         table.copy(bases[i], clazz)
     end
+    clazz.__class = clazz
     clazz.__super = bases[1]
     clazz.__call = function(self, ...)
         return self:__new(...)
     end
+    clazz.__interface = {__index = clazz}
+    setmetatable(clazz.__interface, clazz.__interface)
     return setmetatable(clazz, clazz)
 end
 
@@ -260,18 +263,11 @@ function class:__object_factory()
 
     if moai_class then
         local obj = moai_class.new()
-        obj.__class = self
-
-        local interface = { }
-        setmetatable(interface,interface)
-        interface.__index = self
-        obj:setInterface(interface)
-
+        obj:setInterface(self.__interface)
         return obj
     end
 
-    local obj = {__index = self, __class = self}
-    return setmetatable(obj, obj)
+    return setmetatable({}, self.__interface)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1359,6 +1355,7 @@ end
 --   <li>animation: Scene animation of transition. </li>
 --   <li>second: Time to scene animation. </li>
 --   <li>easeType: EaseType to animation scene. </li>
+--   <li>sync: Other threads wait until action will finish. </li>
 -- </ul>
 function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     params = params or {}
@@ -1382,8 +1379,7 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
     self.nextScene:open(params)
 
     -- scene animation
-    Executors.callOnce(
-    function()
+    local funAnimation = function()
         local animation = self:getSceneAnimationByName(params.animation)
         animation(self.currentScene or Scene(), self.nextScene, params)
 
@@ -1398,7 +1394,12 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
 
         self:dispatchEvent(Event.OPEN_COMPLETE)
     end
-    )
+
+    if params.sync then
+        funAnimation()
+    else
+        Executors.callOnce(funAnimation)
+    end
 
     return self.nextScene
 end
@@ -1412,6 +1413,7 @@ end
 --   <li>easeType: EaseType to animation scene. </li>
 --   <li>backScene: The name of the scene you want to back. </li>
 --   <li>backSceneCount: Number of scene you want to back. </li>
+--   <li>sync: Other threads wait until action will finish. </li>
 -- </ul>
 -- @param params (option)Parameters of the Scene
 function SceneMgr:closeScene(params)
@@ -1440,8 +1442,7 @@ function SceneMgr:closeScene(params)
     -- stop current scene
     self.currentScene:stop(params)
 
-    Executors.callOnce(
-    function()
+    local funAnimation = function()
         local animation = self:getSceneAnimationByName(params.animation)
         animation(self.closingSceneGroup, self.nextScene or Scene(), params)
 
@@ -1462,7 +1463,12 @@ function SceneMgr:closeScene(params)
 
         self:dispatchEvent(Event.CLOSE_COMPLETE)
     end
-    )
+
+    if params.sync then
+        funAnimation()
+    else
+        Executors.callOnce(funAnimation)
+    end
 
     return true
 end
