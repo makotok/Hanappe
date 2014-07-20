@@ -80,6 +80,12 @@ M.DEFAULT_SCREEN_HEIGHT = MOAIEnvironment.verticalResolution or 480
 --- default scale of the viewport
 M.DEFAULT_VIEWPORT_SCALE = 1
 
+--- default y behavior; set to true to have y=0 be the bottom of the screen
+M.DEFAULT_VIEWPORT_YFLIP = false
+
+--- default blending mode for images
+M.DEFAULT_BLEND_MODE = { }
+
 ----------------------------------------------------------------------------------------------------
 -- Public functions
 ----------------------------------------------------------------------------------------------------
@@ -121,8 +127,13 @@ function M.updateDisplaySize(width, height, scale)
 
     M.viewport = M.viewport or MOAIViewport.new()
     M.viewport:setSize(M.screenWidth, M.screenHeight)
-    M.viewport:setScale(M.viewWidth, -M.viewHeight)
-    M.viewport:setOffset(-1, 1)
+    if M.DEFAULT_VIEWPORT_YFLIP then
+      M.viewport:setScale(M.viewWidth, M.viewHeight)
+      M.viewport:setOffset(-1, -1)
+    else
+      M.viewport:setScale(M.viewWidth, -M.viewHeight)
+      M.viewport:setOffset(-1, 1)
+    end
 end
 
 ---
@@ -1608,6 +1619,9 @@ end
 -- @param flipY (Optional)flipY
 -- @return deck
 function DeckMgr:createImageDeck(width, height, flipX, flipY)
+    if M.DEFAULT_VIEWPORT_YFLIP then
+      flipY = not flipY
+    end
     local u0 = flipX and 1 or 0
     local v0 = flipY and 1 or 0
     local u1 = flipX and 0 or 1
@@ -1785,7 +1799,12 @@ function DeckMgr:createNineImageDeck(fileName)
     local stretchColumns = self:_createStretchRowsOrColumns(image, false)
     local contentPadding = self:_getNineImageContentPadding(image)
     local texture = Resources.getTexture(filePath)
-    local uvRect = {1 / imageWidth, 1 / imageHeight, (imageWidth - 1) / imageWidth, (imageHeight - 1) / imageHeight}
+    local uvRect
+    if M.DEFAULT_VIEWPORT_YFLIP then
+      uvRect = {1 / imageWidth, 1 / imageHeight, (imageWidth - 1) / imageWidth, (imageHeight - 1) / imageHeight}
+    else
+      uvRect = {1 / imageWidth, (imageHeight - 1) / imageHeight, (imageWidth - 1) / imageWidth, 1 / imageHeight}
+    end
 
     local deck = MOAIStretchPatch2D.new()
     deck.imageWidth = imageWidth
@@ -2160,6 +2179,7 @@ function Group:init(layer, width, height)
     self.children = {}
     self.isGroup = true
     self.layer = layer
+    self.scissor = nil
     self:setSize(width or 0, height or 0)
 
     self:setPivToCenter()
@@ -2175,6 +2195,19 @@ function Group:setSize(width, height)
 end
 
 ---
+-- Sets a scissor rect for this group (and any children)
+-- @param scissor MOAIScissorRect
+function Group:setScissorRect(scissor)
+  self.scissor = scissor
+  for i = 1, #self.children do
+    local child = self.children[i]
+    if child.setScissorRect then
+      child:setScissorRect(self.scissor)
+    end
+  end
+end
+
+---
 -- Adds the specified child.
 -- @param child DisplayObject
 function Group:addChild(child)
@@ -2185,6 +2218,10 @@ function Group:addChild(child)
             child:setLayer(self.layer)
         elseif self.layer then
             self.layer:insertProp(child)
+        end
+
+        if self.scissor and child.setScissorRect then
+          child:setScissorRect(self.scissor)
         end
 
         return true
@@ -2204,6 +2241,10 @@ function Group:removeChild(child)
             child:setLayer(nil)
         elseif self.layer then
             self.layer:removeProp(child)
+        end
+
+        if self.scissor and child.setScissorRect then
+          child:setScissorRect(nil)
         end
 
         return true
@@ -2619,6 +2660,8 @@ function Image:init(texture, width, height, flipX, flipY)
     DisplayObject.init(self)
 
     self:setTexture(texture)
+
+    self:setBlendMode(unpack(M.DEFAULT_BLEND_MODE))
 
     if width or height then
         local tw, th = self.texture:getSize()
@@ -3118,6 +3161,7 @@ function Label:init(text, width, height, font, textSize)
     self:setTextSize(self.textSize)
     self:setTextScale(1 / self.contentScale)
     self:setString(text)
+    self:setYFlip(M.DEFAULT_VIEWPORT_YFLIP)
 
     if not width or not height then
         self:fitSize(#text)
@@ -3392,6 +3436,12 @@ function TouchHandler:onTouch(e)
     -- touch event
     local e2 = table.copy(e, self.TOUCH_EVENT)
 
+    -- the active prop is the one reported from getTouchableProp,
+    -- the "other" prop is the prop associated originally with this touch
+    -- index. Used to make it easier to distinguish whether a touchUp
+    -- event should be counted as a "click".
+    e2.active_prop = prop
+    e2.other_prop = prop2
     -- dispatch event
     if prop then
         e2.prop = prop
@@ -3409,6 +3459,8 @@ function TouchHandler:onTouch(e)
     e2.data = nil
     e2.prop = nil
     e2.target = nil
+    e2.active_prop = nil
+    e2.other_prop = nil
     e2:setListener(nil, nil)
 end
 
@@ -3423,7 +3475,17 @@ function TouchHandler:getTouchableProp(e)
     for i = #props, 1, -1 do
         local prop = props[i]
         if prop:getAttr(MOAIProp.ATTR_VISIBLE) > 0 then
-            return prop
+	    -- getScissorRect is part of a recent submitted change.
+            local scissor = prop.getScissorRect and prop:getScissorRect()
+            if scissor then
+              local sx, sy = scissor:worldToModel(e.wx, e.wy)
+              local xMin, yMin, xMax, yMax = scissor:getRect()
+              if sx > xMin and sx < xMax and sy > yMin and sy < yMax then
+                return prop
+              end
+            else
+              return prop
+            end
         end
     end
 end

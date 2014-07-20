@@ -21,6 +21,11 @@ flower.DEFAULT_SCREEN_HEIGHT = screenHeight
 
 -- Set the scale of the Viewport
 flower.DEFAULT_VIEWPORT_SCALE = viewScale
+flower.DEFAULT_VIEWPORT_YFLIP = false
+
+-- Optional table of arguments for setBlendMode on new images.
+-- Empty table gives default behavior.
+flower.DEFAULT_BLEND_MODE = { }
 
 -- High quality rendering of Label
 -- When enabled, it may take a long time to display the label.
