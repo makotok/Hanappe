@@ -80,6 +80,9 @@ M.DEFAULT_SCREEN_HEIGHT = MOAIEnvironment.verticalResolution or 480
 --- default scale of the viewport
 M.DEFAULT_VIEWPORT_SCALE = 1
 
+--- default y behavior; set to true to have y=0 be the bottom of the screen
+M.DEFAULT_VIEWPORT_YFLIP = false
+
 ----------------------------------------------------------------------------------------------------
 -- Public functions
 ----------------------------------------------------------------------------------------------------
@@ -121,8 +124,13 @@ function M.updateDisplaySize(width, height, scale)
 
     M.viewport = M.viewport or MOAIViewport.new()
     M.viewport:setSize(M.screenWidth, M.screenHeight)
-    M.viewport:setScale(M.viewWidth, -M.viewHeight)
-    M.viewport:setOffset(-1, 1)
+    if M.DEFAULT_VIEWPORT_YFLIP then
+      M.viewport:setScale(M.viewWidth, M.viewHeight)
+      M.viewport:setOffset(-1, -1)
+    else
+      M.viewport:setScale(M.viewWidth, -M.viewHeight)
+      M.viewport:setOffset(-1, 1)
+    end
 end
 
 ---
@@ -1608,6 +1616,9 @@ end
 -- @param flipY (Optional)flipY
 -- @return deck
 function DeckMgr:createImageDeck(width, height, flipX, flipY)
+    if M.DEFAULT_VIEWPORT_YFLIP then
+      flipY = not flipY
+    end
     local u0 = flipX and 1 or 0
     local v0 = flipY and 1 or 0
     local u1 = flipX and 0 or 1
@@ -1785,7 +1796,12 @@ function DeckMgr:createNineImageDeck(fileName)
     local stretchColumns = self:_createStretchRowsOrColumns(image, false)
     local contentPadding = self:_getNineImageContentPadding(image)
     local texture = Resources.getTexture(filePath)
-    local uvRect = {1 / imageWidth, 1 / imageHeight, (imageWidth - 1) / imageWidth, (imageHeight - 1) / imageHeight}
+    local uvRect
+    if M.DEFAULT_VIEWPORT_YFLIP then
+      uvRect = {1 / imageWidth, 1 / imageHeight, (imageWidth - 1) / imageWidth, (imageHeight - 1) / imageHeight}
+    else
+      uvRect = {1 / imageWidth, (imageHeight - 1) / imageHeight, (imageWidth - 1) / imageWidth, 1 / imageHeight}
+    end
 
     local deck = MOAIStretchPatch2D.new()
     deck.imageWidth = imageWidth
@@ -3118,6 +3134,7 @@ function Label:init(text, width, height, font, textSize)
     self:setTextSize(self.textSize)
     self:setTextScale(1 / self.contentScale)
     self:setString(text)
+    self:setYFlip(M.DEFAULT_VIEWPORT_YFLIP)
 
     if not width or not height then
         self:fitSize(#text)

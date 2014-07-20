@@ -21,6 +21,7 @@ flower.DEFAULT_SCREEN_HEIGHT = screenHeight
 
 -- Set the scale of the Viewport
 flower.DEFAULT_VIEWPORT_SCALE = viewScale
+flower.DEFAULT_VIEWPORT_YFLIP = false
 
 -- High quality rendering of Label
 -- When enabled, it may take a long time to display the label.
