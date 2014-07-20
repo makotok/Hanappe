@@ -83,6 +83,9 @@ M.DEFAULT_VIEWPORT_SCALE = 1
 --- default y behavior; set to true to have y=0 be the bottom of the screen
 M.DEFAULT_VIEWPORT_YFLIP = false
 
+--- default blending mode for images
+M.DEFAULT_BLEND_MODE = { }
+
 ----------------------------------------------------------------------------------------------------
 -- Public functions
 ----------------------------------------------------------------------------------------------------
@@ -2657,6 +2660,8 @@ function Image:init(texture, width, height, flipX, flipY)
     DisplayObject.init(self)
 
     self:setTexture(texture)
+
+    self:setBlendMode(unpack(M.DEFAULT_BLEND_MODE))
 
     if width or height then
         local tw, th = self.texture:getSize()
