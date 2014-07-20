@@ -2176,6 +2176,7 @@ function Group:init(layer, width, height)
     self.children = {}
     self.isGroup = true
     self.layer = layer
+    self.scissor = nil
     self:setSize(width or 0, height or 0)
 
     self:setPivToCenter()
@@ -2191,6 +2192,19 @@ function Group:setSize(width, height)
 end
 
 ---
+-- Sets a scissor rect for this group (and any children)
+-- @param scissor MOAIScissorRect
+function Group:setScissorRect(scissor)
+  self.scissor = scissor
+  for i = 1, #self.children do
+    local child = self.children[i]
+    if child.setScissorRect then
+      child:setScissorRect(self.scissor)
+    end
+  end
+end
+
+---
 -- Adds the specified child.
 -- @param child DisplayObject
 function Group:addChild(child)
@@ -2201,6 +2215,10 @@ function Group:addChild(child)
             child:setLayer(self.layer)
         elseif self.layer then
             self.layer:insertProp(child)
+        end
+
+        if self.scissor and child.setScissorRect then
+          child:setScissorRect(self.scissor)
         end
 
         return true
@@ -2220,6 +2238,10 @@ function Group:removeChild(child)
             child:setLayer(nil)
         elseif self.layer then
             self.layer:removeProp(child)
+        end
+
+        if self.scissor and child.setScissorRect then
+          child:setScissorRect(nil)
         end
 
         return true
@@ -3440,7 +3462,17 @@ function TouchHandler:getTouchableProp(e)
     for i = #props, 1, -1 do
         local prop = props[i]
         if prop:getAttr(MOAIProp.ATTR_VISIBLE) > 0 then
-            return prop
+	    -- getScissorRect is part of a recent submitted change.
+            local scissor = prop.getScissorRect and prop:getScissorRect()
+            if scissor then
+              local sx, sy = scissor:worldToModel(e.wx, e.wy)
+              local xMin, yMin, xMax, yMax = scissor:getRect()
+              if sx > xMin and sx < xMax and sy > yMin and sy < yMax then
+                return prop
+              end
+            else
+              return prop
+            end
         end
     end
 end
