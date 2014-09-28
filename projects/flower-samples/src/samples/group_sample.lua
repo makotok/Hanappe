@@ -18,6 +18,13 @@ function onCreate(e)
     group2 = flower.Group()
     group1:addChild(group2)
 
+    -- group3
+    group3 = flower.Group()
+    group3:setSize(50, 50)
+    group3:setSize(100, 100)
+    group3:setScissorContent(true)
+    group2:addChild(group3)
+
     -- image1
     image1 = flower.Image("cathead.png")
     group1:addChild(image1)
@@ -38,6 +45,11 @@ function onCreate(e)
     image4:setPos(120, 120)
     image4:setVisible(false)
     group2:addChild(image4)
+
+    -- image5
+    image5 = flower.Image("cathead.png")
+    image5:setPos(50, 50)
+    group3:addChild(image5)
 end
 
 function onStart(e)
