@@ -350,9 +350,11 @@ end
 -- @return property value
 function TileMap:getTileProperty(gid, key)
     local tileset = self:findTilesetByGid(gid)
-    local tileId = tileset:getTileIdByGid(gid)
-    if tileset and tileId then
-        return tileset:getTileProperty(tileId, key)
+    if tileset then
+        local tileId = tileset:getTileIdByGid(gid)
+        if tileset and tileId then
+            return tileset:getTileProperty(tileId, key)
+        end
     end
 end
 
@@ -362,9 +364,11 @@ end
 -- @return tile property value
 function TileMap:getTileProperties(gid)
     local tileset = self:findTilesetByGid(gid)
-    local tileId = tileset:getTileIdByGid(gid)
-    if tileset and tileId then
-        return tileset:getTileProperties(tileId)
+    if tileset then
+        local tileId = tileset:getTileIdByGid(gid)
+        if tileset and tileId then
+            return tileset:getTileProperties(tileId)
+        end
     end
 end
 
@@ -675,7 +679,7 @@ M.TileObject = TileObject
 ---
 -- The constructor.
 -- @param tileMap TileMap
-function TileObject:init(tileMap)
+function TileObject:init(tileMap, objectData)
     Group.init(self)
     self.tileMap = assert(tileMap)
     self.name = ""
@@ -744,7 +748,7 @@ end
 -- Update a priority.
 function TileObject:updatePriority()
     if self.parent then
-        local parentPriority = self.parent:getPriority()
+        local parentPriority = self.parent:getPriority() or 0
         self:setPriority(parentPriority + self:getTop())
     end    
 end
@@ -882,7 +886,7 @@ end
 -- @param objectData object data
 -- @return TileObject
 function TileObjectGroup:createObject(objectData)
-    local tileObject = self.objectFactory:newInstance(self.tileMap)
+    local tileObject = self.objectFactory:newInstance(self.tileMap, objectData)
     tileObject:loadData(objectData)
     self:addObject(tileObject)
     return tileObject
