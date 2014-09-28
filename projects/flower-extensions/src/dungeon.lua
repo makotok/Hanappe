@@ -56,7 +56,7 @@ end
 -- @param y Y座標
 -- @return 位置が空間座標内に含まれる場合はtrue
 function Rectangle:contains(x, y)
-    return self.x <= x and self.y <= y and x <= (self.x + self.width)
+    return self.x <= x and self.y <= y and x <= (self.x + self.width) and y <= (self.y + self.height)
 end
 
 ---

@@ -1664,9 +1664,16 @@ function DeckMgr:createTileImageDeck(textureWidth, textureHeight, tileWidth, til
     local tileY = math.floor((th - margin) / (tileHeight + spacing))
 
     local deck = MOAIGfxQuadDeck2D.new()
+    deck.type = "TileImageDeck"
     deck.sheetSize = tileX * tileY
     deck:reserve(deck.sheetSize)
-    deck.type = "TileImageDeck"
+    deck.textureWidth = textureWidth
+    deck.textureHeight = textureHeight
+    deck.tileWidth = tileWidth
+    deck.tileHeight = tileHeight
+    deck.spacing = spacing
+    deck.margin = margin 
+    deck.gridFlag = gridFlag
     deck.flipX = flipX
     deck.flipY = flipY
 
@@ -2160,6 +2167,8 @@ function Group:init(layer, width, height)
     self.children = {}
     self.isGroup = true
     self.layer = layer
+    self.parentScissorRect = nil
+    self.contentScissorRect = nil
     self:setSize(width or 0, height or 0)
 
     self:setPivToCenter()
@@ -2175,6 +2184,23 @@ function Group:setSize(width, height)
 end
 
 ---
+-- Sets the bounds.
+-- This is the bounds of a Group, rather than of the children.
+-- @param xMin xMin
+-- @param yMin yMin
+-- @param zMin zMin
+-- @param xMax xMax
+-- @param yMax yMax
+-- @param zMax zMax
+function Group:setBounds(xMin, yMin, zMin, xMax, yMax, zMax)
+    MOAIPropInterface.setBounds(self, xMin, yMin, zMin, xMax, yMax, zMax)
+
+    if self.contentScissorRect then
+        self.contentScissorRect:setRect(xMin, yMin, xMax, yMax)
+    end
+end
+
+---
 -- Adds the specified child.
 -- @param child DisplayObject
 function Group:addChild(child)
@@ -2185,6 +2211,10 @@ function Group:addChild(child)
             child:setLayer(self.layer)
         elseif self.layer then
             self.layer:insertProp(child)
+        end
+
+        if self.contentScissorRect then
+            child:setScissorRect(self.contentScissorRect)
         end
 
         return true
@@ -2287,6 +2317,41 @@ function Group:setPriority(priority)
 
     for i, v in ipairs(self.children) do
         v:setPriority(priority)
+    end
+end
+
+function Group:setScissorRect(scissorRect)
+    MOAIPropInterface.setScissorRect(self, scissorRect)
+
+    for i, child in ipairs(self.children) do
+        if child.setParentScissorRect then
+            child:setParentScissorRect(scissorRect)
+        else
+            child:setScissorRect(scissorRect)
+        end
+    end
+end
+
+function Group:setParentScissorRect(parentRect)
+    self.parentScissorRect = parentRect
+
+    if self.contentScissorRect then
+        self.contentScissorRect:setScissorRect(self.parentScissorRect)
+    else
+        self:setScissorRect(self.parentScissorRect)
+    end
+end
+
+function Group:setScissorContent(enabled)
+    if enabled then
+        self.contentScissorRect = MOAIScissorRect.new()
+        self.contentScissorRect:setRect(0, 0, self:getWidth(), self:getHeight())
+        self.contentScissorRect:setScissorRect(self.parentScissorRect)
+        self.contentScissorRect:setAttrLink(MOAITransform.INHERIT_TRANSFORM, self, MOAITransform.TRANSFORM_TRAIT)
+        self:setScissorRect(self.contentScissorRect)
+    else
+        self.contentScissorRect = nil
+        self:setScissorRect(self.parentScissorRect)
     end
 end
 
@@ -2742,6 +2807,17 @@ function SheetImage:setTileSize(tileWidth, tileHeight, spacing, margin, flipX, f
     self:setDeck(deck)
     self.sheetSize = deck.sheetSize
     self.sheetNames = {}
+end
+
+---
+-- Sets the texture flip.
+-- @param flipX (option)flipX
+-- @param flipY (option)flipY
+function SheetImage:setFlip(flipX, flipY)
+    local deck = self:getDeck()
+    deck = DeckMgr:getTileImageDeck(deck.textureWidth, deck.textureHeight, deck.tileWidth, deck.tileHeight,
+        deck.spacing, deck.margin, deck.gridFlag, flipX, flipY)
+    self:setDeck(deck)
 end
 
 ---
