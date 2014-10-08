@@ -898,29 +898,6 @@ function UIComponent:getStyle(name)
 end
 
 ---
--- Set the event listener.
--- Event listener that you set in this function is one.
--- @param eventName event name
--- @param func event listener
-function UIComponent:setEventListener(eventName, func)
-    local propertyName = "_event_" .. eventName
-
-    if self[propertyName] == func then
-        return
-    end
-
-    if self[propertyName] then
-        self:removeEventListener(eventName, self[propertyName])
-    end
-
-    self[propertyName] = func
-
-    if self[propertyName] then
-        self:addEventListener(eventName, self[propertyName])
-    end
-end
-
----
 -- Returns the focusMgr.
 -- @return focusMgr
 function UIComponent:getFocusMgr()

@@ -25,4 +25,5 @@ return {
     {title = "Spine Skeletal Animation", scene = "scenes/spine_boy_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Spine Atlas", scene = "scenes/spine_boy_atlas_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Spine Skins", scene = "scenes/spine_goblins_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Task Library 1", scene = "scenes/tasklib_1_sample", openAnime = "fade", closeAnime = "fade"},
 }
