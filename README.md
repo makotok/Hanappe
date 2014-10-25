@@ -5,12 +5,45 @@
 ## Introduction
 Open source framework for [Moai SDK](https://github.com/moai/moai-dev).
 
+## Setup
 
+This is not required if it is already installed.
+
+	# Install MOAI SDK, Apache Ant
+	# For details, see the moai-dev.
+	# 1.5-stable branch or 1.5.2 Release.
+
+	# Download Hanappe
+	cd <install_path>
+	git clone https://github.com/makotok/Hanappe.git
+
+## Run Samples
+	
+### Mac OSX
+
+Please run the "run_osx.sh" file.
+
+	cd <install_path>/Hanappe/projects/flower-sample
+	./run_osx.sh
+	
+	cd <install_path>/Hanappe/projects/hanappe-sample
+	./run_osx.sh
+
+### Windows
+
+Please run "run_win.bat" file.
+
+	cd <install_path>\Hanappe\projects\flower-sample
+	run_win.bat
+	
+	cd <install_path>\Hanappe\projects\hanappe-sample
+	run_win.bat
+	
 ## SDK Version
 I have been tested on the following versions.
 However, it supports the latest version basically.
 
-* Moai SDK Release 1.5
+* Moai SDK Release 1.5.2
 
 ## Tools Version
 Tool version being used by the Hanappe is as follows.

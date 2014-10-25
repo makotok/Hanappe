@@ -187,6 +187,24 @@ function TileMap:saveMapData()
 end
 
 ---
+-- Clear the map data.
+function TileMap:clearMapData()
+    self:removeChildren()
+
+    self.data = {}
+    self.version = 0
+    self.orientation = ""
+    self.mapWidth = 0
+    self.mapHeight = 0
+    self.tileWidth = 0
+    self.tileHeight = 0
+    self.mapLayers = {}
+    self.tilesets = {}
+    self.properties = {}
+    self.resourceDirectory = ""
+end
+
+---
 -- Update the order of the rendering.
 -- If you are using a single layer,
 -- you should update the drawing order in a timely manner.
@@ -344,6 +362,17 @@ function TileMap:getProperty(key)
 end
 
 ---
+-- Returns the property.
+-- @param key key.
+-- @return value.
+function TileMap:getPropertyAsNumber(key)
+    local value = self:getProperty(key)
+    if value then
+        return tonumber(value)
+    end
+end
+
+---
 -- Returns the tile property with the specified gid.
 -- @param gid tile gid
 -- @param key key of the properties
@@ -469,6 +498,17 @@ end
 -- @return value.
 function TileLayer:getProperty(key)
     return self.properties[key]
+end
+
+---
+-- Returns the property.
+-- @param key key.
+-- @return value.
+function TileLayer:getPropertyAsNumber(key)
+    local value = self:getProperty(key)
+    if value then
+        return tonumber(value)
+    end
 end
 
 ---
@@ -816,6 +856,13 @@ function TileObject:getProperty(key)
     return self.properties[key]
 end
 
+function TileObject:getPropertyAsNumber(key)
+    local value = self:getProperty(key)
+    if value then
+        return tonumber(value)
+    end
+end
+
 ----------------------------------------------------------------------------------------------------
 -- @type TileObjectGroup
 -- 
@@ -982,6 +1029,17 @@ end
 -- @return value.
 function TileObjectGroup:getProperty(key)
     return self.properties[key]
+end
+
+---
+-- Returns the property.
+-- @param key key.
+-- @return value.
+function TileObjectGroup:getPropertyAsNumber(key)
+    local value = self:getProperty(key)
+    if value then
+        return tonumber(value)
+    end
 end
 
 ----------------------------------------------------------------------------------------------------

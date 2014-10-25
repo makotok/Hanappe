@@ -906,6 +906,32 @@ function EventDispatcher:removeEventListener(eventType, callback, source)
 end
 
 ---
+-- Set the event listener.
+-- Event listener that you set in this function is one.
+-- @param eventName event name
+-- @param callback event listener
+function EventDispatcher:setEventListener(eventType, callback, source, priority)
+    local propertyName = "_eventListener_" .. assert(eventType)
+    local oldListener = self[propertyName]
+
+    if oldListener and oldListener.callback == callback
+        and oldListener.source == source
+        and oldListener.priority == priority then
+        return
+    end
+
+    if oldListener then
+        self:removeEventListener(oldListener.type, oldListener.callback, oldListener.source)
+    end
+
+    if callback then
+        local newListener = EventListener(eventType, callback, source, priority)
+        self[propertyName] = newListener
+        self:addEventListener(newListener.type, newListener.callback, newListener.source, newListener.priority)
+    end
+end
+
+---
 -- Returns true if you have an event listener.
 -- @param eventType
 -- @param callback
