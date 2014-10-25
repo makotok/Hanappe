@@ -1,5 +1,7 @@
 module(..., package.seeall)
 
+local KeyCode = flower.KeyCode
+
 --------------------------------------------------------------------------------
 -- Event Handler
 --------------------------------------------------------------------------------
@@ -38,6 +40,16 @@ function onKeyInput(e)
     print("tupe  = " .. e.type)
     print("down  = " .. tostring(e.down))
     print("key   = " .. e.key)
+
+    if KeyCode.isShiftKey(e.key) then
+        print("Shift key pressed")
+    end
+    if KeyCode.isCtrlKey(e.key) then
+        print("Ctrl key pressed")
+    end
+    if KeyCode.isAltKey(e.key) then
+        print("Alt key pressed")
+    end
 end
 
 function onTouch(e)

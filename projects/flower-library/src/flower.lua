@@ -443,6 +443,7 @@ end
 ----------------------------------------------------------------------------------------------------
 
 local KeyCode = {}
+M.KeyCode = KeyCode
 
 --- The 0 key
 KeyCode.KEY_0 = 48
@@ -624,6 +625,30 @@ KeyCode.KEY_NUM_7 = 351
 KeyCode.KEY_NUM_8 = 352
 --- The 9 key on the number pad
 KeyCode.KEY_NUM_9 = 353
+
+---
+-- Returns Shift Key has been pressed.
+-- @param key Key code.
+-- @return True if it is Shift Key.
+function KeyCode.isShiftKey(key)
+    return key == KeyCode.KEY_LEFT_SHIFT or key == KEY_RIGHT_SHIFT
+end
+
+---
+-- Returns Ctrl Key has been pressed.
+-- @param key Key code.
+-- @return True if it is Ctrl Key.
+function KeyCode.isCtrlKey(key)
+    return key == KeyCode.KEY_LEFT_CTRL or key == KEY_RIGHT_CTRL
+end
+
+---
+-- Returns Alt Key has been pressed.
+-- @param key Key code.
+-- @return True if it is Alt Key.
+function KeyCode.isAltKey(key)
+    return key == KeyCode.KEY_LEFT_ALT or key == KEY_RIGHT_ALT
+end
 
 ----------------------------------------------------------------------------------------------------
 -- @type Executors
