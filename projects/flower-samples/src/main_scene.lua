@@ -101,8 +101,8 @@ end
 
 function onStart(e)
     -- debug
-    MOAISim.forceGarbageCollection()
-    MOAISim.reportHistogram()
+    --MOAISim.forceGarbageCollection()
+    --MOAISim.reportHistogram()
 
 end
 

@@ -3483,6 +3483,23 @@ function Label:setHighQuality(enabled, contentScale)
     self:setTextSize(self.textSize)
 end
 
+-- V1.6 and code compatibility of V1.5.
+if MOAITextLabel then
+    function Label:getStringBounds(index, length)
+        local xMin, yMin, xMax, yMax = self:getTextBounds(index, length)
+        if xMin == nil or yMin == nil or xMax == nil or yMax == nil then
+            return xMin, yMin, xMax, yMax
+        end
+
+        local w2, h2 = math.floor(self:getWidth() / 2), math.floor(self:getHeight() / 2)
+        xMin = xMin + w2
+        yMin = yMin + h2
+        xMax = xMax + w2
+        yMax = yMax + h2
+        return xMin, yMin, xMax, yMax
+    end
+end
+
 ---
 -- Sets the fit size.
 -- @param length (Option)Length of the text.
