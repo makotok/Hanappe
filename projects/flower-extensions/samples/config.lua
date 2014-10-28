@@ -70,9 +70,6 @@ MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_MODEL_BOUNDS, 2, 1, 1, 1 )
 MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_WORLD_BOUNDS, 2, 0.75, 0.75, 0.75 )
 ]]
 
--- 
-MOAISim.setHistogramEnabled(true)
-
 -- Performance measurement.
 local timer = MOAITimer.new()
 timer:setMode(MOAITimer.LOOP)
@@ -82,8 +79,6 @@ timer:setListener(MOAITimer.EVENT_TIMER_LOOP,
         print("-------------------------------------------")
         print("FPS:", MOAISim.getPerformance())
         print("Draw:", MOAIRenderMgr.getPerformanceDrawCount())
-        MOAISim.reportHistogram()
-        MOAISim.reportLeaks()
     end)
 timer:start()
 
