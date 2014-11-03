@@ -3447,6 +3447,7 @@ end
 -- @param height Height
 function Label:setSize(width, height)
     self:setRect(0, 0, width, height)
+    self:setBounds(0, 0, 0, width, height, 0)
 end
 
 ---
