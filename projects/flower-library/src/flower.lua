@@ -7,7 +7,7 @@
 -- issues, questions, or problems regarding the documentation.
 --
 -- @author Makoto
--- @release V2.1.2
+-- @release V2.1.5
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -3766,6 +3766,13 @@ function TouchHandler:onTouch(e)
     -- touch event
     local e2 = table.copy(e, self.TOUCH_EVENT)
 
+    -- the active prop is the one reported from getTouchableProp,
+    -- the "other" prop is the prop associated originally with this touch
+    -- index. Used to make it easier to distinguish whether a touchUp
+    -- event should be counted as a "click".
+    e2.activeProp = prop
+    e2.otherProp = prop2
+
     -- dispatch event
     if prop then
         e2.prop = prop
@@ -3782,6 +3789,8 @@ function TouchHandler:onTouch(e)
     -- reset properties to free resources used in cached event
     e2.data = nil
     e2.prop = nil
+    e2.activeProp = nil
+    e2.otherProp = nil
     e2.target = nil
     e2:setListener(nil, nil)
 end
