@@ -23,7 +23,7 @@ flower.DEFAULT_SCREEN_HEIGHT = screenHeight
 flower.DEFAULT_VIEWPORT_SCALE = viewScale
 
 --- default y behavior; set to true to have y=0 be the bottom of the screen
-flower.DEFAULT_VIEWPORT_YFLIP = true
+flower.DEFAULT_VIEWPORT_YFLIP = false
 
 -- High quality rendering of Label
 -- When enabled, it may take a long time to display the label.

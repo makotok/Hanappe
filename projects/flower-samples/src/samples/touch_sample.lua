@@ -53,11 +53,25 @@ function onCreate(e)
     image3:setVisible(false)
     group:addChild(image3)
     
+    -- group2
+    group2 = flower.Group(layer)
+    group2:setPos(200, 200)
+    group2:setSize(100, 100)
+    group2:setScissorContent(true)
+    group2.name = "group2"
+
+    -- image3
+    image4 = flower.Image("cathead.png")
+    image4.name = "image4"
+    group2:addChild(image4)
+    
     -- add event listeners
     addTouchEventListeners(group)
+    addTouchEventListeners(group2)
     addTouchEventListeners(image1)
     addTouchEventListeners(image2)
     addTouchEventListeners(image3)
+    addTouchEventListeners(image4)
 end
 
 function onStart(e)

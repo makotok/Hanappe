@@ -2471,8 +2471,13 @@ function Group:addChild(child)
             self.layer:insertProp(child)
         end
 
-        if self.contentScissorRect then
-            child:setScissorRect(self.contentScissorRect)
+        local scissorRect = self.contentScissorRect or self.parentScissorRect
+        if scissorRect then
+            if child.setParentScissorRect then
+                child:setParentScissorRect(scissorRect)
+            else
+                child:setScissorRect(scissorRect)
+            end
         end
 
         return true
@@ -2492,6 +2497,15 @@ function Group:removeChild(child)
             child:setLayer(nil)
         elseif self.layer then
             self.layer:removeProp(child)
+        end
+
+        local scissorRect = self.contentScissorRect or self.parentScissorRect
+        if scissorRect then
+            if child.setParentScissorRect then
+                child:setParentScissorRect(nil)
+            else
+                child:setScissorRect(nil)
+            end
         end
 
         return true
@@ -2578,6 +2592,9 @@ function Group:setPriority(priority)
     end
 end
 
+---
+-- Specify whether to scissor test the children.
+-- @param scissorRect scissorRect
 function Group:setScissorRect(scissorRect)
     MOAIPropInterface.setScissorRect(self, scissorRect)
 
@@ -2600,6 +2617,10 @@ function Group:setParentScissorRect(parentRect)
     end
 end
 
+---
+-- Specify whether to scissor test the children.
+-- If the group is moved, scissorRect to move.
+-- @param enabled enabled
 function Group:setScissorContent(enabled)
     if enabled then
         self.contentScissorRect = MOAIScissorRect.new()
@@ -3776,7 +3797,17 @@ function TouchHandler:getTouchableProp(e)
     for i = #props, 1, -1 do
         local prop = props[i]
         if prop:getAttr(MOAIProp.ATTR_VISIBLE) > 0 then
-            return prop
+            -- getScissorRect is part of a recent submitted change.
+            local scissor = prop.getScissorRect and prop:getScissorRect()
+            if scissor then
+                local sx, sy = scissor:worldToModel(e.wx, e.wy)
+                local xMin, yMin, xMax, yMax = scissor:getRect()
+                if sx > xMin and sx < xMax and sy > yMin and sy < yMax then
+                    return prop
+                end
+            else
+                return prop
+            end
         end
     end
 end
