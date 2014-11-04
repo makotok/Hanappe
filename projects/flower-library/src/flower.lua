@@ -84,6 +84,9 @@ M.DEFAULT_VIEWPORT_SCALE = 1
 --- default y behavior; set to true to have y=0 be the bottom of the screen
 M.DEFAULT_VIEWPORT_YFLIP = false
 
+--- default blending mode for images
+M.DEFAULT_BLEND_MODE = nil
+
 ----------------------------------------------------------------------------------------------------
 -- Public functions
 ----------------------------------------------------------------------------------------------------
@@ -1068,10 +1071,8 @@ M.EventDispatcher = EventDispatcher
 
 EventDispatcher.EVENT_CACHE = {}
 
---------------------------------------------------------------------------------
+---
 -- The constructor.
--- @param eventType (option)The type of event.
---------------------------------------------------------------------------------
 function EventDispatcher:init()
     self.eventListenersMap = {}
 end
@@ -2146,6 +2147,16 @@ DisplayObject = class(EventDispatcher)
 DisplayObject.__index = MOAIPropInterface
 DisplayObject.__moai_class = MOAIProp
 M.DisplayObject = DisplayObject
+
+---
+-- The constructor.
+function DisplayObject:init()
+    DisplayObject.__super.init(self)
+
+    if M.DEFAULT_BLEND_MODE then
+        self:setBlendMode(unpack(M.DEFAULT_BLEND_MODE))
+    end
+end
 
 ---
 -- Returns the size.
