@@ -2542,6 +2542,12 @@ function Group:getChildByName(name)
         if child.name == name then
             return child
         end
+        if child.isGroup and child.getChildByName ~= nil then
+            local child2 = child:getChildByName(name)
+            if child2 then
+                return child2
+            end
+        end
     end
 end
 
