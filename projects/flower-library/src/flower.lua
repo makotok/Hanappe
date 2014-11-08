@@ -3486,7 +3486,7 @@ function Label:init(text, width, height, font, textSize)
     font = Resources.getFont(font, nil, self.textSize * self.contentScale)
 
     self:setFont(font)
-    self:setRect(0, 0, width or 10, height or 10)
+    self:setSize(width or 10, height or 10)
     self:setTextSize(self.textSize)
     self:setTextScale(1 / self.contentScale)
     self:setString(text)
