@@ -2225,11 +2225,27 @@ function DisplayObject:getLeft()
 end
 
 ---
+-- Set the left position.
+-- @param value left position.
+function DisplayObject:setLeft(value)
+    local left, top = self:getPos()
+    self:setPos(value, top)    
+end
+
+---
 -- Returns the top position.
 -- @return top
 function DisplayObject:getTop()
     local left, top = self:getPos()
     return top
+end
+
+---
+-- Set the top position.
+-- @param value top position.
+function DisplayObject:setTop(value)
+    local left, top = self:getPos()
+    self:setPos(left, value)    
 end
 
 ---
@@ -2242,12 +2258,28 @@ function DisplayObject:getRight()
 end
 
 ---
+-- Set the right position.
+-- @param value right position.
+function DisplayObject:setRight(value)
+    local left, top = self:getPos()
+    self:setPos(value - self:getWidth(), top)    
+end
+
+---
 -- Returns the bottom position.
 -- @return bottom
 function DisplayObject:getBottom()
     local left, top = self:getPos()
     local width, height = self:getSize()
     return top + height
+end
+
+---
+-- Set the bottom position.
+-- @param value bottom position.
+function DisplayObject:setBottom(value)
+    local left, top = self:getPos()
+    self:setPos(left, value - self:getHeight())    
 end
 
 ---
@@ -2353,6 +2385,7 @@ function Layer:init(viewport)
     self:setViewport(viewport or M.viewport)
     self.touchEnabled = false
     self.touchHandler = nil
+    self.touchHandlerClass = TouchHandler
 end
 
 ---
@@ -2364,7 +2397,7 @@ function Layer:setTouchEnabled(value)
     end
     self.touchEnabled = value
     if value  then
-        self.touchHandler = self.touchHandler or TouchHandler(self)
+        self.touchHandler = self.touchHandler or self.touchHandlerClass(self)
     end
 end
 
