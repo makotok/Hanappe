@@ -17,6 +17,7 @@ local flower = require "flower"
 local class = flower.class
 local table = flower.table
 local math = flower.math
+local KeyCode = flower.KeyCode
 local Executors = flower.Executors
 local Resources = flower.Resources
 local PropertyUtils = flower.PropertyUtils
@@ -43,7 +44,6 @@ local FocusMgr
 local LayoutMgr
 local IconMgr
 local TextAlign
-local KeyCode
 local UIEvent
 local UIComponent
 local UIGroup
@@ -370,28 +370,6 @@ TextAlign["top"] = MOAITextBox.LEFT_JUSTIFY
 
 --- bottom: MOAITextBox.RIGHT_JUSTIFY
 TextAlign["bottom"] = MOAITextBox.RIGHT_JUSTIFY
-
-----------------------------------------------------------------------------------------------------
--- @type KeyCode
--- This is a table that defines the code of the key input.
-----------------------------------------------------------------------------------------------------
-KeyCode = {}
-M.KeyCode = KeyCode
-
---- DEL
-KeyCode.DEL = 127
-
---- BACKSPACE
-KeyCode.BACKSPACE = 8
-
---- SPACE
-KeyCode.SPACE = 32
-
---- ENTER
-KeyCode.ENTER = 13
-
---- TAB
-KeyCode.TAB = 9
 
 ----------------------------------------------------------------------------------------------------
 -- @type UIEvent
@@ -984,6 +962,7 @@ function UIView:_initInternal()
     self.isUIView = true
     self._scene = nil
     self._lastPriority = 0
+    self._touchDownFocusOutEnabled = true
 
     self:_initLayer()
 end
@@ -1059,8 +1038,10 @@ end
 -- This event handler is called when you touch the layer.
 -- @param e Touch Event
 function UIView:onLayerTouchDown(e)
-    local focusMgr = self:getFocusMgr()
-    focusMgr:setFocusObject(nil)
+    if self._touchDownFocusOutEnabled then
+        local focusMgr = self:getFocusMgr()
+        focusMgr:setFocusObject(nil)
+    end
 end
 
 ---
@@ -2665,11 +2646,11 @@ end
 function TextInput:onKeyDown(e)
     local key = e.key
 
-    if key == KeyCode.DEL or key == KeyCode.BACKSPACE then
+    if key == KeyCode.KEY_DELETE or key == KeyCode.KEY_BACKSPACE then
         local text = self:getText()
         text = #text > 0 and text:sub(1, #text - 1) or text
         self:setText(text)
-    elseif key == KeyCode.ENTER then
+    elseif key == KeyCode.KEY_ENTER then
     -- TODO: LF
     else
         self:addText(string.char(key))
@@ -2890,6 +2871,8 @@ function ListBox:_initInternal()
     self._scrollBarVisible = true
     self._labelField = nil
     self._touchedIndex = nil
+    self._keyMoveEnabled = true
+    self._keyEnterEnabled = true
 end
 
 ---
@@ -3104,7 +3087,7 @@ function ListBox:setSelectedIndex(index)
         newItem:setSelected(true)
     end
 
-    local data = newItem and  newItem:getData() or nil
+    local data = self._selectedIndex and self._listData[self._selectedIndex] or nil
     self:dispatchEvent(UIEvent.ITEM_CHANGED, data)
 end
 
@@ -3113,6 +3096,20 @@ end
 -- @return selectedIndex
 function ListBox:getSelectedIndex()
     return self._selectedIndex
+end
+
+---
+-- Returns the selected row index.
+-- @return selected row index
+function ListBox:getSelectedRowIndex()
+    return self._selectedIndex and math.ceil(self._selectedIndex / self._columnCount) or nil
+end
+
+---
+-- Returns the selected row index.
+-- @return selected row index
+function ListBox:getSelectedColumnIndex()
+    return self._selectedIndex and (self._selectedIndex - 1) % self._columnCount + 1 or nil
 end
 
 ---
@@ -3284,6 +3281,26 @@ function ListBox:findListItemByPos(x, y)
 end
 
 ---
+-- This event handler is called when focus in.
+-- @param e event
+function ListBox:onFocusIn(e)
+    ListBox.__super.onFocusIn(self, e)
+
+    InputMgr:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
+    InputMgr:addEventListener(Event.KEY_UP, self.onKeyUp, self)
+end
+
+---
+-- This event handler is called when focus in.
+-- @param e event
+function ListBox:onFocusOut(e)
+    ListBox.__super.onFocusOut(self, e)
+
+    InputMgr:removeEventListener(Event.KEY_DOWN, self.onKeyDown, self)
+    InputMgr:removeEventListener(Event.KEY_UP, self.onKeyUp, self)
+end
+
+---
 -- This event handler is called when touch.
 -- @param e Touch Event
 function ListBox:onTouchDown(e)
@@ -3344,6 +3361,63 @@ end
 -- @param e Touch Event
 function ListBox:onTouchCancel(e)
     self:onTouchUp(e)
+end
+
+---
+-- This event handler is called when key down.
+-- @param e event
+function ListBox:onKeyDown(e)
+
+    -- move selectedIndex
+    if self._keyMoveEnabled then
+        local selectedIndex = self:getSelectedIndex()
+        local columnCount = self:getColumnCount()
+        if e.key == KeyCode.KEY_UP then
+            selectedIndex = selectedIndex and math.max(1, selectedIndex - columnCount) or 1
+            self:setSelectedIndex(selectedIndex)
+
+            local rowIndex = self:getSelectedRowIndex()
+            if rowIndex <= self:getVerticalScrollPosition() then
+                self:setVerticalScrollPosition(self:getVerticalScrollPosition() - 1)
+            end
+        elseif e.key == KeyCode.KEY_DOWN then
+            selectedIndex = selectedIndex and math.min(self:getListSize(), selectedIndex + columnCount) or 1
+            self:setSelectedIndex(selectedIndex)
+
+            local rowIndex = self:getSelectedRowIndex()
+            if rowIndex > self:getVerticalScrollPosition() + self:getRowCount() then
+                self:setVerticalScrollPosition(self:getVerticalScrollPosition() + 1)
+            end
+        elseif e.key == KeyCode.KEY_LEFT then
+            local rowIndex = selectedIndex and self:getSelectedRowIndex() or 1
+            local minIndex = (rowIndex - 1) * columnCount + 1
+            selectedIndex = selectedIndex and math.max(minIndex, selectedIndex - 1) or 1
+            self:setSelectedIndex(selectedIndex)
+        elseif e.key == KeyCode.KEY_RIGHT then
+            local rowIndex = selectedIndex and self:getSelectedRowIndex() or 1
+            local maxIndex = rowIndex * columnCount
+            selectedIndex = selectedIndex and math.min(maxIndex, selectedIndex + 1) or 1
+            self:setSelectedIndex(selectedIndex)
+        end
+    end
+
+    -- dispatch itemClick event
+    if self._keyEnterEnabled then
+        if e.key == KeyCode.KEY_ENTER then
+            local selectedItem = self:getSelectedItem()
+            if selectedItem then
+                self:dispatchEvent(UIEvent.ITEM_CLICK, selectedItem:getData())
+            end
+        end
+    end
+
+end
+
+---
+-- This event handler is called when key up.
+-- @param e event
+function ListBox:onKeyUp(e)
+
 end
 
 ---
