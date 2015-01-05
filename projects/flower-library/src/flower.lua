@@ -18,9 +18,12 @@ local table
 local math
 local class
 local KeyCode
+local Log
 local Executors
 local Resources
+local Devices
 local PropertyUtils
+local DebugUtils
 local ClassFactory
 local Event
 local EventListener
@@ -72,11 +75,14 @@ local MOAIFontInterface = MOAIFont.getInterfaceTable()
 -- Public Const
 ----------------------------------------------------------------------------------------------------
 
+--- default width of the window
+M.DEFAULT_WINDOW_TITLE = "no titile"
+
 --- default width of the screen
-M.DEFAULT_SCREEN_WIDTH = MOAIEnvironment.horizontalResolution or 320
+M.DEFAULT_SCREEN_WIDTH = 320
 
 --- default height of the screen
-M.DEFAULT_SCREEN_HEIGHT = MOAIEnvironment.verticalResolution or 480
+M.DEFAULT_SCREEN_HEIGHT = 480
 
 --- default scale of the viewport
 M.DEFAULT_VIEWPORT_SCALE = 1
@@ -94,11 +100,12 @@ M.DEFAULT_BLEND_MODE = nil
 ---
 -- Open the window.
 -- Initializes the library.
--- @param title Title of the window
--- @param width Width of the window
--- @param height Height of the window
+-- @param title (Option)Title of the window
+-- @param width (Option)Width of the window
+-- @param height (Option)Height of the window
 -- @param scale (Option)Scale of the Viewport to the Screen
 function M.openWindow(title, width, height, scale)
+    title = title or M.DEFAULT_WINDOW_TITLE
     width = width or M.DEFAULT_SCREEN_WIDTH
     height = height or M.DEFAULT_SCREEN_HEIGHT
     scale = scale or M.DEFAULT_VIEWPORT_SCALE
@@ -111,6 +118,39 @@ function M.openWindow(title, width, height, scale)
     SceneMgr:initialize()
 
     MOAISim.openWindow(title, M.screenWidth, M.screenHeight)
+end
+
+---
+-- Set the size of the assumed device.
+function M.setDefaultDisplaySize(targetDevice, landscape, scaleMode)
+    assert(targetDevice)
+
+    -- mobile
+    if M.isMobile() then
+        M.DEFAULT_SCREEN_WIDTH = MOAIEnvironment.horizontalResolution
+        M.DEFAULT_SCREEN_HEIGHT = MOAIEnvironment.verticalResolution
+        M.DEFAULT_VIEWPORT_SCALE = math.max(M.DEFAULT_SCREEN_WIDTH, M.DEFAULT_SCREEN_HEIGHT) > 960 and 2 or 1
+        return
+    end
+
+    -- desktop
+    local device = type(targetDevice) == "string" and assert(Devices[targetDevice]) or targetDevice
+    local displayWidth = landscape and math.max(device.displayWidth, device.displayHeight) or math.min(device.displayWidth, device.displayHeight)
+    local displayHeight = landscape and math.min(device.displayWidth, device.displayHeight) or math.max(device.displayWidth, device.displayHeight)
+    local viewportScale = 1
+
+    if device.retinaDisplay then
+        if scaleMode then
+            viewportScale = 2
+        else
+            displayWidth = displayWidth / 2
+            displayHeight = displayHeight / 2
+        end
+    end
+
+    M.DEFAULT_SCREEN_WIDTH = displayWidth
+    M.DEFAULT_SCREEN_HEIGHT = displayHeight
+    M.DEFAULT_VIEWPORT_SCALE = viewportScale
 end
 
 ---
@@ -136,6 +176,20 @@ function M.updateDisplaySize(width, height, scale)
         M.viewport:setScale(M.viewWidth, -M.viewHeight)
         M.viewport:setOffset(-1, 1)
     end    
+end
+
+---
+-- Returns whether the mobile execution environment.
+-- @return True in the case of mobile.
+function M.isMobile()
+    return Runtime.isMobile()
+end
+
+---
+-- Returns whether the desktop execution environment.
+-- @return True in the case of desktop.
+function M.isDesktop()
+    return Runtime.isDesktop()
 end
 
 ---
@@ -663,6 +717,47 @@ function KeyCode.isAltKey(key)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Log
+--
+-- TODO:Ldoc
+----------------------------------------------------------------------------------------------------
+Log = {}
+M.Log = Log
+
+Log.infoLogEnabled = true
+Log.warnLogEnabled = true
+Log.errorLogEnabled = true
+Log.debugLogEnabled = true
+
+function Log.info(...)
+    if Log.infoLogEnabled then
+        Log.outputLog("INFO", ...)
+    end
+end
+
+function Log.warn(...)
+    if Log.warnLogEnabled then
+        Log.outputLog("WARN", ...)
+    end
+end
+
+function Log.error(...)
+    if Log.errorLogEnabled then
+        Log.outputLog("ERROR", ...)
+    end
+end
+
+function Log.debug(...)
+    if Log.debugLogEnabled then
+        Log.outputLog("DEBUG", ...)
+    end
+end
+
+function Log.outputLog(logType, ...)
+    print("[" .. logType .. "]", ...)
+end
+
+----------------------------------------------------------------------------------------------------
 -- @type Executors
 --
 -- This is a utility class for asynchronous (coroutine-style) execution.
@@ -875,6 +970,78 @@ function Resources.destroyModule(m)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Devices
+--
+-- This is a class that lists information about the device.
+----------------------------------------------------------------------------------------------------
+Devices = {}
+M.Devices = Devices
+
+Devices.desktop640x480 = {
+    deviceOS = nil,
+    retinaDisplay = false,
+    displayDPI = 96,
+    displayWidth = 640,
+    displayHeight = 480,
+}
+Devices.iPhone5 = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 326,
+    displayWidth = 640,
+    displayHeight = 1136,
+}
+Devices.iPhone5S = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 326,
+    displayWidth = 640,
+    displayHeight = 1136,
+}
+Devices.iPhone6 = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 326,
+    displayWidth = 750,
+    displayHeight = 1334,
+}
+Devices.iPhone6Plus = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 401,
+    displayWidth = 1080,
+    displayHeight = 1920,
+}
+Devices.iPad = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 132,
+    displayWidth = 768,
+    displayHeight = 1024,
+}
+Devices.iPadMini = {
+    deviceOS = "iOS",
+    retinaDisplay = false,
+    displayDPI = 163,
+    displayWidth = 768,
+    displayHeight = 1024,
+}
+Devices.iPadMini2 = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 326,
+    displayWidth = 1536,
+    displayHeight = 2048,
+}
+Devices.iPadAir = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 264,
+    displayWidth = 1536,
+    displayHeight = 2048,
+}
+
+----------------------------------------------------------------------------------------------------
 -- @type PropertyUtils
 --
 -- It is a property utility class.
@@ -916,6 +1083,36 @@ function PropertyUtils.setProperty(obj, name, value, unpackFlag)
     else
         return setter(obj, unpack(value))
     end
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type DebugUtils
+--
+-- It is a debug utility class.
+----------------------------------------------------------------------------------------------------
+DebugUtils = {}
+M.DebugUtils = DebugUtils
+
+function DebugUtils.showDebugLines()
+    MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX, 1, 1, 1, 1, 1 )
+    MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX_LAYOUT, 1, 0, 0, 1, 1 )
+    MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX_BASELINES, 1, 1, 0, 0, 1 )
+    MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_MODEL_BOUNDS, 2, 1, 1, 1 )
+    MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_WORLD_BOUNDS, 2, 0.75, 0.75, 0.75 )    
+end
+
+function DebugUtils.startPerformanceLog(span)
+    span = span or 5
+    local timer = MOAITimer.new()
+    timer:setMode(MOAITimer.LOOP)
+    timer:setSpan(span)
+    timer:setListener(MOAITimer.EVENT_TIMER_LOOP,
+        function()
+            Log.debug("-------------------------------------------")
+            Log.debug("FPS", MOAISim.getPerformance())
+            Log.debug("Draw:", MOAIRenderMgr.getPerformanceDrawCount())
+        end)
+    timer:start()
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1243,6 +1440,21 @@ M.Runtime = Runtime
 function Runtime:initialize()
     Executors.callLoop(self.onEnterFrame)
     MOAIGfxDevice.setListener(MOAIGfxDevice.EVENT_RESIZE, self.onResize)
+end
+
+---
+-- Returns whether the mobile execution environment.
+-- @return True in the case of mobile.
+function Runtime.isMobile()
+    local brand = MOAIEnvironment.osBrand
+    return brand == 'Android' or brand == 'iOS'
+end
+
+---
+-- Returns whether the desktop execution environment.
+-- @return True in the case of desktop.
+function Runtime.isDesktop()
+    return not Runtime.isMobile()
 end
 
 -- enter frame
@@ -3446,7 +3658,7 @@ end
 ---
 -- Unsupported pivot.
 function NineImage:setPiv(xPiv, yPiv, zPiv)
-    print("Unsupported!")
+    Log.warn("Unsupported!")
 end
 
 ---
