@@ -63,6 +63,7 @@ local ListBox
 local ListItem
 local Slider
 local ScrollView
+local Spacer
 
 ----------------------------------------------------------------------------------------------------
 -- Public Const
@@ -186,12 +187,17 @@ M.FocusMgr = FocusMgr
 function FocusMgr:init()
     FocusMgr.__super.init(self)
     self.focusObject = nil
+    self.alywasFocusObject = nil
 end
 
 ---
 -- Set the focus object.
 -- @param object focus object.
 function FocusMgr:setFocusObject(object)
+    if self.alywasFocusObject and self.alywasFocusObject ~= object then
+        return
+    end
+
     if self.focusObject == object then
         return
     end
@@ -214,6 +220,15 @@ function FocusMgr:getFocusObject()
     return self.focusObject
 end
 
+---
+-- Set the focus object.
+-- @param object focus object.
+function FocusMgr:setAlwaysFocusObject(focusObject)
+    self.alywasFocusObject = focusObject
+    if self.alywasFocusObject then
+        self:setFocusObject(focusObject)
+    end
+end
 
 ----------------------------------------------------------------------------------------------------
 -- @type LayoutMgr
@@ -822,6 +837,18 @@ function UIComponent:isFocusEnabled()
 end
 
 ---
+-- Sets the always focus.
+-- @param value always focus.
+function UIComponent:setAlwaysFocus(value)
+    local focusMgr = self:getFocusMgr()
+    if self._focusEnabled and value then
+        focusMgr:setAlwaysFocusObject(self)
+    else
+        focusMgr:setAlwaysFocusObject(nil)
+    end
+end
+
+---
 -- Sets the theme.
 -- @param theme theme
 function UIComponent:setTheme(theme)
@@ -1049,6 +1076,7 @@ end
 -- @param e Touch Event
 function UIView:onSceneStop(e)
     local focusMgr = self:getFocusMgr()
+    focusMgr:setAlwaysFocusObject(nil)
     focusMgr:setFocusObject(nil)
 end
 
@@ -1957,6 +1985,13 @@ Joystick.MODE_ANALOG = "analog"
 --- Mode of the stick
 Joystick.MODE_DIGITAL = "digital"
 
+Joystick.DIRECTION_TO_KEY_CODE_MAP = {
+    left = KeyCode.KEY_LEFT,
+    top = KeyCode.KEY_UP,
+    right = KeyCode.KEY_RIGHT,
+    bottom = KeyCode.KEY_DOWN,
+}
+
 --- The ratio of the center
 Joystick.RANGE_OF_CENTER_RATE = 0.5
 
@@ -1975,6 +2010,8 @@ function Joystick:_initInternal()
     self._rangeOfCenterRate = Joystick.RANGE_OF_CENTER_RATE
     self._stickMode = Joystick.MODE_ANALOG
     self._changedEvent = Event(UIEvent.STICK_CHANGED)
+    self._keyInputDispatchEnabled = false
+    self._keyEvent = nil
 end
 
 ---
@@ -2028,6 +2065,10 @@ function Joystick:updateKnob(x, y)
         e.direction = self:getStickDirection()
         e.down = self._touchDownFlag
         self:dispatchEvent(e)
+
+        if self._keyInputDispatchEnabled then
+            self:dispatchKeyEvent(e.direction)
+        end
     end
 end
 
@@ -2157,10 +2198,37 @@ function Joystick:setStickMode(mode)
 end
 
 ---
+-- Set the keyInputDispatchEnabled
+-- @param value true or false
+function Joystick:setKeyInputDispatchEnabled(value)
+    self._keyInputDispatchEnabled = value
+end
+
+---
 -- Returns the touched.
 -- @return stick mode
 function Joystick:isTouchDown()
     return self._touchIndex ~= nil
+end
+
+function Joystick:dispatchKeyEvent(direction)
+    local key = Joystick.DIRECTION_TO_KEY_CODE_MAP[direction]
+
+    if self._keyEvent and self._keyEvent.key ~= key then
+        self._keyEvent.type = Event.KEY_UP
+        self._keyEvent.down = false
+        InputMgr:dispatchEvent(self._keyEvent)
+    end
+
+    if key then
+        self._keyEvent = self._keyEvent or Event()
+        self._keyEvent.type = Event.KEY_DOWN
+        self._keyEvent.down = true
+        self._keyEvent.key = key
+        InputMgr:dispatchEvent(self._keyEvent)
+    else
+        self._keyEvent = nil
+    end
 end
 
 ---
@@ -3256,8 +3324,7 @@ end
 -- Set the event listener that is called when the user item changed.
 -- @param func event handler
 function ListBox:setOnItemEnter(func)
-    print("Depricated function:setOnItemEnter")
-    self:setOnItemClick(func)
+    self:setEventListener(UIEvent.ITEM_ENTER, func)
 end
 
 ---
@@ -3310,6 +3377,7 @@ function ListBox:onTouchDown(e)
     self._touchedIndex = e.idx
     self._touchedY = e.wy
     self._touchedVsp = self:getVerticalScrollPosition()
+    self._touchedOldItem = self:getSelectedItem()
     self._itemClickCancelFlg = false
 
     local item = self:findListItemByPos(e.wx, e.wy)
@@ -3330,6 +3398,10 @@ function ListBox:onTouchUp(e)
 
     if item and item:getData() and not self._itemClickCancelFlg then
         self:dispatchEvent(UIEvent.ITEM_CLICK, item:getData())
+
+        if self._touchedOldItem == item then
+            self:dispatchEvent(UIEvent.ITEM_ENTER, item:getData())
+        end
     end
 
     self._touchedIndex = nil
@@ -3520,6 +3592,8 @@ function ListItem:setData(data, dataIndex)
     if self._iconImage then
         self._iconImage:setIndex(self:getIconIndex())
     end
+
+    self:invalidateDisplay()
 end
 
 ---
@@ -3588,6 +3662,8 @@ function ListItem:setIconVisible(iconVisible)
     if self._iconImage then
         self._iconImage:setVisible(iconVisible)
     end
+
+    self:invalidateDisplay()
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -4341,6 +4417,17 @@ function ScrollView:onScrollLayerTouchCancel(e)
     self._lastTouchY = nil
 end
 
+----------------------------------------------------------------------------------------------------
+-- @type Spacer
+-- TODO:Doc
+----------------------------------------------------------------------------------------------------
+Spacer = class(UIComponent)
+M.Spacer = Spacer
+
+function Spacer:_initInternal()
+    Spacer.__super._initInternal(self)
+    self._focusEnabled = false
+end
 
 -- widget initialize
 M.initialize()
