@@ -5,22 +5,41 @@ local flower = require "flower"
 local M = {}
 
 --------------------------------------------------------------------------------
--- Flower
+-- MOAI SDK
 --------------------------------------------------------------------------------
 
-local screenWidth = MOAIEnvironment.horizontalResolution or 320
-local screenHeight = MOAIEnvironment.verticalResolution or 480
-local viewScale = math.floor(math.max(math.min(screenWidth / 320, screenHeight / 480), 1))
+-- Setting the FPS
+MOAISim.setStep(1 / 60)
+
+-- Setting of the operation of the Loop.
+MOAISim.clearLoopFlags()
+MOAISim.setLoopFlags(MOAISim.SIM_LOOP_ALLOW_BOOST)
+MOAISim.setLoopFlags(MOAISim.SIM_LOOP_LONG_DELAY)
+
+-- Sets the boost threshold
+MOAISim.setBoostThreshold(0)
+
+--------------------------------------------------------------------------------
+-- Flower
+--------------------------------------------------------------------------------
 
 -- Resources setting
 flower.Resources.addResourceDirectory("assets")
 
--- Set the screen size
-flower.DEFAULT_SCREEN_WIDTH = screenWidth
-flower.DEFAULT_SCREEN_HEIGHT = screenHeight
+-- Set the window title
+flower.DEFAULT_WINDOW_TITLE = "Flower samples"
 
--- Set the scale of the Viewport
-flower.DEFAULT_VIEWPORT_SCALE = viewScale
+-- Set the display size
+flower.setDefaultDisplaySize("iPhone5", false, false)
+
+--- default width of the screen
+--M.DEFAULT_SCREEN_WIDTH = 320
+
+--- default height of the screen
+--M.DEFAULT_SCREEN_HEIGHT = 480
+
+--- default scale of the viewport
+--M.DEFAULT_VIEWPORT_SCALE = 1
 
 --- default y behavior; set to true to have y=0 be the bottom of the screen
 flower.DEFAULT_VIEWPORT_YFLIP = false
@@ -55,48 +74,13 @@ flower.InputMgr.TOUCH_EVENT_ENABLED = true
 flower.InputMgr.MOUSE_EVENT_ENABLED = true
 
 --------------------------------------------------------------------------------
--- MOAI SDK
---------------------------------------------------------------------------------
-
--- Setting the FPS
-MOAISim.setStep(1 / 60)
-
--- Setting of the operation of the Loop.
-MOAISim.clearLoopFlags()
-MOAISim.setLoopFlags(MOAISim.SIM_LOOP_ALLOW_BOOST)
-MOAISim.setLoopFlags(MOAISim.SIM_LOOP_LONG_DELAY)
-
--- Sets the boost threshold
-MOAISim.setBoostThreshold(0)
-
---------------------------------------------------------------------------------
 -- Debugging
 --------------------------------------------------------------------------------
 
 -- Show bounds of MOAIProp
---[[
-MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX, 1, 1, 1, 1, 1 )
-MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX_LAYOUT, 1, 0, 0, 1, 1 )
-MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX_BASELINES, 1, 1, 0, 0, 1 )
-MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_MODEL_BOUNDS, 2, 1, 1, 1 )
-MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_WORLD_BOUNDS, 2, 0.75, 0.75, 0.75 )
-]]
+--flower.DebugUtils.showDebugLines()
 
--- 
---MOAISim.setHistogramEnabled(true)
-
--- Performance measurement.
-local timer = MOAITimer.new()
-timer:setMode(MOAITimer.LOOP)
-timer:setSpan(5)
-timer:setListener(MOAITimer.EVENT_TIMER_LOOP,
-    function()
-        print("-------------------------------------------")
-        print("FPS:", MOAISim.getPerformance())
-        print("Draw:", MOAIRenderMgr.getPerformanceDrawCount())
-        --MOAISim.reportHistogram()
-        --MOAISim.reportLeaks()
-    end)
-timer:start()
+-- Start performance log
+flower.DebugUtils.startPerformanceLog()
 
 return M
