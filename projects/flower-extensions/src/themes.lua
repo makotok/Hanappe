@@ -117,11 +117,14 @@ M.NORMAL = {
         iconTexture = "skins/icons.png",
         iconTileSize = {24, 24},
     },
-    ScrollView = {
+    ScrollGroup = {
         friction = 0.1,
         scrollPolicy = {true, true},
         bouncePolicy = {true, true},
-        scrollForceBounds = {0.1, 0.1, 100, 100},
+        scrollForceLimits = {0.5, 0.5, 100, 100},
+    },
+    ScrollPanel = {
+        backgroundTexture = "skins/panel.9.png",
     },
 }
 
