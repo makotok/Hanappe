@@ -46,6 +46,7 @@ local IconMgr
 local TextAlign
 local UIEvent
 local UIComponent
+local UILayer
 local UIGroup
 local UIView
 local UILayout
@@ -62,18 +63,12 @@ local MsgBox
 local ListBox
 local ListItem
 local Slider
+local Spacer
 local ScrollGroup
 local ScrollView
 local ScrollPanel
-local ScrollList
-local Spacer
-
-----------------------------------------------------------------------------------------------------
--- Public Const
-----------------------------------------------------------------------------------------------------
-
---- Fixed a bug where the position of the MOAI SDK V1.4p0 does not reflect.(Last build fixed)
-M.USE_TRANSFORM_BUGFIX = false
+local PanelView
+local ListView
 
 ----------------------------------------------------------------------------------------------------
 -- Public functions
@@ -190,28 +185,25 @@ M.FocusMgr = FocusMgr
 function FocusMgr:init()
     FocusMgr.__super.init(self)
     self.focusObject = nil
-    self.alywasFocusObject = nil
 end
 
 ---
 -- Set the focus object.
 -- @param object focus object.
 function FocusMgr:setFocusObject(object)
-    if self.alywasFocusObject and self.alywasFocusObject ~= object then
-        return
-    end
-
     if self.focusObject == object then
         return
     end
 
-    local oldFocusObject = self.focusObject
+    if self.focusObject then
+        self:dispatchEvent(UIEvent.FOCUS_OUT, self.focusObject)
+        self.focusObject:dispatchEvent(UIEvent.FOCUS_OUT)
+    end
+
     self.focusObject = object
 
-    if oldFocusObject then
-        oldFocusObject:dispatchEvent(UIEvent.FOCUS_OUT)
-    end
     if self.focusObject then
+        self:dispatchEvent(UIEvent.FOCUS_IN, self.focusObject)
         self.focusObject:dispatchEvent(UIEvent.FOCUS_IN)
     end
 end
@@ -221,16 +213,6 @@ end
 -- @return focus object.
 function FocusMgr:getFocusObject()
     return self.focusObject
-end
-
----
--- Set the focus object.
--- @param object focus object.
-function FocusMgr:setAlwaysFocusObject(focusObject)
-    self.alywasFocusObject = focusObject
-    if self.alywasFocusObject then
-        self:setFocusObject(focusObject)
-    end
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -247,7 +229,6 @@ function LayoutMgr:init()
     LayoutMgr.__super.init(self)
     self._invalidateDisplayQueue = {}
     self._invalidateLayoutQueue = {}
-    self._invalidateViews = {}
     self._invalidating = false
 end
 
@@ -269,10 +250,6 @@ end
 function LayoutMgr:invalidateLayout(component)
     table.insertElement(self._invalidateLayoutQueue, component)
 
-    if component.isUIView then
-        table.insertElement(self._invalidateViews, component)
-    end
-
     if not self._invalidating then
         Executors.callOnce(self.validateAll, self)
         self._invalidating = true
@@ -289,8 +266,6 @@ function LayoutMgr:validateAll()
         self:validateAll()
         return
     end
-
-    self:validatePriority()
 
     self._invalidating = false
     self:dispatchEvent(Event.COMPLETE)
@@ -314,16 +289,6 @@ function LayoutMgr:validateLayout()
     while component do
         component:validateLayout()
         component = table.remove(self._invalidateLayoutQueue, #self._invalidateLayoutQueue)
-    end
-end
-
----
--- Validate the priority of the views.
-function LayoutMgr:validatePriority()
-    local view = table.remove(self._invalidateViews, #self._invalidateViews)
-    while view do
-        view:updatePriority()
-        view = table.remove(self._invalidateViews, #self._invalidateViews)
     end
 end
 
@@ -484,7 +449,6 @@ function UIComponent:init(params)
     self:setProperties(params)
     self._initialized = true
 
-    self:invalidate()
     self:validate()
     self:setPivToCenter()
 end
@@ -575,18 +539,13 @@ end
 -- Validate the layout.
 -- If you need to update the layout, call the updateLayout.
 function UIComponent:validateLayout()
-    -- Fixed a bug where the position of the MOAI SDK V1.4p0 does not reflect
-    if M.USE_TRANSFORM_BUGFIX then
-        self:forceUpdate()
-    end
-
     if self._invalidateLayoutFlag then
         self:updateLayout()
         self._invalidateLayoutFlag = false
-    end
 
-    if self.parent then
-        self.parent:invalidateLayout()
+        if self.parent then
+            self.parent:invalidateLayout()
+        end
     end
 end
 
@@ -831,18 +790,6 @@ function UIComponent:isFocusEnabled()
 end
 
 ---
--- Sets the always focus.
--- @param value always focus.
-function UIComponent:setAlwaysFocus(value)
-    local focusMgr = self:getFocusMgr()
-    if self._focusEnabled and value then
-        focusMgr:setAlwaysFocusObject(self)
-    else
-        focusMgr:setAlwaysFocusObject(nil)
-    end
-end
-
----
 -- Sets the theme.
 -- @param theme theme
 function UIComponent:setTheme(theme)
@@ -963,6 +910,58 @@ function UIComponent:onFocusOut(e)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type UILayer
+-- Layer class for the Widget.
+----------------------------------------------------------------------------------------------------
+UILayer = class(Layer)
+M.UILayer = UILayer
+
+---
+-- The constructor.
+-- @param viewport (option)viewport
+function UILayer:init(viewport)
+    UILayer.__super.init(self, viewport)
+    self.focusOutEnabled = true
+    self.focusMgr = M.getFocusMgr()
+
+    self:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
+    self:setTouchEnabled(true)
+    self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self, 10)
+end
+
+---
+-- Sets the scene for layer.
+-- @param scene scene
+function UILayer:setScene(scene)
+    if self.scene == scene then
+        return
+    end
+
+    if self.scene then
+        self.scene:removeEventListener(Event.STOP, self.onSceneStop, self, -10)
+    end
+
+    UILayer.__super.setScene(self, scene)
+
+    if self.scene then
+        self.scene:addEventListener(Event.STOP, self.onSceneStop, self, -10)
+    end
+end
+
+function UILayer:onTouchDown(e)
+    if self.focusOutEnabled then
+        self.focusMgr:setFocusObject(nil)
+    end
+end
+
+---
+-- This event handler is called when you stop the scene.
+-- @param e Touch Event
+function UILayer:onSceneStop(e)
+    self.focusMgr:setFocusObject(nil)
+end
+
+----------------------------------------------------------------------------------------------------
 -- @type UIGroup
 -- It is a class that can have on a child UIComponent.
 ----------------------------------------------------------------------------------------------------
@@ -992,97 +991,38 @@ M.UIView = UIView
 function UIView:_initInternal()
     UIView.__super._initInternal(self)
     self.isUIView = true
-    self._scene = nil
-    self._lastPriority = 0
-    self._touchDownFocusOutEnabled = true
 
-    self:_initLayer()
+    self:setSize(flower.getViewSize())
+    self:setScissorContent(true)
 end
 
 ---
 -- Initializes the layer to display the view.
 function UIView:_initLayer()
-    local layer = Layer()
-    layer:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
-    layer:setTouchEnabled(true)
-    layer:addEventListener(Event.TOUCH_DOWN, self.onLayerTouchDown, self, 10)
+    if self.layer then
+        return
+    end
 
-    self:setSize(flower.getViewSize())
+    local layer = UILayer()
     self:setLayer(layer)
 end
 
----
--- Initializes the event listeners.
-function UIView:_initEventListeners()
-    UIView.__super._initEventListeners(self)
-end
+function UIView:validateLayout()
+    if self._invalidateLayoutFlag then
+        UIView.__super.validateLayout(self)
 
----
--- Change the size of the viewport.
--- @param screenX X of the Screen.
--- @param screenY Y of the Screen.
--- @param screenWidth Width of the Screen.
--- @param screenHeight Height of the Screen.
-function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
-    local viewScale = flower.viewScale
-    local viewWidth = screenWidth / viewScale
-    local viewHeight = screenHeight / viewScale
-
-    local viewport = MOAIViewport.new()
-    viewport:setSize(screenX, screenY, screenX + screenWidth, screenY + screenHeight)
-    viewport:setScale(viewWidth, -viewHeight)
-    viewport:setOffset(-1, 1)
-
-    self.layer:setViewport(viewport)
-    self:setSize(viewWidth, viewHeight)
-end
-
----
--- Sets the visible to layer.
--- @param visible visible
-function UIView:setVisible(visible)
-    self.layer:setVisible(visible)
-end
-
----
--- Returns the visible from layer.
--- @return visible
-function UIView:getVisible()
-    self.layer:getVisible()
+        if not self.parent or not self.parent.isUIView then
+            self:updatePriority()
+        end
+    end
 end
 
 ---
 -- Sets the scene for layer.
 -- @param scene scene
 function UIView:setScene(scene)
-    if self.layer.scene then
-        self.layer.scene:removeEventListener(Event.STOP, self.onSceneStop, self, -10)
-    end
-
+    self:_initLayer()
     self.layer:setScene(scene)
-
-    if self.layer.scene then
-        self.layer.scene:addEventListener(Event.STOP, self.onSceneStop, self, -10)
-    end
-end
-
----
--- This event handler is called when you touch the layer.
--- @param e Touch Event
-function UIView:onLayerTouchDown(e)
-    if self._touchDownFocusOutEnabled then
-        local focusMgr = self:getFocusMgr()
-        focusMgr:setFocusObject(nil)
-    end
-end
-
----
--- This event handler is called when you stop the scene.
--- @param e Touch Event
-function UIView:onSceneStop(e)
-    local focusMgr = self:getFocusMgr()
-    focusMgr:setAlwaysFocusObject(nil)
-    focusMgr:setFocusObject(nil)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -3973,9 +3913,11 @@ function ScrollGroup:_updateScrollSize()
     local width, height = 0, 0
     local minWidth, minHeight = self:getSize()
     
-    for i, child in ipairs(self:getChildren()) do
-       width  = math.max(width, child:getRight())
-       height = math.max(height, child:getBottom())
+    for i, child in ipairs(self._contentGroup:getChildren()) do
+        if not child._excludeLayout then
+            width  = math.max(width, child:getRight())
+            height = math.max(height, child:getBottom())
+        end
     end
 
     width = width >= minWidth and width or minWidth

@@ -19,6 +19,7 @@ return {
     {title = "Widget ScrollPanel", scene = "scenes/widget_scrollpanel_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget ScrollView 1", scene = "scenes/widget_scrollview_1_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget ScrollView 2", scene = "scenes/widget_scrollview_2_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Widget ViewGroup", scene = "scenes/widget_viewgroup_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Particles", scene = "scenes/particles_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Audio", scene = "scenes/audio_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Aspect", scene = "scenes/aspect_sample", openAnime = "fade", closeAnime = "fade"},

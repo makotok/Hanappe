@@ -16,34 +16,27 @@ function onCreate(e)
             gap = {5, 5},
             align = {"right", "top"},
         },
-        scrollGroup = UIGroup {
-            layout = BoxLayout {
-                gap = {2, 2},
-                padding = {2, 2, 2, 2},
-                direction = "vertical",
+        contents =  {{
+            Button {
+                size = {600, 200},
+                text = "Test1",
             },
-            children = {{
-                Button {
-                    size = {600, 200},
-                    text = "Test1",
-                },
-                Button {
-                    size = {600, 200},
-                    text = "Test2",
-                },
-                Button {
-                    size = {600, 200},
-                    text = "Test3",
-                },
-                Button {
-                    size = {600, 200},
-                    text = "Test4",
-                },
-                Button {
-                    size = {600, 200},
-                    text = "Test5",
-                },
-            }},
-        },
+            Button {
+                size = {600, 200},
+                text = "Test2",
+            },
+            Button {
+                size = {600, 200},
+                text = "Test3",
+            },
+            Button {
+                size = {600, 200},
+                text = "Test4",
+            },
+            Button {
+                size = {600, 200},
+                text = "Test5",
+            },
+        }},
     }
 end
