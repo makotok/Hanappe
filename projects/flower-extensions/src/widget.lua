@@ -66,9 +66,10 @@ local Slider
 local Spacer
 local ScrollGroup
 local ScrollView
-local ScrollPanel
 local PanelView
+local TextView
 local ListView
+local ListViewLayout
 
 ----------------------------------------------------------------------------------------------------
 -- Public functions
@@ -195,13 +196,13 @@ function FocusMgr:setFocusObject(object)
         return
     end
 
-    if self.focusObject then
-        self:dispatchEvent(UIEvent.FOCUS_OUT, self.focusObject)
-        self.focusObject:dispatchEvent(UIEvent.FOCUS_OUT)
-    end
-
+    local oldFocusObject = self.focusObject
     self.focusObject = object
 
+    if oldFocusObject then
+        self:dispatchEvent(UIEvent.FOCUS_OUT, oldFocusObject)
+        oldFocusObject:dispatchEvent(UIEvent.FOCUS_OUT)
+    end
     if self.focusObject then
         self:dispatchEvent(UIEvent.FOCUS_IN, self.focusObject)
         self.focusObject:dispatchEvent(UIEvent.FOCUS_IN)
@@ -846,8 +847,19 @@ function UIComponent:getStyle(name)
     end
 
     local theme = self:getTheme()
-    if theme and theme[name] ~= nil then
-        return theme[name]
+
+    while theme do
+        if theme[name] ~= nil then
+            return theme[name]
+        end
+
+        if theme["parentStyle"] then
+            local parentStyle = theme["parentStyle"]
+            local globalTheme = M.getTheme()
+            theme = globalTheme[parentStyle]
+        else
+            break
+        end
     end
 
     local globalTheme = M.getTheme()
@@ -1069,13 +1081,13 @@ BoxLayout = class(UILayout)
 M.BoxLayout = BoxLayout
 
 --- Horizotal Align: left
-BoxLayout.HORIZOTAL_LEFT = "left"
+BoxLayout.HORIZONTAL_LEFT = "left"
 
 --- Horizotal Align: center
-BoxLayout.HORIZOTAL_CENTER = "center"
+BoxLayout.HORIZONTAL_CENTER = "center"
 
 --- Horizotal Align: right
-BoxLayout.HORIZOTAL_RIGHT = "right"
+BoxLayout.HORIZONTAL_RIGHT = "right"
 
 --- Vertical Align: top
 BoxLayout.VERTICAL_TOP = "top"
@@ -1089,14 +1101,14 @@ BoxLayout.VERTICAL_BOTTOM = "bottom"
 --- Layout Direction: vertical
 BoxLayout.DIRECTION_VERTICAL = "vertical"
 
---- Layout Direction: horizotal
-BoxLayout.DIRECTION_HORIZOTAL = "horizotal"
+--- Layout Direction: horizontal
+BoxLayout.DIRECTION_HORIZONTAL = "horizontal"
 
 ---
 -- Initializes the internal variables.
 function BoxLayout:_initInternal()
-    self._horizotalAlign = BoxLayout.HORIZOTAL_LEFT
-    self._horizotalGap = 0
+    self._horizontalAlign = BoxLayout.HORIZONTAL_LEFT
+    self._horizontalGap = 0
     self._verticalAlign = BoxLayout.VERTICAL_TOP
     self._verticalGap = 0
     self._paddingTop = 0
@@ -1112,7 +1124,7 @@ end
 function BoxLayout:update(parent)
     if self._direction == BoxLayout.DIRECTION_VERTICAL then
         self:updateVertical(parent)
-    elseif self._direction == BoxLayout.DIRECTION_HORIZOTAL then
+    elseif self._direction == BoxLayout.DIRECTION_HORIZONTAL then
         self:updateHorizotal(parent)
     end
 end
@@ -1141,7 +1153,7 @@ function BoxLayout:updateVertical(parent)
 end
 
 ---
--- Sets the position of an objects in the horizotal direction.
+-- Sets the position of an objects in the horizontal direction.
 -- @param parent
 function BoxLayout:updateHorizotal(parent)
     local children = parent.children
@@ -1158,7 +1170,7 @@ function BoxLayout:updateHorizotal(parent)
             local childWidth, childHeight = child:getSize()
             local childY = self:calcChildY(parentHeight, childHeight)
             child:setPos(childX, childY)
-            childX = childX + childWidth + self._horizotalGap
+            childX = childX + childWidth + self._horizontalGap
         end
     end
 end
@@ -1172,11 +1184,11 @@ function BoxLayout:calcChildX(parentWidth, childWidth)
     local diffWidth = parentWidth - childWidth
 
     local x = 0
-    if self._horizotalAlign == BoxLayout.HORIZOTAL_LEFT then
+    if self._horizontalAlign == BoxLayout.HORIZONTAL_LEFT then
         x = self._paddingLeft
-    elseif self._horizotalAlign == BoxLayout.HORIZOTAL_CENTER then
+    elseif self._horizontalAlign == BoxLayout.HORIZONTAL_CENTER then
         x = math.floor((diffWidth + self._paddingLeft - self._paddingRight) / 2)
-    elseif self._horizotalAlign == BoxLayout.HORIZOTAL_RIGHT then
+    elseif self._horizontalAlign == BoxLayout.HORIZONTAL_RIGHT then
         x = diffWidth - self._paddingRight
     else
         error("Not found direction!")
@@ -1229,7 +1241,7 @@ function BoxLayout:calcVerticalLayoutSize(children)
 end
 
 ---
--- Calculate the layout size in the horizotal direction.
+-- Calculate the layout size in the horizontal direction.
 -- @param children children
 -- @return layout width
 -- @return layout height
@@ -1240,13 +1252,13 @@ function BoxLayout:calcHorizotalLayoutSize(children)
     for i, child in ipairs(children) do
         if not child._excludeLayout then
             local cWidth, cHeight = child:getSize()
-            width = width + cWidth + self._horizotalGap
+            width = width + cWidth + self._horizontalGap
             height = math.max(height, cHeight + self._paddingTop + self._paddingBottom)
             count = count + 1
         end
     end
     if count > 1 then
-        width = width - self._horizotalGap
+        width = width - self._horizontalGap
     end
     return width, height
 end
@@ -1266,26 +1278,26 @@ end
 
 ---
 -- Set the alignment.
--- @param horizotalAlign horizotal align
+-- @param horizontalAlign horizontal align
 -- @param verticalAlign vertical align
-function BoxLayout:setAlign(horizotalAlign, verticalAlign)
-    self._horizotalAlign = horizotalAlign
+function BoxLayout:setAlign(horizontalAlign, verticalAlign)
+    self._horizontalAlign = horizontalAlign
     self._verticalAlign = verticalAlign
 end
 
 ---
 -- Set the direction.
--- @param direction direction("horizotal" or "vertical")
+-- @param direction direction("horizontal" or "vertical")
 function BoxLayout:setDirection(direction)
     self._direction = direction
 end
 
 ---
 -- Set the gap.
--- @param horizotalGap horizotal gap
+-- @param horizontalGap horizontal gap
 -- @param verticalGap vertical gap
-function BoxLayout:setGap(horizotalGap, verticalGap)
-    self._horizotalGap = horizotalGap
+function BoxLayout:setGap(horizontalGap, verticalGap)
+    self._horizontalGap = horizontalGap
     self._verticalGap = verticalGap
 end
 
@@ -1559,11 +1571,11 @@ end
 
 ---
 -- Sets the text align.
--- @param horizotalAlign horizotal align(left, center, top)
+-- @param horizontalAlign horizontal align(left, center, top)
 -- @param verticalAlign vertical align(top, center, bottom)
-function Button:setTextAlign(horizotalAlign, verticalAlign)
-    if horizotalAlign or verticalAlign then
-        self:setStyle(Button.STYLE_TEXT_ALIGN, {horizotalAlign or "center", verticalAlign or "center"})
+function Button:setTextAlign(horizontalAlign, verticalAlign)
+    if horizontalAlign or verticalAlign then
+        self:setStyle(Button.STYLE_TEXT_ALIGN, {horizontalAlign or "center", verticalAlign or "center"})
     else
         self:setStyle(Button.STYLE_TEXT_ALIGN, nil)
     end
@@ -1572,7 +1584,7 @@ end
 
 ---
 -- Returns the text align.
--- @return horizotal align(left, center, top)
+-- @return horizontal align(left, center, top)
 -- @return vertical align(top, center, bottom)
 function Button:getTextAlign()
     return unpack(self:getStyle(Button.STYLE_TEXT_ALIGN))
@@ -1580,7 +1592,7 @@ end
 
 ---
 -- Returns the text align for MOAITextBox.
--- @return horizotal align
+-- @return horizontal align
 -- @return vertical align
 function Button:getAlignment()
     local h, v = self:getTextAlign()
@@ -2320,6 +2332,16 @@ function Panel:getBackgroundVisible()
 end
 
 ---
+-- Returns the content rect from backgroundImage.
+-- @return xMin
+-- @return yMin
+-- @return xMax
+-- @return yMax
+function Panel:getContentRect()
+    return self._backgroundImage:getContentRect()
+end
+
+---
 -- This event handler is called when resize.
 -- @param e Touch Event
 function Panel:onResize(e)
@@ -2445,11 +2467,11 @@ end
 
 ---
 -- Sets the text align.
--- @param horizotalAlign horizotal align(left, center, top)
+-- @param horizontalAlign horizontal align(left, center, top)
 -- @param verticalAlign vertical align(top, center, bottom)
-function TextBox:setTextAlign(horizotalAlign, verticalAlign)
-    if horizotalAlign or verticalAlign then
-        self:setStyle(TextBox.STYLE_TEXT_ALIGN, {horizotalAlign or "center", verticalAlign or "center"})
+function TextBox:setTextAlign(horizontalAlign, verticalAlign)
+    if horizontalAlign or verticalAlign then
+        self:setStyle(TextBox.STYLE_TEXT_ALIGN, {horizontalAlign or "center", verticalAlign or "center"})
     else
         self:setStyle(TextBox.STYLE_TEXT_ALIGN, nil)
     end
@@ -2458,7 +2480,7 @@ end
 
 ---
 -- Returns the text align.
--- @return horizotal align(left, center, top)
+-- @return horizontal align(left, center, top)
 -- @return vertical align(top, center, bottom)
 function TextBox:getTextAlign()
     return unpack(self:getStyle(TextBox.STYLE_TEXT_ALIGN))
@@ -2466,7 +2488,7 @@ end
 
 ---
 -- Returns the text align for MOAITextBox.
--- @return horizotal align
+-- @return horizontal align
 -- @return vertical align
 function TextBox:getAlignment()
     local h, v = self:getTextAlign()
@@ -2938,6 +2960,7 @@ function ListBox:_createListItem(index)
     listItem:setSize(itemWidth, itemHeight)
     listItem:setPos(itemX, itemY)
     listItem:setSelected(index == self._selectedIndex)
+    listItem:setListComponent(self)
 
     return listItem
 end
@@ -3594,9 +3617,20 @@ end
 -- Returns the labelField.
 -- @return labelField
 function ListItem:getLabelField()
-    if self.parent then
-        return self.parent:getLabelField()
+    if self._listComponent then
+        return self._listComponent:getLabelField()
     end
+end
+
+function ListItem:setListComponent(value)
+    if self._listComponent ~= value then
+        self._listComponent = value
+        self:invalidate()
+    end
+end
+
+function ListItem:getListComponent()
+    return self._listComponent
 end
 
 ---
@@ -3857,6 +3891,12 @@ ScrollGroup.STYLE_BOUNCE_POLICY = "bouncePolicy"
 --- Style: scrollForceBounds
 ScrollGroup.STYLE_SCROLL_FORCE_LIMITS = "scrollForceLimits"
 
+--- Style: verticalScrollBarTexture
+ScrollGroup.STYLE_VERTICAL_SCROLL_BAR_TEXTURE = "verticalScrollBarTexture"
+
+--- Style: horizontalScrollBarTexture
+ScrollGroup.STYLE_HORIZONTAL_SCROLL_BAR_TEXTURE = "horizontalScrollBarTexture"
+
 ---
 -- Initializes the internal variables.
 function ScrollGroup:_initInternal()
@@ -3874,6 +3914,8 @@ function ScrollGroup:_initInternal()
     self._touchLastX = nil
     self._touchLastY = nil
     self._scrollToAnim = nil
+    self._verticalScrollBar = nil
+    self._horizontalScrollBar = nil
 
     self:setScissorContent(true)
 end
@@ -3893,6 +3935,7 @@ end
 function ScrollGroup:_createChildren()
     self:_createContentBackground()
     self:_createContentGroup()
+    self:_createScrollBar()
 end
 
 function ScrollGroup:_createContentBackground()
@@ -3905,6 +3948,16 @@ function ScrollGroup:_createContentGroup()
     self._contentGroup:setSize(self:getSize())
     self._contentGroup:addChild(self._contentBackground)
     self:addChild(self._contentGroup)
+end
+
+---
+-- Create the scrollBar
+function ScrollGroup:_createScrollBar()
+    self._verticalScrollBar = NineImage(self:getStyle(ScrollGroup.STYLE_VERTICAL_SCROLL_BAR_TEXTURE))
+    self._horizontalScrollBar = NineImage(self:getStyle(ScrollGroup.STYLE_HORIZONTAL_SCROLL_BAR_TEXTURE))
+
+    self:addChild(self._verticalScrollBar)
+    self:addChild(self._horizontalScrollBar)
 end
 
 ---
@@ -3928,20 +3981,61 @@ function ScrollGroup:_updateScrollSize()
 end
 
 ---
+-- Update the vertical scroll bar.
+function ScrollGroup:_updateScrollBar()
+    local vBar = self._verticalScrollBar
+    local hBar = self._horizontalScrollBar
+    local width, height = self:getSize()
+    local contentW, contentH = self._contentGroup:getSize()
+    local contentX, contentY = self._contentGroup:getPos()
+    local maxContentX, maxContentY = math.max(0, contentW - width), math.max(0, contentH - height)
+
+    local hBarW = math.floor(math.max(width / contentW * width, hBar.displayWidth))
+    local hBarH = hBar:getHeight()
+    local hBarX = math.floor(-contentX / maxContentX * (width - hBarW))
+    local hBarY = height - hBarH
+
+    local vBarW = vBar:getWidth()
+    local vBarH = math.floor(math.max(height / contentH * height, vBar.displayHeight))
+    local vBarX = width - vBarW
+    local vBarY = math.floor(-contentY / maxContentY * (height - vBarH))
+
+    hBar:setSize(hBarW, hBarH)
+    hBar:setPos(hBarX, hBarY)
+    hBar:setVisible(contentW > width)
+    hBar:setColor(1, 1, 1, 0.5)
+    vBar:setSize(vBarW, vBarH)
+    vBar:setPos(vBarX, vBarY)
+    vBar:setVisible(contentH > height)
+    vBar:setColor(1, 1, 1, 0.5)
+end
+
+function ScrollGroup:_hideScrollBar()
+    self._verticalScrollBar:seekColor(0, 0, 0, 0, 1)
+    self._horizontalScrollBar:seekColor(0, 0, 0, 0, 1)
+end
+
+---
 -- Update of the scroll processing.
 function ScrollGroup:_updateScrollPosition()
     if self:isTouching() then
+        self:_hideScrollBar()
         self:_stopLooper()
         return
     end
+    if self:isScrollAnimating() then
+        return
+    end
     if not self:isScrolling() then
-        self:_stopLooper()
 
         local left, top = self:getScrollPosition()
         if self:isPositionOutOfBounds(left, top) then
             local clippedLeft, clippedTop = self:clipScrollPosition(left, top)
             self:scrollTo(clippedLeft, clippedTop, 0.5, MOAIEaseType.SOFT_EASE_IN)
-        end    
+        else
+            self:_hideScrollBar()
+            self:_stopLooper()
+        end
         return
     end
 
@@ -4015,6 +4109,7 @@ end
 function ScrollGroup:updateLayout()
     ScrollGroup.__super.updateLayout(self)
     self:_updateScrollSize()
+    self:_updateScrollBar()
 end
 
 ---
@@ -4178,6 +4273,7 @@ function ScrollGroup:scrollTo(x, y, sec, mode, callback)
 
     self:stopScrollAnimation()
     self._scrollToAnim = self._contentGroup:seekLoc(x + px, y + py, 0, sec, mode)
+    self._scrollToAnim:setListener(MOAIAction.EVENT_STOP, function() self:onStopScrollAnimation() end )
 end
 
 ---
@@ -4283,6 +4379,16 @@ end
 -- Update frame.
 function ScrollGroup:onEnterFrame()
     self:_updateScrollPosition()
+    self:_updateScrollBar()
+end
+
+---
+-- Update frame.
+function ScrollGroup:onStopScrollAnimation()
+    self:stopScrollAnimation()
+    self:_stopLooper()
+    self:_hideScrollBar()
+    self:_updateScrollBar()
 end
 
 ---
@@ -4361,6 +4467,7 @@ function ScrollGroup:onTouchMove(e)
     end
 
     self:addScrollPosition(moveX, moveY, 0)
+    self:_updateScrollBar()
     self._touchLastX = e.wx
     self._touchLastY = e.wy
 end
@@ -4370,141 +4477,6 @@ end
 -- @param e touch event
 function ScrollGroup:onTouchCancel(e)
     self:onTouchUp(e)
-end
-
-----------------------------------------------------------------------------------------------------
--- @type ScrollPanel
--- Scrollable UIView class.
-----------------------------------------------------------------------------------------------------
-ScrollPanel = class(Panel)
-M.ScrollPanel = ScrollPanel
-
----
--- Initializes the internal variables.
-function ScrollPanel:_initInternal()
-    ScrollPanel.__super._initInternal(self)
-    self._themeName = "ScrollPanel"
-end
-
----
--- Performing the initialization processing of the component.
-function ScrollPanel:_createChildren()
-    ScrollPanel.__super._createChildren(self)
-
-    self._scrollGroup = ScrollGroup {
-        size = {self:getSize()},
-        parent = self,
-    }
-end
-
-function ScrollPanel:_updateScrollBounds()
-    if self:getBackgroundVisible() then
-        local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
-        self._scrollGroup:setSize(xMax - xMin, yMax - yMin)
-        self._scrollGroup:setPos(xMin, yMin)
-        return
-    end
-    self._scrollGroup:setSize(self:getSize())
-    self._scrollGroup:setPos(0, 0)
-end
-
----
--- Add the content to scrollGroup.
--- @param content
-function ScrollPanel:addContent(content)
-    self._scrollGroup:addContent(content)
-end
-
----
--- Add the content from scrollGroup.
--- @param content
-function ScrollPanel:removeContent(content)
-    self._scrollGroup:removeContent(content)
-end
-
----
--- Add the content from scrollGroup.
--- @param contents
-function ScrollPanel:setContents(contents)
-    self._scrollGroup:setContents(contents)
-end
-
----
--- Return the scrollGroup.
--- @return scrollGroup
-function ScrollPanel:getScrollGroup()
-    return self._scrollGroup
-end
-
----
--- Set the layout.
--- @param layout layout
-function ScrollPanel:setLayout(layout)
-    self._scrollGroup:setLayout(layout)
-end
-
----
--- Set the coefficient of friction at the time of scrolling.
--- @param value friction
-function ScrollPanel:setFriction(value)
-    self._scrollGroup:setFriction(value)
-end
-
----
--- Returns the coefficient of friction at the time of scrolling.
--- @return friction
-function ScrollPanel:getFriction()
-    return self._scrollGroup:getFriction()
-end
-
----
--- Sets the horizontal and vertical scroll enabled.
--- @param horizontal horizontal scroll is enabled.
--- @param vertical vertical scroll is enabled.
-function ScrollPanel:setScrollPolicy(horizontal, vertical)
-    self._scrollGroup:setScrollPolicy(horizontal, vertical)
-end
-
----
--- Return the scroll policy.
--- @return horizontal scroll enabled.
--- @return vertical scroll enabled.
-function ScrollPanel:getScrollPolicy()
-    return self._scrollGroup:getScrollPolicy()
-end
-
----
--- Sets the horizontal and vertical bounce enabled.
--- @param horizontal horizontal scroll is enabled.
--- @param vertical vertical scroll is enabled.
-function ScrollPanel:setBouncePolicy(horizontal, vertical)
-    self._scrollGroup:setBouncePolicy(horizontal, vertical)
-end
-
----
--- Returns whether horizontal bouncing is enabled.
--- @return horizontal bouncing enabled
--- @return vertical bouncing enabled
-function ScrollPanel:getBouncePolicy()
-    return self._scrollGroup:getBouncePolicy()
-end
-
----
--- Scroll to the specified location.
--- @param x position of the x
--- @param y position of the x
--- @param sec second
--- @param mode EaseType
--- @param callback (optional) allows callback notification when animation completes.
-function ScrollPanel:scrollTo(x, y, sec, mode, callback)
-    self._scrollGroup:scrollTo(x, y, sec, mode, callback)
-end
-
----
--- TODO:LuaDoc
-function ScrollPanel:onResize(e)
-    ScrollPanel.__super.onResize(self, e)
-    self:_updateScrollBounds()
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -4532,7 +4504,8 @@ end
 -- Performing the initialization processing of the component.
 function ScrollView:_createChildren()
     self._scrollGroup = ScrollGroup {
-        size = {self:getSize()}
+        size = {self:getSize()},
+        themeName = self._themeName,
     }
 
     self:addChild(self._scrollGroup)
@@ -4557,6 +4530,13 @@ end
 -- @param contents
 function ScrollView:setContents(contents)
     self._scrollGroup:setContents(contents)
+end
+
+---
+-- Return the scroll size.
+-- @return scroll size
+function ScrollView:getScrollSize()
+    return self._scrollGroup:getSize()
 end
 
 ---
@@ -4631,10 +4611,397 @@ function ScrollView:scrollTo(x, y, sec, mode, callback)
 end
 
 ---
--- TODO:LuaDoc
+-- This event handler is called when resize.
+-- @param e Touch Event
 function ScrollView:onResize(e)
     self._scrollGroup:setSize(self:getSize())
 end
+
+----------------------------------------------------------------------------------------------------
+-- @type PanelView
+-- Scrollable UIView class.
+----------------------------------------------------------------------------------------------------
+PanelView = class(ScrollView)
+M.PanelView = PanelView
+
+---
+-- Initializes the internal variables.
+function PanelView:_initInternal()
+    PanelView.__super._initInternal(self)
+    self._themeName = "PanelView"
+end
+
+---
+-- Performing the initialization processing of the component.
+function PanelView:_createChildren()
+    self._backgroundPanel = Panel {
+        size = {self:getSize()},
+        parent = self,
+        themeName = self._themeName,
+    }
+
+    PanelView.__super._createChildren(self)
+end
+
+---
+-- Update the ScrollGroup bounds.
+function PanelView:_updateScrollBounds()
+    if self:getBackgroundVisible() then
+        self._backgroundPanel:setSize(self:getSize())
+
+        local xMin, yMin, xMax, yMax = self._backgroundPanel:getContentRect()
+        self._scrollGroup:setSize(xMax - xMin, yMax - yMin)
+        self._scrollGroup:setPos(xMin, yMin)
+        return
+    end
+
+    self._scrollGroup:setSize(self:getSize())
+    self._scrollGroup:setPos(0, 0)
+end
+
+---
+-- Sets the background texture path.
+-- @param texture background texture path
+function PanelView:setBackgroundTexture(texture)
+    self._backgroundPanel:setBackgroundTexture(texture)
+end
+
+---
+-- Returns the background texture path.
+-- @param texture background texture path
+function PanelView:getBackgroundTexture()
+    return self._backgroundPanel:getBackgroundTexture()
+end
+
+---
+-- Set the visible of the background.
+-- @param visible visible
+function PanelView:setBackgroundVisible(visible)
+    self._backgroundPanel:setBackgroundVisible(visible)
+end
+
+---
+-- Returns the visible of the background.
+-- @return visible
+function PanelView:getBackgroundVisible()
+    return self._backgroundPanel:getBackgroundVisible()
+end
+
+---
+-- This event handler is called when resize.
+-- @param e Touch Event
+function PanelView:onResize(e)
+    PanelView.__super.onResize(self, e)
+    self:_updateScrollBounds()
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type TextView
+-- Scrollable UIView class.
+----------------------------------------------------------------------------------------------------
+TextView = class(PanelView)
+M.TextView = TextView
+
+--- Style: fontName
+TextView.STYLE_FONT_NAME = "fontName"
+
+--- Style: textSize
+TextView.STYLE_TEXT_SIZE = "textSize"
+
+--- Style: textColor
+TextView.STYLE_TEXT_COLOR = "textColor"
+
+--- Style: textSize
+TextView.STYLE_TEXT_ALIGN = "textAlign"
+
+---
+-- Initializes the internal variables.
+function TextView:_initInternal()
+    TextView.__super._initInternal(self)
+    self._themeName = "TextView"
+    self._text = ""
+    self._textLabel = nil
+end
+
+---
+-- Create a children object.
+function TextView:_createChildren()
+    TextView.__super._createChildren(self)
+
+    self._textLabel = Label(self._text, 100, 30)
+    self._textLabel:setWordBreak(MOAITextBox.WORD_BREAK_CHAR)
+    self:addContent(self._textLabel)
+end
+
+---
+-- Update the Text size.
+function TextView:_updateTextSize()
+    self._textLabel:setSize(self:getScrollSize())
+    self._textLabel:fitHeight()
+end
+
+---
+-- Update the display objects.
+function TextView:updateDisplay()
+    TextView.__super.updateDisplay(self)
+
+    self:_updateTextSize()
+
+    local textLabel = self._textLabel
+    textLabel:setString(self:getText())
+    textLabel:setTextSize(self:getTextSize())
+    textLabel:setColor(self:getTextColor())
+    textLabel:setAlignment(self:getAlignment())
+    textLabel:setFont(self:getFont())
+end
+
+function TextView:updateLayout()
+    TextView.__super.updateLayout(self)
+    self:_updateTextSize()
+end
+
+---
+-- Sets the text.
+-- @param text text
+function TextView:setText(text)
+    self._text = text
+    self._textLabel:setString(text)
+end
+
+---
+-- Adds the text.
+-- @param text text
+function TextView:addText(text)
+    self:setText(self._text .. text)
+end
+
+---
+-- Returns the text.
+-- @return text
+function TextView:getText()
+    return self._text
+end
+
+---
+-- Sets the textSize.
+-- @param textSize textSize
+function TextView:setTextSize(textSize)
+    self:setStyle(TextView.STYLE_TEXT_SIZE, textSize)
+    self._textLabel:setTextSize(self:getTextSize())
+    self:invalidateLayout()
+end
+
+---
+-- Returns the textSize.
+-- @return textSize
+function TextView:getTextSize()
+    return self:getStyle(TextView.STYLE_TEXT_SIZE)
+end
+
+---
+-- Sets the fontName.
+-- @param fontName fontName
+function TextView:setFontName(fontName)
+    self:setStyle(TextView.STYLE_FONT_NAME, fontName)
+    self._textLabel:setFont(self:getFont())
+    self:invalidateLayout()
+end
+
+---
+-- Returns the font name.
+-- @return font name
+function TextView:getFontName()
+    return self:getStyle(TextView.STYLE_FONT_NAME)
+end
+
+---
+-- Returns the font.
+-- @return font
+function TextView:getFont()
+    local fontName = self:getFontName()
+    local font = Resources.getFont(fontName, nil, self:getTextSize())
+    return font
+end
+
+---
+-- Sets the text align.
+-- @param horizontalAlign horizontal align(left, center, top)
+-- @param verticalAlign vertical align(top, center, bottom)
+function TextView:setTextAlign(horizontalAlign, verticalAlign)
+    if horizontalAlign or verticalAlign then
+        self:setStyle(TextView.STYLE_TEXT_ALIGN, {horizontalAlign or "center", verticalAlign or "center"})
+    else
+        self:setStyle(TextView.STYLE_TEXT_ALIGN, nil)
+    end
+    self._textLabel:setAlignment(self:getAlignment())
+end
+
+---
+-- Returns the text align.
+-- @return horizontal align(left, center, top)
+-- @return vertical align(top, center, bottom)
+function TextView:getTextAlign()
+    return unpack(self:getStyle(TextView.STYLE_TEXT_ALIGN))
+end
+
+---
+-- Returns the text align for MOAITextBox.
+-- @return horizontal align
+-- @return vertical align
+function TextView:getAlignment()
+    local h, v = self:getTextAlign()
+    h = assert(TextAlign[h])
+    v = assert(TextAlign[v])
+    return h, v
+end
+
+---
+-- Sets the text align.
+-- @param red red(0 ... 1)
+-- @param green green(0 ... 1)
+-- @param blue blue(0 ... 1)
+-- @param alpha alpha(0 ... 1)
+function TextView:setTextColor(red, green, blue, alpha)
+    if red == nil and green == nil and blue == nil and alpha == nil then
+        self:setStyle(TextView.STYLE_TEXT_COLOR, nil)
+    else
+        self:setStyle(TextView.STYLE_TEXT_COLOR, {red or 0, green or 0, blue or 0, alpha or 0})
+    end
+    self._textLabel:setColor(self:getTextColor())
+end
+
+---
+-- Returns the text color.
+-- @return red(0 ... 1)
+-- @return green(0 ... 1)
+-- @return blue(0 ... 1)
+-- @return alpha(0 ... 1)
+function TextView:getTextColor()
+    return unpack(self:getStyle(TextView.STYLE_TEXT_COLOR))
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type ListView
+-- Scrollable UIView class.
+----------------------------------------------------------------------------------------------------
+ListView = class(PanelView)
+M.ListView = ListView
+
+--- Style: listItemFactory
+ListView.STYLE_LIST_ITEM_RENDERER_FACTORY = "listItemRendererFactory"
+
+--- Style: rowHeight
+ListView.STYLE_ROW_HEIGHT = "rowHeight"
+
+---
+-- Initializes the internal variables.
+function ListView:_initInternal()
+    ListView.__super._initInternal(self)
+    self._themeName = "ListView"
+    self._listItems = {}
+    self._listItemRenderers = {}
+    self._freeListItemRenderers = {}
+    self._labelField = nil
+end
+
+function ListView:_createChildren()
+    ListView.__super._createChildren(self)
+
+    local layout = ListViewLayout {}
+    self:setLayout(layout)
+end
+
+function ListView:_updateListItemRenderers()
+    self:_removeListItemRenderers()
+    self:_createListItemRenderers()
+end
+
+function ListView:_removeListItemRenderers()
+    for i, renderer in ipairs(self._listItemRenderers) do
+        self:removeContent(renderer)
+        table.insert(self._freeListItemRenderers, renderer)
+    end
+
+    self._listItemRenderers = {}
+end
+
+function ListView:_createListItemRenderers()
+    for i, listItem in ipairs(self._listItems) do
+        local renderer = #self._freeListItemRenderers > 0 and table.remove(self._freeListItemRenderers, 1)
+            or self:getListItemRendererFactory():newInstance()
+        renderer:setData(listItem, i)
+        renderer:setSize(self._scrollGroup:getWidth(), self:getRowHeight())
+        renderer:setListComponent(self)
+        self:addContent(renderer)
+    end
+end
+
+function ListView:updateDisplay()
+    ListView.__super.updateDisplay()
+    self:_updateListItemRenderers()
+end
+
+function ListView:setListItems(items)
+    self._listItems = items
+    self:invalidate()
+end
+
+---
+-- Sets the ListItemFactory.
+-- @param factory ListItemFactory
+function ListView:setListItemRendererFactory(factory)
+    self:setStyle(ListView.STYLE_LIST_ITEM_RENDERER_FACTORY, factory)
+    self:invalidate()
+end
+
+---
+-- Returns the ListItemFactory.
+-- @return ListItemFactory
+function ListView:getListItemRendererFactory()
+    return self:getStyle(ListView.STYLE_LIST_ITEM_RENDERER_FACTORY)
+end
+
+
+---
+-- Set the height of the row.
+-- @param rowHeight height of the row
+function ListView:setRowHeight(rowHeight)
+    self:setStyle(ListView.STYLE_ROW_HEIGHT, rowHeight)
+    self:invalidateLayout()
+end
+
+---
+-- Return the height of the row.
+-- @return rowHeight
+function ListView:getRowHeight()
+    return self:getStyle(ListView.STYLE_ROW_HEIGHT)
+end
+
+---
+-- Set the labelField.
+-- @param labelField labelField
+function ListView:setLabelField(labelField)
+    if self._labelField ~= labelField then
+        self._labelField = labelField
+        self:invalidateDisplay()
+    end
+end
+
+---
+-- Return the labelField.
+-- @return labelField
+function ListView:getLabelField()
+    return self._labelField
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type ListViewLayout
+-- Scrollable UIView class.
+----------------------------------------------------------------------------------------------------
+ListViewLayout = class(BoxLayout)
+M.ListViewLayout = ListViewLayout
+
+
 
 -- widget initialize
 M.initialize()

@@ -5,14 +5,10 @@ module(..., package.seeall)
 --------------------------------------------------------------------------------
 
 function onCreate(e)
-    view = widget.UIView {
-        scene = scene,
-    }
-    
-    panel1 = widget.ScrollPanel {
+    panelView = widget.PanelView {
         size = {200, 300},
         pos = {50, 50},
-        parent = view,
+        scene = scene,
         scrollPolicy = {false, true},
         layout = widget.BoxLayout {
             gap = {5, 5},
