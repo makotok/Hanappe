@@ -478,6 +478,7 @@ function UIComponent:_initEventListeners()
     self:addEventListener(UIEvent.ENABLED_CHANGED, self.onEnabledChanged, self)
     self:addEventListener(UIEvent.FOCUS_IN, self.onFocusIn, self)
     self:addEventListener(UIEvent.FOCUS_OUT, self.onFocusOut, self)
+    self:addEventListener(Event.RESIZE, self.onResize, self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchCommon, self, -10)
     self:addEventListener(Event.TOUCH_UP, self.onTouchCommon, self, -10)
     self:addEventListener(Event.TOUCH_MOVE, self.onTouchCommon, self, -10)
@@ -892,6 +893,12 @@ function UIComponent:onEnabledChanged(e)
 end
 
 ---
+-- This event handler is called when resize.
+-- @param e Resize Event
+function UIComponent:onResize(e)
+end
+
+---
 -- This event handler is called when touch.
 -- @param e Touch Event
 function UIComponent:onTouchCommon(e)
@@ -1023,7 +1030,8 @@ function UIView:validateLayout()
     if self._invalidateLayoutFlag then
         UIView.__super.validateLayout(self)
 
-        if not self.parent or not self.parent.isUIView then
+        -- root
+        if not self.parent then
             self:updatePriority()
         end
     end
@@ -1350,7 +1358,6 @@ end
 -- Initializes the event listener.
 function Button:_initEventListeners()
     Button.__super._initEventListeners(self)
-    self:addEventListener(Event.RESIZE, self.onResize, self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
     self:addEventListener(Event.TOUCH_UP, self.onTouchUp, self)
     self:addEventListener(Event.TOUCH_MOVE, self.onTouchMove, self)
@@ -1703,12 +1710,6 @@ function Button:onSelectedChanged(e)
     else
         self:dispatchEvent(UIEvent.UP)
     end
-end
-
----
--- This event handler is called when resize.
--- @param e Touch Event
-function Button:onResize(e)
 end
 
 ---
@@ -2263,13 +2264,6 @@ function Panel:_initInternal()
 end
 
 ---
--- Initialize the event listeners
-function Panel:_initEventListeners()
-    Panel.__super._initEventListeners(self)
-    self:addEventListener(UIEvent.RESIZE, self.onResize, self)
-end
-
----
 -- Create a children object.
 function Panel:_createChildren()
     Panel.__super._createChildren(self)
@@ -2289,12 +2283,18 @@ function Panel:_createBackgroundImage()
 end
 
 ---
--- Update the display objects.
-function Panel:updateDisplay()
-    Panel.__super.updateDisplay(self)
+-- Update the backgroundImage.
+function Panel:_updateBackgroundImage()
     self._backgroundImage:setImage(self:getBackgroundTexture())
     self._backgroundImage:setSize(self:getSize())
     self._backgroundImage:setVisible(self:getBackgroundVisible())
+end
+
+---
+-- Update the display objects.
+function Panel:updateDisplay()
+    Panel.__super.updateDisplay(self)
+    self:_updateBackgroundImage()
 end
 
 ---
@@ -2302,7 +2302,7 @@ end
 -- @param texture background texture path
 function Panel:setBackgroundTexture(texture)
     self:setStyle(Panel.STYLE_BACKGROUND_TEXTURE, texture)
-    self._backgroundImage:setImage(self:getBackgroundTexture())
+    self:invalidate()
 end
 
 ---
@@ -2317,7 +2317,7 @@ end
 -- @param visible visible
 function Panel:setBackgroundVisible(visible)
     self:setStyle(Panel.STYLE_BACKGROUND_VISIBLE, visible)
-    self._backgroundImage:setVisible(self:getBackgroundVisible())
+    self:invalidate()
 end
 
 ---
@@ -2341,14 +2341,6 @@ function Panel:getContentRect()
     return self._backgroundImage:getContentRect()
 end
 
----
--- This event handler is called when resize.
--- @param e Touch Event
-function Panel:onResize(e)
-    self._backgroundImage:setImage(self:getBackgroundTexture())
-    self._backgroundImage:setSize(self:getSize())
-end
-
 ----------------------------------------------------------------------------------------------------
 -- @type TextBox
 -- It is a class that displays the text.
@@ -2368,6 +2360,9 @@ TextBox.STYLE_TEXT_COLOR = "textColor"
 --- Style: textSize
 TextBox.STYLE_TEXT_ALIGN = "textAlign"
 
+--- Style: textPadding
+TextBox.STYLE_TEXT_PADDING = "textPadding"
+
 ---
 -- Initialize a variables
 function TextBox:_initInternal()
@@ -2382,21 +2377,20 @@ end
 function TextBox:_createChildren()
     TextBox.__super._createChildren(self)
 
-    self._textLabel = Label(self._text, 100, 30)
+    self._textLabel = Label(self._text)
     self._textLabel:setWordBreak(MOAITextBox.WORD_BREAK_CHAR)
     self:addChild(self._textLabel)
 end
 
 ---
--- Update the display objects.
-function TextBox:updateDisplay()
-    TextBox.__super.updateDisplay(self)
-
+-- Update the TextLabel.
+function TextBox:_updateTextLabel()
     local textLabel = self._textLabel
-    local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
-    local textWidth, textHeight = xMax - xMin, yMax - yMin
+    local xMin, yMin, xMax, yMax = self:getContentRect()
+    local padLeft, padTop, padRight, padBottom = self:getTextPadding()
+    local textWidth, textHeight = xMax - xMin - padLeft - padRight, yMax - yMin - padTop - padBottom
     textLabel:setSize(textWidth, textHeight)
-    textLabel:setPos(xMin, yMin)
+    textLabel:setPos(xMin + padLeft, yMin + padTop)
     textLabel:setString(self:getText())
     textLabel:setTextSize(self:getTextSize())
     textLabel:setColor(self:getTextColor())
@@ -2405,11 +2399,19 @@ function TextBox:updateDisplay()
 end
 
 ---
+-- Update the display objects.
+function TextBox:updateDisplay()
+    TextBox.__super.updateDisplay(self)
+    self:_updateTextLabel()
+end
+
+---
 -- Sets the text.
 -- @param text text
 function TextBox:setText(text)
-    self._text = text
-    self._textLabel:setString(text)
+    self._text = text or ""
+    self._textLabel:setString(self._text)
+    self:invalidate()
 end
 
 ---
@@ -2431,7 +2433,7 @@ end
 -- @param textSize textSize
 function TextBox:setTextSize(textSize)
     self:setStyle(TextBox.STYLE_TEXT_SIZE, textSize)
-    self._textLabel:setTextSize(self:getTextSize())
+    self:invalidate()
 end
 
 ---
@@ -2446,7 +2448,7 @@ end
 -- @param fontName fontName
 function TextBox:setFontName(fontName)
     self:setStyle(TextBox.STYLE_FONT_NAME, fontName)
-    self._textLabel:setFont(self:getFont())
+    self:invalidate()
 end
 
 ---
@@ -2475,7 +2477,7 @@ function TextBox:setTextAlign(horizontalAlign, verticalAlign)
     else
         self:setStyle(TextBox.STYLE_TEXT_ALIGN, nil)
     end
-    self._textLabel:setAlignment(self:getAlignment())
+    self:invalidate()
 end
 
 ---
@@ -2523,36 +2525,24 @@ function TextBox:getTextColor()
 end
 
 ---
--- This event handler is called when resize.
--- @param e Touch Event
-function TextBox:onResize(e)
-    TextBox.__super.onResize(self, e)
-
-    local textLabel = self._textLabel
-    local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
-    local textWidth, textHeight = xMax - xMin, yMax - yMin
-    textLabel:setSize(textWidth, textHeight)
-    textLabel:setPos(xMin, yMin)
-end
-
----
 -- Set textbox padding by label's setRect method, it will set 4 direction padding
--- @param padding pixecls
-function TextBox:setPadding(padding)
-    if self._textLabel then
-        local x1, y1, x2, y2 = self._textLabel:getRect()
-        self._textLabel:setRect(x1 + padding, y1 + padding, x2 - padding, y2 - padding)
-    end
+-- @param left padding for left
+-- @param top padding for top
+-- @param right padding for right
+-- @param bottom padding for bottom
+function TextBox:setTextPadding(left, top, right, bottom)
+    self:setStyle(TextBox.STYLE_TEXT_PADDING, {left or 0, top or 0, right or 0, bottom or 0})
+    self:invalidate()
 end
 
 ---
--- Set textbox padding-top by label's setRect method
--- @param padding pixecls
-function TextBox:setPaddingTop(padding)
-    if self._textLabel then
-        local x1, y1, x2, y2 = self._textLabel:getRect()
-        self._textLabel:setRect(x1, padding, x2, y2)
-    end
+-- Returns the text padding.
+-- @return padding for left
+-- @return padding for top
+-- @return padding for right
+-- @return padding for bottom
+function TextBox:getTextPadding()
+    return unpack(self:getStyle(TextBox.STYLE_TEXT_PADDING))
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -2780,6 +2770,7 @@ function MsgBox:showPopup()
 
     -- text label setting
     self:setText(self._text)
+    self:validate()
     if self._spoolingEnabled then
         self._textLabel:setReveal(0)
     else
@@ -2935,6 +2926,35 @@ function ListBox:_createScrollBar()
 end
 
 ---
+-- Update the rowCount
+function ListBox:_updateRowCount()
+    local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
+    local contentWidth, contentHeight = xMax - xMin, yMax - yMin
+    local rowHeight = self:getRowHeight()
+    self._rowCount = math.floor(contentHeight / rowHeight)
+end
+
+---
+-- Update the ListItems
+function ListBox:_updateListItems()
+
+    -- listItems
+    local vsp = self:getVerticalScrollPosition()
+    local rowCount = self:getRowCount()
+    local colCount = self:getColumnCount()
+    local minIndex = vsp * colCount + 1
+    local maxIndex = vsp * colCount + rowCount * colCount
+    local listSize = self:getListSize()
+    for i = 1, listSize do
+        if i < minIndex or maxIndex < i then
+            self:_deleteListItem(i)
+        else
+            self:_createListItem(i)
+        end
+    end
+end
+
+---
 -- Create the ListItem.
 -- @param index index of the listItems
 -- @return listItem
@@ -2988,51 +3008,8 @@ function ListBox:_clearListItems()
 end
 
 ---
--- Update the display.
-function ListBox:updateDisplay()
-    ListBox.__super.updateDisplay(self)
-
-    -- listItems
-    local vsp = self:getVerticalScrollPosition()
-    local rowCount = self:getRowCount()
-    local colCount = self:getColumnCount()
-    local minIndex = vsp * colCount + 1
-    local maxIndex = vsp * colCount + rowCount * colCount
-    local listSize = self:getListSize()
-    for i = 1, listSize do
-        if i < minIndex or maxIndex < i then
-            self:_deleteListItem(i)
-        else
-            self:_createListItem(i)
-        end
-    end
-
-    self:updateScrollBar()
-end
-
----
--- Update the priority.
--- @param priority priority
--- @return last priority
-function ListBox:updatePriority(priority)
-    priority = ListBox.__super.updatePriority(self, priority)
-    self._scrollBar:setPriority(priority + 1)
-    return priority + 10
-end
-
----
--- Update the size by rowCount.
-function ListBox:updateSize()
-    local rowCount = self:getRowCount()
-    local rowHeight = self:getRowHeight()
-    local pLeft, pTop, pRight, pBottom = self._backgroundImage:getContentPadding()
-
-    self:setHeight(rowCount * rowHeight + pTop + pBottom)
-end
-
----
 -- Update the scroll bar.
-function ListBox:updateScrollBar()
+function ListBox:_updateScrollBar()
     local bar = self._scrollBar
     local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
     local vsp = self:getVerticalScrollPosition()
@@ -3044,6 +3021,36 @@ function ListBox:updateScrollBar()
     step = step >= bar.displayHeight and step or (yMax - yMin - bar.displayHeight) / (maxVsp + 1)
     bar:setPos(xMax - bar:getWidth(), yMin + math.floor(step * vsp))
     bar:setVisible(maxVsp > 0 and self._scrollBarVisible)
+end
+
+---
+-- Update the height by rowCount.
+function ListBox:_updateHeightByRowCount()
+    local rowCount = self:getRowCount()
+    local rowHeight = self:getRowHeight()
+    local pLeft, pTop, pRight, pBottom = self._backgroundImage:getContentPadding()
+
+    self:setHeight(rowCount * rowHeight + pTop + pBottom)
+end
+
+---
+-- Update the display.
+function ListBox:updateDisplay()
+    ListBox.__super.updateDisplay(self)
+
+    self:_updateRowCount()
+    self:_updateListItems()
+    self:_updateScrollBar()
+end
+
+---
+-- Update the priority.
+-- @param priority priority
+-- @return last priority
+function ListBox:updatePriority(priority)
+    priority = ListBox.__super.updatePriority(self, priority)
+    self._scrollBar:setPriority(priority + 1)
+    return priority + 10
 end
 
 ---
@@ -3236,7 +3243,7 @@ end
 -- @param rowCount count of the rows
 function ListBox:setRowCount(rowCount)
     self._rowCount = rowCount
-    self:updateSize()
+    self:_updateHeightByRowCount()
     self:invalidateDisplay()
 end
 
@@ -3278,7 +3285,7 @@ end
 function ListBox:setScrollBarTexture(texture)
     self:setStyle(ListBox.STYLE_SCROLL_BAR_TEXTURE, texture)
     self._scrollBar:setImage(texture)
-    self:updateScrollBar()
+    self:_updateScrollBar()
 end
 
 ---
@@ -3459,19 +3466,6 @@ end
 function ListBox:onKeyUp(e)
 
 end
-
----
--- This event handler is called when resize.
--- @param e Event
-function ListBox:onResize(e)
-    ListBox.__super.onResize(self, e)
-
-    local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
-    local contentWidth, contentHeight = xMax - xMin, yMax - yMin
-    local rowHeight = self:getRowHeight()
-    self._rowCount = math.floor(contentHeight / rowHeight)
-end
-
 
 ----------------------------------------------------------------------------------------------------
 -- @type ListItem
@@ -3891,8 +3885,14 @@ ScrollGroup.STYLE_BOUNCE_POLICY = "bouncePolicy"
 --- Style: scrollForceBounds
 ScrollGroup.STYLE_SCROLL_FORCE_LIMITS = "scrollForceLimits"
 
+--- Style: verticalScrollBarColor
+ScrollGroup.STYLE_VERTICAL_SCROLL_BAR_COLOR = "verticalScrollBarColor"
+
 --- Style: verticalScrollBarTexture
 ScrollGroup.STYLE_VERTICAL_SCROLL_BAR_TEXTURE = "verticalScrollBarTexture"
+
+--- Style: horizontalScrollBarTexture
+ScrollGroup.STYLE_HORIZONTAL_SCROLL_BAR_COLOR = "horizontalScrollBarColor"
 
 --- Style: horizontalScrollBarTexture
 ScrollGroup.STYLE_HORIZONTAL_SCROLL_BAR_TEXTURE = "horizontalScrollBarTexture"
@@ -3914,6 +3914,7 @@ function ScrollGroup:_initInternal()
     self._touchLastX = nil
     self._touchLastY = nil
     self._scrollToAnim = nil
+    self._scrollBarHideAction = nil
     self._verticalScrollBar = nil
     self._horizontalScrollBar = nil
 
@@ -3956,6 +3957,9 @@ function ScrollGroup:_createScrollBar()
     self._verticalScrollBar = NineImage(self:getStyle(ScrollGroup.STYLE_VERTICAL_SCROLL_BAR_TEXTURE))
     self._horizontalScrollBar = NineImage(self:getStyle(ScrollGroup.STYLE_HORIZONTAL_SCROLL_BAR_TEXTURE))
 
+    self._verticalScrollBar:setVisible(false)
+    self._horizontalScrollBar:setVisible(false)
+
     self:addChild(self._verticalScrollBar)
     self:addChild(self._horizontalScrollBar)
 end
@@ -3985,6 +3989,7 @@ end
 function ScrollGroup:_updateScrollBar()
     local vBar = self._verticalScrollBar
     local hBar = self._horizontalScrollBar
+
     local width, height = self:getSize()
     local contentW, contentH = self._contentGroup:getSize()
     local contentX, contentY = self._contentGroup:getPos()
@@ -4002,17 +4007,35 @@ function ScrollGroup:_updateScrollBar()
 
     hBar:setSize(hBarW, hBarH)
     hBar:setPos(hBarX, hBarY)
-    hBar:setVisible(contentW > width)
-    hBar:setColor(1, 1, 1, 0.5)
     vBar:setSize(vBarW, vBarH)
     vBar:setPos(vBarX, vBarY)
-    vBar:setVisible(contentH > height)
-    vBar:setColor(1, 1, 1, 0.5)
 end
 
+---
+-- Show scroll bars.
+function ScrollGroup:_showScrollBar()
+    local maxX, maxY = self:getMaxScrollPosition()
+
+    self._horizontalScrollBar:setVisible(maxX > 0)
+    self._horizontalScrollBar:setColor(unpack(self:getStyle(ScrollGroup.STYLE_HORIZONTAL_SCROLL_BAR_COLOR)))
+
+    self._verticalScrollBar:setVisible(maxY > 0)
+    self._verticalScrollBar:setColor(unpack(self:getStyle(ScrollGroup.STYLE_VERTICAL_SCROLL_BAR_COLOR)))
+end
+
+---
+-- Hide scroll bars.
 function ScrollGroup:_hideScrollBar()
-    self._verticalScrollBar:seekColor(0, 0, 0, 0, 1)
-    self._horizontalScrollBar:seekColor(0, 0, 0, 0, 1)
+    if not self._scrollBarHideAction then
+        local action1 = self._verticalScrollBar:seekColor(0, 0, 0, 0, 1)
+        local action2 = self._horizontalScrollBar:seekColor(0, 0, 0, 0, 1)
+
+        self._scrollBarHideAction = MOAIAction.new()
+        self._scrollBarHideAction:addChild(action1)
+        self._scrollBarHideAction:addChild(action2)
+        self._scrollBarHideAction:setListener(MOAIAction.EVENT_STOP, function() self:onStopScrollBarHideAction() end )
+        self._scrollBarHideAction:start()
+    end
 end
 
 ---
@@ -4079,6 +4102,14 @@ end
 -- @return contentGroup
 function ScrollGroup:getContentGroup()
     return self._contentGroup
+end
+
+---
+-- Returns the contentGroup size.
+-- @return width
+-- @return height
+function ScrollGroup:getContentSize()
+    return self._contentGroup:getSize()
 end
 
 ---
@@ -4200,6 +4231,17 @@ end
 -- @return y-position.
 function ScrollGroup:getScrollPosition()
     return self._contentGroup:getPos()
+end
+
+---
+-- Returns the max scroll position.
+-- @return max x-position.
+-- @return max y-position.
+function ScrollGroup:getMaxScrollPosition()
+    local scrollW, scrollH = self:getSize()
+    local contentW, contentH = self._contentGroup:getSize()
+    local maxScrollX, maxScrollY = math.max(0, contentW - scrollW), math.max(0, contentH - scrollH)
+    return maxScrollX, maxScrollY
 end
 
 ---
@@ -4391,6 +4433,10 @@ function ScrollGroup:onStopScrollAnimation()
     self:_updateScrollBar()
 end
 
+function ScrollGroup:onStopScrollBarHideAction()
+    self._scrollBarHideAction = nil
+end
+
 ---
 -- This event handler is called when you touch the component.
 -- @param e touch event
@@ -4445,6 +4491,7 @@ function ScrollGroup:onTouchMove(e)
     if not self._touchScrolledFlg then
         self:dispatchTouchCancelEvent()
         self._touchScrolledFlg = true
+        self:_showScrollBar()
     end
 
     local moveX, moveY = e.wx - self._touchLastX , e.wy - self._touchLastY
@@ -4494,13 +4541,6 @@ function ScrollView:_initInternal()
 end
 
 ---
--- Initialize the event listeners
-function ScrollView:_initEventListeners()
-    ScrollView.__super._initEventListeners(self)
-    self:addEventListener(UIEvent.RESIZE, self.onResize, self)
-end
-
----
 -- Performing the initialization processing of the component.
 function ScrollView:_createChildren()
     self._scrollGroup = ScrollGroup {
@@ -4509,6 +4549,13 @@ function ScrollView:_createChildren()
     }
 
     self:addChild(self._scrollGroup)
+end
+
+---
+-- Update the ScrollGroup bounds.
+function ScrollView:_updateScrollBounds()
+    self._scrollGroup:setSize(self:getSize())
+    self._scrollGroup:setPos(0, 0)
 end
 
 ---
@@ -4612,9 +4659,10 @@ end
 
 ---
 -- This event handler is called when resize.
--- @param e Touch Event
+-- @param e Resize Event
 function ScrollView:onResize(e)
-    self._scrollGroup:setSize(self:getSize())
+    ScrollView.__super.onResize(self, e)
+    self:_updateScrollBounds()
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -4648,6 +4696,7 @@ end
 function PanelView:_updateScrollBounds()
     if self:getBackgroundVisible() then
         self._backgroundPanel:setSize(self:getSize())
+        self._backgroundPanel:validateDisplay()
 
         local xMin, yMin, xMax, yMax = self._backgroundPanel:getContentRect()
         self._scrollGroup:setSize(xMax - xMin, yMax - yMin)
@@ -4655,8 +4704,7 @@ function PanelView:_updateScrollBounds()
         return
     end
 
-    self._scrollGroup:setSize(self:getSize())
-    self._scrollGroup:setPos(0, 0)
+    PanelView.__super._updateScrollBounds(self)
 end
 
 ---
@@ -4685,14 +4733,6 @@ end
 -- @return visible
 function PanelView:getBackgroundVisible()
     return self._backgroundPanel:getBackgroundVisible()
-end
-
----
--- This event handler is called when resize.
--- @param e Touch Event
-function PanelView:onResize(e)
-    PanelView.__super.onResize(self, e)
-    self:_updateScrollBounds()
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -4734,38 +4774,32 @@ function TextView:_createChildren()
 end
 
 ---
--- Update the Text size.
-function TextView:_updateTextSize()
-    self._textLabel:setSize(self:getScrollSize())
-    self._textLabel:fitHeight()
-end
-
----
--- Update the display objects.
-function TextView:updateDisplay()
-    TextView.__super.updateDisplay(self)
-
-    self:_updateTextSize()
-
+-- Update the Text Label.
+function TextView:_updateTextLabel()
     local textLabel = self._textLabel
     textLabel:setString(self:getText())
     textLabel:setTextSize(self:getTextSize())
     textLabel:setColor(self:getTextColor())
     textLabel:setAlignment(self:getAlignment())
     textLabel:setFont(self:getFont())
+    textLabel:setSize(self:getScrollSize())
+    textLabel:fitHeight()
 end
 
-function TextView:updateLayout()
-    TextView.__super.updateLayout(self)
-    self:_updateTextSize()
+---
+-- Update the display objects.
+function TextView:updateDisplay()
+    TextView.__super.updateDisplay(self)
+    self:_updateTextLabel()
 end
 
 ---
 -- Sets the text.
 -- @param text text
 function TextView:setText(text)
-    self._text = text
-    self._textLabel:setString(text)
+    self._text = text or ""
+    self._textLabel:setString(self._text)
+    self:invalidateDisplay()
 end
 
 ---
@@ -4787,8 +4821,7 @@ end
 -- @param textSize textSize
 function TextView:setTextSize(textSize)
     self:setStyle(TextView.STYLE_TEXT_SIZE, textSize)
-    self._textLabel:setTextSize(self:getTextSize())
-    self:invalidateLayout()
+    self:invalidateDisplay()
 end
 
 ---
@@ -4803,8 +4836,7 @@ end
 -- @param fontName fontName
 function TextView:setFontName(fontName)
     self:setStyle(TextView.STYLE_FONT_NAME, fontName)
-    self._textLabel:setFont(self:getFont())
-    self:invalidateLayout()
+    self:invalidateDisplay()
 end
 
 ---
@@ -4899,6 +4931,7 @@ function ListView:_initInternal()
     ListView.__super._initInternal(self)
     self._themeName = "ListView"
     self._listItems = {}
+    self._listData = {}
     self._listItemRenderers = {}
     self._freeListItemRenderers = {}
     self._labelField = nil
@@ -4936,8 +4969,10 @@ function ListView:_createListItemRenderers()
     end
 end
 
+---
+-- Update the display
 function ListView:updateDisplay()
-    ListView.__super.updateDisplay()
+    ListView.__super.updateDisplay(self)
     self:_updateListItemRenderers()
 end
 
@@ -4967,7 +5002,7 @@ end
 -- @param rowHeight height of the row
 function ListView:setRowHeight(rowHeight)
     self:setStyle(ListView.STYLE_ROW_HEIGHT, rowHeight)
-    self:invalidateLayout()
+    self:invalidate()
 end
 
 ---
