@@ -24,6 +24,9 @@ function onCreate(e)
             gap = {5, 5},
             align = {"center", "top"},
         },
+        onScroll = function(e)
+            print("onScroll")
+        end,
         contents = {{
             Button {
                 size = {200, 50},
@@ -64,7 +67,7 @@ function onCreate(e)
                 layout = BoxLayout {
                     gap = {5, 5},
                     padding = {10, 10, 10, 10},
-                    direction = "horizotal",
+                    direction = "horizontal",
                 },
                 children = {{
                     Button {

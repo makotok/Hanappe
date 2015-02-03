@@ -20,6 +20,7 @@ function onOpen(e)
     flower.InputMgr:addEventListener("mouseRightClick", onMouseClick)
     flower.InputMgr:addEventListener("mouseMiddleClick", onMouseClick)
     flower.InputMgr:addEventListener("mouseMove", onMouseMove)
+    flower.InputMgr:addEventListener("mouseWheel", onMouseWheel)
 end
 
 function onClose(e)
@@ -33,6 +34,7 @@ function onClose(e)
     flower.InputMgr:removeEventListener("mouseRightClick", onMouseClick)
     flower.InputMgr:removeEventListener("mouseMiddleClick", onMouseClick)
     flower.InputMgr:removeEventListener("mouseMove", onMouseMove)
+    flower.InputMgr:removeEventListener("mouseWheel", onMouseWheel)
 end
 
 function onKeyInput(e)
@@ -75,4 +77,10 @@ function onMouseMove(e)
     print("down  = " .. tostring(e.down))
     print("x     = " .. e.x)
     print("y     = " .. e.y)
+end
+
+function onMouseWheel(e)
+    print("----- onMouseWheel -----")
+    print("type   = " .. e.type)
+    print("yDelta = " .. e.yDelta)
 end

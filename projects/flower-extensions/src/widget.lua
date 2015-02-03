@@ -34,6 +34,7 @@ local NineImage = flower.NineImage
 local MovieClip = flower.MovieClip
 local Label = flower.Label
 local Rect = flower.Rect
+local Graphics = flower.Graphics
 local TouchHandler = flower.TouchHandler
 local MOAIKeyboard = MOAIKeyboardAndroid or MOAIKeyboardIOS
 local MOAIDialog = MOAIDialogAndroid or MOAIDialogIOS
@@ -57,6 +58,7 @@ local SheetButton
 local CheckBox
 local Joystick
 local Panel
+local TextLabel
 local TextBox
 local TextInput
 local MsgBox
@@ -70,6 +72,9 @@ local PanelView
 local TextView
 local ListView
 local ListViewLayout
+local BaseItemRenderer
+local LabelItemRenderer
+local ImageItemRenderer
 
 ----------------------------------------------------------------------------------------------------
 -- Public functions
@@ -422,6 +427,9 @@ UIEvent.ITEM_ENTER = "itemEnter"
 --- ListBox: itemClick
 UIEvent.ITEM_CLICK = "itemClick"
 
+--- ScrollGroup: scroll
+UIEvent.SCROLL = "scroll"
+
 ----------------------------------------------------------------------------------------------------
 -- @type UIComponent
 -- The base class for all components.
@@ -435,6 +443,12 @@ UIComponent.STYLE_NORMAL_COLOR = "normalColor"
 
 --- Style: disabledColor
 UIComponent.STYLE_DISABLED_COLOR = "disabledColor"
+
+--- State : normal
+UIComponent.STATE_NORMAL = "normal"
+
+--- State : disabled
+UIComponent.STATE_DISABLED = "disabled"
 
 ---
 -- Constructor.
@@ -465,6 +479,7 @@ function UIComponent:_initInternal()
     self._focusEnabled = true
     self._theme = nil
     self._styles = {}
+    self._currentState = UIComponent.STATE_NORMAL
     self._layout = nil
     self._excludeLayout = false
     self._invalidateDisplayFlag = true
@@ -476,6 +491,7 @@ end
 -- Please to inherit this function if you want to initialize the event listener.
 function UIComponent:_initEventListeners()
     self:addEventListener(UIEvent.ENABLED_CHANGED, self.onEnabledChanged, self)
+    self:addEventListener(UIEvent.THEME_CHANGED, self.onThemeChanged, self)
     self:addEventListener(UIEvent.FOCUS_IN, self.onFocusIn, self)
     self:addEventListener(UIEvent.FOCUS_OUT, self.onFocusOut, self)
     self:addEventListener(Event.RESIZE, self.onResize, self)
@@ -588,6 +604,18 @@ function UIComponent:updatePriority(priority)
     end
 
     return priority
+end
+
+---
+-- Update the current state.
+function UIComponent:updateCurrentState()
+    local oldState = self._currentState
+    local newState = nil
+    if self:isEnabled() then
+        newState = UIComponent.STATE_NORMAL
+    else
+        newState = UIComponent.STATE_DISABLED
+    end
 end
 
 ---
@@ -721,11 +749,23 @@ function UIComponent:setLayout(layout)
 end
 
 ---
+-- Set the excludeLayout.
+-- @param excludeLayout excludeLayout
+function UIComponent:setExcludeLayout(excludeLayout)
+    if self._excludeLayout ~= excludeLayout then
+        self._excludeLayout = excludeLayout
+        self:invalidateLayout()
+    end
+end
+
+---
 -- Set the enabled state.
 -- @param enabled enabled
 function UIComponent:setEnabled(enabled)
-    self._enabled = enabled
-    self:dispatchEvent(UIEvent.ENABLED_CHANGED)
+    if self._enabled ~= enabled then
+        self._enabled = enabled
+        self:dispatchEvent(UIEvent.ENABLED_CHANGED)
+    end
 end
 
 ---
@@ -817,13 +857,30 @@ function UIComponent:getTheme()
 end
 
 ---
--- Sets the themeName.
+-- Set the themeName.
 -- @param themeName themeName
 function UIComponent:setThemeName(themeName)
     if self._themeName ~= themeName then
         self._themeName = themeName
         self:invalidate()
         self:dispatchEvent(UIEvent.THEME_CHANGED)
+    end
+end
+
+---
+-- Return the themeName.
+-- @return themeName
+function UIComponent:getThemeName()
+    return self._themeName
+end
+
+---
+-- Set the state of the component.
+-- @return themeName
+function UIComponent:setCurrentState(state)
+    if self._currentState ~= state then
+        self._currentState = state
+        self:invalidateDisplay()
     end
 end
 
@@ -896,6 +953,12 @@ end
 -- This event handler is called when resize.
 -- @param e Resize Event
 function UIComponent:onResize(e)
+end
+
+---
+-- This event handler is called when theme changed.
+-- @param e Event
+function UIComponent:onThemeChanged(e)
 end
 
 ---
@@ -1134,6 +1197,8 @@ function BoxLayout:update(parent)
         self:updateVertical(parent)
     elseif self._direction == BoxLayout.DIRECTION_HORIZONTAL then
         self:updateHorizotal(parent)
+    else
+        flower.Log.warn("Illegal direction pattern !", self._direction)
     end
 end
 
@@ -1297,7 +1362,7 @@ end
 -- Set the direction.
 -- @param direction direction("horizontal" or "vertical")
 function BoxLayout:setDirection(direction)
-    self._direction = direction
+    self._direction = direction == "horizotal" and "horizontal" or direction
 end
 
 ---
@@ -2339,6 +2404,296 @@ end
 -- @return yMax
 function Panel:getContentRect()
     return self._backgroundImage:getContentRect()
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type TextLabel
+-- It is a class that displays the text.
+----------------------------------------------------------------------------------------------------
+TextLabel = class(UIComponent)
+M.TextLabel = TextLabel
+
+--- Style: fontName
+TextLabel.STYLE_FONT_NAME = "fontName"
+
+--- Style: textSize
+TextLabel.STYLE_TEXT_SIZE = "textSize"
+
+--- Style: textColor
+TextLabel.STYLE_TEXT_COLOR = "textColor"
+
+--- Style: textSize
+TextLabel.STYLE_TEXT_ALIGN = "textAlign"
+
+--- Style: textPadding
+TextLabel.STYLE_TEXT_PADDING = "textPadding"
+
+--- Style: textResizePolicy
+TextLabel.STYLE_TEXT_RESIZE_POLICY = "textResizePolicy"
+
+--- textResizePolicy : none
+TextLabel.RESIZE_POLICY_NONE = "none"
+
+--- textResizePolicy : auto
+TextLabel.RESIZE_POLICY_AUTO = "auto"
+
+---
+-- Initialize a variables
+function TextLabel:_initInternal()
+    TextLabel.__super._initInternal(self)
+    self._focusEnabled = false
+    self._themeName = "TextLabel"
+    self._text = ""
+    self._textLabel = nil
+end
+
+---
+-- Create a children object.
+function TextLabel:_createChildren()
+    TextLabel.__super._createChildren(self)
+
+    self._textLabel = Label(self._text)
+    self._textLabel:setWordBreak(MOAITextBox.WORD_BREAK_CHAR)
+    self:addChild(self._textLabel)
+end
+
+---
+-- Update the TextLabel.
+function TextLabel:_updateTextLabel()
+    self._textLabel:setString(self:getText())
+    self._textLabel:setTextSize(self:getTextSize())
+    self._textLabel:setColor(self:getTextColor())
+    self._textLabel:setAlignment(self:getAlignment())
+    self._textLabel:setFont(self:getFont())
+end
+
+---
+-- Update the TextLabel size.
+function TextLabel:_updateTextLabelSize()
+    local widthPolicy, heightPolicy = self:getTextResizePolicy()
+    local padLeft, padTop, padRight, padBottom = self:getTextPadding()
+
+    if widthPolicy == "auto" and heightPolicy == "auto" then
+        self:fitSize()
+    elseif heightPolicy == "auto" then
+        self:fitHeight()
+    elseif widthPolicy == "auto" then
+        self:fitWidth()
+    elseif self:getWidth() == 0 and self:getHeight() == 0 then
+        self:fitSize()
+    else
+        local textWidth = self:getWidth() - padLeft - padRight
+        local textHeight = self:getHeight() - padTop - padBottom
+        self._textLabel:setSize(textWidth, textHeight)
+        self._textLabel:setPos(padLeft, padTop)
+    end
+end
+
+---
+-- Update the display objects.
+function TextLabel:updateDisplay()
+    TextLabel.__super.updateDisplay(self)
+    self:_updateTextLabel()
+    self:_updateTextLabelSize()
+end
+
+---
+-- Sets the fit size.
+-- @param length (Option)Length of the text.
+-- @param maxWidth (Option)maxWidth of the text.
+-- @param maxHeight (Option)maxHeight of the text.
+-- @param padding (Option)padding of the text.
+function TextLabel:fitSize(length, maxWidth, maxHeight, padding)
+    self._textLabel:fitSize(length, maxWidth, maxHeight, padding)
+
+    local textWidth, textHeight = self:getLabel():getSize()
+    local padLeft, padTop, padRight, padBottom = self:getTextPadding()
+    local width, height = textWidth + padLeft + padRight, textHeight + padTop + padBottom
+
+    self._textLabel:setPos(padLeft, padTop)
+    self:setSize(width, height)
+end
+
+---
+-- Sets the fit height.
+-- @param length (Option)Length of the text.
+-- @param maxHeight (Option)maxHeight of the text.
+-- @param padding (Option)padding of the text.
+function TextLabel:fitHeight(length, maxHeight, padding)
+    self:fitSize(length, self:getLabel():getWidth(), maxHeight, padding) 
+end
+
+---
+-- Sets the fit height.
+-- @param length (Option)Length of the text.
+-- @param maxWidth (Option)maxWidth of the text.
+-- @param padding (Option)padding of the text.
+function TextLabel:fitWidth(length, maxWidth, padding)
+    self:fitSize(length, maxWidth, self:getLabel():getHeight(), padding) 
+end
+
+---
+-- Return the label.
+-- @return label
+function TextLabel:getLabel()
+    return self._textLabel
+end
+
+---
+-- Sets the text.
+-- @param text text
+function TextLabel:setText(text)
+    self._text = text or ""
+    self._textLabel:setString(self._text)
+    self:invalidate()
+end
+
+---
+-- Adds the text.
+-- @param text text
+function TextLabel:addText(text)
+    self:setText(self._text .. text)
+end
+
+---
+-- Returns the text.
+-- @return text
+function TextLabel:getText()
+    return self._text
+end
+
+---
+-- Sets the size policy of label.
+-- @param widthPolicy width policy
+-- @param widthPolicy height policy
+function TextLabel:setTextResizePolicy(widthPolicy, heightPolicy)
+    self:setStyle(TextLabel.STYLE_TEXT_RESIZE_POLICY, {widthPolicy or "none", heightPolicy or "none"})
+    self:invalidate()
+end
+
+---
+-- Returns the size policy of label.
+-- @return width policy
+-- @return height policy
+function TextLabel:getTextResizePolicy()
+    return unpack(self:getStyle(TextLabel.STYLE_TEXT_RESIZE_POLICY))
+end
+
+---
+-- Sets the textSize.
+-- @param textSize textSize
+function TextLabel:setTextSize(textSize)
+    self:setStyle(TextLabel.STYLE_TEXT_SIZE, textSize)
+    self:invalidate()
+end
+
+---
+-- Returns the textSize.
+-- @return textSize
+function TextLabel:getTextSize()
+    return self:getStyle(TextLabel.STYLE_TEXT_SIZE)
+end
+
+---
+-- Sets the fontName.
+-- @param fontName fontName
+function TextLabel:setFontName(fontName)
+    self:setStyle(TextLabel.STYLE_FONT_NAME, fontName)
+    self:invalidate()
+end
+
+---
+-- Returns the font name.
+-- @return font name
+function TextLabel:getFontName()
+    return self:getStyle(TextLabel.STYLE_FONT_NAME)
+end
+
+---
+-- Returns the font.
+-- @return font
+function TextLabel:getFont()
+    local fontName = self:getFontName()
+    local font = Resources.getFont(fontName, nil, self:getTextSize())
+    return font
+end
+
+---
+-- Sets the text align.
+-- @param horizontalAlign horizontal align(left, center, top)
+-- @param verticalAlign vertical align(top, center, bottom)
+function TextLabel:setTextAlign(horizontalAlign, verticalAlign)
+    if horizontalAlign or verticalAlign then
+        self:setStyle(TextLabel.STYLE_TEXT_ALIGN, {horizontalAlign or "center", verticalAlign or "center"})
+    else
+        self:setStyle(TextLabel.STYLE_TEXT_ALIGN, nil)
+    end
+    self:invalidate()
+end
+
+---
+-- Returns the text align.
+-- @return horizontal align(left, center, top)
+-- @return vertical align(top, center, bottom)
+function TextLabel:getTextAlign()
+    return unpack(self:getStyle(TextLabel.STYLE_TEXT_ALIGN))
+end
+
+---
+-- Returns the text align for MOAITextBox.
+-- @return horizontal align
+-- @return vertical align
+function TextLabel:getAlignment()
+    local h, v = self:getTextAlign()
+    h = assert(TextAlign[h])
+    v = assert(TextAlign[v])
+    return h, v
+end
+
+---
+-- Sets the text align.
+-- @param red red(0 ... 1)
+-- @param green green(0 ... 1)
+-- @param blue blue(0 ... 1)
+-- @param alpha alpha(0 ... 1)
+function TextLabel:setTextColor(red, green, blue, alpha)
+    if red == nil and green == nil and blue == nil and alpha == nil then
+        self:setStyle(TextLabel.STYLE_TEXT_COLOR, nil)
+    else
+        self:setStyle(TextLabel.STYLE_TEXT_COLOR, {red or 0, green or 0, blue or 0, alpha or 0})
+    end
+    self._textLabel:setColor(self:getTextColor())
+end
+
+---
+-- Returns the text color.
+-- @return red(0 ... 1)
+-- @return green(0 ... 1)
+-- @return blue(0 ... 1)
+-- @return alpha(0 ... 1)
+function TextLabel:getTextColor()
+    return unpack(self:getStyle(TextLabel.STYLE_TEXT_COLOR))
+end
+
+---
+-- Set textbox padding by label's setRect method, it will set 4 direction padding
+-- @param left padding for left
+-- @param top padding for top
+-- @param right padding for right
+-- @param bottom padding for bottom
+function TextLabel:setTextPadding(left, top, right, bottom)
+    self:setStyle(TextLabel.STYLE_TEXT_PADDING, {left or 0, top or 0, right or 0, bottom or 0})
+    self:invalidate()
+end
+
+---
+-- Returns the text padding.
+-- @return padding for left
+-- @return padding for top
+-- @return padding for right
+-- @return padding for bottom
+function TextLabel:getTextPadding()
+    return unpack(self:getStyle(TextLabel.STYLE_TEXT_PADDING))
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -4014,6 +4369,11 @@ end
 ---
 -- Show scroll bars.
 function ScrollGroup:_showScrollBar()
+    if self._scrollBarHideAction then
+        self._scrollBarHideAction:stop()
+        self._scrollBarHideAction = nil
+    end
+
     local maxX, maxY = self:getMaxScrollPosition()
 
     self._horizontalScrollBar:setVisible(maxX > 0)
@@ -4417,11 +4777,16 @@ function ScrollGroup:dispatchTouchCancelEvent()
     end
 end
 
+function ScrollGroup:setOnScroll(func)
+    self:setEventListener(UIEvent.SCROLL, func)
+end
+
 ---
 -- Update frame.
 function ScrollGroup:onEnterFrame()
     self:_updateScrollPosition()
     self:_updateScrollBar()
+    self:dispatchEvent(UIEvent.SCROLL)
 end
 
 ---
@@ -4486,6 +4851,9 @@ function ScrollGroup:onTouchMove(e)
     if not self._touchScrolledFlg and math.abs(e.wx - self._touchStartX) < 20 and math.abs(e.wy - self._touchStartY) < 20 then
         self._touchLastX = e.wx
         self._touchLastY = e.wy
+        return
+    end
+    if self._touchLastX == e.wx and self._touchLastY == e.wy then
         return
     end
     if not self._touchScrolledFlg then
@@ -4930,11 +5298,13 @@ ListView.STYLE_ROW_HEIGHT = "rowHeight"
 function ListView:_initInternal()
     ListView.__super._initInternal(self)
     self._themeName = "ListView"
-    self._listItems = {}
-    self._listData = {}
+    self._dataList = {}
+    self._dataField = nil
+    self._selectedItems = {}
+    self._selectionMode = "single"
     self._listItemRenderers = {}
     self._freeListItemRenderers = {}
-    self._labelField = nil
+    self._itemToRendererMap = {}
 end
 
 function ListView:_createChildren()
@@ -4951,22 +5321,35 @@ end
 
 function ListView:_removeListItemRenderers()
     for i, renderer in ipairs(self._listItemRenderers) do
+        renderer:removeEventListener(Event.TOUCH_DOWN, self.onItemRendererTouchDown, self)
+        renderer:removeEventListener(Event.TOUCH_UP, self.onItemRendererTouchUp, self)
+        renderer:removeEventListener(Event.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
         self:removeContent(renderer)
         table.insert(self._freeListItemRenderers, renderer)
     end
 
     self._listItemRenderers = {}
+    self._itemToRendererMap = {}
 end
 
 function ListView:_createListItemRenderers()
-    for i, listItem in ipairs(self._listItems) do
+    for i, data in ipairs(self._dataList) do
         local renderer = #self._freeListItemRenderers > 0 and table.remove(self._freeListItemRenderers, 1)
             or self:getListItemRendererFactory():newInstance()
-        renderer:setData(listItem, i)
+        renderer:setData(data)
+        renderer:setDataIndex(i)
+        renderer:setDataField(self:getDataField())
         renderer:setSize(self._scrollGroup:getWidth(), self:getRowHeight())
-        renderer:setListComponent(self)
+        renderer:setHostComponent(self)
+        renderer:addEventListener(Event.TOUCH_DOWN, self.onItemRendererTouchDown, self)
+        renderer:addEventListener(Event.TOUCH_UP, self.onItemRendererTouchUp, self)
+        renderer:addEventListener(Event.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
+
         self:addContent(renderer)
+        self._itemToRendererMap[data] = renderer
     end
+
+    --TODO:update selected items
 end
 
 ---
@@ -4976,9 +5359,70 @@ function ListView:updateDisplay()
     self:_updateListItemRenderers()
 end
 
-function ListView:setListItems(items)
-    self._listItems = items
-    self:invalidate()
+function ListView:setSelectedItem(item)
+    self:setSelectedItems(item and {item} or {})
+end
+
+function ListView:getSelectedItem()
+    if #self._selectedItems > 0 then
+        return self._selectedItems[1]
+    end
+end
+
+function ListView:setSelectedItems(items)
+    assert(self._selectionMode == "single" and #items < 2)
+
+    for i, selectedItem in ipairs(self._selectedItems) do
+        local renderer = self._itemToRendererMap[selectedItem]
+
+        if renderer then
+            renderer:setSelected(false)
+        end
+    end
+
+    self._selectedItems = {}
+    for i, item in ipairs(items) do
+        local renderer = self._itemToRendererMap[item]
+
+        if renderer then
+            renderer:setSelected(true)
+            table.insert(self._selectedItems, item)
+        end
+    end
+end
+
+---
+-- Set the dataList.
+-- @param dataList dataList
+function ListView:setDataList(dataList)
+    if self._dataList ~= dataList then
+        self._dataList = dataList
+        self:invalidate()
+    end
+end
+
+---
+-- Return the dataList.
+-- @return dataList
+function ListView:getDataList()
+    return self._dataList
+end
+
+---
+-- Set the dataField.
+-- @param dataField dataField
+function ListView:setDataField(dataField)
+    if self._dataField ~= dataField then
+        self._dataField = dataField
+        self:invalidateDisplay()
+    end
+end
+
+---
+-- Return the dataField.
+-- @return dataField
+function ListView:getDataField()
+    return self._dataField
 end
 
 ---
@@ -5013,21 +5457,56 @@ function ListView:getRowHeight()
 end
 
 ---
--- Set the labelField.
--- @param labelField labelField
-function ListView:setLabelField(labelField)
-    if self._labelField ~= labelField then
-        self._labelField = labelField
-        self:invalidateDisplay()
+-- This event handler is called when touch.
+-- @param e Touch Event
+function ListView:onItemRendererTouchDown(e)
+    if self._touchedIndex ~= nil and self._touchedIndex ~= e.idx then
+        return
+    end
+
+    self._touchedIndex = e.idx
+
+    local renderer = e.target
+    if renderer.isRenderer then
+        renderer:setPressed(true)
+        renderer:setSelected(true)
+        self:setSelectedItem(renderer:getData())
     end
 end
 
 ---
--- Return the labelField.
--- @return labelField
-function ListView:getLabelField()
-    return self._labelField
+-- This event handler is called when touch.
+-- @param e Touch Event
+function ListView:onItemRendererTouchUp(e)
+    if self._touchedIndex ~= e.idx then
+        return
+    end
+
+    self._touchedIndex = nil
+
+    local renderer = e.target
+    if renderer.isRenderer then
+        renderer:setPressed(false)
+    end
 end
+
+---
+-- This event handler is called when touch.
+-- @param e Touch Event
+function ListView:onItemRendererTouchCancel(e)
+    if self._touchedIndex ~= e.idx then
+        return
+    end
+
+    self._touchedIndex = nil
+
+    local renderer = e.target
+    if renderer.isRenderer then
+        renderer:setPressed(false)
+        self:setSelectedItem(nil)
+    end
+end
+
 
 ----------------------------------------------------------------------------------------------------
 -- @type ListViewLayout
@@ -5036,7 +5515,187 @@ end
 ListViewLayout = class(BoxLayout)
 M.ListViewLayout = ListViewLayout
 
+----------------------------------------------------------------------------------------------------
+-- @type BaseItemRenderer
+-- This is the base class of the item renderer.
+----------------------------------------------------------------------------------------------------
+BaseItemRenderer = class(UIComponent)
+M.BaseItemRenderer = BaseItemRenderer
 
+--- Style: backgroundColor
+BaseItemRenderer.STYLE_BACKGROUND_COLOR = "backgroundColor"
+
+--- Style: backgroundPressedColor
+BaseItemRenderer.STYLE_BACKGROUND_PRESSED_COLOR = "backgroundPressedColor"
+
+--- Style: backgroundSelectedColor
+BaseItemRenderer.STYLE_BACKGROUND_SELECTED_COLOR = "backgroundSelectedColor"
+
+---
+-- Initialize a variables
+function BaseItemRenderer:_initInternal()
+    BaseItemRenderer.__super._initInternal(self)
+    self.isRenderer = true
+    self._data = nil
+    self._dataIndex = nil
+    self._hostComponent = nil
+    self._focusEnabled = false
+    self._selected = false
+    self._pressed = false
+    self._background = nil
+end
+
+---
+-- Create the children.
+function BaseItemRenderer:_createChildren()
+    BaseItemRenderer.__super._createChildren(self)
+    self:_createBackground()
+end
+
+---
+-- Create the background objects.
+function BaseItemRenderer:_createBackground()
+    self._background = Graphics(self:getSize())
+    self._background._excludeLayout = true
+    self:addChild(self._background)
+end
+
+---
+-- Update the background objects.
+function BaseItemRenderer:_updateBackground()
+    self._background:setSize(self:getSize())
+    self._background:clear()
+    self._background:setPenColor(self:getBackgroundColor()):fillRect(0, 0, self:getWidth(), self:getHeight())
+end
+
+---
+-- Update the display objects.
+function BaseItemRenderer:updateDisplay()
+    BaseItemRenderer.__super.updateDisplay(self)
+    self:_updateBackground()
+end
+
+---
+-- Set the data.
+-- @param data data
+function BaseItemRenderer:setData(data)
+    if self._data ~= data then
+        self._data = data
+        self:invalidate()
+    end
+end
+
+---
+-- Return the data.
+-- @return data
+function BaseItemRenderer:getData()
+    return self._data
+end
+
+---
+-- Set the data index.
+-- @param index index of data.
+function BaseItemRenderer:setDataIndex(index)
+    if self._dataIndex ~= index then
+        self._dataIndex = index
+        self:invalidate()
+    end
+end
+
+---
+-- Set the data field.
+-- @param dataField field of data.
+function BaseItemRenderer:setDataField(dataField)
+    if self._dataField ~= dataField then
+        self._dataField = dataField
+        self:invalidate()
+    end    
+end
+
+---
+-- Set the host component with the renderer.
+-- @param index index of data.
+function BaseItemRenderer:setHostComponent(component)
+    if self._hostComponent ~= component then
+        self._hostComponent = component
+        self:invalidate()
+    end
+end
+
+---
+-- Return the host component.
+-- @return host component
+function BaseItemRenderer:getHostComponent()
+    return self._hostComponent
+end
+
+function BaseItemRenderer:getBackgroundColor()
+    if self._pressed then
+        return unpack(self:getStyle(BaseItemRenderer.STYLE_BACKGROUND_PRESSED_COLOR))
+    end
+    if self._selected then
+        return unpack(self:getStyle(BaseItemRenderer.STYLE_BACKGROUND_SELECTED_COLOR))
+    end
+    return unpack(self:getStyle(BaseItemRenderer.STYLE_BACKGROUND_COLOR))
+end
+
+---
+-- Set the pressed
+-- @param pressed pressed
+function BaseItemRenderer:setPressed(pressed)
+    if self._pressed ~= pressed then
+        self._pressed = pressed
+        self:invalidateDisplay()
+    end
+end
+
+---
+-- Set the pressed
+-- @param pressed pressed
+function BaseItemRenderer:setSelected(selected)
+    if self._selected ~= selected then
+        self._selected = selected
+        self:invalidateDisplay()
+    end
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type LabelItemRenderer
+-- This is the base class of the item renderer.
+----------------------------------------------------------------------------------------------------
+LabelItemRenderer = class(BaseItemRenderer)
+M.LabelItemRenderer = LabelItemRenderer
+
+---
+-- Initialize a variables
+function LabelItemRenderer:_initInternal()
+    LabelItemRenderer.__super._initInternal(self)
+    self._themeName = "LabelItemRenderer"
+end
+
+---
+-- Initialize a variables
+function LabelItemRenderer:_createChildren()
+    LabelItemRenderer.__super._createChildren(self)
+
+    self._textLabel = TextLabel {
+        themeName = self:getThemeName(),
+        parent = self,
+    }
+end
+
+function LabelItemRenderer:updateDisplay()
+    LabelItemRenderer.__super.updateDisplay(self)
+    
+    self._textLabel:setSize(self:getSize())
+    if self._data then
+        local text = self._dataField and self._data[self._dataField] or self._data
+        text = type(text) == "string" and text or tostring(text)
+        self._textLabel:setText(text)
+    else
+        self._textLabel:setText("")
+    end
+end
 
 -- widget initialize
 M.initialize()

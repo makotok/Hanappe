@@ -61,6 +61,7 @@ local pointerSensor = MOAIInputMgr.device.pointer
 local mouseLeftSensor = MOAIInputMgr.device.mouseLeft
 local mouseRightSensor = MOAIInputMgr.device.mouseRight
 local mouseMiddleSensor = MOAIInputMgr.device.mouseMiddle
+local mouseWheelSensor = MOAIInputMgr.device.mouseWheel
 local touchSensor = MOAIInputMgr.device.touch
 local keyboardSensor = MOAIInputMgr.device.keyboard
 
@@ -1205,6 +1206,7 @@ Event.TOUCH_CANCEL          = "touchCancel"
 Event.MOUSE_CLICK           = "mouseClick"
 Event.MOUSE_RIGHT_CLICK     = "mouseRightClick"
 Event.MOUSE_MIDDLE_CLICK    = "mouseMiddleClick"
+Event.MOUSE_WHEEL           = "mouseWheel"
 Event.MOUSE_MOVE            = "mouseMove"
 Event.MOUSE_OVER            = "mouseOver"
 Event.MOUSE_OUT             = "mouseOut"
@@ -1500,6 +1502,9 @@ InputMgr.KEYBOARD_EVENT = Event()
 -- Mouse Event
 InputMgr.MOUSE_EVENT = Event()
 
+-- Mouse Wheel Event
+InputMgr.MOUSE_WHEEL = Event()
+
 -- Touch Event Kinds
 InputMgr.TOUCH_EVENT_KINDS = {
     [MOAITouchSensor.TOUCH_DOWN]    = Event.TOUCH_DOWN,
@@ -1608,6 +1613,20 @@ function InputMgr:initialize()
         end
     end
 
+    -- Mouse Wheel Handler
+    local onMouseWheel = function(yDelta)
+
+        -- mouse event
+        if InputMgr.MOUSE_EVENT_ENABLED then
+            local event = InputMgr.MOUSE_WHEEL
+            event.type = Event.MOUSE_WHEEL
+            event.yDelta = yDelta
+            event.x = self.pointer.x
+            event.y = self.pointer.y
+            self:dispatchEvent(event)
+        end
+    end
+
     -- Keyboard Handler
     local onKeyboard = function(key, down)
         local event = InputMgr.KEYBOARD_EVENT
@@ -1621,10 +1640,20 @@ function InputMgr:initialize()
     -- mouse or touch input
     if pointerSensor then
         pointerSensor:setCallback(onPointer)
+    end
+    if mouseLeftSensor then
         mouseLeftSensor:setCallback(onLeftClick)
+    end
+    if mouseRightSensor then
         mouseRightSensor:setCallback(onRightClick)
+    end
+    if mouseMiddleSensor then
         mouseMiddleSensor:setCallback(onMiddleClick)
-    elseif touchSensor then
+    end
+    if mouseWheelSensor then
+        mouseWheelSensor:setCallback(onMouseWheel)
+    end
+    if touchSensor then
         touchSensor:setCallback(onTouch)
     end
 
@@ -3773,8 +3802,10 @@ end
 -- @param width Width
 -- @param height Height
 function Label:setSize(width, height)
-    self:setRect(0, 0, width, height)
-    self:setBounds(0, 0, 0, width, height, 0)
+    -- TODO:In order to bug occurs V1.6, always be set in the center.
+    local left, top = self:getPos()
+    self:setRect(math.floor(-width / 2), math.floor(-height / 2), math.floor(width / 2), math.floor(height / 2))
+    self:setPos(left, top)
 end
 
 ---
@@ -3811,7 +3842,7 @@ function Label:setHighQuality(enabled, contentScale)
     self:setTextSize(self.textSize)
 end
 
--- V1.6 and code compatibility of V1.5.
+-- V1.6 code compatibility of V1.5.
 if MOAITextLabel then
     function Label:getStringBounds(index, length)
         local xMin, yMin, xMax, yMax = self:getTextBounds(index, length)

@@ -18,6 +18,7 @@ local ListItem = widget.ListItem
 --- Normal theme
 M.NORMAL = {
     common = {
+        fontName = "VL-PGothic.ttf",
         normalColor = {1, 1, 1, 1},
         disabledColor = {0.5, 0.5, 0.5, 1},
     },
@@ -25,7 +26,6 @@ M.NORMAL = {
         normalTexture = "skins/button_normal.9.png",
         selectedTexture = "skins/button_selected.9.png",
         disabledTexture = "skins/button_normal.9.png",
-        fontName = "VL-PGothic.ttf",
         textSize = 20,
         textColor = {0, 0, 0, 1},
         textDisabledColor = {0.5, 0.5, 0.5, 1},
@@ -35,7 +35,6 @@ M.NORMAL = {
         normalTexture = "skins/imagebutton_normal.png",
         selectedTexture = "skins/imagebutton_selected.png",
         disabledTexture = "skins/imagebutton_disabled.png",
-        fontName = "VL-PGothic.ttf",
         textSize = 20,
         textColor = {1, 1, 1, 1},
         textDisabledColor = {0.5, 0.5, 0.5, 1},
@@ -47,7 +46,6 @@ M.NORMAL = {
         normalTexture = "gb-up.png",
         selectedTexture = "gb-down.png",
         disabledTexture = "gb-up.png",
-        fontName = "VL-PGothic.ttf",
         textSize = 20,
         textColor = {0, 0, 0, 1},
         textDisabledColor = {0.5, 0.5, 0.5, 1},
@@ -57,7 +55,6 @@ M.NORMAL = {
         normalTexture = "skins/checkbox_normal.png",
         selectedTexture = "skins/checkbox_selected.png",
         disabledTexture = "skins/checkbox_normal.png",
-        fontName = "VL-PGothic.ttf",
         textSize = 20,
         textColor = {1, 1, 1, 1},
         textDisabledColor = {0.5, 0.5, 0.5, 1},
@@ -75,9 +72,15 @@ M.NORMAL = {
     Panel = {
         backgroundTexture = "skins/panel.9.png",
     },
+    TextLabel = {
+        textSize = 18,
+        textColor = {1, 1, 1, 1},
+        textAlign = {"left", "top"},
+        textPadding = {0, 0, 0, 0},
+        textResizePolicy = {"none", "none"},
+    },
     TextBox = {
         parentStyle = "Panel",
-        fontName = "VL-PGothic.ttf",
         textSize = 18,
         textColor = {1, 1, 1, 1},
         textAlign = {"left", "top"},
@@ -142,8 +145,18 @@ M.NORMAL = {
     ListView = {
         parentStyle = "PanelView",
         scrollPolicy = {false, true},
-        rowHeight = 35,
-        listItemRendererFactory = ClassFactory(ListItem),
+        rowHeight = 30,
+        listItemRendererFactory = ClassFactory(widget.LabelItemRenderer),
+    },
+    LabelItemRenderer = {
+        backgroundColor = {0, 0, 0, 0},
+        backgroundPressedColor = {0.5, 0.5, 0.8, 0.5},
+        backgroundSelectedColor = {0.5, 0.5, 0.5, 0.5},
+        textSize = 20,
+        textColor = {1, 1, 1, 1},
+        textAlign = {"left", "top"},
+        textPadding = {5, 0, 5, 0},
+        textResizePolicy = {"none", "none"},
     },
 }
 
