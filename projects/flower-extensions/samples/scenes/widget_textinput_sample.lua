@@ -13,6 +13,7 @@ function onCreate(e)
         size = {200, 50},
         pos = {5, 5},
         parent = view,
+        maxLength = 6,
     }
 
     textInput2 = widget.TextInput()

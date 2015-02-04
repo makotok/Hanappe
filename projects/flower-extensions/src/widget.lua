@@ -2753,6 +2753,13 @@ function TextBox:getText()
     return self._text
 end
 
+-- Returns the text length.
+-- TODO:Tag escaping.
+-- @return text length
+function TextBox:getTextLength()
+    return self._text and #self._text or 0
+end
+
 ---
 -- Sets the textSize.
 -- @param textSize textSize
@@ -2881,6 +2888,9 @@ M.TextInput = TextInput
 --- Style: focusTexture
 TextInput.STYLE_FOCUS_TEXTURE = "focusTexture"
 
+--- Style: maxLength
+TextInput.STYLE_MAX_LENGTH = "maxLength"
+
 ---
 -- Initialize a variables
 function TextInput:_initInternal()
@@ -2954,6 +2964,20 @@ function TextInput:getBackgroundTexture()
 end
 
 ---
+-- Returns the input max length.
+-- @return max length
+function TextInput:getMaxLength()
+    return self:getStyle(TextInput.STYLE_MAX_LENGTH) or 0
+end
+
+---
+-- Set the input max length.
+-- @param maxLength max length.
+function TextInput:setMaxLength(maxLength)
+    self:setStyle(TextInput.STYLE_MAX_LENGTH, maxLength)
+end
+
+---
 -- This event handler is called when focus in.
 -- @param e event
 function TextInput:onFocusIn(e)
@@ -2964,6 +2988,9 @@ function TextInput:onFocusIn(e)
         MOAIKeyboard.setListener(MOAIKeyboard.EVENT_RETURN, self._onKeyboardReturn)
         if MOAIKeyboard.setText then
             MOAIKeyboard.setText(self:getText())
+        end
+        if MOAIKeyboard.setMaxLength then
+            MOAIKeyboard.setMaxLength(self:getMaxLength())
         end
         MOAIKeyboard.showKeyboard(self:getText())
     else
@@ -3003,7 +3030,9 @@ function TextInput:onKeyDown(e)
     elseif key == KeyCode.KEY_ENTER then
     -- TODO: LF
     else
-        self:addText(string.char(key))
+        if self:getMaxLength() == 0 or self:getTextLength() < self:getMaxLength() then
+            self:addText(string.char(key))
+        end
     end
 
     self:drawTextAllow()
