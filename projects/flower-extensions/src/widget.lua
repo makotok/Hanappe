@@ -6,7 +6,7 @@
 -- TODO:TextInput can not move the cursor.
 --
 -- @author Makoto
--- @release V2.1.2
+-- @release V2.2.0
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -74,7 +74,6 @@ local ListView
 local ListViewLayout
 local BaseItemRenderer
 local LabelItemRenderer
-local ImageItemRenderer
 
 ----------------------------------------------------------------------------------------------------
 -- Public functions
