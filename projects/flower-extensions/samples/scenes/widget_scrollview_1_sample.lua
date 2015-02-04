@@ -57,7 +57,7 @@ function onCreate(e)
                 layout = BoxLayout {
                     gap = {5, 5},
                     padding = {10, 10, 10, 10},
-                    direction = "horizotal",
+                    direction = "horizontal",
                 },
                 children = {{
                     Button {

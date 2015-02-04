@@ -11,8 +11,8 @@ MOAISim.setBoostThreshold ( 0 )
 TextLabel.DEFAULT_COLOR = {0, 0, 0, 1}
 
 -- Screen size setting
-local screenWidth = MOAIEnvironment.horizontalResolution or 320
-local screenHeight = MOAIEnvironment.verticalResolution or 480
+local screenWidth = Application:isMobile() and MOAIEnvironment.horizontalResolution or 320
+local screenHeight = Application:isMobile() and MOAIEnvironment.verticalResolution or 480
 local viewScale = screenWidth >= 640 and 2 or 1
 
 -- Application config

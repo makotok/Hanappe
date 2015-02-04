@@ -6,7 +6,7 @@
 -- TODO:TextInput can not move the cursor.
 --
 -- @author Makoto
--- @release V2.1.2
+-- @release V2.2.0
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -17,6 +17,7 @@ local flower = require "flower"
 local class = flower.class
 local table = flower.table
 local math = flower.math
+local KeyCode = flower.KeyCode
 local Executors = flower.Executors
 local Resources = flower.Resources
 local PropertyUtils = flower.PropertyUtils
@@ -33,6 +34,7 @@ local NineImage = flower.NineImage
 local MovieClip = flower.MovieClip
 local Label = flower.Label
 local Rect = flower.Rect
+local Graphics = flower.Graphics
 local TouchHandler = flower.TouchHandler
 local MOAIKeyboard = MOAIKeyboardAndroid or MOAIKeyboardIOS
 local MOAIDialog = MOAIDialogAndroid or MOAIDialogIOS
@@ -43,9 +45,9 @@ local FocusMgr
 local LayoutMgr
 local IconMgr
 local TextAlign
-local KeyCode
 local UIEvent
 local UIComponent
+local UILayer
 local UIGroup
 local UIView
 local UILayout
@@ -56,20 +58,22 @@ local SheetButton
 local CheckBox
 local Joystick
 local Panel
+local TextLabel
 local TextBox
 local TextInput
 local MsgBox
 local ListBox
 local ListItem
 local Slider
+local Spacer
+local ScrollGroup
 local ScrollView
-
-----------------------------------------------------------------------------------------------------
--- Public Const
-----------------------------------------------------------------------------------------------------
-
---- Fixed a bug where the position of the MOAI SDK V1.4p0 does not reflect.(Last build fixed)
-M.USE_TRANSFORM_BUGFIX = false
+local PanelView
+local TextView
+local ListView
+local ListViewLayout
+local BaseItemRenderer
+local LabelItemRenderer
 
 ----------------------------------------------------------------------------------------------------
 -- Public functions
@@ -200,9 +204,11 @@ function FocusMgr:setFocusObject(object)
     self.focusObject = object
 
     if oldFocusObject then
+        self:dispatchEvent(UIEvent.FOCUS_OUT, oldFocusObject)
         oldFocusObject:dispatchEvent(UIEvent.FOCUS_OUT)
     end
     if self.focusObject then
+        self:dispatchEvent(UIEvent.FOCUS_IN, self.focusObject)
         self.focusObject:dispatchEvent(UIEvent.FOCUS_IN)
     end
 end
@@ -213,7 +219,6 @@ end
 function FocusMgr:getFocusObject()
     return self.focusObject
 end
-
 
 ----------------------------------------------------------------------------------------------------
 -- @type LayoutMgr
@@ -229,7 +234,6 @@ function LayoutMgr:init()
     LayoutMgr.__super.init(self)
     self._invalidateDisplayQueue = {}
     self._invalidateLayoutQueue = {}
-    self._invalidateViews = {}
     self._invalidating = false
 end
 
@@ -251,10 +255,6 @@ end
 function LayoutMgr:invalidateLayout(component)
     table.insertElement(self._invalidateLayoutQueue, component)
 
-    if component.isUIView then
-        table.insertElement(self._invalidateViews, component)
-    end
-
     if not self._invalidating then
         Executors.callOnce(self.validateAll, self)
         self._invalidating = true
@@ -271,8 +271,6 @@ function LayoutMgr:validateAll()
         self:validateAll()
         return
     end
-
-    self:validatePriority()
 
     self._invalidating = false
     self:dispatchEvent(Event.COMPLETE)
@@ -296,16 +294,6 @@ function LayoutMgr:validateLayout()
     while component do
         component:validateLayout()
         component = table.remove(self._invalidateLayoutQueue, #self._invalidateLayoutQueue)
-    end
-end
-
----
--- Validate the priority of the views.
-function LayoutMgr:validatePriority()
-    local view = table.remove(self._invalidateViews, #self._invalidateViews)
-    while view do
-        view:updatePriority()
-        view = table.remove(self._invalidateViews, #self._invalidateViews)
     end
 end
 
@@ -370,28 +358,6 @@ TextAlign["top"] = MOAITextBox.LEFT_JUSTIFY
 
 --- bottom: MOAITextBox.RIGHT_JUSTIFY
 TextAlign["bottom"] = MOAITextBox.RIGHT_JUSTIFY
-
-----------------------------------------------------------------------------------------------------
--- @type KeyCode
--- This is a table that defines the code of the key input.
-----------------------------------------------------------------------------------------------------
-KeyCode = {}
-M.KeyCode = KeyCode
-
---- DEL
-KeyCode.DEL = 127
-
---- BACKSPACE
-KeyCode.BACKSPACE = 8
-
---- SPACE
-KeyCode.SPACE = 32
-
---- ENTER
-KeyCode.ENTER = 13
-
---- TAB
-KeyCode.TAB = 9
 
 ----------------------------------------------------------------------------------------------------
 -- @type UIEvent
@@ -460,6 +426,9 @@ UIEvent.ITEM_ENTER = "itemEnter"
 --- ListBox: itemClick
 UIEvent.ITEM_CLICK = "itemClick"
 
+--- ScrollGroup: scroll
+UIEvent.SCROLL = "scroll"
+
 ----------------------------------------------------------------------------------------------------
 -- @type UIComponent
 -- The base class for all components.
@@ -514,8 +483,10 @@ end
 -- Please to inherit this function if you want to initialize the event listener.
 function UIComponent:_initEventListeners()
     self:addEventListener(UIEvent.ENABLED_CHANGED, self.onEnabledChanged, self)
+    self:addEventListener(UIEvent.THEME_CHANGED, self.onThemeChanged, self)
     self:addEventListener(UIEvent.FOCUS_IN, self.onFocusIn, self)
     self:addEventListener(UIEvent.FOCUS_OUT, self.onFocusOut, self)
+    self:addEventListener(Event.RESIZE, self.onResize, self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchCommon, self, -10)
     self:addEventListener(Event.TOUCH_UP, self.onTouchCommon, self, -10)
     self:addEventListener(Event.TOUCH_MOVE, self.onTouchCommon, self, -10)
@@ -578,18 +549,13 @@ end
 -- Validate the layout.
 -- If you need to update the layout, call the updateLayout.
 function UIComponent:validateLayout()
-    -- Fixed a bug where the position of the MOAI SDK V1.4p0 does not reflect
-    if M.USE_TRANSFORM_BUGFIX then
-        self:forceUpdate()
-    end
-
     if self._invalidateLayoutFlag then
         self:updateLayout()
         self._invalidateLayoutFlag = false
-    end
 
-    if self.parent then
-        self.parent:invalidateLayout()
+        if self.parent then
+            self.parent:invalidateLayout()
+        end
     end
 end
 
@@ -646,16 +612,6 @@ end
 -- @return children
 function UIComponent:getChildren()
     return self.children
-end
-
----
--- Sets the children object.
--- @param children
-function UIComponent:setChildren(children)
-    self:removeChildren()
-    for i, child in ipairs(children) do
-        self:addChild(child)
-    end
 end
 
 ---
@@ -773,11 +729,23 @@ function UIComponent:setLayout(layout)
 end
 
 ---
+-- Set the excludeLayout.
+-- @param excludeLayout excludeLayout
+function UIComponent:setExcludeLayout(excludeLayout)
+    if self._excludeLayout ~= excludeLayout then
+        self._excludeLayout = excludeLayout
+        self:invalidateLayout()
+    end
+end
+
+---
 -- Set the enabled state.
 -- @param enabled enabled
 function UIComponent:setEnabled(enabled)
-    self._enabled = enabled
-    self:dispatchEvent(UIEvent.ENABLED_CHANGED)
+    if self._enabled ~= enabled then
+        self._enabled = enabled
+        self:dispatchEvent(UIEvent.ENABLED_CHANGED)
+    end
 end
 
 ---
@@ -869,6 +837,24 @@ function UIComponent:getTheme()
 end
 
 ---
+-- Set the themeName.
+-- @param themeName themeName
+function UIComponent:setThemeName(themeName)
+    if self._themeName ~= themeName then
+        self._themeName = themeName
+        self:invalidate()
+        self:dispatchEvent(UIEvent.THEME_CHANGED)
+    end
+end
+
+---
+-- Return the themeName.
+-- @return themeName
+function UIComponent:getThemeName()
+    return self._themeName
+end
+
+---
 -- Sets the style of the component.
 -- @param name style name
 -- @param value style value
@@ -889,8 +875,19 @@ function UIComponent:getStyle(name)
     end
 
     local theme = self:getTheme()
-    if theme and theme[name] ~= nil then
-        return theme[name]
+
+    while theme do
+        if theme[name] ~= nil then
+            return theme[name]
+        end
+
+        if theme["parentStyle"] then
+            local parentStyle = theme["parentStyle"]
+            local globalTheme = M.getTheme()
+            theme = globalTheme[parentStyle]
+        else
+            break
+        end
     end
 
     local globalTheme = M.getTheme()
@@ -920,6 +917,18 @@ function UIComponent:onEnabledChanged(e)
     else
         self:setColor(unpack(self:getStyle(UIComponent.STYLE_DISABLED_COLOR)))
     end
+end
+
+---
+-- This event handler is called when resize.
+-- @param e Resize Event
+function UIComponent:onResize(e)
+end
+
+---
+-- This event handler is called when theme changed.
+-- @param e Event
+function UIComponent:onThemeChanged(e)
 end
 
 ---
@@ -953,6 +962,58 @@ function UIComponent:onFocusOut(e)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type UILayer
+-- Layer class for the Widget.
+----------------------------------------------------------------------------------------------------
+UILayer = class(Layer)
+M.UILayer = UILayer
+
+---
+-- The constructor.
+-- @param viewport (option)viewport
+function UILayer:init(viewport)
+    UILayer.__super.init(self, viewport)
+    self.focusOutEnabled = true
+    self.focusMgr = M.getFocusMgr()
+
+    self:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
+    self:setTouchEnabled(true)
+    self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self, 10)
+end
+
+---
+-- Sets the scene for layer.
+-- @param scene scene
+function UILayer:setScene(scene)
+    if self.scene == scene then
+        return
+    end
+
+    if self.scene then
+        self.scene:removeEventListener(Event.STOP, self.onSceneStop, self, -10)
+    end
+
+    UILayer.__super.setScene(self, scene)
+
+    if self.scene then
+        self.scene:addEventListener(Event.STOP, self.onSceneStop, self, -10)
+    end
+end
+
+function UILayer:onTouchDown(e)
+    if self.focusOutEnabled then
+        self.focusMgr:setFocusObject(nil)
+    end
+end
+
+---
+-- This event handler is called when you stop the scene.
+-- @param e Touch Event
+function UILayer:onSceneStop(e)
+    self.focusMgr:setFocusObject(nil)
+end
+
+----------------------------------------------------------------------------------------------------
 -- @type UIGroup
 -- It is a class that can have on a child UIComponent.
 ----------------------------------------------------------------------------------------------------
@@ -982,93 +1043,39 @@ M.UIView = UIView
 function UIView:_initInternal()
     UIView.__super._initInternal(self)
     self.isUIView = true
-    self._scene = nil
-    self._lastPriority = 0
 
-    self:_initLayer()
+    self:setSize(flower.getViewSize())
+    self:setScissorContent(true)
 end
 
 ---
 -- Initializes the layer to display the view.
 function UIView:_initLayer()
-    local layer = Layer()
-    layer:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
-    layer:setTouchEnabled(true)
-    layer:addEventListener(Event.TOUCH_DOWN, self.onLayerTouchDown, self, 10)
+    if self.layer then
+        return
+    end
 
-    self:setSize(flower.getViewSize())
+    local layer = UILayer()
     self:setLayer(layer)
 end
 
----
--- Initializes the event listeners.
-function UIView:_initEventListeners()
-    UIView.__super._initEventListeners(self)
-end
+function UIView:validateLayout()
+    if self._invalidateLayoutFlag then
+        UIView.__super.validateLayout(self)
 
----
--- Change the size of the viewport.
--- @param screenX X of the Screen.
--- @param screenY Y of the Screen.
--- @param screenWidth Width of the Screen.
--- @param screenHeight Height of the Screen.
-function UIView:updateViewport(screenX, screenY, screenWidth, screenHeight)
-    local viewScale = flower.viewScale
-    local viewWidth = screenWidth / viewScale
-    local viewHeight = screenHeight / viewScale
-
-    local viewport = MOAIViewport.new()
-    viewport:setSize(screenX, screenY, screenX + screenWidth, screenY + screenHeight)
-    viewport:setScale(viewWidth, -viewHeight)
-    viewport:setOffset(-1, 1)
-
-    self.layer:setViewport(viewport)
-    self:setSize(viewWidth, viewHeight)
-end
-
----
--- Sets the visible to layer.
--- @param visible visible
-function UIView:setVisible(visible)
-    self.layer:setVisible(visible)
-end
-
----
--- Returns the visible from layer.
--- @return visible
-function UIView:getVisible()
-    self.layer:getVisible()
+        -- root
+        if not self.parent then
+            self:updatePriority()
+        end
+    end
 end
 
 ---
 -- Sets the scene for layer.
 -- @param scene scene
 function UIView:setScene(scene)
-    if self.layer.scene then
-        self.layer.scene:removeEventListener(Event.STOP, self.onSceneStop, self, -10)
-    end
-
+    self:_initLayer()
     self.layer:setScene(scene)
-
-    if self.layer.scene then
-        self.layer.scene:addEventListener(Event.STOP, self.onSceneStop, self, -10)
-    end
-end
-
----
--- This event handler is called when you touch the layer.
--- @param e Touch Event
-function UIView:onLayerTouchDown(e)
-    local focusMgr = self:getFocusMgr()
-    focusMgr:setFocusObject(nil)
-end
-
----
--- This event handler is called when you stop the scene.
--- @param e Touch Event
-function UIView:onSceneStop(e)
-    local focusMgr = self:getFocusMgr()
-    focusMgr:setFocusObject(nil)
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -1115,13 +1122,13 @@ BoxLayout = class(UILayout)
 M.BoxLayout = BoxLayout
 
 --- Horizotal Align: left
-BoxLayout.HORIZOTAL_LEFT = "left"
+BoxLayout.HORIZONTAL_LEFT = "left"
 
 --- Horizotal Align: center
-BoxLayout.HORIZOTAL_CENTER = "center"
+BoxLayout.HORIZONTAL_CENTER = "center"
 
 --- Horizotal Align: right
-BoxLayout.HORIZOTAL_RIGHT = "right"
+BoxLayout.HORIZONTAL_RIGHT = "right"
 
 --- Vertical Align: top
 BoxLayout.VERTICAL_TOP = "top"
@@ -1135,14 +1142,14 @@ BoxLayout.VERTICAL_BOTTOM = "bottom"
 --- Layout Direction: vertical
 BoxLayout.DIRECTION_VERTICAL = "vertical"
 
---- Layout Direction: horizotal
-BoxLayout.DIRECTION_HORIZOTAL = "horizotal"
+--- Layout Direction: horizontal
+BoxLayout.DIRECTION_HORIZONTAL = "horizontal"
 
 ---
 -- Initializes the internal variables.
 function BoxLayout:_initInternal()
-    self._horizotalAlign = BoxLayout.HORIZOTAL_LEFT
-    self._horizotalGap = 0
+    self._horizontalAlign = BoxLayout.HORIZONTAL_LEFT
+    self._horizontalGap = 0
     self._verticalAlign = BoxLayout.VERTICAL_TOP
     self._verticalGap = 0
     self._paddingTop = 0
@@ -1158,8 +1165,10 @@ end
 function BoxLayout:update(parent)
     if self._direction == BoxLayout.DIRECTION_VERTICAL then
         self:updateVertical(parent)
-    elseif self._direction == BoxLayout.DIRECTION_HORIZOTAL then
+    elseif self._direction == BoxLayout.DIRECTION_HORIZONTAL then
         self:updateHorizotal(parent)
+    else
+        flower.Log.warn("Illegal direction pattern !", self._direction)
     end
 end
 
@@ -1187,7 +1196,7 @@ function BoxLayout:updateVertical(parent)
 end
 
 ---
--- Sets the position of an objects in the horizotal direction.
+-- Sets the position of an objects in the horizontal direction.
 -- @param parent
 function BoxLayout:updateHorizotal(parent)
     local children = parent.children
@@ -1204,7 +1213,7 @@ function BoxLayout:updateHorizotal(parent)
             local childWidth, childHeight = child:getSize()
             local childY = self:calcChildY(parentHeight, childHeight)
             child:setPos(childX, childY)
-            childX = childX + childWidth + self._horizotalGap
+            childX = childX + childWidth + self._horizontalGap
         end
     end
 end
@@ -1218,11 +1227,11 @@ function BoxLayout:calcChildX(parentWidth, childWidth)
     local diffWidth = parentWidth - childWidth
 
     local x = 0
-    if self._horizotalAlign == BoxLayout.HORIZOTAL_LEFT then
+    if self._horizontalAlign == BoxLayout.HORIZONTAL_LEFT then
         x = self._paddingLeft
-    elseif self._horizotalAlign == BoxLayout.HORIZOTAL_CENTER then
+    elseif self._horizontalAlign == BoxLayout.HORIZONTAL_CENTER then
         x = math.floor((diffWidth + self._paddingLeft - self._paddingRight) / 2)
-    elseif self._horizotalAlign == BoxLayout.HORIZOTAL_RIGHT then
+    elseif self._horizontalAlign == BoxLayout.HORIZONTAL_RIGHT then
         x = diffWidth - self._paddingRight
     else
         error("Not found direction!")
@@ -1275,7 +1284,7 @@ function BoxLayout:calcVerticalLayoutSize(children)
 end
 
 ---
--- Calculate the layout size in the horizotal direction.
+-- Calculate the layout size in the horizontal direction.
 -- @param children children
 -- @return layout width
 -- @return layout height
@@ -1286,13 +1295,13 @@ function BoxLayout:calcHorizotalLayoutSize(children)
     for i, child in ipairs(children) do
         if not child._excludeLayout then
             local cWidth, cHeight = child:getSize()
-            width = width + cWidth + self._horizotalGap
+            width = width + cWidth + self._horizontalGap
             height = math.max(height, cHeight + self._paddingTop + self._paddingBottom)
             count = count + 1
         end
     end
     if count > 1 then
-        width = width - self._horizotalGap
+        width = width - self._horizontalGap
     end
     return width, height
 end
@@ -1312,26 +1321,26 @@ end
 
 ---
 -- Set the alignment.
--- @param horizotalAlign horizotal align
+-- @param horizontalAlign horizontal align
 -- @param verticalAlign vertical align
-function BoxLayout:setAlign(horizotalAlign, verticalAlign)
-    self._horizotalAlign = horizotalAlign
+function BoxLayout:setAlign(horizontalAlign, verticalAlign)
+    self._horizontalAlign = horizontalAlign
     self._verticalAlign = verticalAlign
 end
 
 ---
 -- Set the direction.
--- @param direction direction("horizotal" or "vertical")
+-- @param direction direction("horizontal" or "vertical")
 function BoxLayout:setDirection(direction)
-    self._direction = direction
+    self._direction = direction == "horizotal" and "horizontal" or direction
 end
 
 ---
 -- Set the gap.
--- @param horizotalGap horizotal gap
+-- @param horizontalGap horizontal gap
 -- @param verticalGap vertical gap
-function BoxLayout:setGap(horizotalGap, verticalGap)
-    self._horizotalGap = horizotalGap
+function BoxLayout:setGap(horizontalGap, verticalGap)
+    self._horizontalGap = horizontalGap
     self._verticalGap = verticalGap
 end
 
@@ -1384,7 +1393,6 @@ end
 -- Initializes the event listener.
 function Button:_initEventListeners()
     Button.__super._initEventListeners(self)
-    self:addEventListener(Event.RESIZE, self.onResize, self)
     self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self)
     self:addEventListener(Event.TOUCH_UP, self.onTouchUp, self)
     self:addEventListener(Event.TOUCH_MOVE, self.onTouchMove, self)
@@ -1605,11 +1613,11 @@ end
 
 ---
 -- Sets the text align.
--- @param horizotalAlign horizotal align(left, center, top)
+-- @param horizontalAlign horizontal align(left, center, top)
 -- @param verticalAlign vertical align(top, center, bottom)
-function Button:setTextAlign(horizotalAlign, verticalAlign)
-    if horizotalAlign or verticalAlign then
-        self:setStyle(Button.STYLE_TEXT_ALIGN, {horizotalAlign or "center", verticalAlign or "center"})
+function Button:setTextAlign(horizontalAlign, verticalAlign)
+    if horizontalAlign or verticalAlign then
+        self:setStyle(Button.STYLE_TEXT_ALIGN, {horizontalAlign or "center", verticalAlign or "center"})
     else
         self:setStyle(Button.STYLE_TEXT_ALIGN, nil)
     end
@@ -1618,7 +1626,7 @@ end
 
 ---
 -- Returns the text align.
--- @return horizotal align(left, center, top)
+-- @return horizontal align(left, center, top)
 -- @return vertical align(top, center, bottom)
 function Button:getTextAlign()
     return unpack(self:getStyle(Button.STYLE_TEXT_ALIGN))
@@ -1626,7 +1634,7 @@ end
 
 ---
 -- Returns the text align for MOAITextBox.
--- @return horizotal align
+-- @return horizontal align
 -- @return vertical align
 function Button:getAlignment()
     local h, v = self:getTextAlign()
@@ -1737,12 +1745,6 @@ function Button:onSelectedChanged(e)
     else
         self:dispatchEvent(UIEvent.UP)
     end
-end
-
----
--- This event handler is called when resize.
--- @param e Touch Event
-function Button:onResize(e)
 end
 
 ---
@@ -1976,6 +1978,13 @@ Joystick.MODE_ANALOG = "analog"
 --- Mode of the stick
 Joystick.MODE_DIGITAL = "digital"
 
+Joystick.DIRECTION_TO_KEY_CODE_MAP = {
+    left = KeyCode.KEY_LEFT,
+    top = KeyCode.KEY_UP,
+    right = KeyCode.KEY_RIGHT,
+    bottom = KeyCode.KEY_DOWN,
+}
+
 --- The ratio of the center
 Joystick.RANGE_OF_CENTER_RATE = 0.5
 
@@ -1994,6 +2003,8 @@ function Joystick:_initInternal()
     self._rangeOfCenterRate = Joystick.RANGE_OF_CENTER_RATE
     self._stickMode = Joystick.MODE_ANALOG
     self._changedEvent = Event(UIEvent.STICK_CHANGED)
+    self._keyInputDispatchEnabled = false
+    self._keyEvent = nil
 end
 
 ---
@@ -2047,6 +2058,10 @@ function Joystick:updateKnob(x, y)
         e.direction = self:getStickDirection()
         e.down = self._touchDownFlag
         self:dispatchEvent(e)
+
+        if self._keyInputDispatchEnabled then
+            self:dispatchKeyEvent(e.direction)
+        end
     end
 end
 
@@ -2176,10 +2191,37 @@ function Joystick:setStickMode(mode)
 end
 
 ---
+-- Set the keyInputDispatchEnabled
+-- @param value true or false
+function Joystick:setKeyInputDispatchEnabled(value)
+    self._keyInputDispatchEnabled = value
+end
+
+---
 -- Returns the touched.
 -- @return stick mode
 function Joystick:isTouchDown()
     return self._touchIndex ~= nil
+end
+
+function Joystick:dispatchKeyEvent(direction)
+    local key = Joystick.DIRECTION_TO_KEY_CODE_MAP[direction]
+
+    if self._keyEvent and self._keyEvent.key ~= key then
+        self._keyEvent.type = Event.KEY_UP
+        self._keyEvent.down = false
+        InputMgr:dispatchEvent(self._keyEvent)
+    end
+
+    if key then
+        self._keyEvent = self._keyEvent or Event()
+        self._keyEvent.type = Event.KEY_DOWN
+        self._keyEvent.down = true
+        self._keyEvent.key = key
+        InputMgr:dispatchEvent(self._keyEvent)
+    else
+        self._keyEvent = nil
+    end
 end
 
 ---
@@ -2257,13 +2299,6 @@ function Panel:_initInternal()
 end
 
 ---
--- Initialize the event listeners
-function Panel:_initEventListeners()
-    Panel.__super._initEventListeners(self)
-    self:addEventListener(UIEvent.RESIZE, self.onResize, self)
-end
-
----
 -- Create a children object.
 function Panel:_createChildren()
     Panel.__super._createChildren(self)
@@ -2283,12 +2318,18 @@ function Panel:_createBackgroundImage()
 end
 
 ---
--- Update the display objects.
-function Panel:updateDisplay()
-    Panel.__super.updateDisplay(self)
+-- Update the backgroundImage.
+function Panel:_updateBackgroundImage()
     self._backgroundImage:setImage(self:getBackgroundTexture())
     self._backgroundImage:setSize(self:getSize())
     self._backgroundImage:setVisible(self:getBackgroundVisible())
+end
+
+---
+-- Update the display objects.
+function Panel:updateDisplay()
+    Panel.__super.updateDisplay(self)
+    self:_updateBackgroundImage()
 end
 
 ---
@@ -2296,7 +2337,7 @@ end
 -- @param texture background texture path
 function Panel:setBackgroundTexture(texture)
     self:setStyle(Panel.STYLE_BACKGROUND_TEXTURE, texture)
-    self._backgroundImage:setImage(self:getBackgroundTexture())
+    self:invalidate()
 end
 
 ---
@@ -2311,7 +2352,7 @@ end
 -- @param visible visible
 function Panel:setBackgroundVisible(visible)
     self:setStyle(Panel.STYLE_BACKGROUND_VISIBLE, visible)
-    self._backgroundImage:setVisible(self:getBackgroundVisible())
+    self:invalidate()
 end
 
 ---
@@ -2326,11 +2367,303 @@ function Panel:getBackgroundVisible()
 end
 
 ---
--- This event handler is called when resize.
--- @param e Touch Event
-function Panel:onResize(e)
-    self._backgroundImage:setImage(self:getBackgroundTexture())
-    self._backgroundImage:setSize(self:getSize())
+-- Returns the content rect from backgroundImage.
+-- @return xMin
+-- @return yMin
+-- @return xMax
+-- @return yMax
+function Panel:getContentRect()
+    return self._backgroundImage:getContentRect()
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type TextLabel
+-- It is a class that displays the text.
+----------------------------------------------------------------------------------------------------
+TextLabel = class(UIComponent)
+M.TextLabel = TextLabel
+
+--- Style: fontName
+TextLabel.STYLE_FONT_NAME = "fontName"
+
+--- Style: textSize
+TextLabel.STYLE_TEXT_SIZE = "textSize"
+
+--- Style: textColor
+TextLabel.STYLE_TEXT_COLOR = "textColor"
+
+--- Style: textSize
+TextLabel.STYLE_TEXT_ALIGN = "textAlign"
+
+--- Style: textPadding
+TextLabel.STYLE_TEXT_PADDING = "textPadding"
+
+--- Style: textResizePolicy
+TextLabel.STYLE_TEXT_RESIZE_POLICY = "textResizePolicy"
+
+--- textResizePolicy : none
+TextLabel.RESIZE_POLICY_NONE = "none"
+
+--- textResizePolicy : auto
+TextLabel.RESIZE_POLICY_AUTO = "auto"
+
+---
+-- Initialize a variables
+function TextLabel:_initInternal()
+    TextLabel.__super._initInternal(self)
+    self._focusEnabled = false
+    self._themeName = "TextLabel"
+    self._text = ""
+    self._textLabel = nil
+end
+
+---
+-- Create a children object.
+function TextLabel:_createChildren()
+    TextLabel.__super._createChildren(self)
+
+    self._textLabel = Label(self._text)
+    self._textLabel:setWordBreak(MOAITextBox.WORD_BREAK_CHAR)
+    self:addChild(self._textLabel)
+end
+
+---
+-- Update the TextLabel.
+function TextLabel:_updateTextLabel()
+    self._textLabel:setString(self:getText())
+    self._textLabel:setTextSize(self:getTextSize())
+    self._textLabel:setColor(self:getTextColor())
+    self._textLabel:setAlignment(self:getAlignment())
+    self._textLabel:setFont(self:getFont())
+end
+
+---
+-- Update the TextLabel size.
+function TextLabel:_updateTextLabelSize()
+    local widthPolicy, heightPolicy = self:getTextResizePolicy()
+    local padLeft, padTop, padRight, padBottom = self:getTextPadding()
+
+    if widthPolicy == "auto" and heightPolicy == "auto" then
+        self:fitSize()
+    elseif heightPolicy == "auto" then
+        self:fitHeight()
+    elseif widthPolicy == "auto" then
+        self:fitWidth()
+    elseif self:getWidth() == 0 and self:getHeight() == 0 then
+        self:fitSize()
+    else
+        local textWidth = self:getWidth() - padLeft - padRight
+        local textHeight = self:getHeight() - padTop - padBottom
+        self._textLabel:setSize(textWidth, textHeight)
+        self._textLabel:setPos(padLeft, padTop)
+    end
+end
+
+---
+-- Update the display objects.
+function TextLabel:updateDisplay()
+    TextLabel.__super.updateDisplay(self)
+    self:_updateTextLabel()
+    self:_updateTextLabelSize()
+end
+
+---
+-- Sets the fit size.
+-- @param length (Option)Length of the text.
+-- @param maxWidth (Option)maxWidth of the text.
+-- @param maxHeight (Option)maxHeight of the text.
+-- @param padding (Option)padding of the text.
+function TextLabel:fitSize(length, maxWidth, maxHeight, padding)
+    self._textLabel:fitSize(length, maxWidth, maxHeight, padding)
+
+    local textWidth, textHeight = self:getLabel():getSize()
+    local padLeft, padTop, padRight, padBottom = self:getTextPadding()
+    local width, height = textWidth + padLeft + padRight, textHeight + padTop + padBottom
+
+    self._textLabel:setPos(padLeft, padTop)
+    self:setSize(width, height)
+end
+
+---
+-- Sets the fit height.
+-- @param length (Option)Length of the text.
+-- @param maxHeight (Option)maxHeight of the text.
+-- @param padding (Option)padding of the text.
+function TextLabel:fitHeight(length, maxHeight, padding)
+    self:fitSize(length, self:getLabel():getWidth(), maxHeight, padding) 
+end
+
+---
+-- Sets the fit height.
+-- @param length (Option)Length of the text.
+-- @param maxWidth (Option)maxWidth of the text.
+-- @param padding (Option)padding of the text.
+function TextLabel:fitWidth(length, maxWidth, padding)
+    self:fitSize(length, maxWidth, self:getLabel():getHeight(), padding) 
+end
+
+---
+-- Return the label.
+-- @return label
+function TextLabel:getLabel()
+    return self._textLabel
+end
+
+---
+-- Sets the text.
+-- @param text text
+function TextLabel:setText(text)
+    self._text = text or ""
+    self._textLabel:setString(self._text)
+    self:invalidate()
+end
+
+---
+-- Adds the text.
+-- @param text text
+function TextLabel:addText(text)
+    self:setText(self._text .. text)
+end
+
+---
+-- Returns the text.
+-- @return text
+function TextLabel:getText()
+    return self._text
+end
+
+---
+-- Sets the size policy of label.
+-- @param widthPolicy width policy
+-- @param widthPolicy height policy
+function TextLabel:setTextResizePolicy(widthPolicy, heightPolicy)
+    self:setStyle(TextLabel.STYLE_TEXT_RESIZE_POLICY, {widthPolicy or "none", heightPolicy or "none"})
+    self:invalidate()
+end
+
+---
+-- Returns the size policy of label.
+-- @return width policy
+-- @return height policy
+function TextLabel:getTextResizePolicy()
+    return unpack(self:getStyle(TextLabel.STYLE_TEXT_RESIZE_POLICY))
+end
+
+---
+-- Sets the textSize.
+-- @param textSize textSize
+function TextLabel:setTextSize(textSize)
+    self:setStyle(TextLabel.STYLE_TEXT_SIZE, textSize)
+    self:invalidate()
+end
+
+---
+-- Returns the textSize.
+-- @return textSize
+function TextLabel:getTextSize()
+    return self:getStyle(TextLabel.STYLE_TEXT_SIZE)
+end
+
+---
+-- Sets the fontName.
+-- @param fontName fontName
+function TextLabel:setFontName(fontName)
+    self:setStyle(TextLabel.STYLE_FONT_NAME, fontName)
+    self:invalidate()
+end
+
+---
+-- Returns the font name.
+-- @return font name
+function TextLabel:getFontName()
+    return self:getStyle(TextLabel.STYLE_FONT_NAME)
+end
+
+---
+-- Returns the font.
+-- @return font
+function TextLabel:getFont()
+    local fontName = self:getFontName()
+    local font = Resources.getFont(fontName, nil, self:getTextSize())
+    return font
+end
+
+---
+-- Sets the text align.
+-- @param horizontalAlign horizontal align(left, center, top)
+-- @param verticalAlign vertical align(top, center, bottom)
+function TextLabel:setTextAlign(horizontalAlign, verticalAlign)
+    if horizontalAlign or verticalAlign then
+        self:setStyle(TextLabel.STYLE_TEXT_ALIGN, {horizontalAlign or "center", verticalAlign or "center"})
+    else
+        self:setStyle(TextLabel.STYLE_TEXT_ALIGN, nil)
+    end
+    self:invalidate()
+end
+
+---
+-- Returns the text align.
+-- @return horizontal align(left, center, top)
+-- @return vertical align(top, center, bottom)
+function TextLabel:getTextAlign()
+    return unpack(self:getStyle(TextLabel.STYLE_TEXT_ALIGN))
+end
+
+---
+-- Returns the text align for MOAITextBox.
+-- @return horizontal align
+-- @return vertical align
+function TextLabel:getAlignment()
+    local h, v = self:getTextAlign()
+    h = assert(TextAlign[h])
+    v = assert(TextAlign[v])
+    return h, v
+end
+
+---
+-- Sets the text align.
+-- @param red red(0 ... 1)
+-- @param green green(0 ... 1)
+-- @param blue blue(0 ... 1)
+-- @param alpha alpha(0 ... 1)
+function TextLabel:setTextColor(red, green, blue, alpha)
+    if red == nil and green == nil and blue == nil and alpha == nil then
+        self:setStyle(TextLabel.STYLE_TEXT_COLOR, nil)
+    else
+        self:setStyle(TextLabel.STYLE_TEXT_COLOR, {red or 0, green or 0, blue or 0, alpha or 0})
+    end
+    self._textLabel:setColor(self:getTextColor())
+end
+
+---
+-- Returns the text color.
+-- @return red(0 ... 1)
+-- @return green(0 ... 1)
+-- @return blue(0 ... 1)
+-- @return alpha(0 ... 1)
+function TextLabel:getTextColor()
+    return unpack(self:getStyle(TextLabel.STYLE_TEXT_COLOR))
+end
+
+---
+-- Set textbox padding by label's setRect method, it will set 4 direction padding
+-- @param left padding for left
+-- @param top padding for top
+-- @param right padding for right
+-- @param bottom padding for bottom
+function TextLabel:setTextPadding(left, top, right, bottom)
+    self:setStyle(TextLabel.STYLE_TEXT_PADDING, {left or 0, top or 0, right or 0, bottom or 0})
+    self:invalidate()
+end
+
+---
+-- Returns the text padding.
+-- @return padding for left
+-- @return padding for top
+-- @return padding for right
+-- @return padding for bottom
+function TextLabel:getTextPadding()
+    return unpack(self:getStyle(TextLabel.STYLE_TEXT_PADDING))
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -2352,6 +2685,9 @@ TextBox.STYLE_TEXT_COLOR = "textColor"
 --- Style: textSize
 TextBox.STYLE_TEXT_ALIGN = "textAlign"
 
+--- Style: textPadding
+TextBox.STYLE_TEXT_PADDING = "textPadding"
+
 ---
 -- Initialize a variables
 function TextBox:_initInternal()
@@ -2366,21 +2702,20 @@ end
 function TextBox:_createChildren()
     TextBox.__super._createChildren(self)
 
-    self._textLabel = Label(self._text, 100, 30)
+    self._textLabel = Label(self._text)
     self._textLabel:setWordBreak(MOAITextBox.WORD_BREAK_CHAR)
     self:addChild(self._textLabel)
 end
 
 ---
--- Update the display objects.
-function TextBox:updateDisplay()
-    TextBox.__super.updateDisplay(self)
-
+-- Update the TextLabel.
+function TextBox:_updateTextLabel()
     local textLabel = self._textLabel
-    local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
-    local textWidth, textHeight = xMax - xMin, yMax - yMin
+    local xMin, yMin, xMax, yMax = self:getContentRect()
+    local padLeft, padTop, padRight, padBottom = self:getTextPadding()
+    local textWidth, textHeight = xMax - xMin - padLeft - padRight, yMax - yMin - padTop - padBottom
     textLabel:setSize(textWidth, textHeight)
-    textLabel:setPos(xMin, yMin)
+    textLabel:setPos(xMin + padLeft, yMin + padTop)
     textLabel:setString(self:getText())
     textLabel:setTextSize(self:getTextSize())
     textLabel:setColor(self:getTextColor())
@@ -2389,11 +2724,19 @@ function TextBox:updateDisplay()
 end
 
 ---
+-- Update the display objects.
+function TextBox:updateDisplay()
+    TextBox.__super.updateDisplay(self)
+    self:_updateTextLabel()
+end
+
+---
 -- Sets the text.
 -- @param text text
 function TextBox:setText(text)
-    self._text = text
-    self._textLabel:setString(text)
+    self._text = text or ""
+    self._textLabel:setString(self._text)
+    self:invalidate()
 end
 
 ---
@@ -2410,7 +2753,6 @@ function TextBox:getText()
     return self._text
 end
 
----
 -- Returns the text length.
 -- TODO:Tag escaping.
 -- @return text length
@@ -2423,7 +2765,7 @@ end
 -- @param textSize textSize
 function TextBox:setTextSize(textSize)
     self:setStyle(TextBox.STYLE_TEXT_SIZE, textSize)
-    self._textLabel:setTextSize(self:getTextSize())
+    self:invalidate()
 end
 
 ---
@@ -2438,7 +2780,7 @@ end
 -- @param fontName fontName
 function TextBox:setFontName(fontName)
     self:setStyle(TextBox.STYLE_FONT_NAME, fontName)
-    self._textLabel:setFont(self:getFont())
+    self:invalidate()
 end
 
 ---
@@ -2459,20 +2801,20 @@ end
 
 ---
 -- Sets the text align.
--- @param horizotalAlign horizotal align(left, center, top)
+-- @param horizontalAlign horizontal align(left, center, top)
 -- @param verticalAlign vertical align(top, center, bottom)
-function TextBox:setTextAlign(horizotalAlign, verticalAlign)
-    if horizotalAlign or verticalAlign then
-        self:setStyle(TextBox.STYLE_TEXT_ALIGN, {horizotalAlign or "center", verticalAlign or "center"})
+function TextBox:setTextAlign(horizontalAlign, verticalAlign)
+    if horizontalAlign or verticalAlign then
+        self:setStyle(TextBox.STYLE_TEXT_ALIGN, {horizontalAlign or "center", verticalAlign or "center"})
     else
         self:setStyle(TextBox.STYLE_TEXT_ALIGN, nil)
     end
-    self._textLabel:setAlignment(self:getAlignment())
+    self:invalidate()
 end
 
 ---
 -- Returns the text align.
--- @return horizotal align(left, center, top)
+-- @return horizontal align(left, center, top)
 -- @return vertical align(top, center, bottom)
 function TextBox:getTextAlign()
     return unpack(self:getStyle(TextBox.STYLE_TEXT_ALIGN))
@@ -2480,7 +2822,7 @@ end
 
 ---
 -- Returns the text align for MOAITextBox.
--- @return horizotal align
+-- @return horizontal align
 -- @return vertical align
 function TextBox:getAlignment()
     local h, v = self:getTextAlign()
@@ -2515,36 +2857,24 @@ function TextBox:getTextColor()
 end
 
 ---
--- This event handler is called when resize.
--- @param e Touch Event
-function TextBox:onResize(e)
-    TextBox.__super.onResize(self, e)
-
-    local textLabel = self._textLabel
-    local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
-    local textWidth, textHeight = xMax - xMin, yMax - yMin
-    textLabel:setSize(textWidth, textHeight)
-    textLabel:setPos(xMin, yMin)
-end
-
----
 -- Set textbox padding by label's setRect method, it will set 4 direction padding
--- @param padding pixecls
-function TextBox:setPadding(padding)
-    if self._textLabel then
-        local x1, y1, x2, y2 = self._textLabel:getRect()
-        self._textLabel:setRect(x1 + padding, y1 + padding, x2 - padding, y2 - padding)
-    end
+-- @param left padding for left
+-- @param top padding for top
+-- @param right padding for right
+-- @param bottom padding for bottom
+function TextBox:setTextPadding(left, top, right, bottom)
+    self:setStyle(TextBox.STYLE_TEXT_PADDING, {left or 0, top or 0, right or 0, bottom or 0})
+    self:invalidate()
 end
 
 ---
--- Set textbox padding-top by label's setRect method
--- @param padding pixecls
-function TextBox:setPaddingTop(padding)
-    if self._textLabel then
-        local x1, y1, x2, y2 = self._textLabel:getRect()
-        self._textLabel:setRect(x1, padding, x2, y2)
-    end
+-- Returns the text padding.
+-- @return padding for left
+-- @return padding for top
+-- @return padding for right
+-- @return padding for bottom
+function TextBox:getTextPadding()
+    return unpack(self:getStyle(TextBox.STYLE_TEXT_PADDING))
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -2693,11 +3023,11 @@ end
 function TextInput:onKeyDown(e)
     local key = e.key
 
-    if key == KeyCode.DEL or key == KeyCode.BACKSPACE then
+    if key == KeyCode.KEY_DELETE or key == KeyCode.KEY_BACKSPACE then
         local text = self:getText()
         text = #text > 0 and text:sub(1, #text - 1) or text
         self:setText(text)
-    elseif key == KeyCode.ENTER then
+    elseif key == KeyCode.KEY_ENTER then
     -- TODO: LF
     else
         if self:getMaxLength() == 0 or self:getTextLength() < self:getMaxLength() then
@@ -2794,6 +3124,7 @@ function MsgBox:showPopup()
 
     -- text label setting
     self:setText(self._text)
+    self:validate()
     if self._spoolingEnabled then
         self._textLabel:setReveal(0)
     else
@@ -2920,6 +3251,8 @@ function ListBox:_initInternal()
     self._scrollBarVisible = true
     self._labelField = nil
     self._touchedIndex = nil
+    self._keyMoveEnabled = true
+    self._keyEnterEnabled = true
 end
 
 ---
@@ -2944,6 +3277,35 @@ end
 function ListBox:_createScrollBar()
     self._scrollBar = NineImage(self:getStyle(ListBox.STYLE_SCROLL_BAR_TEXTURE))
     self:addChild(self._scrollBar)
+end
+
+---
+-- Update the rowCount
+function ListBox:_updateRowCount()
+    local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
+    local contentWidth, contentHeight = xMax - xMin, yMax - yMin
+    local rowHeight = self:getRowHeight()
+    self._rowCount = math.floor(contentHeight / rowHeight)
+end
+
+---
+-- Update the ListItems
+function ListBox:_updateListItems()
+
+    -- listItems
+    local vsp = self:getVerticalScrollPosition()
+    local rowCount = self:getRowCount()
+    local colCount = self:getColumnCount()
+    local minIndex = vsp * colCount + 1
+    local maxIndex = vsp * colCount + rowCount * colCount
+    local listSize = self:getListSize()
+    for i = 1, listSize do
+        if i < minIndex or maxIndex < i then
+            self:_deleteListItem(i)
+        else
+            self:_createListItem(i)
+        end
+    end
 end
 
 ---
@@ -2972,6 +3334,7 @@ function ListBox:_createListItem(index)
     listItem:setSize(itemWidth, itemHeight)
     listItem:setPos(itemX, itemY)
     listItem:setSelected(index == self._selectedIndex)
+    listItem:setListComponent(self)
 
     return listItem
 end
@@ -2999,51 +3362,8 @@ function ListBox:_clearListItems()
 end
 
 ---
--- Update the display.
-function ListBox:updateDisplay()
-    ListBox.__super.updateDisplay(self)
-
-    -- listItems
-    local vsp = self:getVerticalScrollPosition()
-    local rowCount = self:getRowCount()
-    local colCount = self:getColumnCount()
-    local minIndex = vsp * colCount + 1
-    local maxIndex = vsp * colCount + rowCount * colCount
-    local listSize = self:getListSize()
-    for i = 1, listSize do
-        if i < minIndex or maxIndex < i then
-            self:_deleteListItem(i)
-        else
-            self:_createListItem(i)
-        end
-    end
-
-    self:updateScrollBar()
-end
-
----
--- Update the priority.
--- @param priority priority
--- @return last priority
-function ListBox:updatePriority(priority)
-    priority = ListBox.__super.updatePriority(self, priority)
-    self._scrollBar:setPriority(priority + 1)
-    return priority + 10
-end
-
----
--- Update the size by rowCount.
-function ListBox:updateSize()
-    local rowCount = self:getRowCount()
-    local rowHeight = self:getRowHeight()
-    local pLeft, pTop, pRight, pBottom = self._backgroundImage:getContentPadding()
-
-    self:setHeight(rowCount * rowHeight + pTop + pBottom)
-end
-
----
 -- Update the scroll bar.
-function ListBox:updateScrollBar()
+function ListBox:_updateScrollBar()
     local bar = self._scrollBar
     local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
     local vsp = self:getVerticalScrollPosition()
@@ -3055,6 +3375,36 @@ function ListBox:updateScrollBar()
     step = step >= bar.displayHeight and step or (yMax - yMin - bar.displayHeight) / (maxVsp + 1)
     bar:setPos(xMax - bar:getWidth(), yMin + math.floor(step * vsp))
     bar:setVisible(maxVsp > 0 and self._scrollBarVisible)
+end
+
+---
+-- Update the height by rowCount.
+function ListBox:_updateHeightByRowCount()
+    local rowCount = self:getRowCount()
+    local rowHeight = self:getRowHeight()
+    local pLeft, pTop, pRight, pBottom = self._backgroundImage:getContentPadding()
+
+    self:setHeight(rowCount * rowHeight + pTop + pBottom)
+end
+
+---
+-- Update the display.
+function ListBox:updateDisplay()
+    ListBox.__super.updateDisplay(self)
+
+    self:_updateRowCount()
+    self:_updateListItems()
+    self:_updateScrollBar()
+end
+
+---
+-- Update the priority.
+-- @param priority priority
+-- @return last priority
+function ListBox:updatePriority(priority)
+    priority = ListBox.__super.updatePriority(self, priority)
+    self._scrollBar:setPriority(priority + 1)
+    return priority + 10
 end
 
 ---
@@ -3134,7 +3484,7 @@ function ListBox:setSelectedIndex(index)
         newItem:setSelected(true)
     end
 
-    local data = newItem and  newItem:getData() or nil
+    local data = self._selectedIndex and self._listData[self._selectedIndex] or nil
     self:dispatchEvent(UIEvent.ITEM_CHANGED, data)
 end
 
@@ -3143,6 +3493,20 @@ end
 -- @return selectedIndex
 function ListBox:getSelectedIndex()
     return self._selectedIndex
+end
+
+---
+-- Returns the selected row index.
+-- @return selected row index
+function ListBox:getSelectedRowIndex()
+    return self._selectedIndex and math.ceil(self._selectedIndex / self._columnCount) or nil
+end
+
+---
+-- Returns the selected row index.
+-- @return selected row index
+function ListBox:getSelectedColumnIndex()
+    return self._selectedIndex and (self._selectedIndex - 1) % self._columnCount + 1 or nil
 end
 
 ---
@@ -3233,7 +3597,7 @@ end
 -- @param rowCount count of the rows
 function ListBox:setRowCount(rowCount)
     self._rowCount = rowCount
-    self:updateSize()
+    self:_updateHeightByRowCount()
     self:invalidateDisplay()
 end
 
@@ -3275,7 +3639,7 @@ end
 function ListBox:setScrollBarTexture(texture)
     self:setStyle(ListBox.STYLE_SCROLL_BAR_TEXTURE, texture)
     self._scrollBar:setImage(texture)
-    self:updateScrollBar()
+    self:_updateScrollBar()
 end
 
 ---
@@ -3289,8 +3653,7 @@ end
 -- Set the event listener that is called when the user item changed.
 -- @param func event handler
 function ListBox:setOnItemEnter(func)
-    print("Depricated function:setOnItemEnter")
-    self:setOnItemClick(func)
+    self:setEventListener(UIEvent.ITEM_ENTER, func)
 end
 
 ---
@@ -3314,6 +3677,26 @@ function ListBox:findListItemByPos(x, y)
 end
 
 ---
+-- This event handler is called when focus in.
+-- @param e event
+function ListBox:onFocusIn(e)
+    ListBox.__super.onFocusIn(self, e)
+
+    InputMgr:addEventListener(Event.KEY_DOWN, self.onKeyDown, self)
+    InputMgr:addEventListener(Event.KEY_UP, self.onKeyUp, self)
+end
+
+---
+-- This event handler is called when focus in.
+-- @param e event
+function ListBox:onFocusOut(e)
+    ListBox.__super.onFocusOut(self, e)
+
+    InputMgr:removeEventListener(Event.KEY_DOWN, self.onKeyDown, self)
+    InputMgr:removeEventListener(Event.KEY_UP, self.onKeyUp, self)
+end
+
+---
 -- This event handler is called when touch.
 -- @param e Touch Event
 function ListBox:onTouchDown(e)
@@ -3323,6 +3706,7 @@ function ListBox:onTouchDown(e)
     self._touchedIndex = e.idx
     self._touchedY = e.wy
     self._touchedVsp = self:getVerticalScrollPosition()
+    self._touchedOldItem = self:getSelectedItem()
     self._itemClickCancelFlg = false
 
     local item = self:findListItemByPos(e.wx, e.wy)
@@ -3343,6 +3727,10 @@ function ListBox:onTouchUp(e)
 
     if item and item:getData() and not self._itemClickCancelFlg then
         self:dispatchEvent(UIEvent.ITEM_CLICK, item:getData())
+
+        if self._touchedOldItem == item then
+            self:dispatchEvent(UIEvent.ITEM_ENTER, item:getData())
+        end
     end
 
     self._touchedIndex = nil
@@ -3377,17 +3765,61 @@ function ListBox:onTouchCancel(e)
 end
 
 ---
--- This event handler is called when resize.
--- @param e Event
-function ListBox:onResize(e)
-    ListBox.__super.onResize(self, e)
+-- This event handler is called when key down.
+-- @param e event
+function ListBox:onKeyDown(e)
 
-    local xMin, yMin, xMax, yMax = self._backgroundImage:getContentRect()
-    local contentWidth, contentHeight = xMax - xMin, yMax - yMin
-    local rowHeight = self:getRowHeight()
-    self._rowCount = math.floor(contentHeight / rowHeight)
+    -- move selectedIndex
+    if self._keyMoveEnabled then
+        local selectedIndex = self:getSelectedIndex()
+        local columnCount = self:getColumnCount()
+        if e.key == KeyCode.KEY_UP then
+            selectedIndex = selectedIndex and math.max(1, selectedIndex - columnCount) or 1
+            self:setSelectedIndex(selectedIndex)
+
+            local rowIndex = self:getSelectedRowIndex()
+            if rowIndex <= self:getVerticalScrollPosition() then
+                self:setVerticalScrollPosition(self:getVerticalScrollPosition() - 1)
+            end
+        elseif e.key == KeyCode.KEY_DOWN then
+            selectedIndex = selectedIndex and math.min(self:getListSize(), selectedIndex + columnCount) or 1
+            self:setSelectedIndex(selectedIndex)
+
+            local rowIndex = self:getSelectedRowIndex()
+            if rowIndex > self:getVerticalScrollPosition() + self:getRowCount() then
+                self:setVerticalScrollPosition(self:getVerticalScrollPosition() + 1)
+            end
+        elseif e.key == KeyCode.KEY_LEFT then
+            local rowIndex = selectedIndex and self:getSelectedRowIndex() or 1
+            local minIndex = (rowIndex - 1) * columnCount + 1
+            selectedIndex = selectedIndex and math.max(minIndex, selectedIndex - 1) or 1
+            self:setSelectedIndex(selectedIndex)
+        elseif e.key == KeyCode.KEY_RIGHT then
+            local rowIndex = selectedIndex and self:getSelectedRowIndex() or 1
+            local maxIndex = rowIndex * columnCount
+            selectedIndex = selectedIndex and math.min(maxIndex, selectedIndex + 1) or 1
+            self:setSelectedIndex(selectedIndex)
+        end
+    end
+
+    -- dispatch itemClick event
+    if self._keyEnterEnabled then
+        if e.key == KeyCode.KEY_ENTER then
+            local selectedItem = self:getSelectedItem()
+            if selectedItem then
+                self:dispatchEvent(UIEvent.ITEM_CLICK, selectedItem:getData())
+            end
+        end
+    end
+
 end
 
+---
+-- This event handler is called when key up.
+-- @param e event
+function ListBox:onKeyUp(e)
+
+end
 
 ----------------------------------------------------------------------------------------------------
 -- @type ListItem
@@ -3476,6 +3908,8 @@ function ListItem:setData(data, dataIndex)
     if self._iconImage then
         self._iconImage:setIndex(self:getIconIndex())
     end
+
+    self:invalidateDisplay()
 end
 
 ---
@@ -3531,9 +3965,20 @@ end
 -- Returns the labelField.
 -- @return labelField
 function ListItem:getLabelField()
-    if self.parent then
-        return self.parent:getLabelField()
+    if self._listComponent then
+        return self._listComponent:getLabelField()
     end
+end
+
+function ListItem:setListComponent(value)
+    if self._listComponent ~= value then
+        self._listComponent = value
+        self:invalidate()
+    end
+end
+
+function ListItem:getListComponent()
+    return self._listComponent
 end
 
 ---
@@ -3544,6 +3989,8 @@ function ListItem:setIconVisible(iconVisible)
     if self._iconImage then
         self._iconImage:setVisible(iconVisible)
     end
+
+    self:invalidateDisplay()
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -3762,150 +4209,240 @@ function Slider:onTouchCancel(e)
 end
 
 ----------------------------------------------------------------------------------------------------
--- @type ScrollView
--- Scrollable UIView class.
+-- @type Spacer
+-- TODO:Doc
 ----------------------------------------------------------------------------------------------------
-ScrollView = class(UIView)
-M.ScrollView = ScrollView
+Spacer = class(UIComponent)
+M.Spacer = Spacer
+
+function Spacer:_initInternal()
+    Spacer.__super._initInternal(self)
+    self._focusEnabled = false
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type ScrollGroup
+-- Scrollable Group class.
+----------------------------------------------------------------------------------------------------
+ScrollGroup = class(UIGroup)
+M.ScrollGroup = ScrollGroup
 
 --- Style: friction
-ScrollView.STYLE_FRICTION = "friction"
+ScrollGroup.STYLE_FRICTION = "friction"
 
 --- Style: scrollPolicy
-ScrollView.STYLE_SCROLL_POLICY = "scrollPolicy"
+ScrollGroup.STYLE_SCROLL_POLICY = "scrollPolicy"
 
 --- Style: bouncePolicy
-ScrollView.STYLE_BOUNCE_POLICY = "bouncePolicy"
+ScrollGroup.STYLE_BOUNCE_POLICY = "bouncePolicy"
 
 --- Style: scrollForceBounds
-ScrollView.STYLE_SCROLL_FORCE_BOUNDS = "scrollForceBounds"
+ScrollGroup.STYLE_SCROLL_FORCE_LIMITS = "scrollForceLimits"
+
+--- Style: verticalScrollBarColor
+ScrollGroup.STYLE_VERTICAL_SCROLL_BAR_COLOR = "verticalScrollBarColor"
+
+--- Style: verticalScrollBarTexture
+ScrollGroup.STYLE_VERTICAL_SCROLL_BAR_TEXTURE = "verticalScrollBarTexture"
+
+--- Style: horizontalScrollBarTexture
+ScrollGroup.STYLE_HORIZONTAL_SCROLL_BAR_COLOR = "horizontalScrollBarColor"
+
+--- Style: horizontalScrollBarTexture
+ScrollGroup.STYLE_HORIZONTAL_SCROLL_BAR_TEXTURE = "horizontalScrollBarTexture"
 
 ---
 -- Initializes the internal variables.
-function ScrollView:_initInternal()
-    ScrollView.__super._initInternal(self)
-    self._themeName = "ScrollView"
+function ScrollGroup:_initInternal()
+    ScrollGroup.__super._initInternal(self)
+    self._themeName = "ScrollGroup"
     self._scrollForceX = 0
     self._scrollForceY = 0
-    self._scrollGroup = nil
+    self._contentGroup = nil
+    self._contentBackground = nil
     self._looper = nil
     self._touchDownIndex = nil
-    self._lastTouchX = nil
-    self._lastTouchY = nil
+    self._touchScrolledFlg = false
+    self._touchStartX = nil
+    self._touchStartY = nil
+    self._touchLastX = nil
+    self._touchLastY = nil
     self._scrollToAnim = nil
+    self._scrollBarHideAction = nil
+    self._verticalScrollBar = nil
+    self._horizontalScrollBar = nil
+
+    self:setScissorContent(true)
 end
 
 ---
 -- Performing the initialization processing of the event listener.
-function ScrollView:_initEventListeners()
-    ScrollView.__super._initEventListeners(self)
-    self.layer:addEventListener(Event.TOUCH_DOWN, self.onScrollLayerTouchDown, self, -20)
-    self.layer:addEventListener(Event.TOUCH_UP, self.onScrollLayerTouchUp, self, -20)
-    self.layer:addEventListener(Event.TOUCH_MOVE, self.onScrollLayerTouchMove, self, -20)
-    self.layer:addEventListener(Event.TOUCH_CANCEL, self.onScrollLayerTouchCancel, self, -20)
+function ScrollGroup:_initEventListeners()
+    ScrollGroup.__super._initEventListeners(self)
+    self:addEventListener(Event.TOUCH_DOWN, self.onTouchDown, self, -20)
+    self:addEventListener(Event.TOUCH_UP, self.onTouchUp, self, -20)
+    self:addEventListener(Event.TOUCH_MOVE, self.onTouchMove, self, -20)
+    self:addEventListener(Event.TOUCH_CANCEL, self.onTouchCancel, self, -20)
 end
 
 ---
 -- Performing the initialization processing of the component.
-function ScrollView:_createChildren()
-    self._scrollGroup = UIGroup {
-        size = {self:getSize()}
-    }
+function ScrollGroup:_createChildren()
+    self:_createContentBackground()
+    self:_createContentGroup()
+    self:_createScrollBar()
+end
 
-    self:addChild(self._scrollGroup)
+function ScrollGroup:_createContentBackground()
+    self._contentBackground = flower.Graphics(self:getSize())
+    self._contentBackground._excludeLayout = true
+end
+
+function ScrollGroup:_createContentGroup()
+    self._contentGroup = UIGroup()
+    self._contentGroup:setSize(self:getSize())
+    self._contentGroup:addChild(self._contentBackground)
+    self:addChild(self._contentGroup)
 end
 
 ---
--- Adjusted so as to fall within the scope of the scroll.
-function ScrollView:_ajustScrollPosition()
-    local left, top = self:getScrollPos()
-    local clipLeft, clipTop = self:clipScrollPosition(left, top)
-    local hBounceEnabled, vBounceEnabled = self:getBouncePolicy()
+-- Create the scrollBar
+function ScrollGroup:_createScrollBar()
+    self._verticalScrollBar = NineImage(self:getStyle(ScrollGroup.STYLE_VERTICAL_SCROLL_BAR_TEXTURE))
+    self._horizontalScrollBar = NineImage(self:getStyle(ScrollGroup.STYLE_HORIZONTAL_SCROLL_BAR_TEXTURE))
 
-    left = hBounceEnabled and left or clipLeft
-    top = vBounceEnabled and top or clipTop
+    self._verticalScrollBar:setVisible(false)
+    self._horizontalScrollBar:setVisible(false)
 
-    self:setScrollPos(left, top)
+    self:addChild(self._verticalScrollBar)
+    self:addChild(self._horizontalScrollBar)
 end
 
 ---
--- Adjust the scroll size.
-function ScrollView:_ajustScrollSize()
-    if not self._autoResizing then
-        return
-    end
-    
+-- Update the scroll size.
+function ScrollGroup:_updateScrollSize()
     local width, height = 0, 0
-    local minWidth, minHeight = self.layer:getSize()
+    local minWidth, minHeight = self:getSize()
     
-    for i, child in ipairs(self:getChildren()) do
-       width  = math.max(width, child:getRight())
-       height = math.max(height, child:getBottom())
+    for i, child in ipairs(self._contentGroup:getChildren()) do
+        if not child._excludeLayout then
+            width  = math.max(width, child:getRight())
+            height = math.max(height, child:getBottom())
+        end
     end
 
     width = width >= minWidth and width or minWidth
     height = height >= minHeight and height or minHeight
 
-    self._scrollGroup:setSize(width, height)
+    self._contentGroup:setSize(width, height)
+    self._contentBackground:setSize(width, height)
 end
 
 ---
--- If it is out of the boundary, to bounce.
--- @return True if to bouncing.
-function ScrollView:_doBounce()
-    if self:isScrolling() or self:isScrollAnimating() then
-        return false
+-- Update the vertical scroll bar.
+function ScrollGroup:_updateScrollBar()
+    local vBar = self._verticalScrollBar
+    local hBar = self._horizontalScrollBar
+
+    local width, height = self:getSize()
+    local contentW, contentH = self._contentGroup:getSize()
+    local contentX, contentY = self._contentGroup:getPos()
+    local maxContentX, maxContentY = math.max(0, contentW - width), math.max(0, contentH - height)
+
+    local hBarW = math.floor(math.max(width / contentW * width, hBar.displayWidth))
+    local hBarH = hBar:getHeight()
+    local hBarX = math.floor(-contentX / maxContentX * (width - hBarW))
+    local hBarY = height - hBarH
+
+    local vBarW = vBar:getWidth()
+    local vBarH = math.floor(math.max(height / contentH * height, vBar.displayHeight))
+    local vBarX = width - vBarW
+    local vBarY = math.floor(-contentY / maxContentY * (height - vBarH))
+
+    hBar:setSize(hBarW, hBarH)
+    hBar:setPos(hBarX, hBarY)
+    vBar:setSize(vBarW, vBarH)
+    vBar:setPos(vBarX, vBarY)
+end
+
+---
+-- Show scroll bars.
+function ScrollGroup:_showScrollBar()
+    if self._scrollBarHideAction then
+        self._scrollBarHideAction:stop()
+        self._scrollBarHideAction = nil
     end
 
-    local left, top = self:getScrollPos()
-    if self:isPositionOutOfBounds(left, top) then
-        local clippedLeft, clippedTop = self:clipScrollPosition(left, top)
-        self:scrollTo(clippedLeft, clippedTop, 0.5, MOAIEaseType.SOFT_EASE_IN)
-        return true
-    end    
+    local maxX, maxY = self:getMaxScrollPosition()
+
+    self._horizontalScrollBar:setVisible(maxX > 0)
+    self._horizontalScrollBar:setColor(unpack(self:getStyle(ScrollGroup.STYLE_HORIZONTAL_SCROLL_BAR_COLOR)))
+
+    self._verticalScrollBar:setVisible(maxY > 0)
+    self._verticalScrollBar:setColor(unpack(self:getStyle(ScrollGroup.STYLE_VERTICAL_SCROLL_BAR_COLOR)))
+end
+
+---
+-- Hide scroll bars.
+function ScrollGroup:_hideScrollBar()
+    if not self._scrollBarHideAction then
+        local action1 = self._verticalScrollBar:seekColor(0, 0, 0, 0, 1)
+        local action2 = self._horizontalScrollBar:seekColor(0, 0, 0, 0, 1)
+
+        self._scrollBarHideAction = MOAIAction.new()
+        self._scrollBarHideAction:addChild(action1)
+        self._scrollBarHideAction:addChild(action2)
+        self._scrollBarHideAction:setListener(MOAIAction.EVENT_STOP, function() self:onStopScrollBarHideAction() end )
+        self._scrollBarHideAction:start()
+    end
 end
 
 ---
 -- Update of the scroll processing.
-function ScrollView:_doUpdateScroll()
+function ScrollGroup:_updateScrollPosition()
     if self:isTouching() then
+        self:_hideScrollBar()
+        self:_stopLooper()
+        return
+    end
+    if self:isScrollAnimating() then
         return
     end
     if not self:isScrolling() then
+
+        local left, top = self:getScrollPosition()
+        if self:isPositionOutOfBounds(left, top) then
+            local clippedLeft, clippedTop = self:clipScrollPosition(left, top)
+            self:scrollTo(clippedLeft, clippedTop, 0.5, MOAIEaseType.SOFT_EASE_IN)
+        else
+            self:_hideScrollBar()
+            self:_stopLooper()
+        end
         return
     end
 
-    local left, top = self:getScrollPos()
+    local left, top = self:getScrollPosition()
     local scrollX, scrollY = self:getScrollForceVec()
     local rateX, rateY = (1 - self:getFriction()), (1 - self:getFriction())
 
     rateX = self:isPositionOutOfHorizontal(left) and rateX * 0.35 or rateX
     rateY = self:isPositionOutOfVertical(top) and rateY * 0.35 or rateY
 
-    self:addScrollPos(scrollX, scrollY)
+    self:addScrollPosition(scrollX, scrollY)
     self:setScrollForceVec(scrollX * rateX, scrollY * rateY)
 end
 
 ---
--- Sets the scene for layer.
--- @param scene scene
-function ScrollView:setScene(scene)
-    if self.layer.scene then
-        self.layer.scene:removeEventListener(Event.CLOSE, self.onSceneClose, self, -10)
-        self:dispose()
-    end
-
-    ScrollView.__super.setScene(self, scene)
-
-    if self.layer.scene then
-        self.layer.scene:addEventListener(Event.CLOSE, self.onSceneClose, self, -10)
+-- Start looper.
+function ScrollGroup:_startLooper()
+    if not self._looper then
         self._looper = Executors.callLoop(self.onEnterFrame, self)
     end
 end
 
 ---
--- Dispose resources.
-function ScrollView:dispose()
+-- Stop looper.
+function ScrollGroup:_stopLooper()
     if self._looper then
         self._looper:stop()
         self._looper = nil
@@ -3913,123 +4450,121 @@ function ScrollView:dispose()
 end
 
 ---
--- Add the content to scrollGroup.
--- @param content
-function ScrollView:addContent(content)
-    self._scrollGroup:addChild(content)
+-- Return the contentBackground
+-- @return contentBackground
+function ScrollGroup:getContentBackground()
+    return self._contentBackground
 end
 
 ---
--- Add the content from scrollGroup.
--- @param content
-function ScrollView:removeContent(content)
-    self._scrollGroup:removeChild(content)
+-- Return the contentGroup
+-- @return contentGroup
+function ScrollGroup:getContentGroup()
+    return self._contentGroup
 end
 
 ---
--- Add the content from scrollGroup.
+-- Returns the contentGroup size.
+-- @return width
+-- @return height
+function ScrollGroup:getContentSize()
+    return self._contentGroup:getSize()
+end
+
+---
+-- Add the content to contentGroup.
+-- @param content
+function ScrollGroup:addContent(content)
+    self._contentGroup:addChild(content)
+end
+
+---
+-- Add the content from contentGroup.
+-- @param content
+function ScrollGroup:removeContent(content)
+    self._contentGroup:removeChild(content)
+end
+
+---
+-- Add the content to contentGroup.
 -- @param contents
-function ScrollView:setContents(contents)
-    self._scrollGroup:setChildren(contents)
-end
-
----
--- Return the scrollGroup.
--- @return scrollGroup
-function ScrollView:getScrollGroup()
-    return self._scrollGroup
-end
-
----
--- Return the scrollGroup.
--- @return scrollGroup
-function ScrollView:setScrollGroup(scrollGroup)
-    self:removeChild(self._scrollGroup)
-    self._scrollGroup = assert(scrollGroup)
-    self:addChild(self._scrollGroup)
-
-    self:invalidate()
-end
-
----
--- Computes attenuation as a function of distance.
--- @param distance Distance
--- @return distance^(-2/3)
-function ScrollView:attenuation(distance)
-    distance = distance == 0 and 1 or math.pow(distance, 0.667)
-    return 1 / distance
+function ScrollGroup:setContents(contents)
+    self._contentGroup:removeChildren()
+    self._contentGroup:addChild(self._contentBackground)
+    self._contentGroup:addChildren(contents)
 end
 
 ---
 -- Also changes the size of the scroll container when layout update.
-function ScrollView:updateLayout()
-    ScrollView.__super.updateLayout(self)
-    self:_ajustScrollSize()
+function ScrollGroup:updateLayout()
+    ScrollGroup.__super.updateLayout(self)
+    self:_updateScrollSize()
+    self:_updateScrollBar()
 end
 
 ---
 -- Set the layout.
 -- @param layout layout
-function ScrollView:setLayout(layout)
-    self._scrollGroup:setLayout(layout)
+function ScrollGroup:setLayout(layout)
+    self._contentGroup:setLayout(layout)
 end
 
 ---
 -- Set the coefficient of friction at the time of scrolling.
 -- @param value friction
-function ScrollView:setFriction(value)
-    self:setStyle(ScrollView.STYLE_FRICTION, value)
+function ScrollGroup:setFriction(value)
+    self:setStyle(ScrollGroup.STYLE_FRICTION, value)
 end
 
 ---
 -- Returns the coefficient of friction at the time of scrolling.
 -- @return friction
-function ScrollView:getFriction()
-    return self:getStyle(ScrollView.STYLE_FRICTION)
+function ScrollGroup:getFriction()
+    return self:getStyle(ScrollGroup.STYLE_FRICTION)
 end
 
 ---
 -- Sets the horizontal and vertical scroll enabled.
 -- @param horizontal horizontal scroll is enabled.
 -- @param vertical vertical scroll is enabled.
-function ScrollView:setScrollPolicy(horizontal, vertical)
+function ScrollGroup:setScrollPolicy(horizontal, vertical)
     if horizontal == nil then horizontal = true end
     if vertical == nil then vertical = true end
 
-    self:setStyle(ScrollView.STYLE_SCROLL_POLICY, {horizontal, vertical})
+    self:setStyle(ScrollGroup.STYLE_SCROLL_POLICY, {horizontal, vertical})
 end
 
 ---
 -- Return the scroll policy.
 -- @return horizontal scroll enabled.
 -- @return vertical scroll enabled.
-function ScrollView:getScrollPolicy()
-    return unpack(self:getStyle(ScrollView.STYLE_SCROLL_POLICY))
+function ScrollGroup:getScrollPolicy()
+    return unpack(self:getStyle(ScrollGroup.STYLE_SCROLL_POLICY))
 end
 
 ---
 -- Sets the horizontal and vertical bounce enabled.
 -- @param horizontal horizontal scroll is enabled.
 -- @param vertical vertical scroll is enabled.
-function ScrollView:setBouncePolicy(horizontal, vertical)
+function ScrollGroup:setBouncePolicy(horizontal, vertical)
     if horizontal == nil then horizontal = true end
     if vertical == nil then vertical = true end
 
-    self:setStyle(ScrollView.STYLE_BOUNCE_POLICY, {horizontal, vertical})
+    self:setStyle(ScrollGroup.STYLE_BOUNCE_POLICY, {horizontal, vertical})
 end
 
 ---
 -- Returns whether horizontal bouncing is enabled.
 -- @return horizontal bouncing enabled
 -- @return vertical bouncing enabled
-function ScrollView:getBouncePolicy()
-    return unpack(self:getStyle(ScrollView.STYLE_BOUNCE_POLICY))
+function ScrollGroup:getBouncePolicy()
+    return unpack(self:getStyle(ScrollGroup.STYLE_BOUNCE_POLICY))
 end
 
 ---
 -- If this component is scrolling returns true.
 -- @return scrolling
-function ScrollView:isScrolling()
+function ScrollGroup:isScrolling()
     return self._scrollForceX ~= 0 or self._scrollForceY~= 0
 end
 
@@ -4037,24 +4572,35 @@ end
 -- Sets the scroll position.
 -- @param x x-position.
 -- @param y y-position.
-function ScrollView:setScrollPos(x, y)
-    self._scrollGroup:setPos(x, y)
+function ScrollGroup:setScrollPosition(x, y)
+    self._contentGroup:setPos(x, y)
 end
 
 ---
 -- Sets the scroll position.
 -- @param x x-position.
 -- @param y y-position.
-function ScrollView:addScrollPos(x, y)
-    self._scrollGroup:addLoc(x, y, 0)
+function ScrollGroup:addScrollPosition(x, y)
+    self._contentGroup:addLoc(x, y, 0)
 end
 
 ---
 -- Returns the scroll position.
 -- @return x-position.
 -- @return y-position.
-function ScrollView:getScrollPos()
-    return self._scrollGroup:getPos()
+function ScrollGroup:getScrollPosition()
+    return self._contentGroup:getPos()
+end
+
+---
+-- Returns the max scroll position.
+-- @return max x-position.
+-- @return max y-position.
+function ScrollGroup:getMaxScrollPosition()
+    local scrollW, scrollH = self:getSize()
+    local contentW, contentH = self._contentGroup:getSize()
+    local maxScrollX, maxScrollY = math.max(0, contentW - scrollW), math.max(0, contentH - scrollH)
+    return maxScrollX, maxScrollY
 end
 
 ---
@@ -4062,9 +4608,9 @@ end
 -- It does not make sense if you're touch.
 -- @param x x force
 -- @param y y force
-function ScrollView:setScrollForceVec(x, y)
+function ScrollGroup:setScrollForceVec(x, y)
     local hScrollEnabled, vScrollEnabled = self:getScrollPolicy()
-    local minScrollX, minScrollY, maxScrollX, maxScrollY = self:getScrollForceBounds()
+    local minScrollX, minScrollY, maxScrollX, maxScrollY = self:getScrollForceLimits()
     local scrollX, scrollY = self:getScrollForceVec()
     
     scrollX = hScrollEnabled and x or 0
@@ -4085,7 +4631,7 @@ end
 -- Returns the force to scroll in one frame.
 -- @return x force
 -- @return y force
-function ScrollView:getScrollForceVec()
+function ScrollGroup:getScrollForceVec()
     return self._scrollForceX, self._scrollForceY
 end
 
@@ -4095,22 +4641,22 @@ end
 -- @param minY y force
 -- @param maxX x force
 -- @param maxY y force
-function ScrollView:setScrollForceBounds(minX, minY, maxX, maxY)
-    self:setStyle(ScrollView.STYLE_SCROLL_FORCE_BOUNDS, {minX, minY, maxX, maxY})
+function ScrollGroup:setScrollForceLimits(minX, minY, maxX, maxY)
+    self:setStyle(ScrollGroup.STYLE_SCROLL_FORCE_LIMITS, {minX, minY, maxX, maxY})
 end
 
 ---
 -- Returns the maximum force in one frame.
 -- @param x force
 -- @param y force
-function ScrollView:getScrollForceBounds()
-    return unpack(self:getStyle(ScrollView.STYLE_SCROLL_FORCE_BOUNDS))
+function ScrollGroup:getScrollForceLimits()
+    return unpack(self:getStyle(ScrollGroup.STYLE_SCROLL_FORCE_LIMITS))
 end
 
 ---
 -- If the user has touched returns true.
 -- @return If the user has touched returns true.
-function ScrollView:isTouching()
+function ScrollGroup:isTouching()
     return self._touchDownIndex ~= nil
 end
 
@@ -4121,20 +4667,21 @@ end
 -- @param sec second
 -- @param mode EaseType
 -- @param callback (optional) allows callback notification when animation completes.
-function ScrollView:scrollTo(x, y, sec, mode, callback)
+function ScrollGroup:scrollTo(x, y, sec, mode, callback)
     local x, y = self:clipScrollPosition(x, y)
-    local px, py, pz = self._scrollGroup:getPiv()
+    local px, py, pz = self._contentGroup:getPiv()
     mode = mode or MOAIEaseType.SHARP_EASE_IN
 
     self:stopScrollAnimation()
-    self._scrollToAnim = self._scrollGroup:seekLoc(x + px, y + py, 0, sec, mode)
+    self._scrollToAnim = self._contentGroup:seekLoc(x + px, y + py, 0, sec, mode)
+    self._scrollToAnim:setListener(MOAIAction.EVENT_STOP, function() self:onStopScrollAnimation() end )
 end
 
 ---
 -- Computes the boundaries of the scroll area.
 -- @return the min and max values of the scroll area
-function ScrollView:getScrollBounds()
-    local childWidth, childHeight = self._scrollGroup:getSize()
+function ScrollGroup:getScrollBounds()
+    local childWidth, childHeight = self._contentGroup:getSize()
     local parentWidth, parentHeight = self:getSize()
     local minX, minY = parentWidth - childWidth, parentHeight - childHeight
     local maxX, maxY = 0, 0
@@ -4147,7 +4694,7 @@ end
 -- @param left The x position
 -- @param top The y position
 -- @return boolean
-function ScrollView:isPositionOutOfBounds(left, top)
+function ScrollGroup:isPositionOutOfBounds(left, top)
     local minX, minY, maxX, maxY = self:getScrollBounds()
 
     return left < minX or left > maxX or top < minY or top > maxY
@@ -4157,7 +4704,7 @@ end
 -- Returns whether the input position is out of bounds.
 -- @param left The x position
 -- @return boolean
-function ScrollView:isPositionOutOfHorizontal(left)
+function ScrollGroup:isPositionOutOfHorizontal(left)
     local minX, minY, maxX, maxY = self:getScrollBounds()
 
     return left < minX or left > maxX
@@ -4167,7 +4714,7 @@ end
 -- Returns whether the input position is out of bounds.
 -- @param left The x position
 -- @return boolean
-function ScrollView:isPositionOutOfVertical(top)
+function ScrollGroup:isPositionOutOfVertical(top)
     local minX, minY, maxX, maxY = self:getScrollBounds()
 
     return top < minY or top > maxY
@@ -4178,7 +4725,7 @@ end
 -- @param left The x position
 -- @param top The y position
 -- @return clipped left and top
-function ScrollView:clipScrollPosition(left, top)
+function ScrollGroup:clipScrollPosition(left, top)
     local minX, minY, maxX, maxY = self:getScrollBounds()
     left = left < minX and minX or left
     left = left > maxX and maxX or left
@@ -4191,14 +4738,14 @@ end
 ---
 -- Returns whether the scrollTo animation is running.
 -- @return boolean
-function ScrollView:isScrollAnimating()
+function ScrollGroup:isScrollAnimating()
     return self._scrollToAnim and self._scrollToAnim:isBusy()
 end
 
 ---
 -- Stops the scrollTo animation if it's running
 -- @return none
-function ScrollView:stopScrollAnimation()
+function ScrollGroup:stopScrollAnimation()
     if self._scrollToAnim then
         self._scrollToAnim:stop()
         self._scrollToAnim = nil
@@ -4206,26 +4753,58 @@ function ScrollView:stopScrollAnimation()
 end
 
 ---
--- Update frame.
-function ScrollView:onEnterFrame()
-    if self:_doBounce() then
+-- TODO:LDoc
+function ScrollGroup:dispatchTouchCancelEvent()
+    if not self.layer or not self.layer.touchHandler then
         return
     end
 
-    self:_doUpdateScroll()
+    local e = Event(Event.TOUCH_CANCEL)
+    for k, prop in pairs(self.layer.touchHandler.touchProps) do
+        e.idx = k
+        while prop do
+            if prop.dispatchEvent then
+                e.prop = prop
+                prop:dispatchEvent(e)
+            end
+            prop = prop.parent
+
+            if prop == self then
+                break
+            end
+        end
+    end
+end
+
+function ScrollGroup:setOnScroll(func)
+    self:setEventListener(UIEvent.SCROLL, func)
 end
 
 ---
--- This event handler is called when scene closed.
--- @param e touch event
-function ScrollView:onSceneClose(e)
-    self:dispose()
+-- Update frame.
+function ScrollGroup:onEnterFrame()
+    self:_updateScrollPosition()
+    self:_updateScrollBar()
+    self:dispatchEvent(UIEvent.SCROLL)
+end
+
+---
+-- Update frame.
+function ScrollGroup:onStopScrollAnimation()
+    self:stopScrollAnimation()
+    self:_stopLooper()
+    self:_hideScrollBar()
+    self:_updateScrollBar()
+end
+
+function ScrollGroup:onStopScrollBarHideAction()
+    self._scrollBarHideAction = nil
 end
 
 ---
 -- This event handler is called when you touch the component.
 -- @param e touch event
-function ScrollView:onScrollLayerTouchDown(e)
+function ScrollGroup:onTouchDown(e)
     if self:isTouching() then
         return
     end
@@ -4233,39 +4812,61 @@ function ScrollView:onScrollLayerTouchDown(e)
     self._scrollForceX = 0
     self._scrollForceY = 0
     self._touchDownIndex = e.idx
-    self._lastTouchX = e.wx
-    self._lastTouchY = e.wy
+    self._touchScrolledFlg = false
+    self._touchStartX = e.wx
+    self._touchStartY = e.wy
+    self._touchLastX = e.wx
+    self._touchLastY = e.wy
 
+    self:_stopLooper()
     self:stopScrollAnimation()
 end
 
 ---
 -- This event handler is called when you touch the component.
 -- @param e touch event
-function ScrollView:onScrollLayerTouchUp(e)
+function ScrollGroup:onTouchUp(e)
     if self._touchDownIndex ~= e.idx then
         return
     end
     
     self._touchDownIndex = nil
-    self._lastTouchX = nil
-    self._lastTouchY = nil
+    self._touchScrolledFlg = false
+    self._touchStartX = nil
+    self._touchStartY = nil
+    self._touchLastX = nil
+    self._touchLastY = nil
+
+    self:_startLooper()
 end
 
 ---
 -- This event handler is called when you touch the component.
 -- @param e touch event
-function ScrollView:onScrollLayerTouchMove(e)
+function ScrollGroup:onTouchMove(e)
     if self._touchDownIndex ~= e.idx then
         return
     end
+    if not self._touchScrolledFlg and math.abs(e.wx - self._touchStartX) < 20 and math.abs(e.wy - self._touchStartY) < 20 then
+        self._touchLastX = e.wx
+        self._touchLastY = e.wy
+        return
+    end
+    if self._touchLastX == e.wx and self._touchLastY == e.wy then
+        return
+    end
+    if not self._touchScrolledFlg then
+        self:dispatchTouchCancelEvent()
+        self._touchScrolledFlg = true
+        self:_showScrollBar()
+    end
 
-    local moveX, moveY = e.wx - self._lastTouchX , e.wy - self._lastTouchY
+    local moveX, moveY = e.wx - self._touchLastX , e.wy - self._touchLastY
     self:setScrollForceVec(moveX, moveY)
     moveX, moveY = self:getScrollForceVec()
 
     local minX, minY, maxX, maxY = self:getScrollBounds()
-    local left, top = self:getScrollPos()
+    local left, top = self:getScrollPosition()
     local newLeft, newTop = left + moveX, top + moveY
 
     local clippedLeft, clippedTop = self:clipScrollPosition(newLeft, newTop)
@@ -4273,30 +4874,847 @@ function ScrollView:onScrollLayerTouchMove(e)
     local hBounceEnabled, vBounceEnabled = self:getBouncePolicy()
 
     if self:isPositionOutOfHorizontal(newLeft) then
-        moveX = hBounceEnabled and (self:attenuation(diff) * moveX) or 0
+        moveX = hBounceEnabled and (math.attenuation(diff) * moveX) or 0
     end
     if self:isPositionOutOfVertical(newTop) then
-        moveY = vBounceEnabled and (self:attenuation(diff) * moveY) or 0
+        moveY = vBounceEnabled and (math.attenuation(diff) * moveY) or 0
     end
 
-    self:addScrollPos(moveX, moveY, 0)
-    self._lastTouchX = e.wx
-    self._lastTouchY = e.wy
+    self:addScrollPosition(moveX, moveY, 0)
+    self:_updateScrollBar()
+    self._touchLastX = e.wx
+    self._touchLastY = e.wy
 end
 
 ---
 -- This event handler is called when you touch the component.
 -- @param e touch event
-function ScrollView:onScrollLayerTouchCancel(e)
-    if self._touchDownIndex ~= e.idx then
+function ScrollGroup:onTouchCancel(e)
+    self:onTouchUp(e)
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type ScrollView
+-- Scrollable UIView class.
+----------------------------------------------------------------------------------------------------
+ScrollView = class(UIView)
+M.ScrollView = ScrollView
+
+---
+-- Initializes the internal variables.
+function ScrollView:_initInternal()
+    ScrollView.__super._initInternal(self)
+    self._themeName = "ScrollView"
+end
+
+---
+-- Performing the initialization processing of the component.
+function ScrollView:_createChildren()
+    self._scrollGroup = ScrollGroup {
+        size = {self:getSize()},
+        themeName = self._themeName,
+    }
+
+    self:addChild(self._scrollGroup)
+end
+
+---
+-- Update the ScrollGroup bounds.
+function ScrollView:_updateScrollBounds()
+    self._scrollGroup:setSize(self:getSize())
+    self._scrollGroup:setPos(0, 0)
+end
+
+---
+-- Add the content to scrollGroup.
+-- @param content
+function ScrollView:addContent(content)
+    self._scrollGroup:addContent(content)
+end
+
+---
+-- Add the content from scrollGroup.
+-- @param content
+function ScrollView:removeContent(content)
+    self._scrollGroup:removeContent(content)
+end
+
+---
+-- Add the content from scrollGroup.
+-- @param contents
+function ScrollView:setContents(contents)
+    self._scrollGroup:setContents(contents)
+end
+
+---
+-- Return the scroll size.
+-- @return scroll size
+function ScrollView:getScrollSize()
+    return self._scrollGroup:getSize()
+end
+
+---
+-- Return the scrollGroup.
+-- @return scrollGroup
+function ScrollView:getScrollGroup()
+    return self._scrollGroup
+end
+
+---
+-- Set the layout.
+-- @param layout layout
+function ScrollView:setLayout(layout)
+    self._scrollGroup:setLayout(layout)
+end
+
+---
+-- Set the coefficient of friction at the time of scrolling.
+-- @param value friction
+function ScrollView:setFriction(value)
+    self._scrollGroup:setFriction(value)
+end
+
+---
+-- Returns the coefficient of friction at the time of scrolling.
+-- @return friction
+function ScrollView:getFriction()
+    return self._scrollGroup:getFriction()
+end
+
+---
+-- Sets the horizontal and vertical scroll enabled.
+-- @param horizontal horizontal scroll is enabled.
+-- @param vertical vertical scroll is enabled.
+function ScrollView:setScrollPolicy(horizontal, vertical)
+    self._scrollGroup:setScrollPolicy(horizontal, vertical)
+end
+
+---
+-- Return the scroll policy.
+-- @return horizontal scroll enabled.
+-- @return vertical scroll enabled.
+function ScrollView:getScrollPolicy()
+    return self._scrollGroup:getScrollPolicy()
+end
+
+---
+-- Sets the horizontal and vertical bounce enabled.
+-- @param horizontal horizontal scroll is enabled.
+-- @param vertical vertical scroll is enabled.
+function ScrollView:setBouncePolicy(horizontal, vertical)
+    self._scrollGroup:setBouncePolicy(horizontal, vertical)
+end
+
+---
+-- Returns whether horizontal bouncing is enabled.
+-- @return horizontal bouncing enabled
+-- @return vertical bouncing enabled
+function ScrollView:getBouncePolicy()
+    return self._scrollGroup:getBouncePolicy()
+end
+
+---
+-- Scroll to the specified location.
+-- @param x position of the x
+-- @param y position of the x
+-- @param sec second
+-- @param mode EaseType
+-- @param callback (optional) allows callback notification when animation completes.
+function ScrollView:scrollTo(x, y, sec, mode, callback)
+    self._scrollGroup:scrollTo(x, y, sec, mode, callback)
+end
+
+---
+-- This event handler is called when resize.
+-- @param e Resize Event
+function ScrollView:onResize(e)
+    ScrollView.__super.onResize(self, e)
+    self:_updateScrollBounds()
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type PanelView
+-- Scrollable UIView class.
+----------------------------------------------------------------------------------------------------
+PanelView = class(ScrollView)
+M.PanelView = PanelView
+
+---
+-- Initializes the internal variables.
+function PanelView:_initInternal()
+    PanelView.__super._initInternal(self)
+    self._themeName = "PanelView"
+end
+
+---
+-- Performing the initialization processing of the component.
+function PanelView:_createChildren()
+    self._backgroundPanel = Panel {
+        size = {self:getSize()},
+        parent = self,
+        themeName = self._themeName,
+    }
+
+    PanelView.__super._createChildren(self)
+end
+
+---
+-- Update the ScrollGroup bounds.
+function PanelView:_updateScrollBounds()
+    if self:getBackgroundVisible() then
+        self._backgroundPanel:setSize(self:getSize())
+        self._backgroundPanel:validateDisplay()
+
+        local xMin, yMin, xMax, yMax = self._backgroundPanel:getContentRect()
+        self._scrollGroup:setSize(xMax - xMin, yMax - yMin)
+        self._scrollGroup:setPos(xMin, yMin)
         return
     end
 
-    self._touchDownIndex = nil
-    self._lastTouchX = nil
-    self._lastTouchY = nil
+    PanelView.__super._updateScrollBounds(self)
 end
 
+---
+-- Sets the background texture path.
+-- @param texture background texture path
+function PanelView:setBackgroundTexture(texture)
+    self._backgroundPanel:setBackgroundTexture(texture)
+    self:_updateScrollBounds()
+end
+
+---
+-- Returns the background texture path.
+-- @param texture background texture path
+function PanelView:getBackgroundTexture()
+    return self._backgroundPanel:getBackgroundTexture()
+end
+
+---
+-- Set the visible of the background.
+-- @param visible visible
+function PanelView:setBackgroundVisible(visible)
+    self._backgroundPanel:setBackgroundVisible(visible)
+    self:_updateScrollBounds()
+end
+
+---
+-- Returns the visible of the background.
+-- @return visible
+function PanelView:getBackgroundVisible()
+    return self._backgroundPanel:getBackgroundVisible()
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type TextView
+-- Scrollable UIView class.
+----------------------------------------------------------------------------------------------------
+TextView = class(PanelView)
+M.TextView = TextView
+
+--- Style: fontName
+TextView.STYLE_FONT_NAME = "fontName"
+
+--- Style: textSize
+TextView.STYLE_TEXT_SIZE = "textSize"
+
+--- Style: textColor
+TextView.STYLE_TEXT_COLOR = "textColor"
+
+--- Style: textSize
+TextView.STYLE_TEXT_ALIGN = "textAlign"
+
+---
+-- Initializes the internal variables.
+function TextView:_initInternal()
+    TextView.__super._initInternal(self)
+    self._themeName = "TextView"
+    self._text = ""
+    self._textLabel = nil
+end
+
+---
+-- Create a children object.
+function TextView:_createChildren()
+    TextView.__super._createChildren(self)
+
+    self._textLabel = Label(self._text, 100, 30)
+    self._textLabel:setWordBreak(MOAITextBox.WORD_BREAK_CHAR)
+    self:addContent(self._textLabel)
+end
+
+---
+-- Update the Text Label.
+function TextView:_updateTextLabel()
+    local textLabel = self._textLabel
+    textLabel:setString(self:getText())
+    textLabel:setTextSize(self:getTextSize())
+    textLabel:setColor(self:getTextColor())
+    textLabel:setAlignment(self:getAlignment())
+    textLabel:setFont(self:getFont())
+    textLabel:setSize(self:getScrollSize())
+    textLabel:fitHeight()
+end
+
+---
+-- Update the display objects.
+function TextView:updateDisplay()
+    TextView.__super.updateDisplay(self)
+    self:_updateTextLabel()
+end
+
+---
+-- Sets the text.
+-- @param text text
+function TextView:setText(text)
+    self._text = text or ""
+    self._textLabel:setString(self._text)
+    self:invalidateDisplay()
+end
+
+---
+-- Adds the text.
+-- @param text text
+function TextView:addText(text)
+    self:setText(self._text .. text)
+end
+
+---
+-- Returns the text.
+-- @return text
+function TextView:getText()
+    return self._text
+end
+
+---
+-- Sets the textSize.
+-- @param textSize textSize
+function TextView:setTextSize(textSize)
+    self:setStyle(TextView.STYLE_TEXT_SIZE, textSize)
+    self:invalidateDisplay()
+end
+
+---
+-- Returns the textSize.
+-- @return textSize
+function TextView:getTextSize()
+    return self:getStyle(TextView.STYLE_TEXT_SIZE)
+end
+
+---
+-- Sets the fontName.
+-- @param fontName fontName
+function TextView:setFontName(fontName)
+    self:setStyle(TextView.STYLE_FONT_NAME, fontName)
+    self:invalidateDisplay()
+end
+
+---
+-- Returns the font name.
+-- @return font name
+function TextView:getFontName()
+    return self:getStyle(TextView.STYLE_FONT_NAME)
+end
+
+---
+-- Returns the font.
+-- @return font
+function TextView:getFont()
+    local fontName = self:getFontName()
+    local font = Resources.getFont(fontName, nil, self:getTextSize())
+    return font
+end
+
+---
+-- Sets the text align.
+-- @param horizontalAlign horizontal align(left, center, top)
+-- @param verticalAlign vertical align(top, center, bottom)
+function TextView:setTextAlign(horizontalAlign, verticalAlign)
+    if horizontalAlign or verticalAlign then
+        self:setStyle(TextView.STYLE_TEXT_ALIGN, {horizontalAlign or "center", verticalAlign or "center"})
+    else
+        self:setStyle(TextView.STYLE_TEXT_ALIGN, nil)
+    end
+    self._textLabel:setAlignment(self:getAlignment())
+end
+
+---
+-- Returns the text align.
+-- @return horizontal align(left, center, top)
+-- @return vertical align(top, center, bottom)
+function TextView:getTextAlign()
+    return unpack(self:getStyle(TextView.STYLE_TEXT_ALIGN))
+end
+
+---
+-- Returns the text align for MOAITextBox.
+-- @return horizontal align
+-- @return vertical align
+function TextView:getAlignment()
+    local h, v = self:getTextAlign()
+    h = assert(TextAlign[h])
+    v = assert(TextAlign[v])
+    return h, v
+end
+
+---
+-- Sets the text align.
+-- @param red red(0 ... 1)
+-- @param green green(0 ... 1)
+-- @param blue blue(0 ... 1)
+-- @param alpha alpha(0 ... 1)
+function TextView:setTextColor(red, green, blue, alpha)
+    if red == nil and green == nil and blue == nil and alpha == nil then
+        self:setStyle(TextView.STYLE_TEXT_COLOR, nil)
+    else
+        self:setStyle(TextView.STYLE_TEXT_COLOR, {red or 0, green or 0, blue or 0, alpha or 0})
+    end
+    self._textLabel:setColor(self:getTextColor())
+end
+
+---
+-- Returns the text color.
+-- @return red(0 ... 1)
+-- @return green(0 ... 1)
+-- @return blue(0 ... 1)
+-- @return alpha(0 ... 1)
+function TextView:getTextColor()
+    return unpack(self:getStyle(TextView.STYLE_TEXT_COLOR))
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type ListView
+-- Scrollable UIView class.
+----------------------------------------------------------------------------------------------------
+ListView = class(PanelView)
+M.ListView = ListView
+
+--- Style: listItemFactory
+ListView.STYLE_ITEM_RENDERER_FACTORY = "itemRendererFactory"
+
+--- Style: rowHeight
+ListView.STYLE_ROW_HEIGHT = "rowHeight"
+
+---
+-- Initializes the internal variables.
+function ListView:_initInternal()
+    ListView.__super._initInternal(self)
+    self._themeName = "ListView"
+    self._dataSource = {}
+    self._dataField = nil
+    self._selectedItems = {}
+    self._selectionMode = "single"
+    self._itemRenderers = {}
+    self._itemToRendererMap = {}
+    self._touchedRenderer = nil
+end
+
+function ListView:_createChildren()
+    ListView.__super._createChildren(self)
+
+    local layout = ListViewLayout {}
+    self:setLayout(layout)
+end
+
+function ListView:_updateItemRenderers()
+    for i, data in ipairs(self:getDataSource()) do
+        self:_updateItemRenderer(data, i)
+    end
+
+    if #self._itemRenderers > #self:getDataSource() then
+        for i = #self._itemRenderers, #self:getDataSource() do
+            self:_removeItemRenderer(self._itemRenderers[i])
+        end
+    end
+end
+
+function ListView:_updateItemRenderer(data, index)
+    local renderer = self._itemRenderers[index]
+    if not renderer then
+        renderer = self:getItemRendererFactory():newInstance()
+        table.insert(self._itemRenderers, renderer)
+        self:addContent(renderer)
+    end
+    renderer:setData(data)
+    renderer:setDataIndex(index)
+    renderer:setDataField(self:getDataField())
+    renderer:setSize(self._scrollGroup:getWidth(), self:getRowHeight())
+    renderer:setHostComponent(self)
+    renderer:addEventListener(Event.TOUCH_DOWN, self.onItemRendererTouchDown, self)
+    renderer:addEventListener(Event.TOUCH_UP, self.onItemRendererTouchUp, self)
+    renderer:addEventListener(Event.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
+
+    self._itemToRendererMap[data] = renderer
+end
+
+
+function ListView:_removeItemRenderers()
+    for i, renderer in ipairs(self._listItemRenderers) do
+        self:_removeItemRenderer(renderer)
+    end
+
+    self._itemRenderers = {}
+    self._itemToRendererMap = {}
+end
+
+function ListView:_removeItemRenderer(renderer)
+    renderer:removeEventListener(Event.TOUCH_DOWN, self.onItemRendererTouchDown, self)
+    renderer:removeEventListener(Event.TOUCH_UP, self.onItemRendererTouchUp, self)
+    renderer:removeEventListener(Event.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
+
+    self:removeContent(renderer)
+    table.removeElement(self._itemRenderers, renderer)
+    self._itemToRendererMap[renderer:getData()] = nil
+end
+
+---
+-- Update the display
+function ListView:updateDisplay()
+    ListView.__super.updateDisplay(self)
+    self:_updateItemRenderers()
+end
+
+function ListView:setSelectedItem(item)
+    self:setSelectedItems(item and {item} or {})
+end
+
+function ListView:getSelectedItem()
+    if #self._selectedItems > 0 then
+        return self._selectedItems[1]
+    end
+end
+
+function ListView:setSelectedItems(items)
+    assert(self._selectionMode == "single" and #items < 2)
+
+    for i, selectedItem in ipairs(self._selectedItems) do
+        local renderer = self._itemToRendererMap[selectedItem]
+
+        if renderer then
+            renderer:setSelected(false)
+        end
+    end
+
+    self._selectedItems = {}
+    for i, item in ipairs(items) do
+        local renderer = self._itemToRendererMap[item]
+
+        if renderer then
+            renderer:setSelected(true)
+            table.insert(self._selectedItems, item)
+        end
+    end
+end
+
+---
+-- Set the dataSource.
+-- @param dataSource dataSource
+function ListView:setDataSource(dataSource)
+    if self._dataSource ~= dataSource then
+        self._dataSource = dataSource
+        self:invalidate()
+    end
+end
+
+---
+-- Return the dataSource.
+-- @return dataSource
+function ListView:getDataSource()
+    return self._dataSource
+end
+
+---
+-- Set the dataField.
+-- @param dataField dataField
+function ListView:setDataField(dataField)
+    if self._dataField ~= dataField then
+        self._dataField = dataField
+        self:invalidateDisplay()
+    end
+end
+
+---
+-- Return the dataField.
+-- @return dataField
+function ListView:getDataField()
+    return self._dataField
+end
+
+---
+-- Sets the itemRendererFactory.
+-- @param factory itemRendererFactory
+function ListView:setItemRendererFactory(factory)
+    self:setStyle(ListView.STYLE_ITEM_RENDERER_FACTORY, factory)
+    self:invalidate()
+end
+
+---
+-- Returns the itemRendererFactory.
+-- @return itemRendererFactory
+function ListView:getItemRendererFactory()
+    return self:getStyle(ListView.STYLE_ITEM_RENDERER_FACTORY)
+end
+
+
+---
+-- Set the height of the row.
+-- @param rowHeight height of the row
+function ListView:setRowHeight(rowHeight)
+    self:setStyle(ListView.STYLE_ROW_HEIGHT, rowHeight)
+    self:invalidate()
+end
+
+---
+-- Return the height of the row.
+-- @return rowHeight
+function ListView:getRowHeight()
+    return self:getStyle(ListView.STYLE_ROW_HEIGHT)
+end
+
+---
+-- This event handler is called when touch.
+-- @param e Touch Event
+function ListView:onItemRendererTouchDown(e)
+    if self._touchedRenderer ~= nil then
+        return
+    end
+
+    local renderer = e.target
+    if renderer.isRenderer then
+        renderer:setPressed(true)
+        renderer:setSelected(true)
+        self:setSelectedItem(renderer:getData())
+        self._touchedRenderer = renderer
+    end
+end
+
+---
+-- This event handler is called when touch.
+-- @param e Touch Event
+function ListView:onItemRendererTouchUp(e)
+    if self._touchedRenderer == nil or self._touchedRenderer ~= e.target then
+        return
+    end
+
+    self._touchedRenderer = nil
+    local renderer = e.target
+    if renderer.isRenderer then
+        renderer:setPressed(false)
+    end
+end
+
+---
+-- This event handler is called when touch.
+-- @param e Touch Event
+function ListView:onItemRendererTouchCancel(e)
+    if self._touchedRenderer == nil or self._touchedRenderer ~= e.target then
+        return
+    end
+    
+    self._touchedRenderer = nil
+    local renderer = e.target
+    if renderer.isRenderer then
+        renderer:setPressed(false)
+        self:setSelectedItem(nil)
+    end
+end
+
+
+----------------------------------------------------------------------------------------------------
+-- @type ListViewLayout
+-- Scrollable UIView class.
+----------------------------------------------------------------------------------------------------
+ListViewLayout = class(BoxLayout)
+M.ListViewLayout = ListViewLayout
+
+----------------------------------------------------------------------------------------------------
+-- @type BaseItemRenderer
+-- This is the base class of the item renderer.
+----------------------------------------------------------------------------------------------------
+BaseItemRenderer = class(UIComponent)
+M.BaseItemRenderer = BaseItemRenderer
+
+--- Style: backgroundColor
+BaseItemRenderer.STYLE_BACKGROUND_COLOR = "backgroundColor"
+
+--- Style: backgroundPressedColor
+BaseItemRenderer.STYLE_BACKGROUND_PRESSED_COLOR = "backgroundPressedColor"
+
+--- Style: backgroundSelectedColor
+BaseItemRenderer.STYLE_BACKGROUND_SELECTED_COLOR = "backgroundSelectedColor"
+
+---
+-- Initialize a variables
+function BaseItemRenderer:_initInternal()
+    BaseItemRenderer.__super._initInternal(self)
+    self.isRenderer = true
+    self._data = nil
+    self._dataIndex = nil
+    self._hostComponent = nil
+    self._focusEnabled = false
+    self._selected = false
+    self._pressed = false
+    self._background = nil
+end
+
+---
+-- Create the children.
+function BaseItemRenderer:_createChildren()
+    BaseItemRenderer.__super._createChildren(self)
+    self:_createBackground()
+end
+
+---
+-- Create the background objects.
+function BaseItemRenderer:_createBackground()
+    self._background = Graphics(self:getSize())
+    self._background._excludeLayout = true
+    self:addChild(self._background)
+end
+
+---
+-- Update the background objects.
+function BaseItemRenderer:_updateBackground()
+    local width, height = self:getSize()
+    self._background:setSize(width, height)
+    self._background:clear()
+    if self:isBackgroundVisible() then
+        self._background:setPenColor(self:getBackgroundColor()):fillRect(0, 0, width, height)
+    end
+end
+
+---
+-- Update the display objects.
+function BaseItemRenderer:updateDisplay()
+    BaseItemRenderer.__super.updateDisplay(self)
+    self:_updateBackground()
+end
+
+---
+-- Set the data.
+-- @param data data
+function BaseItemRenderer:setData(data)
+    if self._data ~= data then
+        self._data = data
+        self:invalidate()
+    end
+end
+
+---
+-- Return the data.
+-- @return data
+function BaseItemRenderer:getData()
+    return self._data
+end
+
+---
+-- Set the data index.
+-- @param index index of data.
+function BaseItemRenderer:setDataIndex(index)
+    if self._dataIndex ~= index then
+        self._dataIndex = index
+        self:invalidate()
+    end
+end
+
+---
+-- Set the data field.
+-- @param dataField field of data.
+function BaseItemRenderer:setDataField(dataField)
+    if self._dataField ~= dataField then
+        self._dataField = dataField
+        self:invalidate()
+    end    
+end
+
+---
+-- Set the host component with the renderer.
+-- @param index index of data.
+function BaseItemRenderer:setHostComponent(component)
+    if self._hostComponent ~= component then
+        self._hostComponent = component
+        self:invalidate()
+    end
+end
+
+---
+-- Return the host component.
+-- @return host component
+function BaseItemRenderer:getHostComponent()
+    return self._hostComponent
+end
+
+function BaseItemRenderer:getBackgroundColor()
+    if self._pressed then
+        return unpack(self:getStyle(BaseItemRenderer.STYLE_BACKGROUND_PRESSED_COLOR))
+    end
+    if self._selected then
+        return unpack(self:getStyle(BaseItemRenderer.STYLE_BACKGROUND_SELECTED_COLOR))
+    end
+    return unpack(self:getStyle(BaseItemRenderer.STYLE_BACKGROUND_COLOR))
+end
+
+function BaseItemRenderer:isBackgroundVisible()
+    local r, g, b, a = self:getBackgroundColor()
+    return r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0
+end
+
+---
+-- Set the pressed
+-- @param pressed pressed
+function BaseItemRenderer:setPressed(pressed)
+    if self._pressed ~= pressed then
+        self._pressed = pressed
+        self:invalidateDisplay()
+    end
+end
+
+---
+-- Set the pressed
+-- @param pressed pressed
+function BaseItemRenderer:setSelected(selected)
+    if self._selected ~= selected then
+        self._selected = selected
+        self:invalidateDisplay()
+    end
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type LabelItemRenderer
+-- This is the base class of the item renderer.
+----------------------------------------------------------------------------------------------------
+LabelItemRenderer = class(BaseItemRenderer)
+M.LabelItemRenderer = LabelItemRenderer
+
+---
+-- Initialize a variables
+function LabelItemRenderer:_initInternal()
+    LabelItemRenderer.__super._initInternal(self)
+    self._themeName = "LabelItemRenderer"
+end
+
+---
+-- Initialize a variables
+function LabelItemRenderer:_createChildren()
+    LabelItemRenderer.__super._createChildren(self)
+
+    self._textLabel = TextLabel {
+        themeName = self:getThemeName(),
+        parent = self,
+    }
+end
+
+function LabelItemRenderer:updateDisplay()
+    LabelItemRenderer.__super.updateDisplay(self)
+    
+    self._textLabel:setSize(self:getSize())
+    if self._data then
+        local text = self._dataField and self._data[self._dataField] or self._data
+        text = type(text) == "string" and text or tostring(text)
+        self._textLabel:setText(text)
+    else
+        self._textLabel:setText("")
+    end
+end
 
 -- widget initialize
 M.initialize()

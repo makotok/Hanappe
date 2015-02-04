@@ -7,7 +7,7 @@
 -- issues, questions, or problems regarding the documentation.
 --
 -- @author Makoto
--- @release V2.1.2
+-- @release V2.2.0
 ----------------------------------------------------------------------------------------------------
 
 -- module
@@ -18,9 +18,12 @@ local table
 local math
 local class
 local KeyCode
+local Log
 local Executors
 local Resources
+local Devices
 local PropertyUtils
+local DebugUtils
 local ClassFactory
 local Event
 local EventListener
@@ -44,6 +47,7 @@ local NineImage
 local Label
 local DrawableObject
 local Rect
+local Graphics
 local Font
 local Texture
 local TouchHandler
@@ -57,6 +61,7 @@ local pointerSensor = MOAIInputMgr.device.pointer
 local mouseLeftSensor = MOAIInputMgr.device.mouseLeft
 local mouseRightSensor = MOAIInputMgr.device.mouseRight
 local mouseMiddleSensor = MOAIInputMgr.device.mouseMiddle
+local mouseWheelSensor = MOAIInputMgr.device.mouseWheel
 local touchSensor = MOAIInputMgr.device.touch
 local keyboardSensor = MOAIInputMgr.device.keyboard
 
@@ -72,14 +77,23 @@ local MOAIFontInterface = MOAIFont.getInterfaceTable()
 -- Public Const
 ----------------------------------------------------------------------------------------------------
 
+--- default width of the window
+M.DEFAULT_WINDOW_TITLE = "no titile"
+
 --- default width of the screen
-M.DEFAULT_SCREEN_WIDTH = MOAIEnvironment.horizontalResolution or 320
+M.DEFAULT_SCREEN_WIDTH = 320
 
 --- default height of the screen
-M.DEFAULT_SCREEN_HEIGHT = MOAIEnvironment.verticalResolution or 480
+M.DEFAULT_SCREEN_HEIGHT = 480
 
 --- default scale of the viewport
 M.DEFAULT_VIEWPORT_SCALE = 1
+
+--- default y behavior; set to true to have y=0 be the bottom of the screen
+M.DEFAULT_VIEWPORT_YFLIP = false
+
+--- default blending mode for images
+M.DEFAULT_BLEND_MODE = nil
 
 ----------------------------------------------------------------------------------------------------
 -- Public functions
@@ -88,11 +102,12 @@ M.DEFAULT_VIEWPORT_SCALE = 1
 ---
 -- Open the window.
 -- Initializes the library.
--- @param title Title of the window
--- @param width Width of the window
--- @param height Height of the window
+-- @param title (Option)Title of the window
+-- @param width (Option)Width of the window
+-- @param height (Option)Height of the window
 -- @param scale (Option)Scale of the Viewport to the Screen
 function M.openWindow(title, width, height, scale)
+    title = title or M.DEFAULT_WINDOW_TITLE
     width = width or M.DEFAULT_SCREEN_WIDTH
     height = height or M.DEFAULT_SCREEN_HEIGHT
     scale = scale or M.DEFAULT_VIEWPORT_SCALE
@@ -105,6 +120,39 @@ function M.openWindow(title, width, height, scale)
     SceneMgr:initialize()
 
     MOAISim.openWindow(title, M.screenWidth, M.screenHeight)
+end
+
+---
+-- Set the size of the assumed device.
+function M.setDefaultDisplaySize(targetDevice, landscape, scaleMode)
+    assert(targetDevice)
+
+    -- mobile
+    if M.isMobile() then
+        M.DEFAULT_SCREEN_WIDTH = MOAIEnvironment.horizontalResolution
+        M.DEFAULT_SCREEN_HEIGHT = MOAIEnvironment.verticalResolution
+        M.DEFAULT_VIEWPORT_SCALE = math.max(M.DEFAULT_SCREEN_WIDTH, M.DEFAULT_SCREEN_HEIGHT) > 960 and 2 or 1
+        return
+    end
+
+    -- desktop
+    local device = type(targetDevice) == "string" and assert(Devices[targetDevice]) or targetDevice
+    local displayWidth = landscape and math.max(device.displayWidth, device.displayHeight) or math.min(device.displayWidth, device.displayHeight)
+    local displayHeight = landscape and math.min(device.displayWidth, device.displayHeight) or math.max(device.displayWidth, device.displayHeight)
+    local viewportScale = 1
+
+    if device.retinaDisplay then
+        if scaleMode then
+            viewportScale = 2
+        else
+            displayWidth = displayWidth / 2
+            displayHeight = displayHeight / 2
+        end
+    end
+
+    M.DEFAULT_SCREEN_WIDTH = displayWidth
+    M.DEFAULT_SCREEN_HEIGHT = displayHeight
+    M.DEFAULT_VIEWPORT_SCALE = viewportScale
 end
 
 ---
@@ -122,8 +170,28 @@ function M.updateDisplaySize(width, height, scale)
 
     M.viewport = M.viewport or MOAIViewport.new()
     M.viewport:setSize(M.screenWidth, M.screenHeight)
-    M.viewport:setScale(M.viewWidth, -M.viewHeight)
-    M.viewport:setOffset(-1, 1)
+
+    if M.DEFAULT_VIEWPORT_YFLIP then
+        M.viewport:setScale(M.viewWidth, M.viewHeight)
+        M.viewport:setOffset(-1, -1)
+    else
+        M.viewport:setScale(M.viewWidth, -M.viewHeight)
+        M.viewport:setOffset(-1, 1)
+    end    
+end
+
+---
+-- Returns whether the mobile execution environment.
+-- @return True in the case of mobile.
+function M.isMobile()
+    return Runtime.isMobile()
+end
+
+---
+-- Returns whether the desktop execution environment.
+-- @return True in the case of desktop.
+function M.isDesktop()
+    return Runtime.isDesktop()
 end
 
 ---
@@ -427,6 +495,15 @@ function math.distance( x0, y0, x1, y1 )
 end
 
 ---
+-- Computes attenuation as a function of distance.
+-- @param distance Distance
+-- @return distance^(-2/3)
+function math.attenuation(distance)
+    distance = distance == 0 and 1 or math.pow(distance, 0.667)
+    return 1 / distance
+end
+
+---
 -- Get the normal vector
 -- @param x
 -- @param y
@@ -651,6 +728,47 @@ function KeyCode.isAltKey(key)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Log
+--
+-- TODO:Ldoc
+----------------------------------------------------------------------------------------------------
+Log = {}
+M.Log = Log
+
+Log.infoLogEnabled = true
+Log.warnLogEnabled = true
+Log.errorLogEnabled = true
+Log.debugLogEnabled = true
+
+function Log.info(...)
+    if Log.infoLogEnabled then
+        Log.outputLog("INFO", ...)
+    end
+end
+
+function Log.warn(...)
+    if Log.warnLogEnabled then
+        Log.outputLog("WARN", ...)
+    end
+end
+
+function Log.error(...)
+    if Log.errorLogEnabled then
+        Log.outputLog("ERROR", ...)
+    end
+end
+
+function Log.debug(...)
+    if Log.debugLogEnabled then
+        Log.outputLog("DEBUG", ...)
+    end
+end
+
+function Log.outputLog(logType, ...)
+    print("[" .. logType .. "]", ...)
+end
+
+----------------------------------------------------------------------------------------------------
 -- @type Executors
 --
 -- This is a utility class for asynchronous (coroutine-style) execution.
@@ -863,6 +981,78 @@ function Resources.destroyModule(m)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Devices
+--
+-- This is a class that lists information about the device.
+----------------------------------------------------------------------------------------------------
+Devices = {}
+M.Devices = Devices
+
+Devices.desktop640x480 = {
+    deviceOS = nil,
+    retinaDisplay = false,
+    displayDPI = 96,
+    displayWidth = 640,
+    displayHeight = 480,
+}
+Devices.iPhone5 = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 326,
+    displayWidth = 640,
+    displayHeight = 1136,
+}
+Devices.iPhone5S = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 326,
+    displayWidth = 640,
+    displayHeight = 1136,
+}
+Devices.iPhone6 = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 326,
+    displayWidth = 750,
+    displayHeight = 1334,
+}
+Devices.iPhone6Plus = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 401,
+    displayWidth = 1080,
+    displayHeight = 1920,
+}
+Devices.iPad = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 132,
+    displayWidth = 768,
+    displayHeight = 1024,
+}
+Devices.iPadMini = {
+    deviceOS = "iOS",
+    retinaDisplay = false,
+    displayDPI = 163,
+    displayWidth = 768,
+    displayHeight = 1024,
+}
+Devices.iPadMini2 = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 326,
+    displayWidth = 1536,
+    displayHeight = 2048,
+}
+Devices.iPadAir = {
+    deviceOS = "iOS",
+    retinaDisplay = true,
+    displayDPI = 264,
+    displayWidth = 1536,
+    displayHeight = 2048,
+}
+
+----------------------------------------------------------------------------------------------------
 -- @type PropertyUtils
 --
 -- It is a property utility class.
@@ -904,6 +1094,36 @@ function PropertyUtils.setProperty(obj, name, value, unpackFlag)
     else
         return setter(obj, unpack(value))
     end
+end
+
+----------------------------------------------------------------------------------------------------
+-- @type DebugUtils
+--
+-- It is a debug utility class.
+----------------------------------------------------------------------------------------------------
+DebugUtils = {}
+M.DebugUtils = DebugUtils
+
+function DebugUtils.showDebugLines()
+    MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX, 1, 1, 1, 1, 1 )
+    MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX_LAYOUT, 1, 0, 0, 1, 1 )
+    MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX_BASELINES, 1, 1, 0, 0, 1 )
+    MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_MODEL_BOUNDS, 2, 1, 1, 1 )
+    MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_WORLD_BOUNDS, 2, 0.75, 0.75, 0.75 )    
+end
+
+function DebugUtils.startPerformanceLog(span)
+    span = span or 5
+    local timer = MOAITimer.new()
+    timer:setMode(MOAITimer.LOOP)
+    timer:setSpan(span)
+    timer:setListener(MOAITimer.EVENT_TIMER_LOOP,
+        function()
+            Log.debug("-------------------------------------------")
+            Log.debug("FPS", MOAISim.getPerformance())
+            Log.debug("Draw:", MOAIRenderMgr.getPerformanceDrawCount())
+        end)
+    timer:start()
 end
 
 ----------------------------------------------------------------------------------------------------
@@ -986,6 +1206,7 @@ Event.TOUCH_CANCEL          = "touchCancel"
 Event.MOUSE_CLICK           = "mouseClick"
 Event.MOUSE_RIGHT_CLICK     = "mouseRightClick"
 Event.MOUSE_MIDDLE_CLICK    = "mouseMiddleClick"
+Event.MOUSE_WHEEL           = "mouseWheel"
 Event.MOUSE_MOVE            = "mouseMove"
 Event.MOUSE_OVER            = "mouseOver"
 Event.MOUSE_OUT             = "mouseOut"
@@ -1059,10 +1280,8 @@ M.EventDispatcher = EventDispatcher
 
 EventDispatcher.EVENT_CACHE = {}
 
---------------------------------------------------------------------------------
+---
 -- The constructor.
--- @param eventType (option)The type of event.
---------------------------------------------------------------------------------
 function EventDispatcher:init()
     self.eventListenersMap = {}
 end
@@ -1235,6 +1454,21 @@ function Runtime:initialize()
     MOAIGfxDevice.setListener(MOAIGfxDevice.EVENT_RESIZE, self.onResize)
 end
 
+---
+-- Returns whether the mobile execution environment.
+-- @return True in the case of mobile.
+function Runtime.isMobile()
+    local brand = MOAIEnvironment.osBrand
+    return brand == 'Android' or brand == 'iOS'
+end
+
+---
+-- Returns whether the desktop execution environment.
+-- @return True in the case of desktop.
+function Runtime.isDesktop()
+    return not Runtime.isMobile()
+end
+
 -- enter frame
 function Runtime.onEnterFrame()
     Runtime:dispatchEvent(Event.ENTER_FRAME)
@@ -1267,6 +1501,9 @@ InputMgr.KEYBOARD_EVENT = Event()
 
 -- Mouse Event
 InputMgr.MOUSE_EVENT = Event()
+
+-- Mouse Wheel Event
+InputMgr.MOUSE_WHEEL = Event()
 
 -- Touch Event Kinds
 InputMgr.TOUCH_EVENT_KINDS = {
@@ -1376,6 +1613,20 @@ function InputMgr:initialize()
         end
     end
 
+    -- Mouse Wheel Handler
+    local onMouseWheel = function(yDelta)
+
+        -- mouse event
+        if InputMgr.MOUSE_EVENT_ENABLED then
+            local event = InputMgr.MOUSE_WHEEL
+            event.type = Event.MOUSE_WHEEL
+            event.yDelta = yDelta
+            event.x = self.pointer.x
+            event.y = self.pointer.y
+            self:dispatchEvent(event)
+        end
+    end
+
     -- Keyboard Handler
     local onKeyboard = function(key, down)
         local event = InputMgr.KEYBOARD_EVENT
@@ -1389,10 +1640,20 @@ function InputMgr:initialize()
     -- mouse or touch input
     if pointerSensor then
         pointerSensor:setCallback(onPointer)
+    end
+    if mouseLeftSensor then
         mouseLeftSensor:setCallback(onLeftClick)
+    end
+    if mouseRightSensor then
         mouseRightSensor:setCallback(onRightClick)
+    end
+    if mouseMiddleSensor then
         mouseMiddleSensor:setCallback(onMiddleClick)
-    elseif touchSensor then
+    end
+    if mouseWheelSensor then
+        mouseWheelSensor:setCallback(onMouseWheel)
+    end
+    if touchSensor then
         touchSensor:setCallback(onTouch)
     end
 
@@ -1849,6 +2110,9 @@ end
 -- @param flipY (Optional)flipY
 -- @return deck
 function DeckMgr:createImageDeck(width, height, flipX, flipY)
+    if M.DEFAULT_VIEWPORT_YFLIP then
+        flipY = not flipY
+    end
     local u0 = flipX and 1 or 0
     local v0 = flipY and 1 or 0
     local u1 = flipX and 0 or 1
@@ -2033,7 +2297,12 @@ function DeckMgr:createNineImageDeck(fileName)
     local stretchColumns = self:_createStretchRowsOrColumns(image, false)
     local contentPadding = self:_getNineImageContentPadding(image)
     local texture = Resources.getTexture(filePath)
-    local uvRect = {1 / imageWidth, 1 / imageHeight, (imageWidth - 1) / imageWidth, (imageHeight - 1) / imageHeight}
+    local uvRect
+    if M.DEFAULT_VIEWPORT_YFLIP then
+        uvRect = {1 / imageWidth, 1 / imageHeight, (imageWidth - 1) / imageWidth, (imageHeight - 1) / imageHeight}
+    else
+        uvRect = {1 / imageWidth, (imageHeight - 1) / imageHeight, (imageWidth - 1) / imageWidth, 1 / imageHeight}
+    end
 
     local deck = MOAIStretchPatch2D.new()
     deck.imageWidth = imageWidth
@@ -2131,6 +2400,16 @@ DisplayObject.__moai_class = MOAIProp
 M.DisplayObject = DisplayObject
 
 ---
+-- The constructor.
+function DisplayObject:init()
+    DisplayObject.__super.init(self)
+
+    if M.DEFAULT_BLEND_MODE then
+        self:setBlendMode(unpack(M.DEFAULT_BLEND_MODE))
+    end
+end
+
+---
 -- Returns the size.
 -- If there is a function that returns a negative getDims.
 -- getSize function always returns the size of the positive.
@@ -2197,6 +2476,14 @@ function DisplayObject:getLeft()
 end
 
 ---
+-- Set the left position.
+-- @param value left position.
+function DisplayObject:setLeft(value)
+    local left, top = self:getPos()
+    self:setPos(value, top)    
+end
+
+---
 -- Returns the top position.
 -- @return top
 function DisplayObject:getTop()
@@ -2205,12 +2492,28 @@ function DisplayObject:getTop()
 end
 
 ---
+-- Set the top position.
+-- @param value top position.
+function DisplayObject:setTop(value)
+    local left, top = self:getPos()
+    self:setPos(left, value)    
+end
+
+---
 -- Returns the right position.
 -- @return right
 function DisplayObject:getRight()
     local left, top = self:getPos()
-    local width, height = self:getDims()
+    local width, height = self:getSize()
     return left + width
+end
+
+---
+-- Set the right position.
+-- @param value right position.
+function DisplayObject:setRight(value)
+    local left, top = self:getPos()
+    self:setPos(value - self:getWidth(), top)    
 end
 
 ---
@@ -2220,6 +2523,14 @@ function DisplayObject:getBottom()
     local left, top = self:getPos()
     local width, height = self:getSize()
     return top + height
+end
+
+---
+-- Set the bottom position.
+-- @param value bottom position.
+function DisplayObject:setBottom(value)
+    local left, top = self:getPos()
+    self:setPos(left, value - self:getHeight())    
 end
 
 ---
@@ -2325,6 +2636,7 @@ function Layer:init(viewport)
     self:setViewport(viewport or M.viewport)
     self.touchEnabled = false
     self.touchHandler = nil
+    self.touchHandlerClass = TouchHandler
 end
 
 ---
@@ -2336,7 +2648,7 @@ function Layer:setTouchEnabled(value)
     end
     self.touchEnabled = value
     if value  then
-        self.touchHandler = self.touchHandler or TouchHandler(self)
+        self.touchHandler = self.touchHandler or self.touchHandlerClass(self)
     end
 end
 
@@ -2454,8 +2766,13 @@ function Group:addChild(child)
             self.layer:insertProp(child)
         end
 
-        if self.contentScissorRect then
-            child:setScissorRect(self.contentScissorRect)
+        local scissorRect = self.contentScissorRect or self.parentScissorRect
+        if scissorRect then
+            if child.setParentScissorRect then
+                child:setParentScissorRect(scissorRect)
+            else
+                child:setScissorRect(scissorRect)
+            end
         end
 
         return true
@@ -2477,9 +2794,26 @@ function Group:removeChild(child)
             self.layer:removeProp(child)
         end
 
+        local scissorRect = self.contentScissorRect or self.parentScissorRect
+        if scissorRect then
+            if child.setParentScissorRect then
+                child:setParentScissorRect(nil)
+            else
+                child:setScissorRect(nil)
+            end
+        end
+
         return true
     end
     return false
+end
+
+---
+-- Add the children.
+function Group:addChildren(children)
+    for i, child in ipairs(children) do
+        self:addChild(child)
+    end
 end
 
 ---
@@ -2492,6 +2826,14 @@ function Group:removeChildren()
 end
 
 ---
+-- Set the children.
+-- @param children
+function Group:setChildren(children)
+    self:removeChildren()
+    self:addChildren(children)
+end
+
+---
 -- Returns a child by name.
 -- @param name child's name
 -- @return child
@@ -2499,6 +2841,12 @@ function Group:getChildByName(name)
     for i, child in ipairs(self.children) do
         if child.name == name then
             return child
+        end
+        if child.isGroup and child.getChildByName ~= nil then
+            local child2 = child:getChildByName(name)
+            if child2 then
+                return child2
+            end
         end
     end
 end
@@ -2561,6 +2909,9 @@ function Group:setPriority(priority)
     end
 end
 
+---
+-- Specify whether to scissor test the children.
+-- @param scissorRect scissorRect
 function Group:setScissorRect(scissorRect)
     MOAIPropInterface.setScissorRect(self, scissorRect)
 
@@ -2583,6 +2934,10 @@ function Group:setParentScissorRect(parentRect)
     end
 end
 
+---
+-- Specify whether to scissor test the children.
+-- If the group is moved, scissorRect to move.
+-- @param enabled enabled
 function Group:setScissorContent(enabled)
     if enabled then
         self.contentScissorRect = MOAIScissorRect.new()
@@ -3358,7 +3713,7 @@ end
 ---
 -- Unsupported pivot.
 function NineImage:setPiv(xPiv, yPiv, zPiv)
-    print("Unsupported!")
+    Log.warn("Unsupported!")
 end
 
 ---
@@ -3431,10 +3786,11 @@ function Label:init(text, width, height, font, textSize)
     font = Resources.getFont(font, nil, self.textSize * self.contentScale)
 
     self:setFont(font)
-    self:setRect(0, 0, width or 10, height or 10)
+    self:setSize(width or 10, height or 10)
     self:setTextSize(self.textSize)
     self:setTextScale(1 / self.contentScale)
     self:setString(text)
+    self:setYFlip(M.DEFAULT_VIEWPORT_YFLIP)
 
     if not width or not height then
         self:fitSize(#text)
@@ -3446,7 +3802,10 @@ end
 -- @param width Width
 -- @param height Height
 function Label:setSize(width, height)
-    self:setRect(0, 0, width, height)
+    -- TODO:In order to bug occurs V1.6, always be set in the center.
+    local left, top = self:getPos()
+    self:setRect(math.floor(-width / 2), math.floor(-height / 2), math.floor(width / 2), math.floor(height / 2))
+    self:setPos(left, top)
 end
 
 ---
@@ -3483,7 +3842,7 @@ function Label:setHighQuality(enabled, contentScale)
     self:setTextSize(self.textSize)
 end
 
--- V1.6 and code compatibility of V1.5.
+-- V1.6 code compatibility of V1.5.
 if MOAITextLabel then
     function Label:getStringBounds(index, length)
         local xMin, yMin, xMax, yMax = self:getTextBounds(index, length)
@@ -3611,6 +3970,292 @@ function Rect:onDraw(index, xOff, yOff, xFlip, yFlip)
 end
 
 ----------------------------------------------------------------------------------------------------
+-- @type Graphics
+--
+-- The DisplayObject that has graphics capabilities.
+-- You can call in the method chain MOAIDraw.
+----------------------------------------------------------------------------------------------------
+Graphics = class(DrawableObject)
+M.Graphics = Graphics
+
+Graphics.DEFAULT_STEPS = 32
+
+---
+-- The constructor.
+function Graphics:init(width, height)
+    Graphics.__super.init(self, width, height)
+    self.commands = {}
+end
+
+---
+-- This is the function called when drawing.
+-- @param index index of DrawCallback.
+-- @param xOff xOff of DrawCallback.
+-- @param yOff yOff of DrawCallback.
+-- @param xFlip xFlip of DrawCallback.
+-- @param yFlip yFlip of the Prop.
+function Graphics:onDraw(index, xOff, yOff, xFlip, yFlip)
+    if #self.commands == 0 then
+        return
+    end
+    
+    MOAIGfxDevice.setPenColor(self:getColor())
+    MOAIGfxDevice.setPenWidth(1)
+    MOAIGfxDevice.setPointSize(1)
+    for i, func in ipairs(self.commands) do
+        func(self)
+    end
+end
+
+---
+-- Draw a circle.
+-- @param x Position of the left.
+-- @param y Position of the top.
+-- @param r Radius.(Not in diameter.)
+-- @param steps Number of points.
+-- @return self
+function Graphics:drawCircle(x, y, r, steps)
+    steps = steps or Graphics.DEFAULT_STEPS
+    local command = function(self)
+        if x and y and r and steps then
+            MOAIDraw.drawCircle(x + r, y + r, r, steps)
+        else
+            local rw = math.min(self:getWidth(), self:getHeight()) / 2
+            MOAIDraw.drawCircle(rw, rw, rw, 360)
+        end
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Draw an ellipse.
+-- @param x Position of the left.
+-- @param y Position of the top.
+-- @param xRad Radius.(Not in diameter.)
+-- @param yRad Radius.(Not in diameter.)
+-- @param steps Number of points.
+-- @return self
+function Graphics:drawEllipse(x, y, xRad, yRad, steps)
+    steps = steps or Graphics.DEFAULT_STEPS
+    local command = function(self)
+        if x and y and xRad and yRad and steps then
+            MOAIDraw.drawEllipse(x + xRad, y + yRad, xRad, yRad, steps)
+        else
+            local rw, rh = self:getWidth() / 2, self:getHeight() / 2
+            MOAIDraw.drawEllipse(rw, rh, rw, rh, steps)
+        end
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Draws a line.
+-- @param ... Position of the points(x0, y0).
+-- @return self
+function Graphics:drawLine(...)
+    local args = {...}
+    local command = function(self)
+        MOAIDraw.drawLine(unpack(args))
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Draws a point.
+-- @param ... Position of the points(x0, y0).
+-- @return self
+function Graphics:drawPoints(...)
+    local args = {...}
+    local command = function(self)
+        MOAIDraw.drawPoints(unpack(args))
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Draw a ray.
+-- @param x Position of the left.
+-- @param y Position of the top.
+-- @param dx Direction.
+-- @param dy Direction.
+-- @return self
+function Graphics:drawRay(x, y, dx, dy)
+    local command = function(self)
+        if x and y and dx and dy then
+            MOAIDraw.drawRay(x, y, dx, dy)
+        else
+            MOAIDraw.drawRay(0, 0, self:getWidth(), self:getHeight())
+        end
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Draw a rectangle.
+-- @param x0 Position of the left.
+-- @param y0 Position of the top.
+-- @param x1 Position of the right.
+-- @param y1 Position of the bottom
+-- @return self
+function Graphics:drawRect(x0, y0, x1, y1)
+    local command = function(self)
+        if x0 and y0 and x1 and y1 then
+            MOAIDraw.drawRect(x0, y0, x1, y1)
+        else
+            MOAIDraw.drawRect(0, 0, self:getWidth(), self:getHeight())
+        end
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Draw a callback.
+-- @param callback callback function.
+-- @return self
+function Graphics:drawCallback(callback)
+    table.insert(self.commands, callback)
+    return self
+end
+
+---
+-- Fill the circle.
+-- @param x Position of the left.
+-- @param y Position of the top.
+-- @param r Radius.(Not in diameter.)
+-- @param steps Number of points.
+-- @return self
+function Graphics:fillCircle(x, y, r, steps)
+    steps = steps or Graphics.DEFAULT_STEPS
+    local command = function(self)
+        if x and y and r and steps then
+            MOAIDraw.fillCircle(x + r, y + r, r, steps)
+        else
+            local r = math.min(self:getWidth(), self:getHeight()) / 2
+            MOAIDraw.fillCircle(r, r, r, steps)
+        end
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Fill an ellipse.
+-- @param x Position of the left.
+-- @param y Position of the top.
+-- @param xRad Radius.(Not in diameter.)
+-- @param yRad Radius.(Not in diameter.)
+-- @param steps Number of points.
+-- @return self
+function Graphics:fillEllipse(x, y, xRad, yRad, steps)
+    steps = steps or Graphics.DEFAULT_STEPS
+    local command = function(self)
+        if x and y and xRad and yRad then
+            MOAIDraw.fillEllipse(x + xRad, y + yRad, xRad, yRad, steps)
+        else
+            local rw, rh = self:getWidth() / 2, self:getHeight() / 2
+            MOAIDraw.fillEllipse(rw, rh, rw, rh, steps)
+        end
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Fills the triangle.
+-- @param ... Position of the points(x0, y0).
+-- @return self
+function Graphics:fillFan(...)
+    local args = {...}
+    local command = function(self)
+        MOAIDraw.fillFan(unpack(args))
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Fill a rectangle.
+-- @param x0 Position of the left.
+-- @param y0 Position of the top.
+-- @param x1 Position of the right.
+-- @param y1 Position of the bottom.
+-- @return self
+function Graphics:fillRect(x0, y0, x1, y1)
+    local command = function(self)
+        if x0 and y0 and x1 and y1 then
+            MOAIDraw.fillRect(x0, y0, x1, y1)
+        else
+            MOAIDraw.fillRect(0, 0, self:getWidth(), self:getHeight())
+        end
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Sets the color of the pen.
+-- Will be reflected in the drawing functions.
+-- @param r red
+-- @param g green
+-- @param b blue
+-- @param a alpha
+-- @return self
+function Graphics:setPenColor(r, g, b, a)
+    a = a or 1
+    local command = function(self)
+        local red, green, blue, alpha = self:getColor()
+        red = r * red
+        green = g * green
+        blue = b * blue
+        alpha = a * alpha
+        MOAIGfxDevice.setPenColor(red, green, blue, alpha)
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Set the size of the pen that you specify.
+-- Will be reflected in the drawing functions.
+-- @param width width
+-- @return self
+function Graphics:setPenWidth(width)
+    local command = function(self)
+        MOAIGfxDevice.setPenWidth(width)
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Set the size of the specified point.
+-- Will be reflected in the drawing functions.
+-- @param size
+-- @return self
+function Graphics:setPointSize(size)
+    local command = function(self)
+        MOAIGfxDevice.setPointSize(size)
+    end
+    table.insert(self.commands, command)
+    return self
+end
+
+---
+-- Clears the drawing operations.
+-- @return self
+function Graphics:clear()
+    self.commands = {}
+    return self
+end
+
+
+----------------------------------------------------------------------------------------------------
 -- @type Texture
 --
 -- Texture class.
@@ -3726,6 +4371,13 @@ function TouchHandler:onTouch(e)
     -- touch event
     local e2 = table.copy(e, self.TOUCH_EVENT)
 
+    -- the active prop is the one reported from getTouchableProp,
+    -- the "other" prop is the prop associated originally with this touch
+    -- index. Used to make it easier to distinguish whether a touchUp
+    -- event should be counted as a "click".
+    e2.activeProp = prop
+    e2.otherProp = prop2
+
     -- dispatch event
     if prop then
         e2.prop = prop
@@ -3742,6 +4394,8 @@ function TouchHandler:onTouch(e)
     -- reset properties to free resources used in cached event
     e2.data = nil
     e2.prop = nil
+    e2.activeProp = nil
+    e2.otherProp = nil
     e2.target = nil
     e2:setListener(nil, nil)
 end
@@ -3757,7 +4411,17 @@ function TouchHandler:getTouchableProp(e)
     for i = #props, 1, -1 do
         local prop = props[i]
         if prop:getAttr(MOAIProp.ATTR_VISIBLE) > 0 then
-            return prop
+            -- getScissorRect is part of a recent submitted change.
+            local scissor = prop.getScissorRect and prop:getScissorRect()
+            if scissor then
+                local sx, sy = scissor:worldToModel(e.wx, e.wy)
+                local xMin, yMin, xMax, yMax = scissor:getRect()
+                if sx > xMin and sx < xMax and sy > yMin and sy < yMax then
+                    return prop
+                end
+            else
+                return prop
+            end
         end
     end
 end

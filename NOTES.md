@@ -1,4 +1,15 @@
 # Release notes
+## Version 2.2.0 (Update: 2015/02/04)
+
+### Test Version
+Moai SDK Release 1.5
+Moai SDK Develop 1.6
+
+### Flower Library
+
+* Improved to work with V1.6 develop.
+* Add more components to the widget library.
+(ScrollView,ScrollGroup,ListView,PanelView,)
 
 ## Version 2.1.4 (Update: 2014/03/16)
 

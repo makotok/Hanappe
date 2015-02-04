@@ -1,28 +1,52 @@
 -- import
 local flower = require "flower"
-local aspect = require "aspect"
 
 -- module
 local M = {}
 
 --------------------------------------------------------------------------------
--- Flower
+-- MOAI SDK
 --------------------------------------------------------------------------------
 
-local screenWidth = MOAIEnvironment.horizontalResolution or 640
-local screenHeight = MOAIEnvironment.verticalResolution or 480
-local viewScale = math.floor(math.max(math.min(screenWidth / 480, screenHeight / 320), 1))
-viewScale = MOAIEnvironment.iosRetinaDisplay and 2 or viewScale
+-- Setting the FPS
+MOAISim.setStep(1 / 60)
+
+-- Setting of the operation of the Loop.
+MOAISim.clearLoopFlags()
+MOAISim.setLoopFlags(MOAISim.SIM_LOOP_ALLOW_BOOST)
+MOAISim.setLoopFlags(MOAISim.SIM_LOOP_LONG_DELAY)
+
+-- Sets the boost threshold
+MOAISim.setBoostThreshold(0)
+
+--------------------------------------------------------------------------------
+-- Flower
+--------------------------------------------------------------------------------
 
 -- Resources setting
 flower.Resources.addResourceDirectory("assets")
 
--- Set the screen size
-flower.DEFAULT_SCREEN_WIDTH = screenWidth
-flower.DEFAULT_SCREEN_HEIGHT = screenHeight
+-- Set the window title
+flower.DEFAULT_WINDOW_TITLE = "Flower extensions"
 
--- Set the scale of the Viewport
-flower.DEFAULT_VIEWPORT_SCALE = viewScale
+-- Set the display size
+flower.setDefaultDisplaySize("iPhone5", false, false)
+
+--- default width of the screen
+--M.DEFAULT_SCREEN_WIDTH = 320
+
+--- default height of the screen
+--M.DEFAULT_SCREEN_HEIGHT = 480
+
+--- default scale of the viewport
+--M.DEFAULT_VIEWPORT_SCALE = 1
+
+--- default y behavior; set to true to have y=0 be the bottom of the screen
+flower.DEFAULT_VIEWPORT_YFLIP = false
+
+-- Optional table of arguments for setBlendMode on new images.
+-- Empty table gives default behavior.
+flower.DEFAULT_BLEND_MODE = nil
 
 -- High quality rendering of Label
 -- When enabled, it may take a long time to display the label.
@@ -42,54 +66,21 @@ flower.Font.DEFAULT_POINTS = 24
 --flower.Texture.DEFAULT_FILTER = MOAITexture.GL_LINEAR
 flower.Texture.DEFAULT_FILTER = MOAITexture.GL_NEAREST
 
---------------------------------------------------------------------------------
--- MOAI SDK
---------------------------------------------------------------------------------
+-- Setting of the behavior of the InputMgr
+-- Whether to fire a touch event on the desktop environment
+flower.InputMgr.TOUCH_EVENT_ENABLED = true
 
--- Setting the FPS
-MOAISim.setStep(1 / 60)
-
--- Setting of the operation of the Loop.
-MOAISim.clearLoopFlags()
-MOAISim.setLoopFlags(MOAISim.SIM_LOOP_ALLOW_BOOST)
-MOAISim.setLoopFlags(MOAISim.SIM_LOOP_LONG_DELAY)
-
--- Sets the boost threshold
-MOAISim.setBoostThreshold(0)
+-- Whether to fire a mouse event on the desktop environment
+flower.InputMgr.MOUSE_EVENT_ENABLED = true
 
 --------------------------------------------------------------------------------
 -- Debugging
 --------------------------------------------------------------------------------
 
 -- Show bounds of MOAIProp
---[[
-MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX, 1, 1, 1, 1, 1 )
-MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX_LAYOUT, 1, 0, 0, 1, 1 )
-MOAIDebugLines.setStyle ( MOAIDebugLines.TEXT_BOX_BASELINES, 1, 1, 0, 0, 1 )
-MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_MODEL_BOUNDS, 2, 1, 1, 1 )
-MOAIDebugLines.setStyle ( MOAIDebugLines.PROP_WORLD_BOUNDS, 2, 0.75, 0.75, 0.75 )
-]]
+--flower.DebugUtils.showDebugLines()
 
--- Performance measurement.
-local timer = MOAITimer.new()
-timer:setMode(MOAITimer.LOOP)
-timer:setSpan(5)
-timer:setListener(MOAITimer.EVENT_TIMER_LOOP,
-    function()
-        print("-------------------------------------------")
-        print("FPS:", MOAISim.getPerformance())
-        print("Draw:", MOAIRenderMgr.getPerformanceDrawCount())
-    end)
-timer:start()
-
---[[
-local traceInterpector = aspect.Interceptor(widget)
-
-function traceInterpector:beginProcess(context, ...)
-    local info = debug.getinfo(4) or {}
-    local msg = string.format("[Trace][%s:%s][%s] Args = ", info.short_src, info.currentline, context.name)
-    print(msg, ...)
-end
-]]
+-- Start performance log
+flower.DebugUtils.startPerformanceLog()
 
 return M
