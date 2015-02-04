@@ -444,12 +444,6 @@ UIComponent.STYLE_NORMAL_COLOR = "normalColor"
 --- Style: disabledColor
 UIComponent.STYLE_DISABLED_COLOR = "disabledColor"
 
---- State : normal
-UIComponent.STATE_NORMAL = "normal"
-
---- State : disabled
-UIComponent.STATE_DISABLED = "disabled"
-
 ---
 -- Constructor.
 -- Please do not inherit this constructor.
@@ -479,7 +473,6 @@ function UIComponent:_initInternal()
     self._focusEnabled = true
     self._theme = nil
     self._styles = {}
-    self._currentState = UIComponent.STATE_NORMAL
     self._layout = nil
     self._excludeLayout = false
     self._invalidateDisplayFlag = true
@@ -604,18 +597,6 @@ function UIComponent:updatePriority(priority)
     end
 
     return priority
-end
-
----
--- Update the current state.
-function UIComponent:updateCurrentState()
-    local oldState = self._currentState
-    local newState = nil
-    if self:isEnabled() then
-        newState = UIComponent.STATE_NORMAL
-    else
-        newState = UIComponent.STATE_DISABLED
-    end
 end
 
 ---
@@ -872,16 +853,6 @@ end
 -- @return themeName
 function UIComponent:getThemeName()
     return self._themeName
-end
-
----
--- Set the state of the component.
--- @return themeName
-function UIComponent:setCurrentState(state)
-    if self._currentState ~= state then
-        self._currentState = state
-        self:invalidateDisplay()
-    end
 end
 
 ---
@@ -5080,6 +5051,7 @@ end
 -- @param texture background texture path
 function PanelView:setBackgroundTexture(texture)
     self._backgroundPanel:setBackgroundTexture(texture)
+    self:_updateScrollBounds()
 end
 
 ---
@@ -5094,6 +5066,7 @@ end
 -- @param visible visible
 function PanelView:setBackgroundVisible(visible)
     self._backgroundPanel:setBackgroundVisible(visible)
+    self:_updateScrollBounds()
 end
 
 ---
@@ -5288,7 +5261,7 @@ ListView = class(PanelView)
 M.ListView = ListView
 
 --- Style: listItemFactory
-ListView.STYLE_LIST_ITEM_RENDERER_FACTORY = "listItemRendererFactory"
+ListView.STYLE_ITEM_RENDERER_FACTORY = "itemRendererFactory"
 
 --- Style: rowHeight
 ListView.STYLE_ROW_HEIGHT = "rowHeight"
@@ -5298,13 +5271,13 @@ ListView.STYLE_ROW_HEIGHT = "rowHeight"
 function ListView:_initInternal()
     ListView.__super._initInternal(self)
     self._themeName = "ListView"
-    self._dataList = {}
+    self._dataSource = {}
     self._dataField = nil
     self._selectedItems = {}
     self._selectionMode = "single"
-    self._listItemRenderers = {}
-    self._freeListItemRenderers = {}
+    self._itemRenderers = {}
     self._itemToRendererMap = {}
+    self._touchedRenderer = nil
 end
 
 function ListView:_createChildren()
@@ -5314,49 +5287,62 @@ function ListView:_createChildren()
     self:setLayout(layout)
 end
 
-function ListView:_updateListItemRenderers()
-    self:_removeListItemRenderers()
-    self:_createListItemRenderers()
-end
-
-function ListView:_removeListItemRenderers()
-    for i, renderer in ipairs(self._listItemRenderers) do
-        renderer:removeEventListener(Event.TOUCH_DOWN, self.onItemRendererTouchDown, self)
-        renderer:removeEventListener(Event.TOUCH_UP, self.onItemRendererTouchUp, self)
-        renderer:removeEventListener(Event.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
-        self:removeContent(renderer)
-        table.insert(self._freeListItemRenderers, renderer)
+function ListView:_updateItemRenderers()
+    for i, data in ipairs(self:getDataSource()) do
+        self:_updateItemRenderer(data, i)
     end
 
-    self._listItemRenderers = {}
+    if #self._itemRenderers > #self:getDataSource() then
+        for i = #self._itemRenderers, #self:getDataSource() do
+            self:_removeItemRenderer(self._itemRenderers[i])
+        end
+    end
+end
+
+function ListView:_updateItemRenderer(data, index)
+    local renderer = self._itemRenderers[index]
+    if not renderer then
+        renderer = self:getItemRendererFactory():newInstance()
+        table.insert(self._itemRenderers, renderer)
+        self:addContent(renderer)
+    end
+    renderer:setData(data)
+    renderer:setDataIndex(index)
+    renderer:setDataField(self:getDataField())
+    renderer:setSize(self._scrollGroup:getWidth(), self:getRowHeight())
+    renderer:setHostComponent(self)
+    renderer:addEventListener(Event.TOUCH_DOWN, self.onItemRendererTouchDown, self)
+    renderer:addEventListener(Event.TOUCH_UP, self.onItemRendererTouchUp, self)
+    renderer:addEventListener(Event.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
+
+    self._itemToRendererMap[data] = renderer
+end
+
+
+function ListView:_removeItemRenderers()
+    for i, renderer in ipairs(self._listItemRenderers) do
+        self:_removeItemRenderer(renderer)
+    end
+
+    self._itemRenderers = {}
     self._itemToRendererMap = {}
 end
 
-function ListView:_createListItemRenderers()
-    for i, data in ipairs(self._dataList) do
-        local renderer = #self._freeListItemRenderers > 0 and table.remove(self._freeListItemRenderers, 1)
-            or self:getListItemRendererFactory():newInstance()
-        renderer:setData(data)
-        renderer:setDataIndex(i)
-        renderer:setDataField(self:getDataField())
-        renderer:setSize(self._scrollGroup:getWidth(), self:getRowHeight())
-        renderer:setHostComponent(self)
-        renderer:addEventListener(Event.TOUCH_DOWN, self.onItemRendererTouchDown, self)
-        renderer:addEventListener(Event.TOUCH_UP, self.onItemRendererTouchUp, self)
-        renderer:addEventListener(Event.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
+function ListView:_removeItemRenderer(renderer)
+    renderer:removeEventListener(Event.TOUCH_DOWN, self.onItemRendererTouchDown, self)
+    renderer:removeEventListener(Event.TOUCH_UP, self.onItemRendererTouchUp, self)
+    renderer:removeEventListener(Event.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
 
-        self:addContent(renderer)
-        self._itemToRendererMap[data] = renderer
-    end
-
-    --TODO:update selected items
+    self:removeContent(renderer)
+    table.removeElement(self._itemRenderers, renderer)
+    self._itemToRendererMap[renderer:getData()] = nil
 end
 
 ---
 -- Update the display
 function ListView:updateDisplay()
     ListView.__super.updateDisplay(self)
-    self:_updateListItemRenderers()
+    self:_updateItemRenderers()
 end
 
 function ListView:setSelectedItem(item)
@@ -5392,20 +5378,20 @@ function ListView:setSelectedItems(items)
 end
 
 ---
--- Set the dataList.
--- @param dataList dataList
-function ListView:setDataList(dataList)
-    if self._dataList ~= dataList then
-        self._dataList = dataList
+-- Set the dataSource.
+-- @param dataSource dataSource
+function ListView:setDataSource(dataSource)
+    if self._dataSource ~= dataSource then
+        self._dataSource = dataSource
         self:invalidate()
     end
 end
 
 ---
--- Return the dataList.
--- @return dataList
-function ListView:getDataList()
-    return self._dataList
+-- Return the dataSource.
+-- @return dataSource
+function ListView:getDataSource()
+    return self._dataSource
 end
 
 ---
@@ -5426,18 +5412,18 @@ function ListView:getDataField()
 end
 
 ---
--- Sets the ListItemFactory.
--- @param factory ListItemFactory
-function ListView:setListItemRendererFactory(factory)
-    self:setStyle(ListView.STYLE_LIST_ITEM_RENDERER_FACTORY, factory)
+-- Sets the itemRendererFactory.
+-- @param factory itemRendererFactory
+function ListView:setItemRendererFactory(factory)
+    self:setStyle(ListView.STYLE_ITEM_RENDERER_FACTORY, factory)
     self:invalidate()
 end
 
 ---
--- Returns the ListItemFactory.
--- @return ListItemFactory
-function ListView:getListItemRendererFactory()
-    return self:getStyle(ListView.STYLE_LIST_ITEM_RENDERER_FACTORY)
+-- Returns the itemRendererFactory.
+-- @return itemRendererFactory
+function ListView:getItemRendererFactory()
+    return self:getStyle(ListView.STYLE_ITEM_RENDERER_FACTORY)
 end
 
 
@@ -5460,17 +5446,16 @@ end
 -- This event handler is called when touch.
 -- @param e Touch Event
 function ListView:onItemRendererTouchDown(e)
-    if self._touchedIndex ~= nil and self._touchedIndex ~= e.idx then
+    if self._touchedRenderer ~= nil then
         return
     end
-
-    self._touchedIndex = e.idx
 
     local renderer = e.target
     if renderer.isRenderer then
         renderer:setPressed(true)
         renderer:setSelected(true)
         self:setSelectedItem(renderer:getData())
+        self._touchedRenderer = renderer
     end
 end
 
@@ -5478,12 +5463,11 @@ end
 -- This event handler is called when touch.
 -- @param e Touch Event
 function ListView:onItemRendererTouchUp(e)
-    if self._touchedIndex ~= e.idx then
+    if self._touchedRenderer == nil or self._touchedRenderer ~= e.target then
         return
     end
 
-    self._touchedIndex = nil
-
+    self._touchedRenderer = nil
     local renderer = e.target
     if renderer.isRenderer then
         renderer:setPressed(false)
@@ -5494,12 +5478,11 @@ end
 -- This event handler is called when touch.
 -- @param e Touch Event
 function ListView:onItemRendererTouchCancel(e)
-    if self._touchedIndex ~= e.idx then
+    if self._touchedRenderer == nil or self._touchedRenderer ~= e.target then
         return
     end
-
-    self._touchedIndex = nil
-
+    
+    self._touchedRenderer = nil
     local renderer = e.target
     if renderer.isRenderer then
         renderer:setPressed(false)
@@ -5563,9 +5546,12 @@ end
 ---
 -- Update the background objects.
 function BaseItemRenderer:_updateBackground()
-    self._background:setSize(self:getSize())
+    local width, height = self:getSize()
+    self._background:setSize(width, height)
     self._background:clear()
-    self._background:setPenColor(self:getBackgroundColor()):fillRect(0, 0, self:getWidth(), self:getHeight())
+    if self:isBackgroundVisible() then
+        self._background:setPenColor(self:getBackgroundColor()):fillRect(0, 0, width, height)
+    end
 end
 
 ---
@@ -5637,6 +5623,11 @@ function BaseItemRenderer:getBackgroundColor()
         return unpack(self:getStyle(BaseItemRenderer.STYLE_BACKGROUND_SELECTED_COLOR))
     end
     return unpack(self:getStyle(BaseItemRenderer.STYLE_BACKGROUND_COLOR))
+end
+
+function BaseItemRenderer:isBackgroundVisible()
+    local r, g, b, a = self:getBackgroundColor()
+    return r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0
 end
 
 ---

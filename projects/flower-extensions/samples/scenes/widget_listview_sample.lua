@@ -1,8 +1,8 @@
 module(..., package.seeall)
 
-local dataList = {}
+local dataSource = {}
 for i = 1, 100 do
-    table.insert(dataList, {label = "label" .. i, text = "text" .. i})
+    table.insert(dataSource, {label = "label" .. i, text = "text" .. i})
 end
 
 
@@ -11,11 +11,23 @@ end
 --------------------------------------------------------------------------------
 
 function onCreate(e)
-    listView = widget.ListView {
-        size = {200, 300},
-        pos = {50, 50},
+    viewGroup = widget.UIView {
         scene = scene,
-        dataField = "label",
-        dataList = {dataList},
+        layout = widget.BoxLayout {
+            gap = {5, 5},
+        },
+        children = {{
+            widget.ListView {
+                size = {flower.viewWidth, flower.viewHeight / 2 - 5},
+                dataField = "label",
+                dataSource = {dataSource},
+            },
+            widget.ListView {
+                size = {flower.viewWidth, flower.viewHeight / 2 - 5},
+                dataField = "label",
+                dataSource = {dataSource},
+                backgroundVisible = false,
+            },
+        }},
     }
 end
