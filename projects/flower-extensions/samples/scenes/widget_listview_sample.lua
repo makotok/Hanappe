@@ -11,23 +11,11 @@ end
 --------------------------------------------------------------------------------
 
 function onCreate(e)
-    viewGroup = widget.UIView {
+    widget.ListView {
+        size = {flower.viewWidth - 10, flower.viewHeight - 100},
+        pos = {5, 5},
+        dataField = "label",
+        dataSource = {dataSource},
         scene = scene,
-        layout = widget.BoxLayout {
-            gap = {5, 5},
-        },
-        children = {{
-            widget.ListView {
-                size = {flower.viewWidth, flower.viewHeight / 2 - 5},
-                dataField = "label",
-                dataSource = {dataSource},
-            },
-            widget.ListView {
-                size = {flower.viewWidth, flower.viewHeight / 2 - 5},
-                dataField = "label",
-                dataSource = {dataSource},
-                backgroundVisible = false,
-            },
-        }},
     }
 end
