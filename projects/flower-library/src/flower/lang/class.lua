@@ -1,12 +1,13 @@
 ----------------------------------------------------------------------------------------------------
--- @type class
---
 -- This implements object-oriented style classes in Lua, including multiple inheritance.
 -- This particular variation of class implementation copies the base class
 -- functions into this class, which improves speed over other implementations
 -- in return for slightly larger class tables.  Please note that the inherited
 -- class members are therefore cached and subsequent changes to a superclass
 -- may not be reflected in your subclasses.
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

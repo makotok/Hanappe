@@ -1,6 +1,4 @@
 ----------------------------------------------------------------------------------------------------
--- @type NineImage
---
 -- This class displays the NinePatch of Android.
 -- The following restrictions exist.
 -- In many cases, to solve by wrapping it in Group class.
@@ -9,6 +7,14 @@
 --   <li>setPiv function does not work.</li>
 --   <li>Scale should not be set directly.<li>
 -- </ol>
+--
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.core.DisplayObject.html">DisplayObject</a><l/i>
+-- </ul>
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

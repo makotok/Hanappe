@@ -19,18 +19,38 @@ function M:simpleColor()
     if not MOAIGfxDevice.isProgrammable () then
         return
     end
+
     local shader = MOAIShader.new ()
     local vsh = getFileData("hp/shader/shader_simple.vsh")
     local fsh = getFileData("hp/shader/shader_simple.fsh")
-    
-    shader:reserveUniforms(2)
-    shader:declareUniform(1, 'transform', MOAIShader.UNIFORM_WORLD_VIEW_PROJ )
-    shader:declareUniform(2, 'ucolor', MOAIShader.UNIFORM_PEN_COLOR )
-    
-    shader:setVertexAttribute ( 1, 'position' )
-    shader:setVertexAttribute ( 2, 'color' )
-    
-    shader:load ( vsh, fsh )
+        
+    if MOAIShaderProgram then
+        -- V1.6
+        local program = MOAIShaderProgram.new ()
+        program:setVertexAttribute ( 1, 'position' )
+        program:setVertexAttribute ( 2, 'color' )
+
+        program:reserveUniforms(2)
+        program:declareUniform(1, 'transform', MOAIShaderProgram.UNIFORM_MATRIX_F4 )
+        program:declareUniform(2, 'ucolor', MOAIShaderProgram.UNIFORM_VECTOR_F4 )
+
+        program:reserveGlobals(2)
+        program:setGlobal(1, 1, MOAIShaderProgram.GLOBAL_WORLD_VIEW_PROJ )
+        program:setGlobal(2, 2, MOAIShaderProgram.GLOBAL_PEN_COLOR )
+        
+        program:load ( vsh, fsh )
+
+        shader:setProgram(program)
+    else
+        -- V1.5
+        shader:setVertexAttribute ( 1, 'position' )
+        shader:setVertexAttribute ( 2, 'color' )        
+        shader:reserveUniforms(2)
+        shader:declareUniform(1, 'transform', MOAIShader.UNIFORM_WORLD_VIEW_PROJ )
+        shader:declareUniform(2, 'ucolor', MOAIShader.UNIFORM_PEN_COLOR )
+        shader:load ( vsh, fsh )
+    end
+
     return shader
 end
 

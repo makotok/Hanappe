@@ -1,8 +1,18 @@
 ----------------------------------------------------------------------------------------------------
--- Class to fill a rectangle. <br>
+-- Class to fill a rectangle.
+-- <p>
 -- NOTE: This uses immediate mode drawing and so has a high performance impact when
 -- used on mobile devices.  You may wish to use a 1-pixel high Image instead if you
 -- wish to minimize draw calls.
+-- </p>
+--
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.core.DrawableObject.html">DrawableObject</a><l/i>
+-- </ul>
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

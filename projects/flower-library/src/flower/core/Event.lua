@@ -1,6 +1,9 @@
 ----------------------------------------------------------------------------------------------------
 -- A class for events, which are communicated to, and handled by, event handlers
 -- Holds the data of the Event.
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

@@ -1,5 +1,13 @@
 ----------------------------------------------------------------------------------------------------
 -- A class to manage and control sets of DisplayObjects.
+--
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.core.DisplayObject.html">DisplayObject</a><l/i>
+-- </ul>
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import
@@ -8,23 +16,30 @@ local table = require "flower.lang.table"
 local Config = require "flower.core.Config"
 local DisplayObject = require "flower.core.DisplayObject"
 
+---
+-- Super class.
+-- @see flower.core.DisplayObject
+local __super = DisplayObject
+
 -- class
-local Group = class(DisplayObject)
+local Group = class(__super)
 
 ---
 -- The constructor.
 -- @param layer (option)layer object
 -- @param width (option)width
 -- @param height (option)height
+-- @see flower.core.DisplayObject
 function Group:init(layer, width, height)
     Group.__super.init(self)
+
     self.children = {}
     self.isGroup = true
     self.layer = layer
     self.parentScissorRect = nil
     self.contentScissorRect = nil
-    self:setSize(width or 0, height or 0)
 
+    self:setSize(width or 0, height or 0)
     self:setPivToCenter()
 end
 

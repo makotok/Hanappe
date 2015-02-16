@@ -1,5 +1,8 @@
 ----------------------------------------------------------------------------------------------------
 -- This class is responsible for event notifications.
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import
@@ -76,8 +79,10 @@ end
 ---
 -- Set the event listener.
 -- Event listener that you set in this function is one.
--- @param eventName event name
+-- @param eventType event type
 -- @param callback event listener
+-- @param source (option)event source
+-- @param priority (option)event priority
 function EventDispatcher:setEventListener(eventType, callback, source, priority)
     local propertyName = "_eventListener_" .. assert(eventType)
     local oldListener = self[propertyName]

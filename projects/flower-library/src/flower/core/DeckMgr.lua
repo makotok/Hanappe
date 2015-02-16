@@ -1,5 +1,8 @@
 ----------------------------------------------------------------------------------------------------
 -- This is a singleton class that manages MOAIDeck.
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import
@@ -159,6 +162,8 @@ end
 ---
 -- Create the Deck for displaying TextureAtlas.
 -- @param luaFilePath TexturePacker lua file path
+-- @param flipX (option)flipX
+-- @param flipY (option)flipY
 -- @return Texture atlas deck
 function DeckMgr:createAtlasDeck(luaFilePath, flipX, flipY)
     local frames = Resources.dofile(luaFilePath).frames

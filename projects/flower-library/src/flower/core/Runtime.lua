@@ -1,9 +1,15 @@
 ----------------------------------------------------------------------------------------------------
--- @type Runtime
---
 -- This is a utility class which starts immediately upon library load
 -- and acts as the single handler for ENTER_FRAME events (which occur
 -- whenever Moai yields control to the Lua subsystem on each frame).
+--
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.core.EventDispatcher.html">EventDispatcher</a><l/i>
+-- </ul>
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

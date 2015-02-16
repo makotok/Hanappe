@@ -1,8 +1,9 @@
 ----------------------------------------------------------------------------------------------------
--- @type math
---
 -- This set of functions extends the native lua 'math' function set with
 -- additional useful methods.
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 local math = setmetatable({}, {__index = _G.math})
 

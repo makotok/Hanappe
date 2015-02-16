@@ -1,7 +1,13 @@
 ----------------------------------------------------------------------------------------------------
--- @type SheetImage
---
 -- Class that displays an image from a sheet of images, supporting TexturePacker's format.
+--
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.core.DisplayObject.html">DisplayObject</a><l/i>
+-- </ul>
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

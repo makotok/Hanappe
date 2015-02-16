@@ -1,8 +1,9 @@
 ----------------------------------------------------------------------------------------------------
--- @type table
---
 -- The next group of functions extends the default lua table implementation
 -- to include some additional useful methods.
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 local table = setmetatable({}, {__index = _G.table})
 

@@ -1,8 +1,14 @@
 ----------------------------------------------------------------------------------------------------
--- @type Scene
---
 -- A scene class, handling display on one or more layers and receiving events from the EventMgr.
 -- Object is controlled by SceneMgr; use that class to manipulate scenes.
+--
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.core.Group.html">Group</a><l/i>
+-- </ul>
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

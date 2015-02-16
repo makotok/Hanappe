@@ -1,6 +1,8 @@
 ----------------------------------------------------------------------------------------------------
--- @type SceneAnimations
 -- A class to handle transitions between scenes and defining various animations for those transitions.
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- class

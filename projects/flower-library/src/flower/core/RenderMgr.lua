@@ -1,7 +1,13 @@
 ----------------------------------------------------------------------------------------------------
--- @type RenderMgr
---
 -- This is a singleton class that manages the rendering object.
+--
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.core.EventDispatcher.html">EventDispatcher</a><l/i>
+-- </ul>
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

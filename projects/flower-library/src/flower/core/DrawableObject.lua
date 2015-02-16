@@ -1,5 +1,13 @@
 ----------------------------------------------------------------------------------------------------
 -- Class for drawing using the MOAIDraw.
+--
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.core.DisplayObject.html">DisplayObject</a><l/i>
+-- </ul>
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

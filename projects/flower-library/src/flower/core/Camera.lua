@@ -1,5 +1,13 @@
 ----------------------------------------------------------------------------------------------------
 -- flower's idea of a Camera, which is a superclass of the Moai Camera.
+--
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="http://moaiforge.github.io/moai-sdk/api/latest/class_m_o_a_i_camera.html">MOAICamera</a><l/i>
+-- </ul>
+-- 
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

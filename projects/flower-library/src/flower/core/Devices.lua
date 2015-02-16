@@ -1,8 +1,14 @@
 ----------------------------------------------------------------------------------------------------
 -- This is a class that lists information about the device.
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
+
+-- class
 local Devices = {}
 
+--- desktop for 640x480
 Devices.desktop640x480 = {
     deviceOS = nil,
     retinaDisplay = false,
@@ -10,6 +16,8 @@ Devices.desktop640x480 = {
     displayWidth = 640,
     displayHeight = 480,
 }
+
+--- iPhone5
 Devices.iPhone5 = {
     deviceOS = "iOS",
     retinaDisplay = true,
@@ -17,6 +25,8 @@ Devices.iPhone5 = {
     displayWidth = 640,
     displayHeight = 1136,
 }
+
+--- iPhone5S
 Devices.iPhone5S = {
     deviceOS = "iOS",
     retinaDisplay = true,
@@ -24,6 +34,8 @@ Devices.iPhone5S = {
     displayWidth = 640,
     displayHeight = 1136,
 }
+
+--- iPhone6
 Devices.iPhone6 = {
     deviceOS = "iOS",
     retinaDisplay = true,
@@ -31,6 +43,8 @@ Devices.iPhone6 = {
     displayWidth = 750,
     displayHeight = 1334,
 }
+
+--- iPhone6Plus
 Devices.iPhone6Plus = {
     deviceOS = "iOS",
     retinaDisplay = true,
@@ -38,6 +52,8 @@ Devices.iPhone6Plus = {
     displayWidth = 1080,
     displayHeight = 1920,
 }
+
+--- iPad
 Devices.iPad = {
     deviceOS = "iOS",
     retinaDisplay = true,
@@ -45,6 +61,8 @@ Devices.iPad = {
     displayWidth = 768,
     displayHeight = 1024,
 }
+
+--- iPadMini
 Devices.iPadMini = {
     deviceOS = "iOS",
     retinaDisplay = false,
@@ -52,6 +70,8 @@ Devices.iPadMini = {
     displayWidth = 768,
     displayHeight = 1024,
 }
+
+--- iPadMini2
 Devices.iPadMini2 = {
     deviceOS = "iOS",
     retinaDisplay = true,
@@ -59,6 +79,8 @@ Devices.iPadMini2 = {
     displayWidth = 1536,
     displayHeight = 2048,
 }
+
+--- iPadAir
 Devices.iPadAir = {
     deviceOS = "iOS",
     retinaDisplay = true,

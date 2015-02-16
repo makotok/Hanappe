@@ -1,7 +1,8 @@
 ----------------------------------------------------------------------------------------------------
--- @type Resources
---
 -- A resource management system that caches loaded resources to maximize performance.
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

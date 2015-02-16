@@ -1,6 +1,14 @@
 ----------------------------------------------------------------------------------------------------
 -- The DisplayObject that has graphics capabilities.
 -- You can call in the method chain MOAIDraw.
+--
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.core.DrawableObject.html">DrawableObject</a><l/i>
+-- </ul>
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

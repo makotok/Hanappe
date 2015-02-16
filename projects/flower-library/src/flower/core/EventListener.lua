@@ -2,6 +2,9 @@
 -- A virtual superclass for EventListeners.
 -- Classes which inherit from this class become able to receive events.
 -- Currently intended for internal use only.
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import

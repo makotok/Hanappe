@@ -1,7 +1,14 @@
 ----------------------------------------------------------------------------------------------------
--- @type Viewport
+-- TODO:LDoc
 --
--- This is flower's idea of a Layer, which is a superclass of the MOAI concept of Layer.
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.core.EventDispatcher.html">EventDispatcher</a><l/i>
+--   <li><a href="http://moaiforge.github.io/moai-sdk/api/latest/class_m_o_a_i_viewport.html">MOAIViewport</a><l/i>
+-- </ul>
+--
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
 
 -- import
