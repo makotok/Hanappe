@@ -1,5 +1,5 @@
 return {
-    {title = "Flower Image", scene = "samples/flower_image_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Flower Image", scene = "samples/flower_image_sample"},
     {title = "Flower SheetImage", scene = "samples/flower_sheetimage_sample", openAnime = "crossFade", closeAnime = "crossFade"},
     {title = "Flower MovieClip", scene = "samples/flower_movieclip_sample", openAnime = "popIn", closeAnime = "popOut"},
     {title = "Flower MapImage", scene = "samples/flower_mapimage_sample", openAnime = "slideLeft", closeAnime = "slideRight"},

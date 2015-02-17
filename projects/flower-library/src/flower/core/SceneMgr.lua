@@ -107,7 +107,7 @@ function SceneMgr:internalOpenScene(sceneName, params, currentCloseFlag)
 
         if self.currentScene and currentCloseFlag then
             self.currentScene:close(params)
-            self:removeScene(self.nextScene)
+            self:removeScene(self.currentScene)
         end
 
         self.currentScene = self.nextScene
