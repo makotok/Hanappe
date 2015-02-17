@@ -6,9 +6,9 @@
 local class = require "flower.lang.class"
 local Event = require "flower.core.Event"
 local EventDispatcher = require "flower.core.EventDispatcher"
-local CommandGroup = require "flower.tasklib.CommandGroup"
-local TaskExecutor = require "flower.tasklib.TaskExecutor"
-local TaskMonitor = require "flower.tasklib.TaskMonitor"
+local CommandGroup = require "flower.tasker.CommandGroup"
+local TaskExecutor = require "flower.tasker.TaskExecutor"
+local TaskMonitor = require "flower.tasker.TaskMonitor"
 local PropertyUtils = require "flower.util.PropertyUtils"
 
 -- class

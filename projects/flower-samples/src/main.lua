@@ -6,7 +6,8 @@ widget = require "flower.widget"
 audio = require "flower.audio"
 spine = require "flower.spine"
 dungeon = require "flower.dungeon"
-tasklib = require "flower.tasklib"
+fsm = require "flower.fsm"
+tasker = require "flower.tasker"
 
 -- audio initialize
 audio.init()

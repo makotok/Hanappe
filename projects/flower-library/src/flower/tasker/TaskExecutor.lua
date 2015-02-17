@@ -6,8 +6,8 @@
 local class = require "flower.lang.class"
 local Event = require "flower.core.Event"
 local EventDispatcher = require "flower.core.EventDispatcher"
-local TaskContext = require "flower.tasklib.TaskContext"
-local TaskEvent = require "flower.tasklib.TaskEvent"
+local TaskContext = require "flower.tasker.TaskContext"
+local TaskEvent = require "flower.tasker.TaskEvent"
 
 -- class
 local TaskExecutor = class(EventDispatcher)

@@ -7,7 +7,7 @@
 local class = require "flower.lang.class"
 local Event = require "flower.core.Event"
 local EventDispatcher = require "flower.core.EventDispatcher"
-local CommandEvent = require "flower.tasklib.CommandEvent"
+local CommandEvent = require "flower.tasker.CommandEvent"
 local PropertyUtils = require "flower.util.PropertyUtils"
 
 -- class

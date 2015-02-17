@@ -1,7 +1,5 @@
 module(..., package.seeall)
 
-local aspect = require "aspect"
-
 -- target table
 local target1 = {
     print = function(self, ...)
@@ -20,7 +18,7 @@ local target2 = {
 }
 
 -- interceptor
-local interceptor = aspect.Interceptor({target1, target2})
+local interceptor = flower.Interceptor({target1, target2})
 
 function interceptor:beginProcess(context, ...)
     print("[BEGIN]", context.name)

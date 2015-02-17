@@ -37,12 +37,12 @@ function onCreate(e)
         end,
     }
 
-    task1 = tasklib.Task {
+    task1 = tasker.Task {
         commands = {{
-            tasklib.EchoCommand {
+            tasker.EchoCommand {
                 message = "はろー1"
             },
-            tasklib.EchoCommand {
+            tasker.EchoCommand {
                 message = "はろー2"
             },
         }},
@@ -60,42 +60,42 @@ function onCreate(e)
         end,
     }
 
-    task2 = tasklib.Task {
+    task2 = tasker.Task {
         commands = {{
-            tasklib.EchoCommand {
+            tasker.EchoCommand {
                 message = "はろー3"
             },
-            tasklib.EchoCommand {
+            tasker.EchoCommand {
                 message = "ここにはこないよ",
                 executeWhen = false,
             },
-            tasklib.EchoCommand {
+            tasker.EchoCommand {
                 message = "ここにもこないよ",
                 executeWhen = function(context)
                     return false
                 end,
             },
-            tasklib.EchoCommand {
+            tasker.EchoCommand {
                 message = "ここにはくるよ",
                 executeWhen = function(context)
                     return context.status == 0
                 end,
             },
-            tasklib.SetContextCommand {
+            tasker.SetContextCommand {
                 params = {{message = "はろーはろー"}},
             },
-            tasklib.FunctionCommand {
+            tasker.FunctionCommand {
                 callback = function(context)
                     print(context:getParam("message"))
                 end,
             },
-            tasklib.AbortCommand {},
-            tasklib.EchoCommand {
+            tasker.AbortCommand {},
+            tasker.EchoCommand {
                 message = "ここにはこないよ",
             },
         }},
         aborts = {{
-            tasklib.EchoCommand {
+            tasker.EchoCommand {
                 message = "エラーになった"
             },
         }},

@@ -4,8 +4,8 @@
 
 -- import
 local class = require "flower.lang.class"
-local BaseCommand = require "flower.tasklib.BaseCommand"
-local CommandExecutor = require "flower.tasklib.CommandExecutor"
+local BaseCommand = require "flower.tasker.BaseCommand"
+local CommandExecutor = require "flower.tasker.CommandExecutor"
 
 -- class
 local CommandGroup = class(BaseCommand)
