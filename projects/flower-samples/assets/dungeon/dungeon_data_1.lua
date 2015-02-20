@@ -13,10 +13,10 @@ return {
     boundGids = {171, 172, 173, 187, 188, 189, 203, 204, 205},
     cornerGids = {174, 175, 190, 191},
     itemMaster = {
-        {itemNo = 1},
-        {itemNo = 2},
-        {itemNo = 3},
-        {itemNo = 4},
+        {id = 1, iconNo = 1},
+        {id = 2, iconNo = 2},
+        {id = 3, iconNo = 3},
+        {id = 4, iconNo = 4},
     },
     objectMaster = {
         {objectNo = 1, objectName = "Player", objectType = "Player", width = 1, height = 1, tileId = 1, tileset = "actor1"},

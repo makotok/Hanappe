@@ -179,222 +179,222 @@ end
 
 ---
 -- class.
--- @see flower.lang.class
-flower.class = require "flower.lang.class"
+-- @see flower.class
+flower.class = require "flower.class"
 
 ---
 -- table.
--- @see flower.lang.class
-flower.table = require "flower.lang.table"
+-- @see flower.table
+flower.table = require "flower.table"
 
 ---
 -- math.
--- @see flower.lang.class
-flower.math = require "flower.lang.math"
+-- @see flower.math
+flower.math = require "flower.math"
 
 ---
 -- Config class.
--- @see flower.core.Config
-flower.Config = require "flower.core.Config"
+-- @see flower.Config
+flower.Config = require "flower.Config"
 
 ---
 -- KeyCode class.
--- @see flower.core.KeyCode
-flower.KeyCode = require "flower.core.KeyCode"
+-- @see flower.KeyCode
+flower.KeyCode = require "flower.KeyCode"
 
 ---
 -- Logger class.
--- @see flower.core.Logger
-flower.Logger = require "flower.core.Logger"
+-- @see flower.Logger
+flower.Logger = require "flower.Logger"
 
 ---
 -- Executors class.
--- @see flower.core.Executors
-flower.Executors = require "flower.core.Executors"
+-- @see flower.Executors
+flower.Executors = require "flower.Executors"
 
 ---
 -- Resources class.
--- @see flower.core.Resources
-flower.Resources = require "flower.core.Resources"
+-- @see flower.Resources
+flower.Resources = require "flower.Resources"
 
 ---
 -- Devices class.
--- @see flower.core.Devices
-flower.Devices = require "flower.core.Devices"
+-- @see flower.Devices
+flower.Devices = require "flower.Devices"
 
 ---
 -- ClassFactory class.
--- @see flower.core.ClassFactory
-flower.ClassFactory = require "flower.core.ClassFactory"
+-- @see flower.ClassFactory
+flower.ClassFactory = require "flower.ClassFactory"
 
 ---
 -- Event class.
--- @see flower.core.Event
-flower.Event = require "flower.core.Event"
+-- @see flower.Event
+flower.Event = require "flower.Event"
 
 ---
 -- EventListener class.
--- @see flower.core.EventListener
-flower.EventListener = require "flower.core.EventListener"
+-- @see flower.EventListener
+flower.EventListener = require "flower.EventListener"
 
 ---
 -- EventDispatcher class.
--- @see flower.core.EventDispatcher
-flower.EventDispatcher = require "flower.core.EventDispatcher"
+-- @see flower.EventDispatcher
+flower.EventDispatcher = require "flower.EventDispatcher"
 
 ---
 -- Runtime class.
--- @see flower.core.Runtime
-flower.Runtime = require "flower.core.Runtime"
+-- @see flower.Runtime
+flower.Runtime = require "flower.Runtime"
 
 ---
 -- InputMgr class.
--- @see flower.core.InputMgr
-flower.InputMgr = require "flower.core.InputMgr"
+-- @see flower.InputMgr
+flower.InputMgr = require "flower.InputMgr"
 
 ---
 -- RenderMgr class.
--- @see flower.core.RenderMgr
-flower.RenderMgr = require "flower.core.RenderMgr"
+-- @see flower.RenderMgr
+flower.RenderMgr = require "flower.RenderMgr"
 
 ---
 -- SceneMgr class.
--- @see flower.core.SceneMgr
-flower.SceneMgr = require "flower.core.SceneMgr"
+-- @see flower.SceneMgr
+flower.SceneMgr = require "flower.SceneMgr"
 
 ---
 -- DeckMgr class.
--- @see flower.core.DeckMgr
-flower.DeckMgr = require "flower.core.DeckMgr"
+-- @see flower.DeckMgr
+flower.DeckMgr = require "flower.DeckMgr"
 
 ---
 -- Animation class.
--- @see flower.core.Animation
-flower.Animation = require "flower.core.Animation"
+-- @see flower.Animation
+flower.Animation = require "flower.Animation"
 
 ---
 -- Window class.
--- @see flower.core.Window
-flower.Window = require "flower.core.Window"
+-- @see flower.Window
+flower.Window = require "flower.Window"
 
 ---
 -- DisplayObject class.
--- @see flower.core.DisplayObject
-flower.DisplayObject = require "flower.core.DisplayObject"
+-- @see flower.DisplayObject
+flower.DisplayObject = require "flower.DisplayObject"
 
 ---
 -- Group class.
--- @see flower.core.Group
-flower.Group = require "flower.core.Group"
+-- @see flower.Group
+flower.Group = require "flower.Group"
 
 ---
 -- Scene class.
--- @see flower.core.Scene
-flower.Scene = require "flower.core.Scene"
+-- @see flower.Scene
+flower.Scene = require "flower.Scene"
 
 ---
 -- SceneAnimations class.
--- @see flower.core.SceneAnimations
-flower.SceneAnimations = require "flower.core.SceneAnimations"
+-- @see flower.SceneAnimations
+flower.SceneAnimations = require "flower.SceneAnimations"
 
 ---
 -- Layer class.
--- @see flower.core.Layer
-flower.Layer = require "flower.core.Layer"
+-- @see flower.Layer
+flower.Layer = require "flower.Layer"
 
 ---
 -- Viewport class.
--- @see flower.core.Viewport
-flower.Viewport = require "flower.core.Viewport"
+-- @see flower.Viewport
+flower.Viewport = require "flower.Viewport"
 
 ---
 -- Camera class.
--- @see flower.core.Camera
-flower.Camera = require "flower.core.Camera"
+-- @see flower.Camera
+flower.Camera = require "flower.Camera"
 
 ---
 -- Image class.
--- @see flower.core.Image
-flower.Image = require "flower.core.Image"
+-- @see flower.Image
+flower.Image = require "flower.Image"
 
 ---
 -- SheetImage class.
--- @see flower.core.SheetImage
-flower.SheetImage = require "flower.core.SheetImage"
+-- @see flower.SheetImage
+flower.SheetImage = require "flower.SheetImage"
 
 ---
 -- MapImage class.
--- @see flower.core.MapImage
-flower.MapImage = require "flower.core.MapImage"
+-- @see flower.MapImage
+flower.MapImage = require "flower.MapImage"
 
 ---
 -- MovieClip class.
--- @see flower.core.MovieClip
-flower.MovieClip = require "flower.core.MovieClip"
+-- @see flower.MovieClip
+flower.MovieClip = require "flower.MovieClip"
 
 ---
 -- NineImage class.
--- @see flower.core.NineImage
-flower.NineImage = require "flower.core.NineImage"
+-- @see flower.NineImage
+flower.NineImage = require "flower.NineImage"
 
 ---
 -- Label class.
--- @see flower.core.Label
-flower.Label = require "flower.core.Label"
+-- @see flower.Label
+flower.Label = require "flower.Label"
 
 ---
 -- DrawableObject class.
--- @see flower.core.DrawableObject
-flower.DrawableObject = require "flower.core.DrawableObject"
+-- @see flower.DrawableObject
+flower.DrawableObject = require "flower.DrawableObject"
 
 ---
 -- DrawableRect class.
--- @see flower.core.DrawableRect
-flower.DrawableRect = require "flower.core.DrawableRect"
+-- @see flower.DrawableRect
+flower.DrawableRect = require "flower.DrawableRect"
 
 ---
 -- Rect class.
--- @see flower.core.DrawableRect
+-- @see flower.DrawableRect
 flower.Rect = flower.DrawableRect
 
 ---
 -- Graphics class.
--- @see flower.core.Graphics
-flower.Graphics = require "flower.core.Graphics"
+-- @see flower.Graphics
+flower.Graphics = require "flower.Graphics"
 
 ---
 -- Particle class.
--- @see flower.core.Particle
-flower.Particle = require "flower.core.Particle"
+-- @see flower.Particle
+flower.Particle = require "flower.Particle"
 
 ---
 -- Font class.
--- @see flower.core.Font
-flower.Font = require "flower.core.Font"
+-- @see flower.Font
+flower.Font = require "flower.Font"
 
 ---
 -- Texture class.
--- @see flower.core.Texture
-flower.Texture = require "flower.core.Texture"
+-- @see flower.Texture
+flower.Texture = require "flower.Texture"
 
 ---
 -- TouchHandler class.
--- @see flower.core.TouchHandler
-flower.TouchHandler = require "flower.core.TouchHandler"
+-- @see flower.TouchHandler
+flower.TouchHandler = require "flower.TouchHandler"
 
 ---
 -- Interceptor class.
--- @see flower.core.Interceptor
-flower.Interceptor = require "flower.core.Interceptor"
+-- @see flower.Interceptor
+flower.Interceptor = require "flower.Interceptor"
 
 ---
 -- PropertyUtils class.
--- @see flower.util.PropertyUtils
-flower.PropertyUtils = require "flower.util.PropertyUtils"
+-- @see flower.PropertyUtils
+flower.PropertyUtils = require "flower.PropertyUtils"
 
 ---
 -- DebugUtils class.
--- @see flower.util.DebugUtils
-flower.DebugUtils = require "flower.util.DebugUtils"
+-- @see flower.DebugUtils
+flower.DebugUtils = require "flower.DebugUtils"
 
 return flower
