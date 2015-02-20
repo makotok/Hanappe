@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- Easy Finite State Machine Library.
+-- Flower Extentions Library for FSM.
 --
 -- @author Makoto
 -- @release V3.0.0

@@ -1,4 +1,6 @@
 ----------------------------------------------------------------------------------------------------
+-- Flower Extentions Library for tiled.
+--
 -- It is a library to display Tiled Map Editor.(Support:V0.9)
 -- http://www.mapeditor.org/
 -- 

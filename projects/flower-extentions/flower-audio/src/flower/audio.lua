@@ -1,5 +1,6 @@
 ----------------------------------------------------------------------------------------------------
--- Audio library.
+-- Flower Extentions Library for Audio.
+--
 -- This allows the change of the flexible implementation.
 -- 
 -- @author Makoto

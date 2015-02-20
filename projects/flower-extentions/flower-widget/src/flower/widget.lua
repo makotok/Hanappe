@@ -1,6 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- This is a library to build an advanced widget.
--- There are still some problems.
+-- Flower Extentions Library for widget.
 --
 -- @author Makoto
 -- @release V3.0.0

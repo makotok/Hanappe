@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- Task System Library.
+-- Flower Extentions Library for task system.
 --
 -- @author Makoto
 -- @release V3.0.0
