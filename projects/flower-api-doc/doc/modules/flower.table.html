@@ -101,6 +101,14 @@
   <li><a href="../modules/flower.fsm.StateMachine.html">flower.fsm.StateMachine</a></li>
   <li><a href="../modules/flower.math.html">flower.math</a></li>
   <li><a href="../modules/flower.spine.html">flower.spine</a></li>
+  <li><a href="../modules/flower.spine.Animation.html">flower.spine.Animation</a></li>
+  <li><a href="../modules/flower.spine.AtlasMgr.html">flower.spine.AtlasMgr</a></li>
+  <li><a href="../modules/flower.spine.Attachment.html">flower.spine.Attachment</a></li>
+  <li><a href="../modules/flower.spine.Bone.html">flower.spine.Bone</a></li>
+  <li><a href="../modules/flower.spine.Skeleton.html">flower.spine.Skeleton</a></li>
+  <li><a href="../modules/flower.spine.Slot.html">flower.spine.Slot</a></li>
+  <li><a href="../modules/flower.spine.SpineEvent.html">flower.spine.SpineEvent</a></li>
+  <li><a href="../modules/flower.spine.SpineUtils.html">flower.spine.SpineUtils</a></li>
   <li><strong>flower.table</strong></li>
   <li><a href="../modules/flower.tasker.html">flower.tasker</a></li>
   <li><a href="../modules/flower.tasker.AbortCommand.html">flower.tasker.AbortCommand</a></li>
@@ -214,6 +222,10 @@
 	<tr>
 	<td class="name" nowrap><a href="#removeElement">removeElement&nbsp;(t, o)</a></td>
 	<td class="summary">Removes the element from the table.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#bininsert">bininsert&nbsp;(t, value, fcomp)</a></td>
+	<td class="summary">Inserts a given value through BinaryInsert into the table sorted by [, comp].</td>
 	</tr>
 </table>
 
@@ -391,6 +403,41 @@
     <ol>
 
         index
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "bininsert"></a>
+    <strong>bininsert&nbsp;(t, value, fcomp)</strong>
+    </dt>
+    <dd>
+    Inserts a given value through BinaryInsert into the table sorted by [, comp].
+
+ If 'comp' is given, then it must be a function that receives
+ two table elements, and returns true when the first is less
+ than the second, e.g. comp = function(a, b) return a > b end,
+ will give a sorted table, with the biggest value on position 1.
+ [, comp] behaves as in table.sort(table, value [, comp])
+ returns the index where 'value' was inserted
+
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">t</span>
+       table</li>
+      <li><span class="parameter">value</span>
+       value</li>
+      <li><span class="parameter">fcomp</span>
+       Compare function</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        index where 'value' was inserted
     </ol>
 
 

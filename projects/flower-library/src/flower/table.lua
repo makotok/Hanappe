@@ -33,6 +33,13 @@ function table.keyOf(src, val)
     return nil
 end
 
+function table.isEmpty(t)
+    if next(t) == nil then
+        return true
+    end
+    return false
+end
+
 ---
 -- Copy the table shallowly (i.e. do not create recursive copies of values)
 -- @param src copy
@@ -99,6 +106,40 @@ function table.removeElement(t, o)
         table.remove(t, i)
     end
     return i
+end
+
+---
+-- Inserts a given value through BinaryInsert into the table sorted by [, comp].
+-- 
+-- If 'comp' is given, then it must be a function that receives
+-- two table elements, and returns true when the first is less
+-- than the second, e.g. comp = function(a, b) return a > b end,
+-- will give a sorted table, with the biggest value on position 1.
+-- [, comp] behaves as in table.sort(table, value [, comp])
+-- returns the index where 'value' was inserted
+--
+-- @param t table
+-- @param value value
+-- @param fcomp Compare function
+-- @return index where 'value' was inserted
+function table.bininsert(t, value, fcomp)
+    -- Initialise compare function
+    local fcomp = fcomp or function( a,b ) return a < b end
+    --  Initialise numbers
+    local iStart,iEnd,iMid,iState = 1,#t,1,0
+    -- Get insert position
+    while iStart <= iEnd do
+        -- calculate middle
+        iMid = math.floor( (iStart+iEnd)/2 )
+        -- compare
+        if fcomp( value,t[iMid] ) then
+            iEnd,iState = iMid - 1,0
+        else
+            iStart,iState = iMid + 1,1
+        end
+    end
+    table.insert( t,(iMid+iState),value )
+    return (iMid+iState)
 end
 
 return table
