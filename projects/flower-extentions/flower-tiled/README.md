@@ -1,21 +1,38 @@
-# Flower Library
-
 ## Introduction
-Flower is a simple, lightweight library for MoaiSDK.
+It is a module that extends the Flower Library.
 
-http://getmoai.com/
+## Tiled
+A library for using Tiled Map Editor.(Support Version: 0.9.0)
 
-## Feature
-MoaiSDK is powerful.
-However, there are many little cumbersome.  
+http://www.mapeditor.org/
 
-You will be easily able to use the Flower.
+### Usage
+It is the simplest way.
 
-* To simplify the coding
-* There is only one file
-* Based object-oriented
-* High performance
-* Can mix standard code MoaiSDK
+```Lua
+tiled = require "tiled"
 
-## Docs
-Please refer to the [Wiki](https://github.com/makotok/Hanappe/wiki/Flower-Library).
+function onCreate(e)
+    layer = flower.Layer()
+    layer:setScene(scene)
+    layer:setSortMode(MOAILayer.SORT_PRIORITY_ASCENDING)
+    
+    tileMap = tiled.TileMap()
+    tileMap:loadLueFile("platform.lue")
+    tileMap:setLayer(layer)
+end
+```
+
+### Isometric
+It is possible to use Isometric.
+
+### Performance
+Designed to reduce the drawing.
+
+When using a single tileset, and perform only once drawn.
+
+### Scalability
+Design for easy expansion.
+
+Easy to inherited class, switching is simple.
+
