@@ -48,6 +48,19 @@ function Group:setSize(width, height)
 end
 
 ---
+-- Sets the size.
+-- @param width width
+-- @param height height
+function Group:fitChildrenSize()
+    local maxWidth, maxHeight = 0, 0
+    for i, child in ipairs(self.children) do
+       maxWidth = math.max(maxWidth, child:getRight())
+       maxHeight = math.max(maxHeight, child:getBottom())
+    end
+    self:setSize(maxWidth, maxHeight)
+end
+
+---
 -- Sets the bounds.
 -- This is the bounds of a Group, rather than of the children.
 -- @param xMin xMin

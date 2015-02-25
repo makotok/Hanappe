@@ -9,6 +9,7 @@
 -- import
 local class = require "flower.class"
 local table = require "flower.table"
+local Logger = require "flower.Logger"
 local EventDispatcher = require "flower.EventDispatcher"
 local Executors = require "flower.Executors"
 local UIEvent = require "flower.widget.UIEvent"
@@ -74,27 +75,41 @@ function LayoutMgr:validateAll()
 
     self._invalidating = false
     self:dispatchEvent(UIEvent.COMPLETE)
-
+    Logger.debug("LayoutMgr:validateAll complete")
 end
 
 ---
 -- Validate the display of the all components.
 function LayoutMgr:validateDisplay()
-    local component = table.remove(self._invalidateDisplayQueue, #self._invalidateDisplayQueue)
+    if #self._invalidateDisplayQueue == 0 then
+        return
+    end
+
+    local validateCount = 0
+    local component = table.remove(self._invalidateDisplayQueue, 1)
     while component do
         component:validateDisplay()
-        component = table.remove(self._invalidateDisplayQueue, #self._invalidateDisplayQueue)
+        component = table.remove(self._invalidateDisplayQueue, 1)
+        validateCount = validateCount + 1
     end
+    Logger.debug("LayoutMgr:validateDisplay count=" .. validateCount)
 end
 
 ---
 -- Validate the layout of the all components.
 function LayoutMgr:validateLayout()
-    local component = table.remove(self._invalidateLayoutQueue, #self._invalidateLayoutQueue)
+    if #self._invalidateLayoutQueue == 0 then
+        return
+    end
+    
+    local validateCount = 0
+    local component = table.remove(self._invalidateLayoutQueue, 1)
     while component do
         component:validateLayout()
-        component = table.remove(self._invalidateLayoutQueue, #self._invalidateLayoutQueue)
+        component = table.remove(self._invalidateLayoutQueue, 1)
+        validateCount = validateCount + 1
     end
+    Logger.debug("LayoutMgr:validateLayout count=" .. validateCount)
 end
 
 return LayoutMgr

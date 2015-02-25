@@ -75,7 +75,7 @@ end
 function BaseItemRenderer:setData(data)
     if self._data ~= data then
         self._data = data
-        self:invalidate()
+        self:invalidateDisplay()
     end
 end
 
@@ -92,7 +92,7 @@ end
 function BaseItemRenderer:setDataIndex(index)
     if self._dataIndex ~= index then
         self._dataIndex = index
-        self:invalidate()
+        self:invalidateDisplay()
     end
 end
 
@@ -102,7 +102,7 @@ end
 function BaseItemRenderer:setDataField(dataField)
     if self._dataField ~= dataField then
         self._dataField = dataField
-        self:invalidate()
+        self:invalidateDisplay()
     end    
 end
 

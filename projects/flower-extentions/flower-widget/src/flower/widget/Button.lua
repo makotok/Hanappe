@@ -52,10 +52,10 @@ Button.EVENT_DOWN = UIEvent.DOWN
 --- Event: up
 Button.EVENT_UP = UIEvent.DOWN
 
---- Event: up
+--- Event: click
 Button.EVENT_CLICK = UIEvent.CLICK
 
---- Event: up
+--- Event: cancel
 Button.EVENT_CANCEL = UIEvent.CANCEL
 
 ---

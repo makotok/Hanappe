@@ -244,6 +244,10 @@ widget.BaseItemRenderer = require "flower.widget.BaseItemRenderer"
 -- @see flower.widget.LabelItemRenderer
 widget.LabelItemRenderer = require "flower.widget.LabelItemRenderer"
 
+---
+-- ImageLabelItemRenderer Class.
+-- @see flower.widget.ImageLabelItemRenderer
+widget.ImageLabelItemRenderer = require "flower.widget.ImageLabelItemRenderer"
 
 -- compatibility
 widget.TextLabel = widget.UILabel

@@ -8,6 +8,7 @@
 -- import
 local class = require "flower.class"
 local table = require "flower.table"
+local Logger = require "flower.Logger"
 local UILayout = require "flower.widget.UILayout"
 
 -- class
@@ -37,6 +38,15 @@ BoxLayout.DIRECTION_VERTICAL = "vertical"
 --- Layout Direction: horizontal
 BoxLayout.DIRECTION_HORIZONTAL = "horizontal"
 
+--- Layout Policy: none
+BoxLayout.LAYOUT_POLICY_NONE = "none"
+
+--- Layout Policy: fitContent
+BoxLayout.LAYOUT_POLICY_FIT_CONTENT = "fitContent"
+
+--- Layout Policy: fillParent
+BoxLayout.LAYOUT_POLICY_FILL_PARENT = "fillParent"
+
 ---
 -- Initializes the internal variables.
 function BoxLayout:_initInternal()
@@ -49,6 +59,7 @@ function BoxLayout:_initInternal()
     self._paddingLeft = 0
     self._paddingRight = 0
     self._direction = BoxLayout.DIRECTION_VERTICAL
+    self._layoutPolicy = {BoxLayout.LAYOUT_POLICY_FIT_CONTENT, BoxLayout.LAYOUT_POLICY_FIT_CONTENT}
 end
 
 ---
@@ -60,7 +71,7 @@ function BoxLayout:update(parent)
     elseif self._direction == BoxLayout.DIRECTION_HORIZONTAL then
         self:updateHorizotal(parent)
     else
-        flower.Log.warn("Illegal direction pattern !", self._direction)
+        Logger.warn("Illegal direction pattern !", self._direction)
     end
 end
 
@@ -71,10 +82,14 @@ function BoxLayout:updateVertical(parent)
     local children = parent.children
     local childrenWidth, childrenHeight = self:calcVerticalLayoutSize(children)
 
+    local hPolicy, vPolicy = unpack(self._layoutPolicy)
     local parentWidth, parentHeight = parent:getSize()
-    local parentWidth = math.max(parentWidth, childrenWidth)
-    local parentHeight = math.max(parentHeight, childrenHeight)
-    parent:setSize(parentWidth, parentHeight)
+    parentWidth = hPolicy == BoxLayout.LAYOUT_POLICY_FIT_CONTENT and math.max(parentWidth, childrenWidth) or parentWidth
+    parentHeight =  vPolicy == BoxLayout.LAYOUT_POLICY_FIT_CONTENT and math.max(parentHeight, childrenHeight) or parentHeight
+
+    if hPolicy ~= BoxLayout.LAYOUT_POLICY_NONE or vPolicy ~= BoxLayout.LAYOUT_POLICY_NONE then
+        parent:setSize(parentWidth, parentHeight)
+    end
 
     local childY = self:calcChildY(parentHeight, childrenHeight)
     for i, child in ipairs(children) do
@@ -94,10 +109,14 @@ function BoxLayout:updateHorizotal(parent)
     local children = parent.children
     local childrenWidth, childrenHeight = self:calcHorizotalLayoutSize(children)
 
+    local hPolicy, vPolicy = unpack(self._layoutPolicy)
     local parentWidth, parentHeight = parent:getSize()
-    local parentWidth = math.max(parentWidth, childrenWidth)
-    local parentHeight = math.max(parentHeight, childrenHeight)
-    parent:setSize(parentWidth, parentHeight)
+    parentWidth = hPolicy == BoxLayout.LAYOUT_POLICY_FIT_CONTENT and math.max(parentWidth, childrenWidth) or parentWidth
+    parentHeight =  vPolicy == BoxLayout.LAYOUT_POLICY_FIT_CONTENT and math.max(parentHeight, childrenHeight) or parentHeight
+
+    if hPolicy ~= BoxLayout.LAYOUT_POLICY_NONE or vPolicy ~= BoxLayout.LAYOUT_POLICY_NONE then
+        parent:setSize(parentWidth, parentHeight)
+    end
 
     local childX = self:calcChildX(parentWidth, childrenWidth)
     for i, child in ipairs(children) do
@@ -234,6 +253,14 @@ end
 function BoxLayout:setGap(horizontalGap, verticalGap)
     self._horizontalGap = horizontalGap
     self._verticalGap = verticalGap
+end
+
+---
+-- Set the layout policy.
+-- @param horizontalPolicy horizontal policy
+-- @param verticalPolicy vertical policy
+function BoxLayout:setLayoutPolicy(horizontalPolicy, verticalPolicy)
+    self._layoutPolicy = {horizontalPolicy or BoxLayout.LAYOUT_POLICY_NONE, verticalPolicy or BoxLayout.LAYOUT_POLICY_NONE}
 end
 
 return BoxLayout

@@ -8,6 +8,7 @@
 -- import
 local class = require "flower.class"
 local table = require "flower.table"
+local PropertyUtils = require "flower.PropertyUtils"
 
 -- class
 local ClassFactory = class()
@@ -34,19 +35,8 @@ end
 ---
 -- INTERNAL USE ONLY
 function ClassFactory:copyPropertiesToObject(properties, obj, fieldAccess)
-    if not properties then
-        return obj
-    end
-
-    for k, v in pairs(properties) do
-        local setterName = "set" .. k:sub(1, 1):upper() .. (#k > 1 and k:sub(2) or "")
-        local setter = obj[setterName]
-
-        if not fieldAccess and setter then
-            setter(obj, v)
-        else
-            obj[k] = v
-        end
+    if properties then
+        PropertyUtils.setProperties(obj, properties, true)
     end
     return obj
 end

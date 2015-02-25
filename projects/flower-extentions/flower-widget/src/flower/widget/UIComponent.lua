@@ -26,6 +26,9 @@ UIComponent.STYLE_NORMAL_COLOR = "normalColor"
 --- Style: disabledColor
 UIComponent.STYLE_DISABLED_COLOR = "disabledColor"
 
+--- Style: minSize
+UIComponent.STYLE_MIN_SIZE = "minSize"
+
 ---
 -- Constructor.
 -- Please do not inherit this constructor.
@@ -134,11 +137,12 @@ end
 function UIComponent:validateLayout()
     if self._invalidateLayoutFlag then
         self:updateLayout()
-        self._invalidateLayoutFlag = false
 
         if self.parent then
             self.parent:invalidateLayout()
         end
+
+        self._invalidateLayoutFlag = false
     end
 end
 
@@ -268,8 +272,9 @@ end
 -- @param width Width
 -- @param height Height
 function UIComponent:setSize(width, height)
-    width  = width  < 0 and 0 or width
-    height = height < 0 and 0 or height
+    local minW, minH = self:getMinSize()
+    width  = math.max(minW or 0, width or 0)
+    height = math.max(minH or 0, height or 0)
 
     local oldWidth, oldHeight =  self:getSize()
 
@@ -278,6 +283,28 @@ function UIComponent:setSize(width, height)
         self:invalidate()
         self:dispatchEvent(UIEvent.RESIZE)
     end
+end
+
+---
+-- Sets the min size.
+-- @param minWidth minWidth
+-- @param minHeight minHeight
+function UIComponent:setMinSize(minWidth, minHeight)
+    minWidth = minWidth or 0
+    minHeight = minHeight or 0
+    local oldMinW, oldMinH = self:getMinSize()
+    if oldMinW ~= minWidth or oldMinH ~= minHeight then
+        self:setStyle(UIComponent.STYLE_MIN_SIZE, {minWidth, minHeight})
+        self:setSize(self:getSize())
+    end
+end
+
+---
+-- Returns the minWidth and minHeight.
+-- @return minWidth
+-- @return minHeight
+function UIComponent:getMinSize()
+    unpack(self:getStyle(UIComponent.STYLE_MIN_SIZE, {0, 0}))
 end
 
 ---
@@ -307,8 +334,10 @@ end
 -- Set the layout.
 -- @param layout layout
 function UIComponent:setLayout(layout)
-    self._layout = layout
-    self:invalidateLayout()
+    if self._layout ~= layout then
+        self._layout = layout
+        self:invalidateLayout()
+    end
 end
 
 ---
@@ -458,8 +487,12 @@ end
 ---
 -- Returns the style.
 -- @param name style name
+-- @param default default value.
 -- @return style value
-function UIComponent:getStyle(name)
+function UIComponent:getStyle(name, default)
+    -- not initialized pattern
+    self._styles = self._styles or {}
+
     if self._styles[name] ~= nil then
         return self._styles[name]
     end
@@ -481,7 +514,7 @@ function UIComponent:getStyle(name)
     end
 
     local globalTheme = self:getThemeMgr():getTheme()
-    return globalTheme["common"][name]
+    return globalTheme["common"][name] or default
 end
 
 ---

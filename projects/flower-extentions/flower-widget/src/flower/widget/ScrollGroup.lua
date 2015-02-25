@@ -110,11 +110,19 @@ function ScrollGroup:_createScrollBar()
 end
 
 ---
+-- Pre Update the scroll size.
+function ScrollGroup:_preUpdateScrollSize()
+    self._contentGroup:setSize(self:getSize())
+    self._contentGroup:validateLayout()
+end
+
+---
 -- Update the scroll size.
 function ScrollGroup:_updateScrollSize()
     local width, height = 0, 0
+    local oldWidth, oldHeight = self._contentGroup:getSize()
     local minWidth, minHeight = self:getSize()
-    
+
     for i, child in ipairs(self._contentGroup:getChildren()) do
         if not child._excludeLayout then
             width  = math.max(width, child:getRight())
@@ -127,6 +135,8 @@ function ScrollGroup:_updateScrollSize()
 
     self._contentGroup:setSize(width, height)
     self._contentBackground:setSize(width, height)
+
+    self._contentGroup:validateLayout()
 end
 
 ---
@@ -165,11 +175,12 @@ function ScrollGroup:_showScrollBar()
     end
 
     local maxX, maxY = self:getMaxScrollPosition()
+    local hScrollEnabled, vScrollEnabled = self:getScrollPolicy()
 
-    self._horizontalScrollBar:setVisible(maxX > 0)
+    self._horizontalScrollBar:setVisible(maxX > 0 and hScrollEnabled)
     self._horizontalScrollBar:setColor(unpack(self:getStyle(ScrollGroup.STYLE_HORIZONTAL_SCROLL_BAR_COLOR)))
 
-    self._verticalScrollBar:setVisible(maxY > 0)
+    self._verticalScrollBar:setVisible(maxY > 0 and vScrollEnabled)
     self._verticalScrollBar:setColor(unpack(self:getStyle(ScrollGroup.STYLE_VERTICAL_SCROLL_BAR_COLOR)))
 end
 
@@ -315,6 +326,7 @@ end
 ---
 -- Also changes the size of the scroll container when layout update.
 function ScrollGroup:updateLayout()
+    self:_preUpdateScrollSize()
     ScrollGroup.__super.updateLayout(self)
     self:_updateScrollSize()
     self:_updateScrollBar()

@@ -144,9 +144,11 @@ end
 -- Sets the text.
 -- @param text text
 function UILabel:setText(text)
-    self._text = text or ""
-    self._textLabel:setString(self._text)
-    self:invalidate()
+    if self._text ~= text then
+        self._text = text or ""
+        self._textLabel:setString(self._text)
+        self:invalidateDisplay()
+    end
 end
 
 ---
@@ -168,8 +170,11 @@ end
 -- @param widthPolicy width policy
 -- @param widthPolicy height policy
 function UILabel:setTextResizePolicy(widthPolicy, heightPolicy)
-    self:setStyle(UILabel.STYLE_TEXT_RESIZE_POLICY, {widthPolicy or "none", heightPolicy or "none"})
-    self:invalidate()
+    local oldWidthPolicy, oldHeightPolicy = self:getTextResizePolicy()
+    if oldWidthPolicy ~= widthPolicy or oldHeightPolicy ~= heightPolicy then
+        self:setStyle(UILabel.STYLE_TEXT_RESIZE_POLICY, {widthPolicy or "none", heightPolicy or "none"})
+        self:invalidateDisplay()
+    end
 end
 
 ---
@@ -184,8 +189,10 @@ end
 -- Sets the textSize.
 -- @param textSize textSize
 function UILabel:setTextSize(textSize)
-    self:setStyle(UILabel.STYLE_TEXT_SIZE, textSize)
-    self:invalidate()
+    if self:getTextSize() ~= textSize then
+        self:setStyle(UILabel.STYLE_TEXT_SIZE, textSize)
+        self:invalidateDisplay()
+    end
 end
 
 ---
@@ -199,8 +206,10 @@ end
 -- Sets the fontName.
 -- @param fontName fontName
 function UILabel:setFontName(fontName)
-    self:setStyle(UILabel.STYLE_FONT_NAME, fontName)
-    self:invalidate()
+    if self:getFontName() ~= fontName then
+        self:setStyle(UILabel.STYLE_FONT_NAME, fontName)
+        self:invalidateDisplay()
+    end
 end
 
 ---
@@ -224,12 +233,17 @@ end
 -- @param horizontalAlign horizontal align(left, center, top)
 -- @param verticalAlign vertical align(top, center, bottom)
 function UILabel:setTextAlign(horizontalAlign, verticalAlign)
+    local oldH, oldV = self:getTextAlign()
     if horizontalAlign or verticalAlign then
         self:setStyle(UILabel.STYLE_TEXT_ALIGN, {horizontalAlign or "center", verticalAlign or "center"})
     else
         self:setStyle(UILabel.STYLE_TEXT_ALIGN, nil)
     end
-    self:invalidate()
+    local newH, newV = self:getTextAlign()
+
+    if oldH ~= newH or oldV ~= newV then
+        self:invalidateDisplay()
+    end
 end
 
 ---
@@ -283,8 +297,13 @@ end
 -- @param right padding for right
 -- @param bottom padding for bottom
 function UILabel:setTextPadding(left, top, right, bottom)
+    local oldL, oldT, oldR, oldB = self:getTextPadding()
     self:setStyle(UILabel.STYLE_TEXT_PADDING, {left or 0, top or 0, right or 0, bottom or 0})
-    self:invalidate()
+    local newL, newT, newR, newB = self:getTextPadding()
+
+    if oldL ~= newL or oldT ~= newT or oldR ~= newR or oldB ~= newB then
+        self:invalidateDisplay()
+    end
 end
 
 ---

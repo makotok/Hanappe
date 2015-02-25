@@ -31,10 +31,13 @@ local Image = class(DisplayObject)
 function Image:init(texture, width, height, flipX, flipY)
     Image.__super.init(self)
 
-    self:setTexture(texture)
-
+    if texture then
+        self:setTexture(texture)
+    end
     if width or height then
-        local tw, th = self.texture:getSize()
+        local tw, th = texture and self.texture:getSize()
+        tw = tw or 0
+        th = th or 0
         self:setSize(width or tw, height or th)
     end
     if flipX or flipY then

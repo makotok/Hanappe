@@ -21,6 +21,15 @@ ListView.STYLE_ITEM_RENDERER_FACTORY = "itemRendererFactory"
 --- Style: rowHeight
 ListView.STYLE_ROW_HEIGHT = "rowHeight"
 
+--- Style: columnCount
+ListView.STYLE_COLUMN_COUNT = "columnCount"
+
+--- Event: selectedChanged
+ListView.EVENT_SELECTED_CHANGED = "selectedChanged"
+
+--- Event: itemClick
+ListView.EVENT_ITEM_CLICK = "itemClick"
+
 ---
 -- Initializes the internal variables.
 function ListView:_initInternal()
@@ -32,17 +41,24 @@ function ListView:_initInternal()
     self._selectionMode = "single"
     self._itemRenderers = {}
     self._itemToRendererMap = {}
+    self._itemRendererChanged = false
     self._touchedRenderer = nil
 end
 
 function ListView:_createChildren()
     ListView.__super._createChildren(self)
 
-    local layout = ListViewLayout {}
+    local layout = ListViewLayout {
+        rowHeight = self:getRowHeight(),
+        columnCount = self:getColumnCount(),
+    }
     self:setLayout(layout)
 end
 
 function ListView:_updateItemRenderers()
+    if not self._itemRendererChanged then
+        return
+    end
     for i, data in ipairs(self:getDataSource()) do
         self:_updateItemRenderer(data, i)
     end
@@ -52,6 +68,8 @@ function ListView:_updateItemRenderers()
             self:_removeItemRenderer(self._itemRenderers[i])
         end
     end
+
+    self._itemRendererChanged = false
 end
 
 function ListView:_updateItemRenderer(data, index)
@@ -64,7 +82,6 @@ function ListView:_updateItemRenderer(data, index)
     renderer:setData(data)
     renderer:setDataIndex(index)
     renderer:setDataField(self:getDataField())
-    renderer:setSize(self._scrollGroup:getWidth(), self:getRowHeight())
     renderer:setHostComponent(self)
     renderer:addEventListener(UIEvent.TOUCH_DOWN, self.onItemRendererTouchDown, self)
     renderer:addEventListener(UIEvent.TOUCH_UP, self.onItemRendererTouchUp, self)
@@ -100,6 +117,17 @@ function ListView:updateDisplay()
     self:_updateItemRenderers()
 end
 
+---
+-- Update the display
+function ListView:updateLayout()
+    if self._layout then
+        self._layout:setRowHeight(self:getRowHeight())
+        self._layout:setColumnCount(self:getColumnCount())
+    end
+
+    ListView.__super.updateLayout(self)
+end
+
 function ListView:setSelectedItem(item)
     self:setSelectedItems(item and {item} or {})
 end
@@ -112,6 +140,20 @@ end
 
 function ListView:setSelectedItems(items)
     assert(self._selectionMode == "single" and #items < 2)
+
+    local changed = #items ~= #self._selectedItems
+    if not changed then
+        for i, item in ipairs(items) do
+            if item ~= self._selectedItems[i] then
+                changed = true
+                break
+            end
+        end
+
+        if not changed then
+            return
+        end
+    end
 
     for i, selectedItem in ipairs(self._selectedItems) do
         local renderer = self._itemToRendererMap[selectedItem]
@@ -130,6 +172,8 @@ function ListView:setSelectedItems(items)
             table.insert(self._selectedItems, item)
         end
     end
+
+    self:dispatchEvent(ListView.EVENT_SELECTED_CHANGED, self._selectedItems)
 end
 
 ---
@@ -138,6 +182,7 @@ end
 function ListView:setDataSource(dataSource)
     if self._dataSource ~= dataSource then
         self._dataSource = dataSource
+        self._itemRendererChanged = true
         self:invalidate()
     end
 end
@@ -155,6 +200,7 @@ end
 function ListView:setDataField(dataField)
     if self._dataField ~= dataField then
         self._dataField = dataField
+        self._itemRendererChanged = true
         self:invalidateDisplay()
     end
 end
@@ -170,8 +216,11 @@ end
 -- Sets the itemRendererFactory.
 -- @param factory itemRendererFactory
 function ListView:setItemRendererFactory(factory)
-    self:setStyle(ListView.STYLE_ITEM_RENDERER_FACTORY, factory)
-    self:invalidate()
+    if self:getItemRendererFactory() ~= factory then
+        self:setStyle(ListView.STYLE_ITEM_RENDERER_FACTORY, factory)
+        self._itemRendererChanged = true
+        self:invalidate()
+    end
 end
 
 ---
@@ -181,13 +230,14 @@ function ListView:getItemRendererFactory()
     return self:getStyle(ListView.STYLE_ITEM_RENDERER_FACTORY)
 end
 
-
 ---
 -- Set the height of the row.
 -- @param rowHeight height of the row
 function ListView:setRowHeight(rowHeight)
-    self:setStyle(ListView.STYLE_ROW_HEIGHT, rowHeight)
-    self:invalidate()
+    if self:getRowHeight() ~= rowHeight then
+        self:setStyle(ListView.STYLE_ROW_HEIGHT, rowHeight)
+        self:invalidateLayout()
+    end
 end
 
 ---
@@ -195,6 +245,38 @@ end
 -- @return rowHeight
 function ListView:getRowHeight()
     return self:getStyle(ListView.STYLE_ROW_HEIGHT)
+end
+
+
+---
+-- Set the count of the columns.
+-- @param columnCount count of the columns
+function ListView:setColumnCount(columnCount)
+    if self:getColumnCount() ~= columnCount then
+        self:setStyle(ListView.STYLE_COLUMN_COUNT, columnCount)
+        self:invalidateLayout()
+    end
+end
+
+---
+-- Return the count of the columns.
+-- @return columnCount
+function ListView:getColumnCount()
+    return self:getStyle(ListView.STYLE_COLUMN_COUNT)
+end
+
+---
+-- Set the event listener that is called when the selected changed.
+-- @param func selected changed event handler
+function ListView:setOnSelectedChanged(func)
+    self:setEventListener(ListView.EVENT_SELECTED_CHANGED, func)
+end
+
+---
+-- Set the event listener that is called when the item click.
+-- @param func selected changed event handler
+function ListView:setOnItemClick(func)
+    self:setEventListener(ListView.EVENT_ITEM_CLICK, func)
 end
 
 ---
@@ -226,6 +308,7 @@ function ListView:onItemRendererTouchUp(e)
     local renderer = e.target
     if renderer.isRenderer then
         renderer:setPressed(false)
+        self:dispatchEvent(ListView.EVENT_ITEM_CLICK, renderer:getData())
     end
 end
 
