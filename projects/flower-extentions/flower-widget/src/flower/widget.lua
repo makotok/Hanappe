@@ -13,11 +13,18 @@ local widget = {}
 ----------------------------------------------------------------------------------------------------
 
 ---
--- This class is an dialog or IOS and Android.
+-- This class is an native dialog or IOS and Android.
 -- @param ... title, message, positive, neutral, negative, cancelable, callback
 function widget.showDialog(...)
     local MOAIDialog = MOAIDialogAndroid or MOAIDialogIOS
     MOAIDialog.showDialog(...)
+end
+
+---
+-- This class is an DialogBox
+-- @param params
+function widget.showDialogBox(scene, params)
+    widget.DialogBox(params):show(scene)
 end
 
 ---
@@ -170,6 +177,11 @@ widget.Joystick = require "flower.widget.Joystick"
 widget.Panel = require "flower.widget.Panel"
 
 ---
+-- TextLabel Class.
+-- @see flower.widget.UILabel
+widget.TextLabel = widget.UILabel
+
+---
 -- TextBox Class.
 -- @see flower.widget.TextBox
 widget.TextBox = require "flower.widget.TextBox"
@@ -183,6 +195,11 @@ widget.TextInput = require "flower.widget.TextInput"
 -- MsgBox Class.
 -- @see flower.widget.MsgBox
 widget.MsgBox = require "flower.widget.MsgBox"
+
+---
+-- DialogBox Class.
+-- @see flower.widget.DialogBox
+widget.DialogBox = require "flower.widget.DialogBox"
 
 ---
 -- ListBox Class.
@@ -248,9 +265,5 @@ widget.LabelItemRenderer = require "flower.widget.LabelItemRenderer"
 -- ImageLabelItemRenderer Class.
 -- @see flower.widget.ImageLabelItemRenderer
 widget.ImageLabelItemRenderer = require "flower.widget.ImageLabelItemRenderer"
-
--- compatibility
-widget.TextLabel = widget.UILabel
-
 
 return widget

@@ -74,7 +74,7 @@ function ChildScene:createController(params)
     end
     
     function controller.onTouchDown(e)
-        flower.closeScene({animation = "popOut", backScene = "samples/scene_sample"})
+        flower.closeScene({animation = "popOut", backScene = "samples/flower_scene_sample"})
         --flower.closeScene({animation = "popOut", backSceneCount = 2})
     end
     

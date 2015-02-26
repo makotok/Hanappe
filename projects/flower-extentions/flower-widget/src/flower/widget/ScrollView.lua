@@ -35,6 +35,13 @@ end
 
 ---
 -- Update the ScrollGroup bounds.
+function ScrollView:updateDisplay()
+    ScrollView.__super.updateDisplay(self)
+    self:_updateScrollBounds()
+end
+
+---
+-- Update the ScrollGroup bounds.
 function ScrollView:_updateScrollBounds()
     self._scrollGroup:setSize(self:getSize())
     self._scrollGroup:setPos(0, 0)

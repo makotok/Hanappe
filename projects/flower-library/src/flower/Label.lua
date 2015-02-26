@@ -27,8 +27,8 @@ Label.__moai_class = MOAITextBox
 ---
 -- Constructor.
 -- @param text Text
--- @param width Width
--- @param height Height
+-- @param option) width Width
+-- @param option) height Height
 -- @param font (option) Font path, or Font object
 -- @param textSize (option) TextSize
 function Label:init(text, width, height, font, textSize)
@@ -37,8 +37,6 @@ function Label:init(text, width, height, font, textSize)
     self.highQualityEnabled = Config.LABEL_HIGH_QUALITY_ENABLED
     self.contentScale = self.highQualityEnabled and Config.VIEW_SCALE or 1
     self.textSize = textSize or Config.FONT_POINTS
-
-    font = Resources.getFont(font, nil, self.textSize * self.contentScale)
 
     self:setFont(font)
     self:setSize(width or 10, height or 10)
@@ -112,6 +110,14 @@ if MOAITextLabel then
         yMax = yMax + h2
         return xMin, yMin, xMax, yMax
     end
+end
+
+---
+-- Set the font.
+-- @param font font or font path.
+function Label:setFont(font)
+    font = Resources.getFont(font, nil, self.textSize * self.contentScale)
+    Label.__index.setFont(self, font)
 end
 
 ---

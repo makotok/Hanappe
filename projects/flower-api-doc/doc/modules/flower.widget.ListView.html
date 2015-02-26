@@ -144,9 +144,11 @@
   <li><a href="../modules/flower.widget.BoxLayout.html">flower.widget.BoxLayout</a></li>
   <li><a href="../modules/flower.widget.Button.html">flower.widget.Button</a></li>
   <li><a href="../modules/flower.widget.CheckBox.html">flower.widget.CheckBox</a></li>
+  <li><a href="../modules/flower.widget.DialogBox.html">flower.widget.DialogBox</a></li>
   <li><a href="../modules/flower.widget.FocusMgr.html">flower.widget.FocusMgr</a></li>
   <li><a href="../modules/flower.widget.IconMgr.html">flower.widget.IconMgr</a></li>
   <li><a href="../modules/flower.widget.ImageButton.html">flower.widget.ImageButton</a></li>
+  <li><a href="../modules/flower.widget.ImageLabelItemRenderer.html">flower.widget.ImageLabelItemRenderer</a></li>
   <li><a href="../modules/flower.widget.Joystick.html">flower.widget.Joystick</a></li>
   <li><a href="../modules/flower.widget.LabelItemRenderer.html">flower.widget.LabelItemRenderer</a></li>
   <li><a href="../modules/flower.widget.LayoutMgr.html">flower.widget.LayoutMgr</a></li>
@@ -203,6 +205,10 @@
 	<td class="summary">Update the display</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#ListView:updateLayout">ListView:updateLayout&nbsp;()</a></td>
+	<td class="summary">Update the display</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#ListView:setDataSource">ListView:setDataSource&nbsp;(dataSource)</a></td>
 	<td class="summary">Set the dataSource.</td>
 	</tr>
@@ -235,6 +241,22 @@
 	<td class="summary">Return the height of the row.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#ListView:setColumnCount">ListView:setColumnCount&nbsp;(columnCount)</a></td>
+	<td class="summary">Set the count of the columns.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:getColumnCount">ListView:getColumnCount&nbsp;()</a></td>
+	<td class="summary">Return the count of the columns.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setOnSelectedChanged">ListView:setOnSelectedChanged&nbsp;(func)</a></td>
+	<td class="summary">Set the event listener that is called when the selected changed.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setOnItemClick">ListView:setOnItemClick&nbsp;(func)</a></td>
+	<td class="summary">Set the event listener that is called when the item click.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#ListView:onItemRendererTouchDown">ListView:onItemRendererTouchDown&nbsp;(e)</a></td>
 	<td class="summary">This event handler is called when touch.</td>
 	</tr>
@@ -256,6 +278,18 @@
 	<tr>
 	<td class="name" nowrap><a href="#STYLE_ROW_HEIGHT">STYLE_ROW_HEIGHT</a></td>
 	<td class="summary">Style: rowHeight</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_COLUMN_COUNT">STYLE_COLUMN_COUNT</a></td>
+	<td class="summary">Style: columnCount</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#EVENT_SELECTED_CHANGED">EVENT_SELECTED_CHANGED</a></td>
+	<td class="summary">Event: selectedChanged</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#EVENT_ITEM_CLICK">EVENT_ITEM_CLICK</a></td>
+	<td class="summary">Event: itemClick</td>
 	</tr>
 </table>
 
@@ -282,6 +316,19 @@
     <dt>
     <a name = "ListView:updateDisplay"></a>
     <strong>ListView:updateDisplay&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the display
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:updateLayout"></a>
+    <strong>ListView:updateLayout&nbsp;()</strong>
     </dt>
     <dd>
     Update the display
@@ -437,6 +484,78 @@
 
 </dd>
     <dt>
+    <a name = "ListView:setColumnCount"></a>
+    <strong>ListView:setColumnCount&nbsp;(columnCount)</strong>
+    </dt>
+    <dd>
+    Set the count of the columns.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">columnCount</span>
+       count of the columns</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:getColumnCount"></a>
+    <strong>ListView:getColumnCount&nbsp;()</strong>
+    </dt>
+    <dd>
+    Return the count of the columns.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        columnCount
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setOnSelectedChanged"></a>
+    <strong>ListView:setOnSelectedChanged&nbsp;(func)</strong>
+    </dt>
+    <dd>
+    Set the event listener that is called when the selected changed.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">func</span>
+       selected changed event handler</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setOnItemClick"></a>
+    <strong>ListView:setOnItemClick&nbsp;(func)</strong>
+    </dt>
+    <dd>
+    Set the event listener that is called when the item click.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">func</span>
+       selected changed event handler</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
     <a name = "ListView:onItemRendererTouchDown"></a>
     <strong>ListView:onItemRendererTouchDown&nbsp;(e)</strong>
     </dt>
@@ -513,6 +632,45 @@
     </dt>
     <dd>
     Style: rowHeight
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_COLUMN_COUNT"></a>
+    <strong>STYLE_COLUMN_COUNT</strong>
+    </dt>
+    <dd>
+    Style: columnCount
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "EVENT_SELECTED_CHANGED"></a>
+    <strong>EVENT_SELECTED_CHANGED</strong>
+    </dt>
+    <dd>
+    Event: selectedChanged
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "EVENT_ITEM_CLICK"></a>
+    <strong>EVENT_ITEM_CLICK</strong>
+    </dt>
+    <dd>
+    Event: itemClick
 
 
 

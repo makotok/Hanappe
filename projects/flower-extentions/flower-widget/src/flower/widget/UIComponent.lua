@@ -40,7 +40,7 @@ function UIComponent:init(params)
     self:_initEventListeners()
     self:_createChildren()
 
-    self:setProperties(params)
+    self:setProperties(params)    
     self._initialized = true
 
     self:validate()

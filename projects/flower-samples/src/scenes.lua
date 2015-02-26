@@ -27,6 +27,7 @@ return {
     {title = "Widget TextBox", scene = "samples/widget_textbox_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget TextInput", scene = "samples/widget_textinput_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget MsgBox", scene = "samples/widget_msgbox_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Widget DialogBox", scene = "samples/widget_dialogbox_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget ListBox", scene = "samples/widget_listbox_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget Layout", scene = "samples/widget_layout_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget ViewGroup", scene = "samples/widget_viewgroup_sample", openAnime = "fade", closeAnime = "fade"},

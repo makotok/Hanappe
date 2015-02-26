@@ -144,9 +144,11 @@
   <li><strong>flower.widget.BoxLayout</strong></li>
   <li><a href="../modules/flower.widget.Button.html">flower.widget.Button</a></li>
   <li><a href="../modules/flower.widget.CheckBox.html">flower.widget.CheckBox</a></li>
+  <li><a href="../modules/flower.widget.DialogBox.html">flower.widget.DialogBox</a></li>
   <li><a href="../modules/flower.widget.FocusMgr.html">flower.widget.FocusMgr</a></li>
   <li><a href="../modules/flower.widget.IconMgr.html">flower.widget.IconMgr</a></li>
   <li><a href="../modules/flower.widget.ImageButton.html">flower.widget.ImageButton</a></li>
+  <li><a href="../modules/flower.widget.ImageLabelItemRenderer.html">flower.widget.ImageLabelItemRenderer</a></li>
   <li><a href="../modules/flower.widget.Joystick.html">flower.widget.Joystick</a></li>
   <li><a href="../modules/flower.widget.LabelItemRenderer.html">flower.widget.LabelItemRenderer</a></li>
   <li><a href="../modules/flower.widget.LayoutMgr.html">flower.widget.LayoutMgr</a></li>
@@ -242,6 +244,10 @@
 	<td class="name" nowrap><a href="#BoxLayout:setGap">BoxLayout:setGap&nbsp;(horizontalGap, verticalGap)</a></td>
 	<td class="summary">Set the gap.</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#BoxLayout:setLayoutPolicy">BoxLayout:setLayoutPolicy&nbsp;(horizontalPolicy, verticalPolicy)</a></td>
+	<td class="summary">Set the layout policy.</td>
+	</tr>
 </table>
 <h2><a href="#Fields">Fields</a></h2>
 <table class="function_list">
@@ -276,6 +282,18 @@
 	<tr>
 	<td class="name" nowrap><a href="#DIRECTION_HORIZONTAL">DIRECTION_HORIZONTAL</a></td>
 	<td class="summary">Layout Direction: horizontal</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LAYOUT_POLICY_NONE">LAYOUT_POLICY_NONE</a></td>
+	<td class="summary">Layout Policy: none</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LAYOUT_POLICY_FIT_CONTENT">LAYOUT_POLICY_FIT_CONTENT</a></td>
+	<td class="summary">Layout Policy: fitContent</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#LAYOUT_POLICY_FILL_PARENT">LAYOUT_POLICY_FILL_PARENT</a></td>
+	<td class="summary">Layout Policy: fillParent</td>
 	</tr>
 </table>
 
@@ -535,6 +553,26 @@
 
 
 </dd>
+    <dt>
+    <a name = "BoxLayout:setLayoutPolicy"></a>
+    <strong>BoxLayout:setLayoutPolicy&nbsp;(horizontalPolicy, verticalPolicy)</strong>
+    </dt>
+    <dd>
+    Set the layout policy.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">horizontalPolicy</span>
+       horizontal policy</li>
+      <li><span class="parameter">verticalPolicy</span>
+       vertical policy</li>
+    </ul>
+
+
+
+
+
+</dd>
 </dl>
     <h2><a name="Fields"></a>Fields</h2>
 
@@ -636,6 +674,45 @@
     </dt>
     <dd>
     Layout Direction: horizontal
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LAYOUT_POLICY_NONE"></a>
+    <strong>LAYOUT_POLICY_NONE</strong>
+    </dt>
+    <dd>
+    Layout Policy: none
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LAYOUT_POLICY_FIT_CONTENT"></a>
+    <strong>LAYOUT_POLICY_FIT_CONTENT</strong>
+    </dt>
+    <dd>
+    Layout Policy: fitContent
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "LAYOUT_POLICY_FILL_PARENT"></a>
+    <strong>LAYOUT_POLICY_FILL_PARENT</strong>
+    </dt>
+    <dd>
+    Layout Policy: fillParent
 
 
 

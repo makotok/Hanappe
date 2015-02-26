@@ -128,6 +128,13 @@ function ListView:updateLayout()
     ListView.__super.updateLayout(self)
 end
 
+function ListView:invalidateItemRenderers()
+    if not self._itemRendererChanged then
+        self:invalidateDisplay()
+        self._itemRendererChanged = true
+    end
+end
+
 function ListView:setSelectedItem(item)
     self:setSelectedItems(item and {item} or {})
 end
@@ -183,7 +190,7 @@ function ListView:setDataSource(dataSource)
     if self._dataSource ~= dataSource then
         self._dataSource = dataSource
         self._itemRendererChanged = true
-        self:invalidate()
+        self:invalidateItemRenderers()
     end
 end
 
@@ -201,7 +208,7 @@ function ListView:setDataField(dataField)
     if self._dataField ~= dataField then
         self._dataField = dataField
         self._itemRendererChanged = true
-        self:invalidateDisplay()
+        self:invalidateItemRenderers()
     end
 end
 
@@ -219,7 +226,7 @@ function ListView:setItemRendererFactory(factory)
     if self:getItemRendererFactory() ~= factory then
         self:setStyle(ListView.STYLE_ITEM_RENDERER_FACTORY, factory)
         self._itemRendererChanged = true
-        self:invalidate()
+        self:invalidateItemRenderers()
     end
 end
 

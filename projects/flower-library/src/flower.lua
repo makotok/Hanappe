@@ -397,4 +397,9 @@ flower.PropertyUtils = require "flower.PropertyUtils"
 -- @see flower.DebugUtils
 flower.DebugUtils = require "flower.DebugUtils"
 
+---
+-- BitUtils class.
+-- @see flower.BitUtils
+flower.BitUtils = require "flower.BitUtils"
+
 return flower

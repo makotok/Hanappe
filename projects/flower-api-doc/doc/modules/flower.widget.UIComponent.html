@@ -144,9 +144,11 @@
   <li><a href="../modules/flower.widget.BoxLayout.html">flower.widget.BoxLayout</a></li>
   <li><a href="../modules/flower.widget.Button.html">flower.widget.Button</a></li>
   <li><a href="../modules/flower.widget.CheckBox.html">flower.widget.CheckBox</a></li>
+  <li><a href="../modules/flower.widget.DialogBox.html">flower.widget.DialogBox</a></li>
   <li><a href="../modules/flower.widget.FocusMgr.html">flower.widget.FocusMgr</a></li>
   <li><a href="../modules/flower.widget.IconMgr.html">flower.widget.IconMgr</a></li>
   <li><a href="../modules/flower.widget.ImageButton.html">flower.widget.ImageButton</a></li>
+  <li><a href="../modules/flower.widget.ImageLabelItemRenderer.html">flower.widget.ImageLabelItemRenderer</a></li>
   <li><a href="../modules/flower.widget.Joystick.html">flower.widget.Joystick</a></li>
   <li><a href="../modules/flower.widget.LabelItemRenderer.html">flower.widget.LabelItemRenderer</a></li>
   <li><a href="../modules/flower.widget.LayoutMgr.html">flower.widget.LayoutMgr</a></li>
@@ -289,6 +291,14 @@
 	<td class="summary">Sets the size.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#UIComponent:setMinSize">UIComponent:setMinSize&nbsp;(minWidth, minHeight)</a></td>
+	<td class="summary">Sets the min size.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#UIComponent:getMinSize">UIComponent:getMinSize&nbsp;()</a></td>
+	<td class="summary">Returns the minWidth and minHeight.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#UIComponent:setParent">UIComponent:setParent&nbsp;(parent)</a></td>
 	<td class="summary">Sets the object's parent, inheriting its color and transform.</td>
 	</tr>
@@ -353,7 +363,7 @@
 	<td class="summary">Sets the style of the component.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#UIComponent:getStyle">UIComponent:getStyle&nbsp;(name)</a></td>
+	<td class="name" nowrap><a href="#UIComponent:getStyle">UIComponent:getStyle&nbsp;(name, default)</a></td>
 	<td class="summary">Returns the style.</td>
 	</tr>
 	<tr>
@@ -398,6 +408,10 @@
 	<tr>
 	<td class="name" nowrap><a href="#STYLE_DISABLED_COLOR">STYLE_DISABLED_COLOR</a></td>
 	<td class="summary">Style: disabledColor</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_MIN_SIZE">STYLE_MIN_SIZE</a></td>
+	<td class="summary">Style: minSize</td>
 	</tr>
 </table>
 
@@ -797,6 +811,46 @@
 
 </dd>
     <dt>
+    <a name = "UIComponent:setMinSize"></a>
+    <strong>UIComponent:setMinSize&nbsp;(minWidth, minHeight)</strong>
+    </dt>
+    <dd>
+    Sets the min size.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">minWidth</span>
+       minWidth</li>
+      <li><span class="parameter">minHeight</span>
+       minHeight</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "UIComponent:getMinSize"></a>
+    <strong>UIComponent:getMinSize&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the minWidth and minHeight.
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        minWidth</li>
+        <li>
+        minHeight</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
     <a name = "UIComponent:setParent"></a>
     <strong>UIComponent:setParent&nbsp;(parent)</strong>
     </dt>
@@ -1089,7 +1143,7 @@
 </dd>
     <dt>
     <a name = "UIComponent:getStyle"></a>
-    <strong>UIComponent:getStyle&nbsp;(name)</strong>
+    <strong>UIComponent:getStyle&nbsp;(name, default)</strong>
     </dt>
     <dd>
     Returns the style.
@@ -1098,6 +1152,8 @@
     <ul>
       <li><span class="parameter">name</span>
        style name</li>
+      <li><span class="parameter">default</span>
+       default value.</li>
     </ul>
 
     <h3>Returns:</h3>
@@ -1277,6 +1333,19 @@
     </dt>
     <dd>
     Style: disabledColor
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_MIN_SIZE"></a>
+    <strong>STYLE_MIN_SIZE</strong>
+    </dt>
+    <dd>
+    Style: minSize
 
 
 

@@ -12,7 +12,6 @@ Scenes = require "scenes"
 
 local selectedData
 local backButton
-local view
 local menuList
 
 --------------------------------------------------------------------------------
@@ -52,20 +51,12 @@ end
 --------------------------------------------------------------------------------
 
 function onCreate(e)
-    view = widget.UIView {
+    menuList = widget.ListView {
         scene = scene,
-    }
-    
-    menuList = widget.ListBox {
-        size = {flower.viewWidth - 10, flower.viewHeight - 10},
-        pos = {5, 5},
-        parent = view,
-        labelField = "title",
-        listData = {Scenes},
-        rowHeight = 35,
-        listItemFactory = flower.ClassFactory(widget.ListItem, {textSize = 20}),
-        onItemChanged = menuList_OnItemChanged,
-        onItemClick = menuList_OnItemClick,
+        dataField = "title",
+        dataSource = {Scenes},
+        onSelectedChanged = onSelectedChanged,
+        onItemClick = onItemClick,
     }
     
     flower.Runtime:addEventListener("resize", onResize)
@@ -75,10 +66,10 @@ function onResize(e)
     updateLayout()
 end
 
-function menuList_OnItemChanged(e)
+function onSelectedChanged(e)
 end
 
-function menuList_OnItemClick(e)
+function onItemClick(e)
     local data = e.data
     local childScene = flower.openScene(data.scene, {animation = data.openAnime})
     if childScene then
