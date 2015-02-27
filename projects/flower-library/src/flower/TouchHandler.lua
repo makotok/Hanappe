@@ -95,7 +95,7 @@ function TouchHandler:getTouchableProp(e)
         local prop = props[i]
         if prop:getAttr(MOAIProp.ATTR_VISIBLE) > 0 then
             -- getScissorRect is part of a recent submitted change.
-            local scissor = prop.getScissorRect and prop:getScissorRect()
+            local scissor = prop.getScissorRect and prop:getScissorRect() or prop.scissorRect
             if scissor then
                 local sx, sy = scissor:worldToModel(e.wx, e.wy)
                 local xMin, yMin, xMax, yMax = scissor:getRect()

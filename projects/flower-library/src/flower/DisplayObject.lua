@@ -236,4 +236,12 @@ function DisplayObject:setLayer(layer)
     end
 end
 
+---
+-- Set the scissor rect.
+-- @param scissorRect scissorRect
+function DisplayObject:setScissorRect(scissorRect)
+    DisplayObject.__index.setScissorRect(self, scissorRect)
+    self.scissorRect = scissorRect
+end
+
 return DisplayObject
