@@ -343,7 +343,7 @@ end
 -- @param title title
 function DialogBox:setTitle(title)
     self._title = title
-    self._titleLabel:setText(title)
+    self._titleLabel:setString(title)
 end
 
 ---
@@ -358,7 +358,7 @@ end
 -- @param text text
 function DialogBox:setText(text)
     self._text = text
-    self._textLabel:setText(text)
+    self._textLabel:setString(text)
 end
 
 ---

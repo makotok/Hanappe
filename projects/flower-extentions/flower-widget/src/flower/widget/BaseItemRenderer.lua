@@ -22,6 +22,9 @@ BaseItemRenderer.STYLE_BACKGROUND_PRESSED_COLOR = "backgroundPressedColor"
 --- Style: backgroundSelectedColor
 BaseItemRenderer.STYLE_BACKGROUND_SELECTED_COLOR = "backgroundSelectedColor"
 
+--- Style: bottomBorderColor
+BaseItemRenderer.STYLE_BOTTOM_BORDER_COLOR = "bottomBorderColor"
+
 ---
 -- Initialize a variables
 function BaseItemRenderer:_initInternal()
@@ -41,6 +44,7 @@ end
 function BaseItemRenderer:_createChildren()
     BaseItemRenderer.__super._createChildren(self)
     self:_createBackground()
+    self:_createRenderers()
 end
 
 ---
@@ -52,13 +56,26 @@ function BaseItemRenderer:_createBackground()
 end
 
 ---
+-- Create the renderer objects.
+function BaseItemRenderer:_createRenderers()
+
+end
+
+---
 -- Update the background objects.
 function BaseItemRenderer:_updateBackground()
     local width, height = self:getSize()
     self._background:setSize(width, height)
     self._background:clear()
+
+    -- draw background
     if self:isBackgroundVisible() then
         self._background:setPenColor(self:getBackgroundColor()):fillRect(0, 0, width, height)
+    end
+
+    -- draw bottom border
+    if self:isBottomBorderVisible() then
+        self._background:setPenColor(self:getBottomBorderColor()):drawLine(0, height, width, height)
     end
 end
 
@@ -133,8 +150,17 @@ function BaseItemRenderer:getBackgroundColor()
     return unpack(self:getStyle(BaseItemRenderer.STYLE_BACKGROUND_COLOR))
 end
 
+function BaseItemRenderer:getBottomBorderColor()
+    return unpack(self:getStyle(BaseItemRenderer.STYLE_BOTTOM_BORDER_COLOR))
+end
+
 function BaseItemRenderer:isBackgroundVisible()
     local r, g, b, a = self:getBackgroundColor()
+    return r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0
+end
+
+function BaseItemRenderer:isBottomBorderVisible()
+    local r, g, b, a = self:getBottomBorderColor()
     return r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0
 end
 

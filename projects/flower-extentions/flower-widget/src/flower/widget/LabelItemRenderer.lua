@@ -22,27 +22,33 @@ function LabelItemRenderer:_initInternal()
 end
 
 ---
--- Initialize a variables
-function LabelItemRenderer:_createChildren()
-    LabelItemRenderer.__super._createChildren(self)
+-- Create the renderer objects.
+function LabelItemRenderer:_createRenderers()
+    LabelItemRenderer.__super._createRenderers(self)
+    self:_createTextLabel()
+end
 
+function LabelItemRenderer:_createTextLabel()
     self._textLabel = UILabel {
         themeName = self:getThemeName(),
         parent = self,
     }
 end
 
-function LabelItemRenderer:updateDisplay()
-    LabelItemRenderer.__super.updateDisplay(self)
-    
+function LabelItemRenderer:_updateTextLabel()
     self._textLabel:setSize(self:getSize())
+    self._textLabel:setVisible(self._data ~= nil)
+
     if self._data then
         local text = self._dataField and self._data[self._dataField] or self._data
         text = type(text) == "string" and text or tostring(text)
         self._textLabel:setText(text)
-    else
-        self._textLabel:setText("")
     end
+end
+
+function LabelItemRenderer:updateDisplay()
+    LabelItemRenderer.__super.updateDisplay(self)
+    self:_updateTextLabel()
 end
 
 return LabelItemRenderer

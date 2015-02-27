@@ -10,11 +10,11 @@ local class = require "flower.class"
 local Image = require "flower.Image"
 local UILabel = require "flower.widget.UILabel"
 local UILayout = require "flower.widget.UILayout"
-local BaseItemRenderer = require "flower.widget.BaseItemRenderer"
+local LabelItemRenderer = require "flower.widget.LabelItemRenderer"
 local BoxLayout = require "flower.widget.BoxLayout"
 
 -- class
-local ImageLabelItemRenderer = class(BaseItemRenderer)
+local ImageLabelItemRenderer = class(LabelItemRenderer)
 
 ---
 -- Initialize a variables
@@ -28,18 +28,23 @@ function ImageLabelItemRenderer:_initInternal()
 end
 
 ---
--- Initialize a variables
-function ImageLabelItemRenderer:_createChildren()
-    ImageLabelItemRenderer.__super._createChildren(self)
+-- Create the renderer objects.
+function ImageLabelItemRenderer:_createRenderers()
+    self:_createImage()
+    ImageLabelItemRenderer.__super._createRenderers(self)
+    self:_createLayout()
+end
 
+---
+-- Create the image.
+function ImageLabelItemRenderer:_createImage()
     self._image = Image()
     self:addChild(self._image)
+end
 
-    self._textLabel = UILabel {
-        themeName = self:getThemeName(),
-        parent = self,
-    }
-
+---
+-- Create the default layout.
+function ImageLabelItemRenderer:_createLayout()
     self:setLayout(BoxLayout {
         direction = "horizontal",
         align = {"left", "center"},
@@ -47,13 +52,10 @@ function ImageLabelItemRenderer:_createChildren()
     })
 end
 
-function ImageLabelItemRenderer:updateDisplay()
-    ImageLabelItemRenderer.__super.updateDisplay(self)
-
+---
+-- Update the image.
+function ImageLabelItemRenderer:_updateImage()
     self._image:setVisible(self._data ~= nil)
-    
-    self._textLabel:setSize(self:getSize())
-    self._textLabel:setVisible(self._data ~= nil)
 
     if self._data then
         if self._imageField and self._data[self._imageField] then
@@ -62,11 +64,14 @@ function ImageLabelItemRenderer:updateDisplay()
         if self._imageSize and #self._imageSize == 2 then
             self._image:setSize(unpack(self._imageSize))
         end
-
-        local text = self._dataField and self._data[self._dataField] or self._data
-        text = type(text) == "string" and text or tostring(text)
-        self._textLabel:setText(text)
     end
+end
+
+---
+-- Update the Display objects.
+function ImageLabelItemRenderer:updateDisplay()
+    ImageLabelItemRenderer.__super.updateDisplay(self)
+    self:_updateImage()
 end
 
 ---
