@@ -25,6 +25,9 @@ Slider.STYLE_PROGRESS_TEXTURE = "progressTexture"
 --- Style: thumbTexture
 Slider.STYLE_THUMB_TEXTURE = "thumbTexture"
 
+--- Event: valueChanged
+Slider.EVENT_VALUE_CHANGED = UIEvent.VALUE_CHANGED
+
 ---
 -- Initializes the internal variables.
 function Slider:_initInternal()
@@ -208,9 +211,7 @@ function Slider:onTouchMove(e)
     if self._touchDownIdx ~= e.idx then
         return
     end
-    if self:inside(e.wx, e.wy, 0) then
-        self:doSlide(e.wx)
-    end
+    self:doSlide(e.wx)
 end
 
 ---

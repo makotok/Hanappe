@@ -19,7 +19,7 @@ local Resources = require "flower.Resources"
 -- class
 local Button = class(UIComponent)
 
---- Style: selectedTexture
+--- Style: normalTexture
 Button.STYLE_NORMAL_TEXTURE = "normalTexture"
 
 --- Style: selectedTexture
@@ -72,6 +72,7 @@ function Button:_initInternal()
 end
 
 ---
+-- @private
 -- Initializes the event listener.
 function Button:_initEventListeners()
     Button.__super._initEventListeners(self)

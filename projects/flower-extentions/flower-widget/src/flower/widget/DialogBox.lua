@@ -51,20 +51,14 @@ DialogBox.STYLE_ICON_PADDING = "iconPadding"
 --- Style : iconScaleFactor
 DialogBox.STYLE_ICON_SCALE_FACTOR = "iconScaleFactor"
 
---- Style : iconScaleFactor
-DialogBox.STYLE_ICON_SCALE_FACTOR = "iconScaleFactor"
+--- Event: show
+DialogBox.EVENT_SHOW = "show"
 
---- Event: messageShow
-DialogBox.EVENT_SHOW = "messageShow"
+--- Event: hide
+DialogBox.EVENT_HIDE = "hide"
 
---- Event: messageEnd
-DialogBox.EVENT_MESSAGE_END = "messageEnd"
-
---- Event: messageHide
-DialogBox.EVENT_HIDE = "messageHide"
-
---- Event: messageResult
-DialogBox.EVENT_RESULT = "messageResult"
+--- Event: result
+DialogBox.EVENT_RESULT = "result"
 
 --- Type : Info
 DialogBox.TYPE_INFO = "Info"

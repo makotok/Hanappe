@@ -27,6 +27,15 @@ ListBox.STYLE_ROW_HEIGHT = "rowHeight"
 --- Style: scrollBarTexture
 ListBox.STYLE_SCROLL_BAR_TEXTURE = "scrollBarTexture"
 
+--- Event: itemChanged
+ListBox.EVENT_ITEM_CHANGED = UIEvent.ITEM_CHANGED
+
+--- Event: itemEnter
+ListBox.EVENT_ITEM_ENTER = UIEvent.ITEM_ENTER
+
+--- Event: itemClick
+ListBox.EVENT_ITEM_CLICK = UIEvent.ITEM_CLICK
+
 ---
 -- Initialize a variables
 function ListBox:_initInternal()
