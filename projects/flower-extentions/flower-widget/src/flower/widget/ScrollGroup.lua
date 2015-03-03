@@ -340,6 +340,13 @@ function ScrollGroup:setLayout(layout)
 end
 
 ---
+-- Return the layout.
+-- @return layout
+function ScrollGroup:getContentLayout()
+    return self._contentGroup:getLayout()
+end
+
+---
 -- Set the coefficient of friction at the time of scrolling.
 -- @param value friction
 function ScrollGroup:setFriction(value)

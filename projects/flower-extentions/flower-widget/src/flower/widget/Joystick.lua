@@ -32,11 +32,14 @@ Joystick.STICK_RIGHT = "right"
 --- Direction of the stick
 Joystick.STICK_BOTTOM = "bottom"
 
---- Mode of the stick
+--- Mode: analog
 Joystick.MODE_ANALOG = "analog"
 
---- Mode of the stick
+--- Mode: digital
 Joystick.MODE_DIGITAL = "digital"
+
+--- Mode: diagonal
+Joystick.MODE_DIAGONAL = "diagonal"
 
 Joystick.DIRECTION_TO_KEY_CODE_MAP = {
     left = KeyCode.KEY_LEFT,
@@ -116,6 +119,7 @@ function Joystick:updateKnob(x, y)
         e.oldX, e.oldY = self:getKnobInputRate(oldX, oldY)
         e.newX, e.newY = self:getKnobInputRate(newX, newY)
         e.direction = self:getStickDirection()
+        e.directions = {self:getStickDirections()}
         e.down = self._touchDownFlag
         self:dispatchEvent(e)
 
@@ -150,8 +154,10 @@ end
 function Joystick:getKnobNewLoc(x, y)
     if self:getStickMode() == Joystick.MODE_ANALOG then
         return self:getKnobNewLocForAnalog(x, y)
-    else
+    elseif  self:getStickMode() == Joystick.MODE_DIGITAL then
         return self:getKnobNewLocForDigital(x, y)
+    elseif  self:getStickMode() == Joystick.MODE_DIAGONAL then
+        return self:getKnobNewLocForDiagonal(x, y)
     end
 end
 
@@ -206,6 +212,43 @@ function Joystick:getKnobNewLocForDigital(x, y)
 end
 
 ---
+-- Returns the position to match the diagonal mode.
+-- @param x X-position of the model
+-- @param y Y-position of the model
+-- @return adjusted x-position
+-- @return adjusted y-position
+function Joystick:getKnobNewLocForDiagonal(x, y)
+    local cx, cy = self:getCenterLoc()
+    local rx, ry = (x - cx), (y - cy)
+    local radian = math.atan2(math.abs(ry), math.abs(rx))
+    local angle = radian * 180 / math.pi
+    local minX, minY = 0, 0
+    local maxX, maxY = self:getSize()
+    local cRate = self._rangeOfCenterRate
+    local cMinX, cMinY = cx - cx * cRate, cy - cy * cRate
+    local cMaxX, cMaxY = cx + cx * cRate, cy + cy * cRate
+    local diagonalAngle = 30
+
+    if cMinX < x and x < cMaxX and cMinY < y and y < cMaxY then
+        x = cx
+        y = cy
+    elseif 0 <= angle and angle < diagonalAngle then
+        x = x < cx and minX or maxX
+        y = cy
+    elseif diagonalAngle <= angle and angle < 90 - diagonalAngle then
+        radian = 45 * math.pi / 180
+        minX, minY = -math.cos(radian) * cx + cx, -math.sin(radian) * cy + cy
+        maxX, maxY =  math.cos(radian) * cx + cx,  math.sin(radian) * cy + cy
+        x = x < cx and minX or maxX
+        y = y < cy and minY or maxY
+    else
+        x = cx
+        y = y < cy and minY or maxY
+    end
+    return x, y
+end
+
+---
 -- Returns the percentage of input.
 -- @param x X-position
 -- @param y Y-position
@@ -234,6 +277,35 @@ function Joystick:getStickDirection()
         dir = y < cy and Joystick.STICK_TOP or Joystick.STICK_BOTTOM
     end
     return dir
+end
+
+---
+-- Returns the direction of the stick.
+-- @return horizontal direction
+-- @return vertical direction
+function Joystick:getStickDirections()
+    local x, y = self._knobImage:getLoc()
+    local cx, cy = self:getCenterLoc()
+
+    local horiozntal
+    if x == cx then
+        horiozntal = Joystick.STICK_CENTER
+    elseif x < cx then
+        horiozntal = Joystick.STICK_LEFT
+    else
+        horiozntal = Joystick.STICK_RIGHT       
+    end
+
+    local vertical
+    if y == cy then
+        vertical = Joystick.STICK_CENTER
+    elseif y < cy then
+        vertical = Joystick.STICK_TOP
+    else
+        vertical = Joystick.STICK_BOTTOM       
+    end
+
+    return horiozntal, vertical
 end
 
 ---

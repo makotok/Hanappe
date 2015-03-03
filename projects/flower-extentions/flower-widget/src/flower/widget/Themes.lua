@@ -182,6 +182,7 @@ Themes.NORMAL = {
     },
     ImageLabelItemRenderer = {
         parentStyle = "LabelItemRenderer",
+        layoutPadding = {5, 0, 5, 0},
     },
     ImageItemRenderer = {
         parentStyle = "BaseItemRenderer",

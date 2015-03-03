@@ -7,6 +7,10 @@ module(..., package.seeall)
 function onCreate(e)
     view = widget.UIView {
         scene = scene,
+        layout = widget.BoxLayout {
+            align = {"center", "center"},
+            gap = {10, 10},
+        },
     }
     
     joystick1 = widget.Joystick {
@@ -22,9 +26,11 @@ function onCreate(e)
         onStickChanged = joystick_OnStickChanged,
     }
     
-    joystick1:setPos(5, flower.viewHeight - joystick1:getHeight() - 5)
-    joystick2:setPos(flower.viewWidth - joystick2:getWidth() - 5, flower.viewHeight - joystick2:getHeight() - 5)
-
+    joystick3 = widget.Joystick {
+        stickMode = "diagonal",
+        parent = view,
+        onStickChanged = joystick_OnStickChanged,
+    }
 end
 
 function onStart(e)
@@ -42,6 +48,7 @@ function joystick_OnStickChanged(e)
     print("stick old :", e.oldX, e.oldY)
     print("stick new :", e.newX, e.newY)
     print("stick dir :", e.direction)
+    print("stick dirs :", unpack(e.directions))
     print("stick down:", e.down)
 end
 

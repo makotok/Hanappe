@@ -341,6 +341,13 @@ function UIComponent:setLayout(layout)
 end
 
 ---
+-- Return the layout.
+-- @return layout
+function UIComponent:getLayout()
+    return self._layout
+end
+
+---
 -- Set the excludeLayout.
 -- @param excludeLayout excludeLayout
 function UIComponent:setExcludeLayout(excludeLayout)

@@ -69,6 +69,13 @@ function ScrollView:setContents(contents)
 end
 
 ---
+-- Return the layout from scrollGroup.
+-- @return layout
+function ScrollView:getContentLayout()
+    return self._scrollGroup:getContentLayout()
+end
+
+---
 -- Return the scroll size.
 -- @return scroll size
 function ScrollView:getScrollSize()

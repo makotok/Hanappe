@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- This is the base class of the item renderer.
+-- Item renderer to display the label.
 --
 -- @author Makoto
 -- @release V3.0.0
@@ -28,6 +28,8 @@ function LabelItemRenderer:_createRenderers()
     self:_createTextLabel()
 end
 
+---
+-- Create the textLabel.
 function LabelItemRenderer:_createTextLabel()
     self._textLabel = UILabel {
         themeName = self:getThemeName(),
@@ -35,6 +37,8 @@ function LabelItemRenderer:_createTextLabel()
     }
 end
 
+---
+-- Update the textLabel.
 function LabelItemRenderer:_updateTextLabel()
     self._textLabel:setSize(self:getSize())
     self._textLabel:setVisible(self._data ~= nil)
@@ -46,6 +50,8 @@ function LabelItemRenderer:_updateTextLabel()
     end
 end
 
+---
+-- Update the display objects.
 function LabelItemRenderer:updateDisplay()
     LabelItemRenderer.__super.updateDisplay(self)
     self:_updateTextLabel()

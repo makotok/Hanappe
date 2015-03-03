@@ -49,6 +49,7 @@ function ImageLabelItemRenderer:_createLayout()
         direction = "horizontal",
         align = {"left", "center"},
         layoutPolicy = {"none", "none"},
+        padding = self:getStyle("layoutPadding"),
     })
 end
 

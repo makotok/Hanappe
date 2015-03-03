@@ -44,6 +44,7 @@ end
 function BaseItemRenderer:_createChildren()
     BaseItemRenderer.__super._createChildren(self)
     self:_createBackground()
+    self:_createBorder()
     self:_createRenderers()
 end
 
@@ -53,6 +54,14 @@ function BaseItemRenderer:_createBackground()
     self._background = Graphics(self:getSize())
     self._background._excludeLayout = true
     self:addChild(self._background)
+end
+
+---
+-- Create the background objects.
+function BaseItemRenderer:_createBorder()
+    self._border = Graphics(self:getSize())
+    self._border._excludeLayout = true
+    self:addChild(self._border)
 end
 
 ---
@@ -67,6 +76,8 @@ function BaseItemRenderer:_updateBackground()
     local width, height = self:getSize()
     self._background:setSize(width, height)
     self._background:clear()
+    self._border:setSize(width, height)
+    self._border:clear()
 
     -- draw background
     if self:isBackgroundVisible() then
@@ -75,7 +86,7 @@ function BaseItemRenderer:_updateBackground()
 
     -- draw bottom border
     if self:isBottomBorderVisible() then
-        self._background:setPenColor(self:getBottomBorderColor()):drawLine(0, height, width, height)
+        self._border:setPenColor(self:getBottomBorderColor()):drawLine(0, height, width, height)
     end
 end
 
@@ -140,6 +151,12 @@ function BaseItemRenderer:getHostComponent()
     return self._hostComponent
 end
 
+---
+-- Returns the background color.
+-- @return Red
+-- @return Green
+-- @return Blue
+-- @return Alpha
 function BaseItemRenderer:getBackgroundColor()
     if self._pressed then
         return unpack(self:getStyle(BaseItemRenderer.STYLE_BACKGROUND_PRESSED_COLOR))
@@ -150,15 +167,27 @@ function BaseItemRenderer:getBackgroundColor()
     return unpack(self:getStyle(BaseItemRenderer.STYLE_BACKGROUND_COLOR))
 end
 
+---
+-- Returns the bottom border color.
+-- @return Red
+-- @return Green
+-- @return Blue
+-- @return Alpha
 function BaseItemRenderer:getBottomBorderColor()
     return unpack(self:getStyle(BaseItemRenderer.STYLE_BOTTOM_BORDER_COLOR))
 end
 
+---
+-- Returns the background visible.
+-- @return True if display the background
 function BaseItemRenderer:isBackgroundVisible()
     local r, g, b, a = self:getBackgroundColor()
     return r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0
 end
 
+---
+-- Returns the bottom border visible.
+-- @return True if display the bottom border.
 function BaseItemRenderer:isBottomBorderVisible()
     local r, g, b, a = self:getBottomBorderColor()
     return r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0

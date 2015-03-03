@@ -36,6 +36,7 @@ function onCreate(e)
                 pos = {5, 5},
                 dataField = "label",
                 dataSource = {dataSource},
+                columnCount = 2,
                 itemRendererFactory = flower.ClassFactory(widget.ImageLabelItemRenderer, {
                     imageField = "image",
                     imageSize = {20, 20},

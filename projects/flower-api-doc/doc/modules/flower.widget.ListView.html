@@ -185,7 +185,7 @@
 
 <h1>Module <code>flower.widget.ListView</code></h1>
 
-<p>Scrollable UIView class.</p>
+<p>List view class.</p>
 <p></p>
     <h3>Info:</h3>
     <ul>
@@ -201,12 +201,48 @@
 	<td class="summary">Initializes the internal variables.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#ListView:_createChildren">ListView:_createChildren&nbsp;()</a></td>
+	<td class="summary">Create the children objects.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:_updateItemRenderers">ListView:_updateItemRenderers&nbsp;()</a></td>
+	<td class="summary">Update the item renderers.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:_updateItemRenderer">ListView:_updateItemRenderer&nbsp;(data, index)</a></td>
+	<td class="summary">Update the item renderer.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:_removeItemRenderers">ListView:_removeItemRenderers&nbsp;()</a></td>
+	<td class="summary">Remove the item renderers.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:_removeItemRenderer">ListView:_removeItemRenderer&nbsp;(renderer)</a></td>
+	<td class="summary">Remove the item renderer.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#ListView:updateDisplay">ListView:updateDisplay&nbsp;()</a></td>
 	<td class="summary">Update the display</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#ListView:updateLayout">ListView:updateLayout&nbsp;()</a></td>
 	<td class="summary">Update the display</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:invalidateItemRenderers">ListView:invalidateItemRenderers&nbsp;()</a></td>
+	<td class="summary">Invalidate item renderers.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setSelectedItem">ListView:setSelectedItem&nbsp;(item)</a></td>
+	<td class="summary">Set the selected item.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:getSelectedItem">ListView:getSelectedItem&nbsp;()</a></td>
+	<td class="summary">Return the selected item.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setSelectedItems">ListView:setSelectedItems&nbsp;(items)</a></td>
+	<td class="summary">Sets the selected items.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#ListView:setDataSource">ListView:setDataSource&nbsp;(dataSource)</a></td>
@@ -314,6 +350,83 @@
 
 </dd>
     <dt>
+    <a name = "ListView:_createChildren"></a>
+    <strong>ListView:_createChildren&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create the children objects.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:_updateItemRenderers"></a>
+    <strong>ListView:_updateItemRenderers&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the item renderers.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:_updateItemRenderer"></a>
+    <strong>ListView:_updateItemRenderer&nbsp;(data, index)</strong>
+    </dt>
+    <dd>
+    Update the item renderer.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">data</span>
+       data.</li>
+      <li><span class="parameter">index</span>
+       index of items.</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:_removeItemRenderers"></a>
+    <strong>ListView:_removeItemRenderers&nbsp;()</strong>
+    </dt>
+    <dd>
+    Remove the item renderers.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:_removeItemRenderer"></a>
+    <strong>ListView:_removeItemRenderer&nbsp;(renderer)</strong>
+    </dt>
+    <dd>
+    Remove the item renderer.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">renderer</span>
+       item renderer.</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
     <a name = "ListView:updateDisplay"></a>
     <strong>ListView:updateDisplay&nbsp;()</strong>
     </dt>
@@ -333,6 +446,73 @@
     <dd>
     Update the display
 
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:invalidateItemRenderers"></a>
+    <strong>ListView:invalidateItemRenderers&nbsp;()</strong>
+    </dt>
+    <dd>
+    Invalidate item renderers.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setSelectedItem"></a>
+    <strong>ListView:setSelectedItem&nbsp;(item)</strong>
+    </dt>
+    <dd>
+    Set the selected item.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">item</span>
+       selected item.</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:getSelectedItem"></a>
+    <strong>ListView:getSelectedItem&nbsp;()</strong>
+    </dt>
+    <dd>
+    Return the selected item.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        selected item.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setSelectedItems"></a>
+    <strong>ListView:setSelectedItems&nbsp;(items)</strong>
+    </dt>
+    <dd>
+    Sets the selected items.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">items</span>
+       selected items.</li>
+    </ul>
 
 
 

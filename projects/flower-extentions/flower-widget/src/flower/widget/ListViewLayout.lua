@@ -1,5 +1,5 @@
 --------------------------------------------------------------------------------
--- This is the class that sets the layout of the box.
+-- Layout class for the ListView.
 --
 -- @author Makoto
 -- @release V3.0.0

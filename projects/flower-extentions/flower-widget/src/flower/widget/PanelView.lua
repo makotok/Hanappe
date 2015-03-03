@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- Scrollable UIView class.
+-- Scrollable view class in the Panel.
 --
 -- @author Makoto
 -- @release V3.0.0

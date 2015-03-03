@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- Scrollable UIView class.
+-- View class that displays a scrollable text.
 --
 -- @author Makoto
 -- @release V3.0.0
@@ -163,7 +163,7 @@ function TextView:getAlignment()
 end
 
 ---
--- Sets the text align.
+-- Sets the text color.
 -- @param red red(0 ... 1)
 -- @param green green(0 ... 1)
 -- @param blue blue(0 ... 1)

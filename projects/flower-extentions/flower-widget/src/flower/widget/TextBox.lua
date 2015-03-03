@@ -97,8 +97,9 @@ function TextBox:getText()
     return self._text
 end
 
+---
 -- Returns the text length.
--- TODO:Tag escaping.
+-- @todo Tag escaping.
 -- @return text length
 function TextBox:getTextLength()
     return self._text and #self._text or 0

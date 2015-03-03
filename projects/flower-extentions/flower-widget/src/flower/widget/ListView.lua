@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- Scrollable UIView class.
+-- List view class.
 --
 -- @author Makoto
 -- @release V3.0.0
@@ -45,6 +45,8 @@ function ListView:_initInternal()
     self._touchedRenderer = nil
 end
 
+---
+-- Create the children objects.
 function ListView:_createChildren()
     ListView.__super._createChildren(self)
 
@@ -55,6 +57,8 @@ function ListView:_createChildren()
     self:setLayout(layout)
 end
 
+---
+-- Update the item renderers.
 function ListView:_updateItemRenderers()
     if not self._itemRendererChanged then
         return
@@ -72,6 +76,10 @@ function ListView:_updateItemRenderers()
     self._itemRendererChanged = false
 end
 
+---
+-- Update the item renderer.
+-- @param data data.
+-- @param index index of items.
 function ListView:_updateItemRenderer(data, index)
     local renderer = self._itemRenderers[index]
     if not renderer then
@@ -90,9 +98,10 @@ function ListView:_updateItemRenderer(data, index)
     self._itemToRendererMap[data] = renderer
 end
 
-
+---
+-- Remove the item renderers.
 function ListView:_removeItemRenderers()
-    for i, renderer in ipairs(self._listItemRenderers) do
+    for i, renderer in ipairs(self._itemRenderers) do
         self:_removeItemRenderer(renderer)
     end
 
@@ -100,6 +109,9 @@ function ListView:_removeItemRenderers()
     self._itemToRendererMap = {}
 end
 
+---
+-- Remove the item renderer.
+-- @param renderer item renderer.
 function ListView:_removeItemRenderer(renderer)
     renderer:removeEventListener(UIEvent.TOUCH_DOWN, self.onItemRendererTouchDown, self)
     renderer:removeEventListener(UIEvent.TOUCH_UP, self.onItemRendererTouchUp, self)
@@ -120,14 +132,16 @@ end
 ---
 -- Update the display
 function ListView:updateLayout()
-    if self._layout then
-        self._layout:setRowHeight(self:getRowHeight())
-        self._layout:setColumnCount(self:getColumnCount())
+    if self:getContentLayout() then
+        self:getContentLayout():setRowHeight(self:getRowHeight())
+        self:getContentLayout():setColumnCount(self:getColumnCount())
     end
 
     ListView.__super.updateLayout(self)
 end
 
+---
+-- Invalidate item renderers.
 function ListView:invalidateItemRenderers()
     if not self._itemRendererChanged then
         self:invalidateDisplay()
@@ -135,16 +149,25 @@ function ListView:invalidateItemRenderers()
     end
 end
 
+---
+-- Set the selected item.
+-- @param item selected item.
 function ListView:setSelectedItem(item)
     self:setSelectedItems(item and {item} or {})
 end
 
+---
+-- Return the selected item.
+-- @return selected item.
 function ListView:getSelectedItem()
     if #self._selectedItems > 0 then
         return self._selectedItems[1]
     end
 end
 
+---
+-- Sets the selected items.
+-- @param items selected items.
 function ListView:setSelectedItems(items)
     assert(self._selectionMode == "single" and #items < 2)
 
@@ -189,7 +212,6 @@ end
 function ListView:setDataSource(dataSource)
     if self._dataSource ~= dataSource then
         self._dataSource = dataSource
-        self._itemRendererChanged = true
         self:invalidateItemRenderers()
     end
 end
@@ -207,7 +229,6 @@ end
 function ListView:setDataField(dataField)
     if self._dataField ~= dataField then
         self._dataField = dataField
-        self._itemRendererChanged = true
         self:invalidateItemRenderers()
     end
 end
@@ -225,7 +246,7 @@ end
 function ListView:setItemRendererFactory(factory)
     if self:getItemRendererFactory() ~= factory then
         self:setStyle(ListView.STYLE_ITEM_RENDERER_FACTORY, factory)
-        self._itemRendererChanged = true
+        self:_removeItemRenderers()
         self:invalidateItemRenderers()
     end
 end
