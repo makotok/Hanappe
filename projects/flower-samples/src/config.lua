@@ -63,6 +63,25 @@ Config.TOUCH_EVENT_ENABLED = true
 Config.MOUSE_EVENT_ENABLED = true
 
 --------------------------------------------------------------------------------
+-- Logger
+--------------------------------------------------------------------------------
+
+-- info log
+flower.Logger.LOG_LEVELS.INFO = true
+
+-- warn log
+flower.Logger.LOG_LEVELS.WARN = true
+
+-- error log
+flower.Logger.LOG_LEVELS.ERROR = true
+
+-- debug log
+flower.Logger.LOG_LEVELS.DEBUG = true
+
+-- trace log
+flower.Logger.LOG_LEVELS.TRACE = true
+
+--------------------------------------------------------------------------------
 -- Debugging
 --------------------------------------------------------------------------------
 
