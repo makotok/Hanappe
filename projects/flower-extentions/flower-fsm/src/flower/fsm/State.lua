@@ -16,7 +16,7 @@ local State = class()
 -- コンストラクタ
 function State:init(params)
     params = params or {}
-    self._machine = nil
+    self.machine = nil
     self._onEnter = params.onEnter
     self._onUpdate = params.onUpdate
     self._onExit = params.onExit
@@ -26,7 +26,7 @@ end
 -- ステートマシンを設定します.
 -- @param machine エンジン
 function State:setMachine(machine)
-    self._machine = machine
+    self.machine = machine
 end
 
 ---
@@ -55,6 +55,5 @@ function State:exit(context)
         self._onExit(self, context)
     end
 end
-
 
 return State

@@ -9,6 +9,7 @@
 local class = require "flower.class"
 local Logger = require "flower.Logger"
 local EventDispatcher = require "flower.EventDispatcher"
+local State = require "flower.fsm.State"
 
 -- class
 local StateMachine = class(EventDispatcher)
