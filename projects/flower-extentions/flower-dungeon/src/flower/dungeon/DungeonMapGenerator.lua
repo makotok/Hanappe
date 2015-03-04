@@ -164,8 +164,8 @@ function DungeonMapGenerator:_createItems(map)
 end
 
 function DungeonMapGenerator:_createItem(room)
-    local x = math.random(room.x + 1, room.x + room.width - 1)
-    local y = math.random(room.y + 1, room.y + room.height - 1)
+    local x = math.random(room.x, room.x + room.width - 2)
+    local y = math.random(room.y, room.y + room.height - 2)
     local src = self.itemMaster[math.random(1, #self.itemMaster)]
 
     return DungeonItem(src, x, y)
@@ -195,8 +195,8 @@ function DungeonMapGenerator:_createObjects(map)
 end
 
 function DungeonMapGenerator:_createObject(src, room)
-    local x = math.random(room.x + 1, room.x + room.width - 1)
-    local y = math.random(room.y + 1, room.y + room.height - 1)
+    local x = math.random(room.x, room.x + room.width - 2)
+    local y = math.random(room.y, room.y + room.height - 2)
 
     return DungeonObject(src, x, y)
 end
