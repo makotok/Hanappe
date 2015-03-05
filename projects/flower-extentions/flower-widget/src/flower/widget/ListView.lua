@@ -351,7 +351,6 @@ function ListView:onItemRendererTouchUp(e)
     local renderer = e.target
     if renderer.isRenderer then
         renderer:setPressed(false)
-        renderer:setSelected(true)
         self:dispatchEvent(ListView.EVENT_ITEM_CLICK, renderer:getData())
     end
 end

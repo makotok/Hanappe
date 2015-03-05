@@ -35,6 +35,7 @@ end
 function CheckBox:updateTextLabel()
     CheckBox.__super.updateTextLabel(self)
 
+    -- TODO:Need?
     --self._textLabel:fitWidth()
 end
 

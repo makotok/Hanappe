@@ -23,6 +23,7 @@ return {
     {title = "Dungeon 2", scene = "samples/dungeon_2_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Dungeon 3", scene = "samples/dungeon_3_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget Button", scene = "samples/widget_button_sample", openAnime = "fade", closeAnime = "fade"},
+    {title = "Widget CheckBox", scene = "samples/widget_checkbox_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget Joystick", scene = "samples/widget_joystick_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget Panel", scene = "samples/widget_panel_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget TextLabel", scene = "samples/widget_textlabel_sample", openAnime = "fade", closeAnime = "fade"},

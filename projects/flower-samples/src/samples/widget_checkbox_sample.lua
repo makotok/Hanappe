@@ -13,7 +13,6 @@ function onCreate(e)
     }
     
     checkbox1 = widget.CheckBox {
-        pos = {50, closeButton:getBottom() + 10},
         size = {300, 40},
         parent = view,
         text = "メッセージ",
@@ -24,7 +23,6 @@ function onCreate(e)
     }
 
     checkbox2 = widget.CheckBox {
-        pos = {50, checkbox1:getBottom() + 20},
         size = {146, 40},
         parent = view,
         text = "English",

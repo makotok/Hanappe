@@ -51,9 +51,11 @@ function CheckBoxItemRenderer:_updateCheckBox()
     self._checkBox:setSize(self:getSize())
 
     if self._data then
-        local text = self._labelField and self._data[self._labelField] or self._data
-        text = type(text) == "string" and text or tostring(text)
-        self._checkBox:setText(text)
+        if self._labelField then
+            local text = self._data[self._labelField]
+            text = type(text) == "string" and text or tostring(text)
+            self._checkBox:setText(text)
+        end
 
         if self._selectedField then
             self._checkBox:setSelected(self._data[self._selectedField])
