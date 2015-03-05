@@ -25,42 +25,42 @@ Logger.TRACE_LEVELS = {
 }
 
 ---
--- Output the INFO level log.
+-- Outputs a info log.
 -- @param ... messages
 function Logger.info(...)
     Logger.log("INFO", ...)
 end
 
 ---
--- Output the WARN level log.
+-- Outputs a warn log.
 -- @param ... messages
 function Logger.warn(...)
     Logger.log("WARN", ...)
 end
 
 ---
--- Output the ERROR level log.
+-- Outputs a error log.
 -- @param ... messages
 function Logger.error(...)
     Logger.log("ERROR", ...)
 end
 
 ---
--- Output the DEBUG level log.
+-- Outputs a debug log.
 -- @param ... messages
 function Logger.debug(...)
     Logger.log("DEBUG", ...)
 end
 
 ---
--- Output the TRACE level log.
+-- Outputs a trace log.
 -- @param ... messages
 function Logger.trace(...)
     Logger.log("TRACE", ...)
 end
 
 ---
--- Output the log.
+-- Outputs a specified log.
 -- @param logLevel target log level.
 -- @param ... messages
 function Logger.log(logLevel, ...)
@@ -74,8 +74,8 @@ function Logger.log(logLevel, ...)
 end
 
 ---
--- This is the format function of the message.
--- You can change the format by overwriting.
+-- Formats a messages.
+-- You can change the format function.
 -- @param logLevel log level.
 -- @param ... messages
 function Logger.format(logLevel, ...)
@@ -83,16 +83,15 @@ function Logger.format(logLevel, ...)
 end
 
 ---
--- It is actually processing to output a log.
--- It is possible to override this function, you can change the output destination.
--- @param logLevel log level.
+-- Outputs a log.
+-- You can change the outputLog function.
 -- @param ... messages
 function Logger.outputLog(...)
     print(...)
 end
 
 ---
--- print a stack trace
+-- Prints a stack trace.
 function Logger.outputTrace()
     Logger.outputLog(debug.traceback())
 end

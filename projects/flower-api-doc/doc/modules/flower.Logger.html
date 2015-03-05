@@ -30,6 +30,11 @@
   <li><a href="../index.html">Index</a></li>
 </ul>
 
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Tables">Tables</a></li>
+</ul>
 
 
 <h2>Modules</h2>
@@ -180,7 +185,7 @@
 
 <h1>Module <code>flower.Logger</code></h1>
 
-<p>TODO:Ldoc</p>
+<p>Simple logger class.</p>
 <p></p>
     <h3>Info:</h3>
     <ul>
@@ -189,11 +194,284 @@
     </ul>
 
 
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#info">info&nbsp;(...)</a></td>
+	<td class="summary">Outputs a info log.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#warn">warn&nbsp;(...)</a></td>
+	<td class="summary">Outputs a warn log.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#error">error&nbsp;(...)</a></td>
+	<td class="summary">Outputs a error log.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#debug">debug&nbsp;(...)</a></td>
+	<td class="summary">Outputs a debug log.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#trace">trace&nbsp;(...)</a></td>
+	<td class="summary">Outputs a trace log.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#log">log&nbsp;(logLevel, ...)</a></td>
+	<td class="summary">Outputs a specified log.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#format">format&nbsp;(logLevel, ...)</a></td>
+	<td class="summary">Formats a messages.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#outputLog">outputLog&nbsp;(...)</a></td>
+	<td class="summary">Outputs a log.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#outputTrace">outputTrace&nbsp;()</a></td>
+	<td class="summary">Prints a stack trace.</td>
+	</tr>
+</table>
+<h2><a href="#Tables">Tables</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#LOG_LEVELS">LOG_LEVELS</a></td>
+	<td class="summary">Log level.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TRACE_LEVELS">TRACE_LEVELS</a></td>
+	<td class="summary">Trace level.</td>
+	</tr>
+</table>
 
 <br/>
 <br/>
 
 
+    <h2><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "info"></a>
+    <strong>info&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Outputs a info log.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       messages</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "warn"></a>
+    <strong>warn&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Outputs a warn log.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       messages</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "error"></a>
+    <strong>error&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Outputs a error log.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       messages</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "debug"></a>
+    <strong>debug&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Outputs a debug log.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       messages</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "trace"></a>
+    <strong>trace&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Outputs a trace log.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       messages</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "log"></a>
+    <strong>log&nbsp;(logLevel, ...)</strong>
+    </dt>
+    <dd>
+    Outputs a specified log.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">logLevel</span>
+       target log level.</li>
+      <li><span class="parameter">...</span>
+       messages</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "format"></a>
+    <strong>format&nbsp;(logLevel, ...)</strong>
+    </dt>
+    <dd>
+    Formats a messages.
+ You can change the format function.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">logLevel</span>
+       log level.</li>
+      <li><span class="parameter">...</span>
+       messages</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "outputLog"></a>
+    <strong>outputLog&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Outputs a log.
+ You can change the outputLog function.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       messages</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "outputTrace"></a>
+    <strong>outputTrace&nbsp;()</strong>
+    </dt>
+    <dd>
+    Prints a stack trace.
+
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Tables"></a>Tables</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "LOG_LEVELS"></a>
+    <strong>LOG_LEVELS</strong>
+    </dt>
+    <dd>
+    Log level.
+
+    <h3>Fields:</h3>
+    <ul>
+      <li><span class="parameter">INFO</span>
+      </li>
+      <li><span class="parameter">WARN</span>
+      </li>
+      <li><span class="parameter">ERROR</span>
+      </li>
+      <li><span class="parameter">DEBUG</span>
+      </li>
+      <li><span class="parameter">TRACE</span>
+      </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TRACE_LEVELS"></a>
+    <strong>TRACE_LEVELS</strong>
+    </dt>
+    <dd>
+    Trace level.
+
+    <h3>Fields:</h3>
+    <ul>
+      <li><span class="parameter">INFO</span>
+      </li>
+      <li><span class="parameter">WARN</span>
+      </li>
+      <li><span class="parameter">ERROR</span>
+      </li>
+      <li><span class="parameter">DEBUG</span>
+      </li>
+      <li><span class="parameter">TRACE</span>
+      </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
 
 
 </div> <!-- id="content" -->

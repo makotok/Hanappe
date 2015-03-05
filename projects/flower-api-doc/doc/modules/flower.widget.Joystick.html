@@ -237,11 +237,19 @@
 	<td class="summary">Returns the position to match the digital mode.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#Joystick:getKnobNewLocForDiagonal">Joystick:getKnobNewLocForDiagonal&nbsp;(x, y)</a></td>
+	<td class="summary">Returns the position to match the diagonal mode.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#Joystick:getKnobInputRate">Joystick:getKnobInputRate&nbsp;(x, y)</a></td>
 	<td class="summary">Returns the percentage of input.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#Joystick:getStickDirection">Joystick:getStickDirection&nbsp;()</a></td>
+	<td class="summary">Returns the direction of the stick.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Joystick:getStickDirections">Joystick:getStickDirections&nbsp;()</a></td>
 	<td class="summary">Returns the direction of the stick.</td>
 	</tr>
 	<tr>
@@ -305,11 +313,15 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#MODE_ANALOG">MODE_ANALOG</a></td>
-	<td class="summary">Mode of the stick</td>
+	<td class="summary">Mode: analog</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#MODE_DIGITAL">MODE_DIGITAL</a></td>
-	<td class="summary">Mode of the stick</td>
+	<td class="summary">Mode: digital</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#MODE_DIAGONAL">MODE_DIAGONAL</a></td>
+	<td class="summary">Mode: diagonal</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#RANGE_OF_CENTER_RATE">RANGE_OF_CENTER_RATE</a></td>
@@ -522,6 +534,33 @@
 
 </dd>
     <dt>
+    <a name = "Joystick:getKnobNewLocForDiagonal"></a>
+    <strong>Joystick:getKnobNewLocForDiagonal&nbsp;(x, y)</strong>
+    </dt>
+    <dd>
+    Returns the position to match the diagonal mode.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">x</span>
+       X-position of the model</li>
+      <li><span class="parameter">y</span>
+       Y-position of the model</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        adjusted x-position</li>
+        <li>
+        adjusted y-position</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
     <a name = "Joystick:getKnobInputRate"></a>
     <strong>Joystick:getKnobInputRate&nbsp;(x, y)</strong>
     </dt>
@@ -560,6 +599,26 @@
     <ol>
 
         direction
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Joystick:getStickDirections"></a>
+    <strong>Joystick:getStickDirections&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the direction of the stick.
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        horizontal direction</li>
+        <li>
+        vertical direction</li>
     </ol>
 
 
@@ -802,7 +861,7 @@
     <strong>MODE_ANALOG</strong>
     </dt>
     <dd>
-    Mode of the stick
+    Mode: analog
 
 
 
@@ -815,7 +874,20 @@
     <strong>MODE_DIGITAL</strong>
     </dt>
     <dd>
-    Mode of the stick
+    Mode: digital
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "MODE_DIAGONAL"></a>
+    <strong>MODE_DIAGONAL</strong>
+    </dt>
+    <dd>
+    Mode: diagonal
 
 
 

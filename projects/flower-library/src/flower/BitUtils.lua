@@ -1,8 +1,15 @@
 ----------------------------------------------------------------------------------------------------
 -- Small library for bit operation.
+-- 
+-- @author Makoto
+-- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
+
+-- class
 local BitUtils = {}
 
+---
+-- Returns a numeric value of the specified bit.
 function BitUtils.bit(p)
     return 2 ^ (p - 1)  -- 1-based indexing
 end

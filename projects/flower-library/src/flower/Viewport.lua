@@ -1,5 +1,5 @@
 ----------------------------------------------------------------------------------------------------
--- TODO:LDoc
+-- The Viewport class.
 --
 -- <h4>Extends:</h4>
 -- <ul>
@@ -28,7 +28,7 @@ local DEFAULT_VIEWPORT = nil
 
 ---
 -- Returns the defalut viewport.
--- @return default viewport
+-- @return Default viewport instance
 function Viewport.getDefaultViewport()
     if not DEFAULT_VIEWPORT then
         DEFAULT_VIEWPORT = Viewport()
@@ -47,7 +47,8 @@ function Viewport:init()
 end
 
 ---
--- Set the auto resize when resize window.
+-- Sets the auto resize when resize window.
+-- @param value Auto resize enabled.
 function Viewport:setAutoResizeEnabled(value)
     if self.autoResizeEnabled == value then
         return
@@ -65,7 +66,11 @@ function Viewport:setAutoResizeEnabled(value)
 end
 
 ---
--- Update the size and scale and offset.
+-- Updates the size and scale and offset.
+-- @param width Width of the viewport.
+-- @param height Height of the viewport.
+-- @param viewScale Scale factor.
+-- @param yFlip Y flip.
 function Viewport:updateViewSize(width, height, viewScale, yFlip)
     self.width = width or self.width
     self.height = height or self.height

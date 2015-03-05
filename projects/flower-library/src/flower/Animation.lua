@@ -1,7 +1,18 @@
 --------------------------------------------------------------------------------
 -- This is a class to animate the MOAIProp.
+--
+-- <p>
 -- You can define the animation to flow.
 -- If you want to achieve complex animations, will say only this class.
+-- </p>
+-- 
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.EventDispatcher.html">EventDispatcher</a><l/i>
+-- </ul>
+-- 
+-- @author Makoto
+-- @release V3.0.0
 --------------------------------------------------------------------------------
 
 -- import
