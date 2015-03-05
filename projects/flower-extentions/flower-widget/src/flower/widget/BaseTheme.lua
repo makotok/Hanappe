@@ -5,18 +5,14 @@
 -- @release V2.1.2
 ----------------------------------------------------------------------------------------------------
 
--- module
-local Themes = {}
-
 -- import
 local ClassFactory = require "flower.ClassFactory"
-local ThemeMgr = require "flower.widget.ThemeMgr"
 local MsgBox = require "flower.widget.MsgBox"
 local ListItem = require "flower.widget.ListItem"
 local LabelItemRenderer = require "flower.widget.LabelItemRenderer"
 
---- Normal theme
-Themes.NORMAL = {
+--- Base theme
+local BaseTheme = {
     common = {
         normalColor = {1, 1, 1, 1},
         disabledColor = {0.5, 0.5, 0.5, 1},
@@ -187,9 +183,18 @@ Themes.NORMAL = {
     ImageItemRenderer = {
         parentStyle = "BaseItemRenderer",
     },
+    CheckBoxItemRenderer = {
+        parentStyle = "BaseItemRenderer",
+        normalTexture = "skins/checkbox_normal.png",
+        selectedTexture = "skins/checkbox_selected.png",
+        disabledTexture = "skins/checkbox_normal.png",
+        fontName = "VL-PGothic.ttf",
+        textSize = 24,
+        textColor = {1, 1, 1, 1},
+        textAlign = {"left", "center"},
+        textPadding = {5, 0, 0, 0},
+        textDisabledColor = {0.5, 0.5, 0.5, 1},
+    },
 }
 
--- initial theme
-ThemeMgr.getInstance():setTheme(Themes.NORMAL)
-
-return ThemeMgr
+return BaseTheme

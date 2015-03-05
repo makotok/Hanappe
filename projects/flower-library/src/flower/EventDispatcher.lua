@@ -34,6 +34,8 @@ function EventDispatcher:addEventListener(eventType, callback, source, priority)
     assert(eventType)
     assert(callback)
 
+    self.eventListenersMap = self.eventListenersMap or {}
+
     if self:hasEventListener(eventType, callback, source) then
         return false
     end
@@ -65,6 +67,7 @@ function EventDispatcher:removeEventListener(eventType, callback, source)
     assert(eventType)
     assert(callback)
 
+    self.eventListenersMap = self.eventListenersMap or {}
     local listeners = self.eventListenersMap[eventType] or {}
 
     for i, listener in ipairs(listeners) do
@@ -113,6 +116,7 @@ end
 function EventDispatcher:hasEventListener(eventType, callback, source)
     assert(eventType)
 
+    self.eventListenersMap = self.eventListenersMap or {}
     local listeners = self.eventListenersMap[eventType]
     if not listeners or #listeners == 0 then
         return false
@@ -135,6 +139,10 @@ end
 -- @param event Event object or Event type name.
 -- @param data Data that is set in the event.
 function EventDispatcher:dispatchEvent(event, data)
+    if not self.eventListenersMap then
+        return
+    end
+
     local eventName = type(event) == "string" and event
     if eventName then
         event = EVENT_CACHE[eventName] or Event(eventName)

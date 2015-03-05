@@ -32,7 +32,7 @@
 
 <h2>Contents</h2>
 <ul>
-<li><a href="#Tables">Tables</a></li>
+<li><a href="#Functions">Functions</a></li>
 </ul>
 
 
@@ -140,9 +140,11 @@
   <li><a href="../modules/flower.tiled.Tileset.html">flower.tiled.Tileset</a></li>
   <li><a href="../modules/flower.widget.html">flower.widget</a></li>
   <li><a href="../modules/flower.widget.BaseItemRenderer.html">flower.widget.BaseItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.BaseTheme.html">flower.widget.BaseTheme</a></li>
   <li><a href="../modules/flower.widget.BoxLayout.html">flower.widget.BoxLayout</a></li>
   <li><a href="../modules/flower.widget.Button.html">flower.widget.Button</a></li>
   <li><a href="../modules/flower.widget.CheckBox.html">flower.widget.CheckBox</a></li>
+  <li><strong>flower.widget.CheckBoxItemRenderer</strong></li>
   <li><a href="../modules/flower.widget.DialogBox.html">flower.widget.DialogBox</a></li>
   <li><a href="../modules/flower.widget.FocusMgr.html">flower.widget.FocusMgr</a></li>
   <li><a href="../modules/flower.widget.IconMgr.html">flower.widget.IconMgr</a></li>
@@ -168,7 +170,6 @@
   <li><a href="../modules/flower.widget.TextInput.html">flower.widget.TextInput</a></li>
   <li><a href="../modules/flower.widget.TextView.html">flower.widget.TextView</a></li>
   <li><a href="../modules/flower.widget.ThemeMgr.html">flower.widget.ThemeMgr</a></li>
-  <li><strong>flower.widget.Themes</strong></li>
   <li><a href="../modules/flower.widget.UIComponent.html">flower.widget.UIComponent</a></li>
   <li><a href="../modules/flower.widget.UIEvent.html">flower.widget.UIEvent</a></li>
   <li><a href="../modules/flower.widget.UIGroup.html">flower.widget.UIGroup</a></li>
@@ -182,23 +183,46 @@
 
 <div id="content">
 
-<h1>Module <code>flower.widget.Themes</code></h1>
+<h1>Module <code>flower.widget.CheckBoxItemRenderer</code></h1>
 
-<p>Widget Themes.</p>
-<p>
- </p>
+<p>This is the base class of the item renderer.</p>
+<p></p>
     <h3>Info:</h3>
     <ul>
-        <li><strong>Release</strong>: V2.1.2</li>
+        <li><strong>Release</strong>: V3.0.0</li>
         <li><strong>Author</strong>: Makoto</li>
     </ul>
 
 
-<h2><a href="#Tables">Tables</a></h2>
+<h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#NORMAL">NORMAL</a></td>
-	<td class="summary">Normal theme</td>
+	<td class="name" nowrap><a href="#CheckBoxItemRenderer:_initInternal">CheckBoxItemRenderer:_initInternal&nbsp;()</a></td>
+	<td class="summary">Initialize a variables</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CheckBoxItemRenderer:_createRenderers">CheckBoxItemRenderer:_createRenderers&nbsp;()</a></td>
+	<td class="summary">Create the renderer objects.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CheckBoxItemRenderer:_createCheckBox">CheckBoxItemRenderer:_createCheckBox&nbsp;()</a></td>
+	<td class="summary">Create the checkBox.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CheckBoxItemRenderer:_updateCheckBox">CheckBoxItemRenderer:_updateCheckBox&nbsp;()</a></td>
+	<td class="summary">Update the checkBox.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CheckBoxItemRenderer:updateDisplay">CheckBoxItemRenderer:updateDisplay&nbsp;()</a></td>
+	<td class="summary">Update the Display objects.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CheckBoxItemRenderer:setLabelField">CheckBoxItemRenderer:setLabelField&nbsp;(labelField)</a></td>
+	<td class="summary">Sets the label field of data.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#CheckBoxItemRenderer:setSelectedField">CheckBoxItemRenderer:setSelectedField&nbsp;(selectedField)</a></td>
+	<td class="summary">Sets the selected field of data.</td>
 	</tr>
 </table>
 
@@ -206,26 +230,103 @@
 <br/>
 
 
-    <h2><a name="Tables"></a>Tables</h2>
+    <h2><a name="Functions"></a>Functions</h2>
 
     <dl class="function">
     <dt>
-    <a name = "NORMAL"></a>
-    <strong>NORMAL</strong>
+    <a name = "CheckBoxItemRenderer:_initInternal"></a>
+    <strong>CheckBoxItemRenderer:_initInternal&nbsp;()</strong>
     </dt>
     <dd>
-    Normal theme
+    Initialize a variables
 
-    <h3>Fields:</h3>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CheckBoxItemRenderer:_createRenderers"></a>
+    <strong>CheckBoxItemRenderer:_createRenderers&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create the renderer objects.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CheckBoxItemRenderer:_createCheckBox"></a>
+    <strong>CheckBoxItemRenderer:_createCheckBox&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create the checkBox.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CheckBoxItemRenderer:_updateCheckBox"></a>
+    <strong>CheckBoxItemRenderer:_updateCheckBox&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the checkBox.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CheckBoxItemRenderer:updateDisplay"></a>
+    <strong>CheckBoxItemRenderer:updateDisplay&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the Display objects.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CheckBoxItemRenderer:setLabelField"></a>
+    <strong>CheckBoxItemRenderer:setLabelField&nbsp;(labelField)</strong>
+    </dt>
+    <dd>
+    Sets the label field of data.
+
+    <h3>Parameters:</h3>
     <ul>
-      <li><span class="parameter"></span>
-      </li>
-      <li><span class="parameter">1</span>
-      </li>
-      <li><span class="parameter">1</span>
-      </li>
-      <li><span class="parameter">1</span>
-      </li>
+      <li><span class="parameter">labelField</span>
+       field of data.</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "CheckBoxItemRenderer:setSelectedField"></a>
+    <strong>CheckBoxItemRenderer:setSelectedField&nbsp;(selectedField)</strong>
+    </dt>
+    <dd>
+    Sets the selected field of data.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">selectedField</span>
+       field of data.</li>
     </ul>
 
 

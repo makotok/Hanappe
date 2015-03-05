@@ -53,10 +53,12 @@ end
 function onCreate(e)
     menuList = widget.ListView {
         scene = scene,
-        dataField = "title",
         dataSource = {Scenes},
         onSelectedChanged = onSelectedChanged,
         onItemClick = onItemClick,
+        itemProperties = {{
+            labelField = "title",
+        }},
     }
     
     flower.Runtime:addEventListener("resize", onResize)

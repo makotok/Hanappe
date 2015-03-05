@@ -8,6 +8,7 @@
 -- import
 local class = require "flower.class"
 local table = require "flower.table"
+local ClassFactory = require "flower.ClassFactory"
 local UIEvent = require "flower.widget.UIEvent"
 local PanelView = require "flower.widget.PanelView"
 local ListViewLayout = require "flower.widget.ListViewLayout"
@@ -36,10 +37,10 @@ function ListView:_initInternal()
     ListView.__super._initInternal(self)
     self._themeName = "ListView"
     self._dataSource = {}
-    self._dataField = nil
     self._selectedItems = {}
     self._selectionMode = "single"
     self._itemRenderers = {}
+    self._itemProperties = nil
     self._itemToRendererMap = {}
     self._itemRendererChanged = false
     self._touchedRenderer = nil
@@ -87,9 +88,9 @@ function ListView:_updateItemRenderer(data, index)
         table.insert(self._itemRenderers, renderer)
         self:addContent(renderer)
     end
+    renderer:setProperties(self._itemProperties)
     renderer:setData(data)
     renderer:setDataIndex(index)
-    renderer:setDataField(self:getDataField())
     renderer:setHostComponent(self)
     renderer:addEventListener(UIEvent.TOUCH_DOWN, self.onItemRendererTouchDown, self)
     renderer:addEventListener(UIEvent.TOUCH_UP, self.onItemRendererTouchUp, self)
@@ -138,6 +139,21 @@ function ListView:updateLayout()
     end
 
     ListView.__super.updateLayout(self)
+end
+
+---
+-- Update the order of rendering.
+-- It is called by LayoutMgr.
+-- @param priority priority.
+-- @return last priority
+function ListView:updatePriority(priority)
+    priority = ListView.__super.updatePriority(self, priority)
+
+    for i, renderer in ipairs(self._itemRenderers) do
+        renderer:setPriority(priority)
+    end
+
+    return priority + 10
 end
 
 ---
@@ -224,20 +240,20 @@ function ListView:getDataSource()
 end
 
 ---
--- Set the dataField.
--- @param dataField dataField
-function ListView:setDataField(dataField)
-    if self._dataField ~= dataField then
-        self._dataField = dataField
-        self:invalidateItemRenderers()
-    end
+-- Sets the ItemRenderer class.
+-- @param clazz ItemRenderer class
+function ListView:setItemRendererClass(clazz)
+    self:setItemRendererFactory(clazz and ClassFactory(clazz))
 end
 
 ---
--- Return the dataField.
--- @return dataField
-function ListView:getDataField()
-    return self._dataField
+-- Sets the ItemRenderer class.
+-- @param clazz ItemRenderer class
+function ListView:setItemProperties(properties)
+    if self._itemProperties ~= properties then
+        self._itemProperties = properties
+        self:invalidateItemRenderers()
+    end
 end
 
 ---
@@ -318,7 +334,6 @@ function ListView:onItemRendererTouchDown(e)
     local renderer = e.target
     if renderer.isRenderer then
         renderer:setPressed(true)
-        renderer:setSelected(true)
         self:setSelectedItem(renderer:getData())
         self._touchedRenderer = renderer
     end
@@ -336,6 +351,7 @@ function ListView:onItemRendererTouchUp(e)
     local renderer = e.target
     if renderer.isRenderer then
         renderer:setPressed(false)
+        renderer:setSelected(true)
         self:dispatchEvent(ListView.EVENT_ITEM_CLICK, renderer:getData())
     end
 end

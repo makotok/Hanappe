@@ -44,24 +44,18 @@ end
 function BaseItemRenderer:_createChildren()
     BaseItemRenderer.__super._createChildren(self)
     self:_createBackground()
-    self:_createBorder()
     self:_createRenderers()
 end
 
 ---
 -- Create the background objects.
 function BaseItemRenderer:_createBackground()
+    if self._background then
+        return
+    end
     self._background = Graphics(self:getSize())
     self._background._excludeLayout = true
     self:addChild(self._background)
-end
-
----
--- Create the background objects.
-function BaseItemRenderer:_createBorder()
-    self._border = Graphics(self:getSize())
-    self._border._excludeLayout = true
-    self:addChild(self._border)
 end
 
 ---
@@ -76,8 +70,6 @@ function BaseItemRenderer:_updateBackground()
     local width, height = self:getSize()
     self._background:setSize(width, height)
     self._background:clear()
-    self._border:setSize(width, height)
-    self._border:clear()
 
     -- draw background
     if self:isBackgroundVisible() then
@@ -86,7 +78,7 @@ function BaseItemRenderer:_updateBackground()
 
     -- draw bottom border
     if self:isBottomBorderVisible() then
-        self._border:setPenColor(self:getBottomBorderColor()):drawLine(0, height, width, height)
+        self._background:setPenColor(self:getBottomBorderColor()):drawLine(0, height, width, height)
     end
 end
 
@@ -122,16 +114,6 @@ function BaseItemRenderer:setDataIndex(index)
         self._dataIndex = index
         self:invalidateDisplay()
     end
-end
-
----
--- Set the data field.
--- @param dataField field of data.
-function BaseItemRenderer:setDataField(dataField)
-    if self._dataField ~= dataField then
-        self._dataField = dataField
-        self:invalidateDisplay()
-    end    
 end
 
 ---

@@ -19,6 +19,7 @@ local LabelItemRenderer = class(BaseItemRenderer)
 function LabelItemRenderer:_initInternal()
     LabelItemRenderer.__super._initInternal(self)
     self._themeName = "LabelItemRenderer"
+    self._labelField = nil
 end
 
 ---
@@ -31,6 +32,9 @@ end
 ---
 -- Create the textLabel.
 function LabelItemRenderer:_createTextLabel()
+    if self._textLabel then
+        return
+    end
     self._textLabel = UILabel {
         themeName = self:getThemeName(),
         parent = self,
@@ -44,7 +48,7 @@ function LabelItemRenderer:_updateTextLabel()
     self._textLabel:setVisible(self._data ~= nil)
 
     if self._data then
-        local text = self._dataField and self._data[self._dataField] or self._data
+        local text = self._labelField and self._data[self._labelField] or self._data
         text = type(text) == "string" and text or tostring(text)
         self._textLabel:setText(text)
     end
@@ -55,6 +59,16 @@ end
 function LabelItemRenderer:updateDisplay()
     LabelItemRenderer.__super.updateDisplay(self)
     self:_updateTextLabel()
+end
+
+---
+-- Sets the label field of data.
+-- @param labelField field of data.
+function LabelItemRenderer:setLabelField(labelField)
+    if self._labelField ~= labelField then
+        self._labelField = labelField
+        self:invalidateDisplay()
+    end    
 end
 
 return LabelItemRenderer

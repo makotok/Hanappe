@@ -27,9 +27,9 @@ Label.__moai_class = MOAITextBox
 ---
 -- Constructor.
 -- @param text Text
--- @param option) width Width
--- @param option) height Height
--- @param font (option) Font path, or Font object
+-- @param width (option)Width
+-- @param height (option)Height
+-- @param font (option) ont path, or Font object
 -- @param textSize (option) TextSize
 function Label:init(text, width, height, font, textSize)
     Label.__super.init(self)
@@ -81,7 +81,7 @@ function Label:setTextScale(scale)
 end
 
 ---
--- Set the high quality of the drawing of the string.
+-- Sets the high quality of the drawing of the string.
 -- This setting is meaningful when the scale of the Viewport does not match the screen.
 -- @param enabled Set true to the high quality
 -- @param contentScale (Option)Scale of the Viewport, which label is displayed.

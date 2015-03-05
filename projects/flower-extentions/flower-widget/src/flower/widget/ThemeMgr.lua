@@ -33,7 +33,7 @@ function ThemeMgr:init()
     assert(INSTANCE == null)
 
     ThemeMgr.__super.init(self)
-    self.theme = nil
+    self.theme = require "flower.widget.BaseTheme"
 end
 
 ---

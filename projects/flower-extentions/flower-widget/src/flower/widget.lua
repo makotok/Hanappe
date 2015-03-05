@@ -22,7 +22,8 @@ end
 
 ---
 -- This class is an DialogBox
--- @param params
+-- @param scene scene
+-- @param params params
 function widget.showDialogBox(scene, params)
     widget.DialogBox(params):show(scene)
 end
@@ -77,9 +78,9 @@ end
 ----------------------------------------------------------------------------------------------------
 
 ---
--- Themes Class.
--- @see flower.widget.Themes
-widget.Themes = require "flower.widget.Themes"
+-- BaseTheme Class.
+-- @see flower.widget.BaseTheme
+widget.BaseTheme = require "flower.widget.BaseTheme"
 
 ---
 -- ThemeMgr Class.
@@ -265,5 +266,10 @@ widget.LabelItemRenderer = require "flower.widget.LabelItemRenderer"
 -- ImageLabelItemRenderer Class.
 -- @see flower.widget.ImageLabelItemRenderer
 widget.ImageLabelItemRenderer = require "flower.widget.ImageLabelItemRenderer"
+
+---
+-- CheckBoxItemRenderer Class.
+-- @see flower.widget.CheckBoxItemRenderer
+widget.CheckBoxItemRenderer = require "flower.widget.CheckBoxItemRenderer"
 
 return widget

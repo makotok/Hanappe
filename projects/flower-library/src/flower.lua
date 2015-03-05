@@ -8,7 +8,8 @@
 --
 -- <h4>Memo:</h4>
 -- <p>
--- English documentation has been updated.  Please contact github://Cloven with
+-- English documentation has been updated.
+-- Please contact github://Cloven with
 -- issues, questions, or problems regarding the documentation.
 -- </p>
 --

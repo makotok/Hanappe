@@ -27,6 +27,7 @@ end
 function CheckBox:updateButtonImage()
     local buttonImage = self._buttonImage
     buttonImage:setTexture(self:getImagePath())
+    buttonImage:setTop((self:getHeight() - buttonImage:getHeight()) / 2)
 end
 
 ---
@@ -34,7 +35,7 @@ end
 function CheckBox:updateTextLabel()
     CheckBox.__super.updateTextLabel(self)
 
-    self._textLabel:fitWidth()
+    --self._textLabel:fitWidth()
 end
 
 ---
@@ -43,8 +44,11 @@ end
 function CheckBox:getLabelContentRect()
     local buttonImage = self._buttonImage
     local textLabel = self._textLabel
-    local left, top = buttonImage:getRight(), buttonImage:getTop()
-    local right, bottom = left + textLabel:getWidth(), top + buttonImage:getHeight()
+
+    local paddingLeft, paddingTop, paddingRight, paddingBottom = self:getTextPadding()
+    local left, top = buttonImage:getRight() + paddingLeft, paddingTop
+    local right, bottom = self:getWidth() - paddingRight, self:getHeight() - paddingBottom
+
     return left, top, right, bottom
 end
 

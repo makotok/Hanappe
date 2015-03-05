@@ -31,13 +31,16 @@ end
 -- Create the renderer objects.
 function ImageLabelItemRenderer:_createRenderers()
     self:_createImage()
-    ImageLabelItemRenderer.__super._createRenderers(self)
     self:_createLayout()
+    ImageLabelItemRenderer.__super._createRenderers(self)
 end
 
 ---
 -- Create the image.
 function ImageLabelItemRenderer:_createImage()
+    if self._image then
+        return
+    end
     self._image = Image()
     self:addChild(self._image)
 end
@@ -45,6 +48,9 @@ end
 ---
 -- Create the default layout.
 function ImageLabelItemRenderer:_createLayout()
+    if self._layout then
+        return
+    end
     self:setLayout(BoxLayout {
         direction = "horizontal",
         align = {"left", "center"},
@@ -76,8 +82,8 @@ function ImageLabelItemRenderer:updateDisplay()
 end
 
 ---
--- Set the data field.
--- @param imageField field of image.
+-- Sets the image field of the data.
+-- @param imageField field of the image.
 function ImageLabelItemRenderer:setImageField(imageField)
     if self._imageField ~= imageField then
         self._imageField = imageField
@@ -86,8 +92,9 @@ function ImageLabelItemRenderer:setImageField(imageField)
 end
 
 ---
--- Set the data field.
--- @param dataField field of data.
+-- Sets the size of the image.
+-- @param width Width of the image.
+-- @param height Hidth of the image.
 function ImageLabelItemRenderer:setImageSize(width, height)
     self._imageSize = {width, height}
     self:invalidateDisplay()
