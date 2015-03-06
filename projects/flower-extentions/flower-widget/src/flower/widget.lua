@@ -268,6 +268,11 @@ widget.LabelItemRenderer = require "flower.widget.LabelItemRenderer"
 widget.ImageLabelItemRenderer = require "flower.widget.ImageLabelItemRenderer"
 
 ---
+-- SheetImageLabelItemRenderer Class.
+-- @see flower.widget.SheetImageLabelItemRenderer
+widget.SheetImageLabelItemRenderer = require "flower.widget.SheetImageLabelItemRenderer"
+
+---
 -- CheckBoxItemRenderer Class.
 -- @see flower.widget.CheckBoxItemRenderer
 widget.CheckBoxItemRenderer = require "flower.widget.CheckBoxItemRenderer"

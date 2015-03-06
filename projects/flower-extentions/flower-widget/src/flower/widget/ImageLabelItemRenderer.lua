@@ -31,7 +31,6 @@ end
 -- Create the renderer objects.
 function ImageLabelItemRenderer:_createRenderers()
     self:_createImage()
-    self:_createLayout()
     ImageLabelItemRenderer.__super._createRenderers(self)
 end
 
@@ -46,20 +45,6 @@ function ImageLabelItemRenderer:_createImage()
 end
 
 ---
--- Create the default layout.
-function ImageLabelItemRenderer:_createLayout()
-    if self._layout then
-        return
-    end
-    self:setLayout(BoxLayout {
-        direction = "horizontal",
-        align = {"left", "center"},
-        layoutPolicy = {"none", "none"},
-        padding = self:getStyle("layoutPadding"),
-    })
-end
-
----
 -- Update the image.
 function ImageLabelItemRenderer:_updateImage()
     self._image:setVisible(self._data ~= nil)
@@ -71,14 +56,30 @@ function ImageLabelItemRenderer:_updateImage()
         if self._imageSize and #self._imageSize == 2 then
             self._image:setSize(unpack(self._imageSize))
         end
+
+        self._image:setPos(5, (self:getHeight() - self._image:getHeight()) / 2)
+    end
+end
+
+---
+-- Update the textLabel.
+function ImageLabelItemRenderer:_updateTextLabel()
+    self._textLabel:setLeft(self._image:getRight())
+    self._textLabel:setSize(self:getWidth() - self._image:getWidth(), self:getHeight())
+    self._textLabel:setVisible(self._data ~= nil)
+
+    if self._data then
+        local text = self._labelField and self._data[self._labelField] or self._data
+        text = type(text) == "string" and text or tostring(text)
+        self._textLabel:setText(text)
     end
 end
 
 ---
 -- Update the Display objects.
 function ImageLabelItemRenderer:updateDisplay()
-    ImageLabelItemRenderer.__super.updateDisplay(self)
     self:_updateImage()
+    ImageLabelItemRenderer.__super.updateDisplay(self)
 end
 
 ---
@@ -96,8 +97,11 @@ end
 -- @param width Width of the image.
 -- @param height Hidth of the image.
 function ImageLabelItemRenderer:setImageSize(width, height)
-    self._imageSize = {width, height}
-    self:invalidateDisplay()
+    local oldW, oldH = self._imageSize and unpack(self._imageSize)
+    if oldW ~= width or oldH ~= height then
+        self._imageSize = {width, height}
+        self:invalidateDisplay()
+    end
 end
 
 return ImageLabelItemRenderer

@@ -31,9 +31,12 @@ local SheetImage = class(DisplayObject)
 function SheetImage:init(texture, sizeX, sizeY, spacing, margin, flipX, flipY)
     SheetImage.__super.init(self)
 
-    self:setTexture(texture)
     self.sheetSize = 0
     self.sheetNames = {}
+
+    if texture then
+        self:setTexture(texture)
+    end
 
     if sizeX and sizeY then
         self:setSheetSize(sizeX, sizeY, spacing, margin, flipX, flipY)

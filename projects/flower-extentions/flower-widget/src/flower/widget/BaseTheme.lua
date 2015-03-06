@@ -178,10 +178,11 @@ local BaseTheme = {
     },
     ImageLabelItemRenderer = {
         parentStyle = "LabelItemRenderer",
-        layoutPadding = {5, 0, 5, 0},
     },
-    ImageItemRenderer = {
-        parentStyle = "BaseItemRenderer",
+    SheetImageLabelItemRenderer = {
+        parentStyle = "LabelItemRenderer",
+        sheetTexture = "skins/icons.png",
+        sheetTileSize = {24, 24},
     },
     CheckBoxItemRenderer = {
         parentStyle = "BaseItemRenderer",

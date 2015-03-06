@@ -2,7 +2,7 @@ module(..., package.seeall)
 
 local dataSource = {}
 for i = 1, 100 do
-    table.insert(dataSource, {label = "label" .. i, text = "text" .. i, image = "cathead.png", selected = (i % 3) == 0})
+    table.insert(dataSource, {label = "label" .. i, text = "text" .. i, image = "cathead.png", selected = (i % 3) == 0, sheetIndex = i})
 end
 
 
@@ -16,8 +16,7 @@ function onCreate(e)
         layout = widget.BoxLayout {},
         children = {{
             widget.ListView {
-                size = {320, 150},
-                pos = {5, 5},
+                size = {320, flower.viewHeight / 4},
                 dataSource = {dataSource},
                 itemProperties = {{
                     labelField = "label",
@@ -33,8 +32,7 @@ function onCreate(e)
                 end,
             },
             widget.ListView {
-                size = {320, 150},
-                pos = {5, 5},
+                size = {320, flower.viewHeight / 4},
                 dataSource = {dataSource},
                 columnCount = 2,
                 itemRendererClass = widget.ImageLabelItemRenderer,
@@ -45,14 +43,30 @@ function onCreate(e)
                 }},
             },
             widget.ListView {
-                size = {320, 150},
-                pos = {5, 5},
+                size = {320, flower.viewHeight / 4},
+                dataSource = {dataSource},
+                columnCount = 2,
+                itemRendererClass = widget.SheetImageLabelItemRenderer,
+                itemProperties = {{
+                    labelField = "label",
+                    sheetIndexField = "sheetIndex",
+                }},
+            },
+            widget.ListView {
+                size = {320, flower.viewHeight / 4},
                 dataSource = {dataSource},
                 itemRendererClass = widget.CheckBoxItemRenderer,
                 itemProperties = {{
                     labelField = "label",
                     selectedField = "selected",
                 }},
+                onItemClick = function(e)
+                    for i, item in ipairs(dataSource) do
+                        if item.selected then
+                            print("item " .. i .. " selected")
+                        end
+                    end
+                end,
             },
         }},
 
