@@ -26,8 +26,7 @@ end
 
 ---
 -- 指定した位置が空間座標内に含まれる場合にtrueを返します.
--- @param x X座標
--- @param y Y座標
+-- @param rect Rect.
 -- @return 位置が空間座標内に含まれる場合はtrue
 function DungeonRect:containsByRect(rect)
     return self:contains(rect.x, rect.y)

@@ -22,6 +22,7 @@ local TileObject = class(Group)
 ---
 -- The constructor.
 -- @param tileMap TileMap
+-- @param objectData TileObject data.
 function TileObject:init(tileMap, objectData)
     TileObject.__super.init(self)
     self.tileMap = assert(tileMap)

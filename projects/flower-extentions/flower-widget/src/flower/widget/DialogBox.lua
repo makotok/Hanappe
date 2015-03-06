@@ -307,14 +307,14 @@ function DialogBox:isBusy()
 end
 
 ---
--- Set the type.
--- @param type type
-function DialogBox:setType(typ)
-    self._type = typ
+-- Sets the type.
+-- @param value type
+function DialogBox:setType(value)
+    self._type = value
 end
 
 ---
--- Return the type
+-- Returns the type
 -- @return type
 function DialogBox:getType()
     return self._type
@@ -328,14 +328,14 @@ function DialogBox:setButtons(...)
 end
 
 ---
--- Set the type
+-- Sets the type
 -- @return type
 function DialogBox:getButtons()
     return self._buttons
 end
 
 ---
--- Set the title.
+-- Sets the title.
 -- @param title title
 function DialogBox:setTitle(title)
     self._title = title
@@ -343,14 +343,14 @@ function DialogBox:setTitle(title)
 end
 
 ---
--- Return the title
+-- Returns the title
 -- @return title
 function DialogBox:getTitle()
     return self._title
 end
 
 ---
--- Set the text.
+-- Sets the text.
 -- @param text text
 function DialogBox:setText(text)
     self._text = text
@@ -358,7 +358,7 @@ function DialogBox:setText(text)
 end
 
 ---
--- Return the text.
+-- Returns the text.
 -- @return text
 function DialogBox:getText()
     return self._text
@@ -376,7 +376,7 @@ function DialogBox:setTextColor(r, g, b, a)
 end
 
 ---
--- Set the size of the text.
+-- Sets the size of the text.
 -- @param points points
 function DialogBox:setTextSize(points)
     self:setStyle(DialogBox.STYLE_TEXT_SIZE, points)
@@ -384,21 +384,21 @@ function DialogBox:setTextSize(points)
 end
 
 ---
--- Set the event listener was called to display a message box.
+-- Sets the event listener was called to display a message box.
 -- @param func event listener
 function DialogBox:setOnShow(func)
     self:setEventListener(DialogBox.EVENT_SHOW, func)
 end
 
 ---
--- Set the event listener was called to hide a message box.
+-- Sets the event listener was called to hide a message box.
 -- @param func event listener
 function DialogBox:setOnHide(func)
     self:setEventListener(DialogBox.EVENT_HIDE, func)
 end
 
 ---
--- Set the event listener was called to end a message box.
+-- Sets the event listener was called to end a message box.
 -- @param func event listener
 function DialogBox:setOnResult(func)
     self:setEventListener(DialogBox.EVENT_RESULT, func)

@@ -152,8 +152,8 @@ end
 
 ---
 -- Return the Deck for displaying Spine Atlas page
--- @param atlasData lua table with data for current atlas page
--- @return Texture atlas deck
+-- @param atlasPageData lua table with data for current atlas page
+-- @param scale scale
 function AtlasMgr:getSpineAtlasDeck(atlasPageData, scale)
     local key = atlasPageData.texturePath .. "$" .. scale
     local cache = DeckMgr.atlasDecks
@@ -166,8 +166,8 @@ end
 
 ---
 -- Create the Deck for displaying one Spine Atlas page
--- @param atlasData lua table with region data for current atlas page
--- @return Texture atlas deck
+-- @param atlasPage lua table with region data for current atlas page
+-- @param scale scale
 function AtlasMgr:createSpineAtlasDeck(atlasPage, scale)
     local frames = atlasPage.regions
     local totalFrames = SpineUtils.length(frames)

@@ -171,7 +171,7 @@ end
 ---
 -- Sets the size policy of label.
 -- @param widthPolicy width policy
--- @param widthPolicy height policy
+-- @param heightPolicy height policy
 function UILabel:setTextResizePolicy(widthPolicy, heightPolicy)
     local oldWidthPolicy, oldHeightPolicy = self:getTextResizePolicy()
     if oldWidthPolicy ~= widthPolicy or oldHeightPolicy ~= heightPolicy then

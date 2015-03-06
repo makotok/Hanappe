@@ -247,8 +247,8 @@ function ListView:setItemRendererClass(clazz)
 end
 
 ---
--- Sets the ItemRenderer class.
--- @param clazz ItemRenderer class
+-- Sets the ItemRenderer properties.
+-- @param properties ItemRenderer properties
 function ListView:setItemProperties(properties)
     if self._itemProperties ~= properties then
         self._itemProperties = properties

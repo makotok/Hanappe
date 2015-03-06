@@ -33,6 +33,7 @@
 <h2>Contents</h2>
 <ul>
 <li><a href="#Functions">Functions</a></li>
+<li><a href="#Fields">Fields</a></li>
 </ul>
 
 
@@ -102,7 +103,7 @@
   <li><a href="../modules/flower.math.html">flower.math</a></li>
   <li><a href="../modules/flower.spine.html">flower.spine</a></li>
   <li><a href="../modules/flower.spine.Animation.html">flower.spine.Animation</a></li>
-  <li><strong>flower.spine.AtlasMgr</strong></li>
+  <li><a href="../modules/flower.spine.AtlasMgr.html">flower.spine.AtlasMgr</a></li>
   <li><a href="../modules/flower.spine.Attachment.html">flower.spine.Attachment</a></li>
   <li><a href="../modules/flower.spine.Bone.html">flower.spine.Bone</a></li>
   <li><a href="../modules/flower.spine.Skeleton.html">flower.spine.Skeleton</a></li>
@@ -163,7 +164,7 @@
   <li><a href="../modules/flower.widget.ScrollGroup.html">flower.widget.ScrollGroup</a></li>
   <li><a href="../modules/flower.widget.ScrollView.html">flower.widget.ScrollView</a></li>
   <li><a href="../modules/flower.widget.SheetButton.html">flower.widget.SheetButton</a></li>
-  <li><a href="../modules/flower.widget.SheetImageLabelItemRenderer.html">flower.widget.SheetImageLabelItemRenderer</a></li>
+  <li><strong>flower.widget.SheetImageLabelItemRenderer</strong></li>
   <li><a href="../modules/flower.widget.Slider.html">flower.widget.Slider</a></li>
   <li><a href="../modules/flower.widget.Spacer.html">flower.widget.Spacer</a></li>
   <li><a href="../modules/flower.widget.TextAlign.html">flower.widget.TextAlign</a></li>
@@ -184,38 +185,73 @@
 
 <div id="content">
 
-<h1>Module <code>flower.spine.AtlasMgr</code></h1>
+<h1>Module <code>flower.widget.SheetImageLabelItemRenderer</code></h1>
 
-<p>Read Spine atlas files</p>
+<p>This is the base class of the item renderer.</p>
 <p></p>
     <h3>Info:</h3>
     <ul>
-        <li><strong>Release</strong>: V1.0</li>
-        <li><strong>Author</strong>: Vavius</li>
+        <li><strong>Release</strong>: V3.0.0</li>
+        <li><strong>Author</strong>: Makoto</li>
     </ul>
 
 
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#AtlasMgr:parseLine">AtlasMgr:parseLine&nbsp;(data, line)</a></td>
-	<td class="summary">Parse one line in spine atlas file into lua table</td>
+	<td class="name" nowrap><a href="#SheetImageLabelItemRenderer:_initInternal">SheetImageLabelItemRenderer:_initInternal&nbsp;()</a></td>
+	<td class="summary">Initialize a variables</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#AtlasMgr:load">AtlasMgr:load&nbsp;(atlas)</a></td>
-	<td class="summary">Parse spine atlas file.</td>
+	<td class="name" nowrap><a href="#SheetImageLabelItemRenderer:_createRenderers">SheetImageLabelItemRenderer:_createRenderers&nbsp;()</a></td>
+	<td class="summary">Create the renderer objects.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#AtlasMgr:getAttachmentDeckAndIndex">AtlasMgr:getAttachmentDeckAndIndex&nbsp;(attachmentName, atlasName, scale)</a></td>
-	<td class="summary">Return deck and index for displaying attachment</td>
+	<td class="name" nowrap><a href="#SheetImageLabelItemRenderer:_createImage">SheetImageLabelItemRenderer:_createImage&nbsp;()</a></td>
+	<td class="summary">Create the image.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#AtlasMgr:getSpineAtlasDeck">AtlasMgr:getSpineAtlasDeck&nbsp;(atlasPageData, scale)</a></td>
-	<td class="summary">Return the Deck for displaying Spine Atlas page</td>
+	<td class="name" nowrap><a href="#SheetImageLabelItemRenderer:_updateImage">SheetImageLabelItemRenderer:_updateImage&nbsp;()</a></td>
+	<td class="summary">Update the image.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#AtlasMgr:createSpineAtlasDeck">AtlasMgr:createSpineAtlasDeck&nbsp;(atlasPage, scale)</a></td>
-	<td class="summary">Create the Deck for displaying one Spine Atlas page</td>
+	<td class="name" nowrap><a href="#SheetImageLabelItemRenderer:_updateTextLabel">SheetImageLabelItemRenderer:_updateTextLabel&nbsp;()</a></td>
+	<td class="summary">Update the textLabel.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#SheetImageLabelItemRenderer:updateDisplay">SheetImageLabelItemRenderer:updateDisplay&nbsp;()</a></td>
+	<td class="summary">Update the Display objects.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#SheetImageLabelItemRenderer:setSheetTexture">SheetImageLabelItemRenderer:setSheetTexture&nbsp;(sheetTexture)</a></td>
+	<td class="summary">Sets the texture of the sheet.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#SheetImageLabelItemRenderer:getSheetTexture">SheetImageLabelItemRenderer:getSheetTexture&nbsp;()</a></td>
+	<td class="summary">Returns the sheet texture.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#SheetImageLabelItemRenderer:setSheetIndexField">SheetImageLabelItemRenderer:setSheetIndexField&nbsp;(sheetIndexField)</a></td>
+	<td class="summary">Sets the index field of the sheet.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#SheetImageLabelItemRenderer:setSheetTileSize">SheetImageLabelItemRenderer:setSheetTileSize&nbsp;(width, height)</a></td>
+	<td class="summary">Sets the size of the sheet.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#SheetImageLabelItemRenderer:getSheetTileSize">SheetImageLabelItemRenderer:getSheetTileSize&nbsp;()</a></td>
+	<td class="summary">Sets the size of the sheet.</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_SHEET_TEXTURE">STYLE_SHEET_TEXTURE</a></td>
+	<td class="summary">Style: sheetTexture</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_SHEET_TILE_SIZE">STYLE_SHEET_TILE_SIZE</a></td>
+	<td class="summary">Style: sheetTileSize</td>
 	</tr>
 </table>
 
@@ -227,18 +263,94 @@
 
     <dl class="function">
     <dt>
-    <a name = "AtlasMgr:parseLine"></a>
-    <strong>AtlasMgr:parseLine&nbsp;(data, line)</strong>
+    <a name = "SheetImageLabelItemRenderer:_initInternal"></a>
+    <strong>SheetImageLabelItemRenderer:_initInternal&nbsp;()</strong>
     </dt>
     <dd>
-    Parse one line in spine atlas file into lua table
+    Initialize a variables
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SheetImageLabelItemRenderer:_createRenderers"></a>
+    <strong>SheetImageLabelItemRenderer:_createRenderers&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create the renderer objects.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SheetImageLabelItemRenderer:_createImage"></a>
+    <strong>SheetImageLabelItemRenderer:_createImage&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create the image.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SheetImageLabelItemRenderer:_updateImage"></a>
+    <strong>SheetImageLabelItemRenderer:_updateImage&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the image.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SheetImageLabelItemRenderer:_updateTextLabel"></a>
+    <strong>SheetImageLabelItemRenderer:_updateTextLabel&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the textLabel.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SheetImageLabelItemRenderer:updateDisplay"></a>
+    <strong>SheetImageLabelItemRenderer:updateDisplay&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the Display objects.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "SheetImageLabelItemRenderer:setSheetTexture"></a>
+    <strong>SheetImageLabelItemRenderer:setSheetTexture&nbsp;(sheetTexture)</strong>
+    </dt>
+    <dd>
+    Sets the texture of the sheet.
 
     <h3>Parameters:</h3>
     <ul>
-      <li><span class="parameter">data</span>
-       output table</li>
-      <li><span class="parameter">line</span>
-       input line</li>
+      <li><span class="parameter">sheetTexture</span>
+       texture.</li>
     </ul>
 
 
@@ -247,22 +359,17 @@
 
 </dd>
     <dt>
-    <a name = "AtlasMgr:load"></a>
-    <strong>AtlasMgr:load&nbsp;(atlas)</strong>
+    <a name = "SheetImageLabelItemRenderer:getSheetTexture"></a>
+    <strong>SheetImageLabelItemRenderer:getSheetTexture&nbsp;()</strong>
     </dt>
     <dd>
-    Parse spine atlas file.  Internall use
+    Returns the sheet texture.
 
-    <h3>Parameters:</h3>
-    <ul>
-      <li><span class="parameter">atlas</span>
-       full path to spine atlas file</li>
-    </ul>
 
     <h3>Returns:</h3>
     <ol>
 
-        lua table with atlas data
+        Sheet texture.
     </ol>
 
 
@@ -270,20 +377,16 @@
 
 </dd>
     <dt>
-    <a name = "AtlasMgr:getAttachmentDeckAndIndex"></a>
-    <strong>AtlasMgr:getAttachmentDeckAndIndex&nbsp;(attachmentName, atlasName, scale)</strong>
+    <a name = "SheetImageLabelItemRenderer:setSheetIndexField"></a>
+    <strong>SheetImageLabelItemRenderer:setSheetIndexField&nbsp;(sheetIndexField)</strong>
     </dt>
     <dd>
-    Return deck and index for displaying attachment
+    Sets the index field of the sheet.
 
     <h3>Parameters:</h3>
     <ul>
-      <li><span class="parameter">attachmentName</span>
-       actual attachment name</li>
-      <li><span class="parameter">atlasName</span>
-       attachment will be looked up in this atlas</li>
-      <li><span class="parameter">scale</span>
-       skeleton scale</li>
+      <li><span class="parameter">sheetIndexField</span>
+       field of the sheet.</li>
     </ul>
 
 
@@ -292,18 +395,18 @@
 
 </dd>
     <dt>
-    <a name = "AtlasMgr:getSpineAtlasDeck"></a>
-    <strong>AtlasMgr:getSpineAtlasDeck&nbsp;(atlasPageData, scale)</strong>
+    <a name = "SheetImageLabelItemRenderer:setSheetTileSize"></a>
+    <strong>SheetImageLabelItemRenderer:setSheetTileSize&nbsp;(width, height)</strong>
     </dt>
     <dd>
-    Return the Deck for displaying Spine Atlas page
+    Sets the size of the sheet.
 
     <h3>Parameters:</h3>
     <ul>
-      <li><span class="parameter">atlasPageData</span>
-       lua table with data for current atlas page</li>
-      <li><span class="parameter">scale</span>
-       scale</li>
+      <li><span class="parameter">width</span>
+       Width of the sheet.</li>
+      <li><span class="parameter">height</span>
+       Hidth of the sheet.</li>
     </ul>
 
 
@@ -312,19 +415,49 @@
 
 </dd>
     <dt>
-    <a name = "AtlasMgr:createSpineAtlasDeck"></a>
-    <strong>AtlasMgr:createSpineAtlasDeck&nbsp;(atlasPage, scale)</strong>
+    <a name = "SheetImageLabelItemRenderer:getSheetTileSize"></a>
+    <strong>SheetImageLabelItemRenderer:getSheetTileSize&nbsp;()</strong>
     </dt>
     <dd>
-    Create the Deck for displaying one Spine Atlas page
+    Sets the size of the sheet.
 
-    <h3>Parameters:</h3>
-    <ul>
-      <li><span class="parameter">atlasPage</span>
-       lua table with region data for current atlas page</li>
-      <li><span class="parameter">scale</span>
-       scale</li>
-    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        Width of the sheet.</li>
+        <li>
+        Hidth of the sheet.</li>
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "STYLE_SHEET_TEXTURE"></a>
+    <strong>STYLE_SHEET_TEXTURE</strong>
+    </dt>
+    <dd>
+    Style: sheetTexture
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_SHEET_TILE_SIZE"></a>
+    <strong>STYLE_SHEET_TILE_SIZE</strong>
+    </dt>
+    <dd>
+    Style: sheetTileSize
+
 
 
 

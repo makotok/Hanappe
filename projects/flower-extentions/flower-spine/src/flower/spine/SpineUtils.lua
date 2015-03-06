@@ -5,6 +5,10 @@
 -- class
 local SpineUtils = {}
 
+---
+-- Wraps the angle.
+-- @param angle
+-- @return Wrapped angle.
 function SpineUtils.wrapAngle(angle)
     while angle > 180 do
         angle = angle - 360

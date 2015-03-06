@@ -13,6 +13,8 @@ local UIComponent = require "flower.widget.UIComponent"
 -- class
 local Spacer = class(UIComponent)
 
+---
+-- Initialization is the process of internal variables.
 function Spacer:_initInternal()
     Spacer.__super._initInternal(self)
     self._focusEnabled = false

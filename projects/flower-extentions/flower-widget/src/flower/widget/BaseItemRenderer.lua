@@ -118,7 +118,7 @@ end
 
 ---
 -- Set the host component with the renderer.
--- @param index index of data.
+-- @param component component.
 function BaseItemRenderer:setHostComponent(component)
     if self._hostComponent ~= component then
         self._hostComponent = component
@@ -176,7 +176,7 @@ function BaseItemRenderer:isBottomBorderVisible()
 end
 
 ---
--- Set the pressed
+-- Sets the pressed.
 -- @param pressed pressed
 function BaseItemRenderer:setPressed(pressed)
     if self._pressed ~= pressed then
@@ -186,8 +186,8 @@ function BaseItemRenderer:setPressed(pressed)
 end
 
 ---
--- Set the pressed
--- @param pressed pressed
+-- Sets the selected.
+-- @param selected selected
 function BaseItemRenderer:setSelected(selected)
     if self._selected ~= selected then
         self._selected = selected

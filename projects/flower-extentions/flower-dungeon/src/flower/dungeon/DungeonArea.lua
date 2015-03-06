@@ -1,5 +1,4 @@
 --------------------------------------------------------------------------------
--- @type DungeonArea
 -- ダンジョン内の分割エリアクラスです.
 -- 部屋を生成するためのエリアを定義します.
 --------------------------------------------------------------------------------
@@ -12,6 +11,12 @@ local DungeonRoom = require "flower.dungeon.DungeonRoom"
 -- class
 local DungeonArea = class(DungeonRect)
 
+---
+-- Constructor.
+-- @param x x
+-- @param y y
+-- @param width width
+-- @param height height
 function DungeonArea:init(x, y, width, height)
     DungeonArea.__super.init(self, x, y, width, height)
     self.room = nil

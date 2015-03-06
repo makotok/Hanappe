@@ -164,6 +164,7 @@
   <li><a href="../modules/flower.widget.ScrollGroup.html">flower.widget.ScrollGroup</a></li>
   <li><a href="../modules/flower.widget.ScrollView.html">flower.widget.ScrollView</a></li>
   <li><a href="../modules/flower.widget.SheetButton.html">flower.widget.SheetButton</a></li>
+  <li><a href="../modules/flower.widget.SheetImageLabelItemRenderer.html">flower.widget.SheetImageLabelItemRenderer</a></li>
   <li><a href="../modules/flower.widget.Slider.html">flower.widget.Slider</a></li>
   <li><a href="../modules/flower.widget.Spacer.html">flower.widget.Spacer</a></li>
   <li><a href="../modules/flower.widget.TextAlign.html">flower.widget.TextAlign</a></li>
@@ -242,12 +243,12 @@
 	<td class="summary">Returns in the process whether messages are displayed.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#DialogBox:setType">DialogBox:setType&nbsp;(typ)</a></td>
-	<td class="summary">Set the type.</td>
+	<td class="name" nowrap><a href="#DialogBox:setType">DialogBox:setType&nbsp;(value)</a></td>
+	<td class="summary">Sets the type.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#DialogBox:getType">DialogBox:getType&nbsp;()</a></td>
-	<td class="summary">Return the type</td>
+	<td class="summary">Returns the type</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#DialogBox:setButtons">DialogBox:setButtons&nbsp;(...)</a></td>
@@ -255,23 +256,23 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#DialogBox:getButtons">DialogBox:getButtons&nbsp;()</a></td>
-	<td class="summary">Set the type</td>
+	<td class="summary">Sets the type</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#DialogBox:setTitle">DialogBox:setTitle&nbsp;(title)</a></td>
-	<td class="summary">Set the title.</td>
+	<td class="summary">Sets the title.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#DialogBox:getTitle">DialogBox:getTitle&nbsp;()</a></td>
-	<td class="summary">Return the title</td>
+	<td class="summary">Returns the title</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#DialogBox:setText">DialogBox:setText&nbsp;(text)</a></td>
-	<td class="summary">Set the text.</td>
+	<td class="summary">Sets the text.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#DialogBox:getText">DialogBox:getText&nbsp;()</a></td>
-	<td class="summary">Return the text.</td>
+	<td class="summary">Returns the text.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#DialogBox:setTextColor">DialogBox:setTextColor&nbsp;(r, g, b, a)</a></td>
@@ -279,19 +280,19 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#DialogBox:setTextSize">DialogBox:setTextSize&nbsp;(points)</a></td>
-	<td class="summary">Set the size of the text.</td>
+	<td class="summary">Sets the size of the text.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#DialogBox:setOnShow">DialogBox:setOnShow&nbsp;(func)</a></td>
-	<td class="summary">Set the event listener was called to display a message box.</td>
+	<td class="summary">Sets the event listener was called to display a message box.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#DialogBox:setOnHide">DialogBox:setOnHide&nbsp;(func)</a></td>
-	<td class="summary">Set the event listener was called to hide a message box.</td>
+	<td class="summary">Sets the event listener was called to hide a message box.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#DialogBox:setOnResult">DialogBox:setOnResult&nbsp;(func)</a></td>
-	<td class="summary">Set the event listener was called to end a message box.</td>
+	<td class="summary">Sets the event listener was called to end a message box.</td>
 	</tr>
 </table>
 <h2><a href="#Fields">Fields</a></h2>
@@ -545,14 +546,14 @@
 </dd>
     <dt>
     <a name = "DialogBox:setType"></a>
-    <strong>DialogBox:setType&nbsp;(typ)</strong>
+    <strong>DialogBox:setType&nbsp;(value)</strong>
     </dt>
     <dd>
-    Set the type.
+    Sets the type.
 
     <h3>Parameters:</h3>
     <ul>
-      <li><span class="parameter">typ</span>
+      <li><span class="parameter">value</span>
        type</li>
     </ul>
 
@@ -566,7 +567,7 @@
     <strong>DialogBox:getType&nbsp;()</strong>
     </dt>
     <dd>
-    Return the type
+    Returns the type
 
 
     <h3>Returns:</h3>
@@ -602,7 +603,7 @@
     <strong>DialogBox:getButtons&nbsp;()</strong>
     </dt>
     <dd>
-    Set the type
+    Sets the type
 
 
     <h3>Returns:</h3>
@@ -620,7 +621,7 @@
     <strong>DialogBox:setTitle&nbsp;(title)</strong>
     </dt>
     <dd>
-    Set the title.
+    Sets the title.
 
     <h3>Parameters:</h3>
     <ul>
@@ -638,7 +639,7 @@
     <strong>DialogBox:getTitle&nbsp;()</strong>
     </dt>
     <dd>
-    Return the title
+    Returns the title
 
 
     <h3>Returns:</h3>
@@ -656,7 +657,7 @@
     <strong>DialogBox:setText&nbsp;(text)</strong>
     </dt>
     <dd>
-    Set the text.
+    Sets the text.
 
     <h3>Parameters:</h3>
     <ul>
@@ -674,7 +675,7 @@
     <strong>DialogBox:getText&nbsp;()</strong>
     </dt>
     <dd>
-    Return the text.
+    Returns the text.
 
 
     <h3>Returns:</h3>
@@ -716,7 +717,7 @@
     <strong>DialogBox:setTextSize&nbsp;(points)</strong>
     </dt>
     <dd>
-    Set the size of the text.
+    Sets the size of the text.
 
     <h3>Parameters:</h3>
     <ul>
@@ -734,7 +735,7 @@
     <strong>DialogBox:setOnShow&nbsp;(func)</strong>
     </dt>
     <dd>
-    Set the event listener was called to display a message box.
+    Sets the event listener was called to display a message box.
 
     <h3>Parameters:</h3>
     <ul>
@@ -752,7 +753,7 @@
     <strong>DialogBox:setOnHide&nbsp;(func)</strong>
     </dt>
     <dd>
-    Set the event listener was called to hide a message box.
+    Sets the event listener was called to hide a message box.
 
     <h3>Parameters:</h3>
     <ul>
@@ -770,7 +771,7 @@
     <strong>DialogBox:setOnResult&nbsp;(func)</strong>
     </dt>
     <dd>
-    Set the event listener was called to end a message box.
+    Sets the event listener was called to end a message box.
 
     <h3>Parameters:</h3>
     <ul>

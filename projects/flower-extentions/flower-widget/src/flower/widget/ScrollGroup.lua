@@ -549,7 +549,7 @@ end
 
 ---
 -- Returns whether the input position is out of bounds.
--- @param left The x position
+-- @param top The y position
 -- @return boolean
 function ScrollGroup:isPositionOutOfVertical(top)
     local minX, minY, maxX, maxY = self:getScrollBounds()
