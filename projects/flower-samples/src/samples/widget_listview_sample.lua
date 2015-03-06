@@ -61,11 +61,13 @@ function onCreate(e)
                     selectedField = "selected",
                 }},
                 onItemClick = function(e)
+                    local itemNames = ""
                     for i, item in ipairs(dataSource) do
                         if item.selected then
-                            print("item " .. i .. " selected")
+                            itemNames = itemNames .. item.label .. ","
                         end
                     end
+                    print("Selected " .. itemNames)
                 end,
             },
         }},
