@@ -1,16 +1,13 @@
-## Introduction
-It is a module that extends the Flower Library.
-
-## Tiled
+# Flower Tiled
 A library for using Tiled Map Editor.(Support Version: 0.9.0)
 
 http://www.mapeditor.org/
 
-### Usage
+## Usage
 It is the simplest way.
 
 ```Lua
-tiled = require "tiled"
+tiled = require "flower.tiled"
 
 function onCreate(e)
     layer = flower.Layer()
@@ -23,15 +20,15 @@ function onCreate(e)
 end
 ```
 
-### Isometric
+## Isometric
 It is possible to use Isometric.
 
-### Performance
+## Performance
 Designed to reduce the drawing.
 
 When using a single tileset, and perform only once drawn.
 
-### Scalability
+## Scalability
 Design for easy expansion.
 
 Easy to inherited class, switching is simple.

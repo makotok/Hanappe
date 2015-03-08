@@ -1,10 +1,7 @@
-## Introduction
-It is a module that extends the Flower Library.
-
-## Widget
+# Widget
 Widget library that can be used for simple.
 
-### Usage
+## Usage
 Example of some components are as follows.
 
 ```Lua

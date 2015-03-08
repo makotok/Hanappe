@@ -1,21 +1,18 @@
-# Flower Library
+# Audio
+Audio library that can be used for simple.
 
-## Introduction
-Flower is a simple, lightweight library for MoaiSDK.
+### Usage
 
-http://getmoai.com/
+```Lua
+audio = require "flower.audio"
+audio.init()
 
-## Feature
-MoaiSDK is powerful.
-However, there are many little cumbersome.  
+--- play sound
+audio.play("sample_sound.wav")
 
-You will be easily able to use the Flower.
+-- pause sound
+audio.pause("sample_sound.wav")
 
-* To simplify the coding
-* There is only one file
-* Based object-oriented
-* High performance
-* Can mix standard code MoaiSDK
-
-## Docs
-Please refer to the [Wiki](https://github.com/makotok/Hanappe/wiki/Flower-Library).
+-- stop sound
+audio.stop("sample_sound.wav")
+```
