@@ -1,4 +1,25 @@
 # Release notes
+## Version 3.0.0 (Update: 2015/03/09)
+
+### Test Version
+Moai SDK Release 1.5.2
+Moai SDK Develop 1.6
+
+### Flower Library
+In preparation for future modifications, was refactoring the internal structure.
+The previous version is not part compatibility.
+
+* Split files of the library.
+* For config.lua file, there is no compatibility.
+* Add some widgets.
+ * DialogBox
+ * UILabel
+* Add ItemRenderer class for the ListView.
+ * ImageLabelItemRenderer
+ * SheetImageLabelItemRenderer
+ * CheckBoxItemRenderer
+* Improved performance problems caused by LayoutMgr.
+
 ## Version 2.2.0 (Update: 2015/02/04)
 
 ### Test Version
@@ -9,7 +30,7 @@ Moai SDK Develop 1.6
 
 * Improved to work with V1.6 develop.
 * Add more components to the widget library.
-(ScrollView,ScrollGroup,ListView,PanelView,)
+(ScrollView,ScrollGroup,ListView,PanelView)
 
 ## Version 2.1.4 (Update: 2014/03/16)
 

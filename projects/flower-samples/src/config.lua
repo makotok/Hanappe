@@ -91,4 +91,4 @@ flower.Logger.LOG_LEVELS.TRACE = true
 -- Start performance log
 flower.DebugUtils.startPerformanceLog()
 
-return M
+return Config

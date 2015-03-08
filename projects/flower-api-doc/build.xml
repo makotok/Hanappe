@@ -3,7 +3,7 @@
   <!-- Library setting -->
   <property name="flower.prj.dir" value=".."/>
   <property name="flower.lib.dir" value="${flower.prj.dir}/flower-library"/>
-  <property name="flower.ext.dir" value="${flower.prj.dir}/flower-extentions"/>
+  <property name="flower.ext.dir" value="${flower.prj.dir}/flower-extensions"/>
   <property name="flower.audio.dir" value="${flower.ext.dir}/flower-audio"/>
   <property name="flower.dungeon.dir" value="${flower.ext.dir}/flower-dungeon"/>
   <property name="flower.fsm.dir" value="${flower.ext.dir}/flower-fsm"/>
