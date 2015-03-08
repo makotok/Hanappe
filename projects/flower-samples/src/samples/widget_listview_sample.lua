@@ -16,7 +16,7 @@ function onCreate(e)
         layout = widget.BoxLayout {},
         children = {{
             widget.ListView {
-                size = {320, flower.viewHeight / 4},
+                size = {flower.viewWidth, flower.viewHeight / 4},
                 dataSource = {dataSource},
                 itemProperties = {{
                     labelField = "label",
@@ -32,7 +32,7 @@ function onCreate(e)
                 end,
             },
             widget.ListView {
-                size = {320, flower.viewHeight / 4},
+                size = {flower.viewWidth, flower.viewHeight / 4},
                 dataSource = {dataSource},
                 columnCount = 2,
                 itemRendererClass = widget.ImageLabelItemRenderer,
@@ -43,7 +43,7 @@ function onCreate(e)
                 }},
             },
             widget.ListView {
-                size = {320, flower.viewHeight / 4},
+                size = {flower.viewWidth, flower.viewHeight / 4},
                 dataSource = {dataSource},
                 columnCount = 2,
                 itemRendererClass = widget.SheetImageLabelItemRenderer,
@@ -53,7 +53,7 @@ function onCreate(e)
                 }},
             },
             widget.ListView {
-                size = {320, flower.viewHeight / 4},
+                size = {flower.viewWidth, flower.viewHeight / 4},
                 dataSource = {dataSource},
                 itemRendererClass = widget.CheckBoxItemRenderer,
                 itemProperties = {{
