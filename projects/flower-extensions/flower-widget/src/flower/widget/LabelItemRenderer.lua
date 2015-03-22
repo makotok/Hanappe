@@ -1,6 +1,11 @@
 ----------------------------------------------------------------------------------------------------
 -- Item renderer to display the label.
 --
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.widget.BaseItemRenderer.html">BaseItemRenderer</a><l/i>
+-- </ul>
+--
 -- @author Makoto
 -- @release V3.0.0
 ----------------------------------------------------------------------------------------------------

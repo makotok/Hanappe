@@ -65,13 +65,6 @@ function widget.getLayoutMgr()
     return widget.LayoutMgr.getInstance()
 end
 
----
--- Return the singlton instance of IconMgr.
--- @return IconMgr
-function widget.getIconMgr()
-    return widget.IconMgr.getInstance()
-end
-
 ----------------------------------------------------------------------------------------------------
 -- Classes
 -- @section Classes
@@ -96,11 +89,6 @@ widget.FocusMgr = require "flower.widget.FocusMgr"
 -- LayoutMgr Class.
 -- @see flower.widget.LayoutMgr
 widget.LayoutMgr = require "flower.widget.LayoutMgr"
-
----
--- IconMgr Class.
--- @see flower.widget.IconMgr
-widget.IconMgr = require "flower.widget.IconMgr"
 
 ---
 -- TextAlign Class.

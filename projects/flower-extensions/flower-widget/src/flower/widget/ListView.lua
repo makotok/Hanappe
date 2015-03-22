@@ -2,6 +2,12 @@
 -- List view class.
 --
 -- TODO: create an object only display range
+--
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.widget.PanelView.html">PanelView</a><l/i>
+-- </ul>
+--
 -- @author Makoto
 -- @release V3.0.0
 ----------------------------------------------------------------------------------------------------

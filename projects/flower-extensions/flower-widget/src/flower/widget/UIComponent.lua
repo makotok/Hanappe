@@ -2,6 +2,11 @@
 -- The base class for all components.
 -- Provide the basic operation of the component.
 --
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.Group.html">Group</a><l/i>
+-- </ul>
+--
 -- @author Makoto
 -- @release V3.0.0
 ----------------------------------------------------------------------------------------------------

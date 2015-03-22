@@ -2,6 +2,11 @@
 -- It is a class that displays multiple items.
 -- You can choose to scroll through the items.
 --
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.widget.Panel.html">Panel</a><l/i>
+-- </ul>
+--
 -- @author Makoto
 -- @release V3.0.0
 ----------------------------------------------------------------------------------------------------

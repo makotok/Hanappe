@@ -2,6 +2,11 @@
 -- This is a view class that displays the component.
 -- Widgets to the root class view.
 --
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.widget.UIGroup.html">UIGroup</a><l/i>
+-- </ul>
+--
 -- @author Makoto
 -- @release V3.0.0
 ----------------------------------------------------------------------------------------------------

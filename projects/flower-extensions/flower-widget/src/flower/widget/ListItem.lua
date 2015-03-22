@@ -2,6 +2,11 @@
 -- It is the item class ListBox.
 -- Used from the ListBox.
 --
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.widget.TextBox.html">TextBox</a><l/i>
+-- </ul>
+--
 -- @author Makoto
 -- @release V3.0.0
 ----------------------------------------------------------------------------------------------------

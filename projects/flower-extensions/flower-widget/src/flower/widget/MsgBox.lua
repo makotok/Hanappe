@@ -2,6 +2,11 @@
 -- It is a class that displays the message.
 -- Displays the next page of the message when selected.
 --
+-- <h4>Extends:</h4>
+-- <ul>
+--   <li><a href="flower.widget.TextBox.html">TextBox</a><l/i>
+-- </ul>
+--
 -- @author Makoto
 -- @release V3.0.0
 ----------------------------------------------------------------------------------------------------
