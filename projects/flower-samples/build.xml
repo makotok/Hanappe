@@ -1,10 +1,26 @@
 <project name="example" default="build" basedir=".">
 
-  <!-- Setting -->
-  <property name="flower.lib.dir" value="../flower-library"/>
+  <!-- Library setting -->
+  <property name="flower.prj.dir" value=".."/>
+  <property name="flower.lib.dir" value="${flower.prj.dir}/flower-library"/>
+  <property name="flower.ext.dir" value="${flower.prj.dir}/flower-extensions"/>
+  <property name="flower.audio.dir" value="${flower.ext.dir}/flower-audio"/>
+  <property name="flower.dungeon.dir" value="${flower.ext.dir}/flower-dungeon"/>
+  <property name="flower.fsm.dir" value="${flower.ext.dir}/flower-fsm"/>
+  <property name="flower.spine.dir" value="${flower.ext.dir}/flower-spine"/>
+  <property name="flower.tasker.dir" value="${flower.ext.dir}/flower-tasker"/>
+  <property name="flower.tiled.dir" value="${flower.ext.dir}/flower-tiled"/>
+  <property name="flower.widget.dir" value="${flower.ext.dir}/flower-widget"/>
+
+  <!-- Output Setting -->
   <property name="bin.dir" value="./bin"/>
   
   <!-- Targets -->
+
+  <!-- Build -->
+  <target name="build" depends="clean,copy-flower,copy-audio,copy-dungeon,copy-fsm,copy-spine,copy-tasker,copy-tiled,copy-widget,copy-project">
+  </target>
+
   <!-- Clean -->
   <target name="clean">
     <mkdir dir="${bin.dir}"/>
@@ -13,15 +29,76 @@
     </delete>
   </target>
   
-  <!-- Build -->
-  <target name="build" depends="clean">
+  <!-- Copy project -->
+  <target name="copy-project">
+    <copy todir="${bin.dir}" overwrite="true">
+      <fileset dir="./assets"/>
+      <fileset dir="./src"/>
+    </copy>
+  </target>
+
+  <!-- Copy flower -->
+  <target name="copy-flower">
     <copy todir="${bin.dir}" overwrite="true">
       <fileset dir="${flower.lib.dir}/assets"/>
       <fileset dir="${flower.lib.dir}/src"/>
     </copy>
+  </target>
+
+  <!-- Copy flower audio -->
+  <target name="copy-audio">
     <copy todir="${bin.dir}" overwrite="true">
-      <fileset dir="assets"/>
-      <fileset dir="src"/>
+      <fileset dir="${flower.audio.dir}/assets"/>
+      <fileset dir="${flower.audio.dir}/src"/>
     </copy>
   </target>
+
+  <!-- Copy flower dungeon -->
+  <target name="copy-dungeon">
+    <copy todir="${bin.dir}" overwrite="true">
+      <fileset dir="${flower.dungeon.dir}/assets"/>
+      <fileset dir="${flower.dungeon.dir}/src"/>
+    </copy>
+  </target>
+
+  <!-- Copy flower fsm -->
+  <target name="copy-fsm">
+    <copy todir="${bin.dir}" overwrite="true">
+      <fileset dir="${flower.fsm.dir}/assets"/>
+      <fileset dir="${flower.fsm.dir}/src"/>
+    </copy>
+  </target>
+
+  <!-- Copy flower spine -->
+  <target name="copy-spine">
+    <copy todir="${bin.dir}" overwrite="true">
+      <fileset dir="${flower.spine.dir}/assets"/>
+      <fileset dir="${flower.spine.dir}/src"/>
+    </copy>
+  </target>
+
+  <!-- Copy flower tasker -->
+  <target name="copy-tasker">
+    <copy todir="${bin.dir}" overwrite="true">
+      <fileset dir="${flower.tasker.dir}/assets"/>
+      <fileset dir="${flower.tasker.dir}/src"/>
+    </copy>
+  </target>
+
+  <!-- Copy flower tiled -->
+  <target name="copy-tiled">
+    <copy todir="${bin.dir}" overwrite="true">
+      <fileset dir="${flower.tiled.dir}/assets"/>
+      <fileset dir="${flower.tiled.dir}/src"/>
+    </copy>
+  </target>
+
+  <!-- Copy flower widget -->
+  <target name="copy-widget">
+    <copy todir="${bin.dir}" overwrite="true">
+      <fileset dir="${flower.widget.dir}/assets"/>
+      <fileset dir="${flower.widget.dir}/src"/>
+    </copy>
+  </target>
+
 </project>

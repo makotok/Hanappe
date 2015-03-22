@@ -1,0 +1,1027 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Fields">Fields</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/flower.html">flower</a></li>
+  <li><a href="../modules/flower.Animation.html">flower.Animation</a></li>
+  <li><a href="../modules/flower.BitUtils.html">flower.BitUtils</a></li>
+  <li><a href="../modules/flower.Camera.html">flower.Camera</a></li>
+  <li><a href="../modules/flower.ClassFactory.html">flower.ClassFactory</a></li>
+  <li><a href="../modules/flower.Config.html">flower.Config</a></li>
+  <li><a href="../modules/flower.DebugUtils.html">flower.DebugUtils</a></li>
+  <li><a href="../modules/flower.DeckMgr.html">flower.DeckMgr</a></li>
+  <li><a href="../modules/flower.Devices.html">flower.Devices</a></li>
+  <li><a href="../modules/flower.DisplayObject.html">flower.DisplayObject</a></li>
+  <li><a href="../modules/flower.DrawableObject.html">flower.DrawableObject</a></li>
+  <li><a href="../modules/flower.DrawableRect.html">flower.DrawableRect</a></li>
+  <li><a href="../modules/flower.Event.html">flower.Event</a></li>
+  <li><a href="../modules/flower.EventDispatcher.html">flower.EventDispatcher</a></li>
+  <li><a href="../modules/flower.EventListener.html">flower.EventListener</a></li>
+  <li><a href="../modules/flower.Executors.html">flower.Executors</a></li>
+  <li><a href="../modules/flower.Font.html">flower.Font</a></li>
+  <li><a href="../modules/flower.Graphics.html">flower.Graphics</a></li>
+  <li><a href="../modules/flower.Group.html">flower.Group</a></li>
+  <li><a href="../modules/flower.Image.html">flower.Image</a></li>
+  <li><a href="../modules/flower.InputMgr.html">flower.InputMgr</a></li>
+  <li><a href="../modules/flower.Interceptor.html">flower.Interceptor</a></li>
+  <li><a href="../modules/flower.KeyCode.html">flower.KeyCode</a></li>
+  <li><a href="../modules/flower.Label.html">flower.Label</a></li>
+  <li><a href="../modules/flower.Layer.html">flower.Layer</a></li>
+  <li><a href="../modules/flower.Logger.html">flower.Logger</a></li>
+  <li><a href="../modules/flower.MapImage.html">flower.MapImage</a></li>
+  <li><a href="../modules/flower.MovieClip.html">flower.MovieClip</a></li>
+  <li><a href="../modules/flower.NineImage.html">flower.NineImage</a></li>
+  <li><a href="../modules/flower.Particle.html">flower.Particle</a></li>
+  <li><a href="../modules/flower.PropertyUtils.html">flower.PropertyUtils</a></li>
+  <li><a href="../modules/flower.RenderMgr.html">flower.RenderMgr</a></li>
+  <li><a href="../modules/flower.Resources.html">flower.Resources</a></li>
+  <li><a href="../modules/flower.Runtime.html">flower.Runtime</a></li>
+  <li><a href="../modules/flower.Scene.html">flower.Scene</a></li>
+  <li><a href="../modules/flower.SceneAnimations.html">flower.SceneAnimations</a></li>
+  <li><a href="../modules/flower.SceneMgr.html">flower.SceneMgr</a></li>
+  <li><a href="../modules/flower.SheetImage.html">flower.SheetImage</a></li>
+  <li><a href="../modules/flower.Texture.html">flower.Texture</a></li>
+  <li><a href="../modules/flower.TouchHandler.html">flower.TouchHandler</a></li>
+  <li><a href="../modules/flower.Viewport.html">flower.Viewport</a></li>
+  <li><a href="../modules/flower.Window.html">flower.Window</a></li>
+  <li><a href="../modules/flower.audio.html">flower.audio</a></li>
+  <li><a href="../modules/flower.audio.BaseSoundMgr.html">flower.audio.BaseSoundMgr</a></li>
+  <li><a href="../modules/flower.audio.MockSoundMgr.html">flower.audio.MockSoundMgr</a></li>
+  <li><a href="../modules/flower.audio.UntzSoundMgr.html">flower.audio.UntzSoundMgr</a></li>
+  <li><a href="../modules/flower.class.html">flower.class</a></li>
+  <li><a href="../modules/flower.dungeon.html">flower.dungeon</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonArea.html">flower.dungeon.DungeonArea</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonItem.html">flower.dungeon.DungeonItem</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonMap.html">flower.dungeon.DungeonMap</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonMapGenerator.html">flower.dungeon.DungeonMapGenerator</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonMapView.html">flower.dungeon.DungeonMapView</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonObject.html">flower.dungeon.DungeonObject</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonRect.html">flower.dungeon.DungeonRect</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonRoad.html">flower.dungeon.DungeonRoad</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonRoom.html">flower.dungeon.DungeonRoom</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonTiledGenerator.html">flower.dungeon.DungeonTiledGenerator</a></li>
+  <li><a href="../modules/flower.fsm.html">flower.fsm</a></li>
+  <li><a href="../modules/flower.fsm.State.html">flower.fsm.State</a></li>
+  <li><a href="../modules/flower.fsm.StateMachine.html">flower.fsm.StateMachine</a></li>
+  <li><a href="../modules/flower.math.html">flower.math</a></li>
+  <li><a href="../modules/flower.spine.html">flower.spine</a></li>
+  <li><a href="../modules/flower.spine.Animation.html">flower.spine.Animation</a></li>
+  <li><a href="../modules/flower.spine.AtlasMgr.html">flower.spine.AtlasMgr</a></li>
+  <li><a href="../modules/flower.spine.Attachment.html">flower.spine.Attachment</a></li>
+  <li><a href="../modules/flower.spine.Bone.html">flower.spine.Bone</a></li>
+  <li><a href="../modules/flower.spine.Skeleton.html">flower.spine.Skeleton</a></li>
+  <li><a href="../modules/flower.spine.Slot.html">flower.spine.Slot</a></li>
+  <li><a href="../modules/flower.spine.SpineEvent.html">flower.spine.SpineEvent</a></li>
+  <li><a href="../modules/flower.spine.SpineUtils.html">flower.spine.SpineUtils</a></li>
+  <li><a href="../modules/flower.table.html">flower.table</a></li>
+  <li><a href="../modules/flower.tasker.html">flower.tasker</a></li>
+  <li><a href="../modules/flower.tasker.AbortCommand.html">flower.tasker.AbortCommand</a></li>
+  <li><a href="../modules/flower.tasker.BaseCommand.html">flower.tasker.BaseCommand</a></li>
+  <li><a href="../modules/flower.tasker.CommandEvent.html">flower.tasker.CommandEvent</a></li>
+  <li><a href="../modules/flower.tasker.CommandExecutor.html">flower.tasker.CommandExecutor</a></li>
+  <li><a href="../modules/flower.tasker.CommandGroup.html">flower.tasker.CommandGroup</a></li>
+  <li><a href="../modules/flower.tasker.EchoCommand.html">flower.tasker.EchoCommand</a></li>
+  <li><a href="../modules/flower.tasker.FunctionCommand.html">flower.tasker.FunctionCommand</a></li>
+  <li><a href="../modules/flower.tasker.SetContextCommand.html">flower.tasker.SetContextCommand</a></li>
+  <li><a href="../modules/flower.tasker.Task.html">flower.tasker.Task</a></li>
+  <li><a href="../modules/flower.tasker.TaskContext.html">flower.tasker.TaskContext</a></li>
+  <li><a href="../modules/flower.tasker.TaskEvent.html">flower.tasker.TaskEvent</a></li>
+  <li><a href="../modules/flower.tasker.TaskExecutor.html">flower.tasker.TaskExecutor</a></li>
+  <li><a href="../modules/flower.tasker.TaskMonitor.html">flower.tasker.TaskMonitor</a></li>
+  <li><a href="../modules/flower.tiled.html">flower.tiled</a></li>
+  <li><a href="../modules/flower.tiled.IsometricLayerRenderer.html">flower.tiled.IsometricLayerRenderer</a></li>
+  <li><a href="../modules/flower.tiled.TileFlag.html">flower.tiled.TileFlag</a></li>
+  <li><a href="../modules/flower.tiled.TileLayer.html">flower.tiled.TileLayer</a></li>
+  <li><a href="../modules/flower.tiled.TileLayerRenderer.html">flower.tiled.TileLayerRenderer</a></li>
+  <li><a href="../modules/flower.tiled.TileLayerRendererFactory.html">flower.tiled.TileLayerRendererFactory</a></li>
+  <li><a href="../modules/flower.tiled.TileMap.html">flower.tiled.TileMap</a></li>
+  <li><a href="../modules/flower.tiled.TileMapImage.html">flower.tiled.TileMapImage</a></li>
+  <li><a href="../modules/flower.tiled.TileObject.html">flower.tiled.TileObject</a></li>
+  <li><a href="../modules/flower.tiled.TileObjectGroup.html">flower.tiled.TileObjectGroup</a></li>
+  <li><a href="../modules/flower.tiled.TileObjectRenderer.html">flower.tiled.TileObjectRenderer</a></li>
+  <li><a href="../modules/flower.tiled.TileObjectRendererFactory.html">flower.tiled.TileObjectRendererFactory</a></li>
+  <li><a href="../modules/flower.tiled.TileSheetImage.html">flower.tiled.TileSheetImage</a></li>
+  <li><a href="../modules/flower.tiled.Tileset.html">flower.tiled.Tileset</a></li>
+  <li><a href="../modules/flower.widget.html">flower.widget</a></li>
+  <li><a href="../modules/flower.widget.BaseItemRenderer.html">flower.widget.BaseItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.BaseTheme.html">flower.widget.BaseTheme</a></li>
+  <li><a href="../modules/flower.widget.BoxLayout.html">flower.widget.BoxLayout</a></li>
+  <li><a href="../modules/flower.widget.Button.html">flower.widget.Button</a></li>
+  <li><a href="../modules/flower.widget.CheckBox.html">flower.widget.CheckBox</a></li>
+  <li><a href="../modules/flower.widget.CheckBoxItemRenderer.html">flower.widget.CheckBoxItemRenderer</a></li>
+  <li><strong>flower.widget.DialogBox</strong></li>
+  <li><a href="../modules/flower.widget.FocusMgr.html">flower.widget.FocusMgr</a></li>
+  <li><a href="../modules/flower.widget.ImageButton.html">flower.widget.ImageButton</a></li>
+  <li><a href="../modules/flower.widget.ImageLabelItemRenderer.html">flower.widget.ImageLabelItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.Joystick.html">flower.widget.Joystick</a></li>
+  <li><a href="../modules/flower.widget.LabelItemRenderer.html">flower.widget.LabelItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.LayoutMgr.html">flower.widget.LayoutMgr</a></li>
+  <li><a href="../modules/flower.widget.ListBox.html">flower.widget.ListBox</a></li>
+  <li><a href="../modules/flower.widget.ListItem.html">flower.widget.ListItem</a></li>
+  <li><a href="../modules/flower.widget.ListView.html">flower.widget.ListView</a></li>
+  <li><a href="../modules/flower.widget.ListViewLayout.html">flower.widget.ListViewLayout</a></li>
+  <li><a href="../modules/flower.widget.MsgBox.html">flower.widget.MsgBox</a></li>
+  <li><a href="../modules/flower.widget.Panel.html">flower.widget.Panel</a></li>
+  <li><a href="../modules/flower.widget.PanelView.html">flower.widget.PanelView</a></li>
+  <li><a href="../modules/flower.widget.ScrollGroup.html">flower.widget.ScrollGroup</a></li>
+  <li><a href="../modules/flower.widget.ScrollView.html">flower.widget.ScrollView</a></li>
+  <li><a href="../modules/flower.widget.SheetButton.html">flower.widget.SheetButton</a></li>
+  <li><a href="../modules/flower.widget.SheetImageLabelItemRenderer.html">flower.widget.SheetImageLabelItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.Slider.html">flower.widget.Slider</a></li>
+  <li><a href="../modules/flower.widget.Spacer.html">flower.widget.Spacer</a></li>
+  <li><a href="../modules/flower.widget.TextAlign.html">flower.widget.TextAlign</a></li>
+  <li><a href="../modules/flower.widget.TextBox.html">flower.widget.TextBox</a></li>
+  <li><a href="../modules/flower.widget.TextInput.html">flower.widget.TextInput</a></li>
+  <li><a href="../modules/flower.widget.TextView.html">flower.widget.TextView</a></li>
+  <li><a href="../modules/flower.widget.ThemeMgr.html">flower.widget.ThemeMgr</a></li>
+  <li><a href="../modules/flower.widget.UIComponent.html">flower.widget.UIComponent</a></li>
+  <li><a href="../modules/flower.widget.UIEvent.html">flower.widget.UIEvent</a></li>
+  <li><a href="../modules/flower.widget.UIGroup.html">flower.widget.UIGroup</a></li>
+  <li><a href="../modules/flower.widget.UILabel.html">flower.widget.UILabel</a></li>
+  <li><a href="../modules/flower.widget.UILayer.html">flower.widget.UILayer</a></li>
+  <li><a href="../modules/flower.widget.UILayout.html">flower.widget.UILayout</a></li>
+  <li><a href="../modules/flower.widget.UIView.html">flower.widget.UIView</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>flower.widget.DialogBox</code></h1>
+
+<p>This is the class that displays a message in the panel.</p>
+<p>
+
+ <h4>Extends:</h4>
+ <ul>
+   <li><a href="flower.widget.Panel.html">Panel</a><l/i>
+ </ul>
+</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Release</strong>: V3.0.0</li>
+        <li><strong>Author</strong>: Makoto</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:_initInternal">DialogBox:_initInternal&nbsp;()</a></td>
+	<td class="summary">Initializes the internal variables.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:_createChildren">DialogBox:_createChildren&nbsp;()</a></td>
+	<td class="summary">Create a child objects.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:_createAnimations">DialogBox:_createAnimations&nbsp;()</a></td>
+	<td class="summary">Create a animation objects.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:updateDisplay">DialogBox:updateDisplay&nbsp;()</a></td>
+	<td class="summary">Update the display.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:spoolingEnabled">DialogBox:spoolingEnabled&nbsp;(enable)</a></td>
+	<td class="summary">Turns spooling ON or OFF.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:show">DialogBox:show&nbsp;(scene)</a></td>
+	<td class="summary">Displays a message box in the pop-up effect.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:hide">DialogBox:hide&nbsp;()</a></td>
+	<td class="summary">To hide the message box in the pop-up effect.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:spool">DialogBox:spool&nbsp;()</a></td>
+	<td class="summary">Spools the text.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:nextPage">DialogBox:nextPage&nbsp;()</a></td>
+	<td class="summary">Displays the next page.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:more">DialogBox:more&nbsp;()</a></td>
+	<td class="summary">Returns the next page if exists.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:isBusy">DialogBox:isBusy&nbsp;()</a></td>
+	<td class="summary">Returns in the process whether messages are displayed.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:setType">DialogBox:setType&nbsp;(value)</a></td>
+	<td class="summary">Sets the type.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:getType">DialogBox:getType&nbsp;()</a></td>
+	<td class="summary">Returns the type</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:setButtons">DialogBox:setButtons&nbsp;(...)</a></td>
+	<td class="summary">Sets the Buttons.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:getButtons">DialogBox:getButtons&nbsp;()</a></td>
+	<td class="summary">Sets the type</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:setTitle">DialogBox:setTitle&nbsp;(title)</a></td>
+	<td class="summary">Sets the title.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:getTitle">DialogBox:getTitle&nbsp;()</a></td>
+	<td class="summary">Returns the title</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:setText">DialogBox:setText&nbsp;(text)</a></td>
+	<td class="summary">Sets the text.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:getText">DialogBox:getText&nbsp;()</a></td>
+	<td class="summary">Returns the text.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:setTextColor">DialogBox:setTextColor&nbsp;(r, g, b, a)</a></td>
+	<td class="summary">Sets the color of the text.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:setTextSize">DialogBox:setTextSize&nbsp;(points)</a></td>
+	<td class="summary">Sets the size of the text.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:setOnShow">DialogBox:setOnShow&nbsp;(func)</a></td>
+	<td class="summary">Sets the event listener was called to display a message box.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:setOnHide">DialogBox:setOnHide&nbsp;(func)</a></td>
+	<td class="summary">Sets the event listener was called to hide a message box.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#DialogBox:setOnResult">DialogBox:setOnResult&nbsp;(func)</a></td>
+	<td class="summary">Sets the event listener was called to end a message box.</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_FONT_NAME">STYLE_FONT_NAME</a></td>
+	<td class="summary">Style: fontName</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_TEXT_COLOR">STYLE_TEXT_COLOR</a></td>
+	<td class="summary">Style : textColor</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_TEXT_SIZE">STYLE_TEXT_SIZE</a></td>
+	<td class="summary">Style : textSize</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_BUTTONS_PADDING">STYLE_BUTTONS_PADDING</a></td>
+	<td class="summary">Style : buttonsPadding</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_TITLE_PADDING">STYLE_TITLE_PADDING</a></td>
+	<td class="summary">Style : titlePadding</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_TITLE_COLOR">STYLE_TITLE_COLOR</a></td>
+	<td class="summary">Style : titleColor</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_TITLE_SIZE">STYLE_TITLE_SIZE</a></td>
+	<td class="summary">Style : titleSize</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_TITLE_FONT_NAME">STYLE_TITLE_FONT_NAME</a></td>
+	<td class="summary">Style : titleFontName</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_ICON_PADDING">STYLE_ICON_PADDING</a></td>
+	<td class="summary">Style : iconPadding</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_ICON_SCALE_FACTOR">STYLE_ICON_SCALE_FACTOR</a></td>
+	<td class="summary">Style : iconScaleFactor</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#EVENT_SHOW">EVENT_SHOW</a></td>
+	<td class="summary">Event: show</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#EVENT_HIDE">EVENT_HIDE</a></td>
+	<td class="summary">Event: hide</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#EVENT_RESULT">EVENT_RESULT</a></td>
+	<td class="summary">Event: result</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TYPE_INFO">TYPE_INFO</a></td>
+	<td class="summary">Type : Info</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TYPE_CONFIRM">TYPE_CONFIRM</a></td>
+	<td class="summary">Type : Confirm</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TYPE_WARNING">TYPE_WARNING</a></td>
+	<td class="summary">Type : Warning</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TYPE_ERROR">TYPE_ERROR</a></td>
+	<td class="summary">Type : Error</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "DialogBox:_initInternal"></a>
+    <strong>DialogBox:_initInternal&nbsp;()</strong>
+    </dt>
+    <dd>
+    Initializes the internal variables.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:_createChildren"></a>
+    <strong>DialogBox:_createChildren&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create a child objects.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:_createAnimations"></a>
+    <strong>DialogBox:_createAnimations&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create a animation objects.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:updateDisplay"></a>
+    <strong>DialogBox:updateDisplay&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the display.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:spoolingEnabled"></a>
+    <strong>DialogBox:spoolingEnabled&nbsp;(enable)</strong>
+    </dt>
+    <dd>
+    Turns spooling ON or OFF.
+ If self is currently spooling and enable is false, stop spooling and reveal
+ entire page.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">enable</span>
+       Boolean for new state</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        none
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:show"></a>
+    <strong>DialogBox:show&nbsp;(scene)</strong>
+    </dt>
+    <dd>
+    Displays a message box in the pop-up effect.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">scene</span>
+      </li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:hide"></a>
+    <strong>DialogBox:hide&nbsp;()</strong>
+    </dt>
+    <dd>
+    To hide the message box in the pop-up effect.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:spool"></a>
+    <strong>DialogBox:spool&nbsp;()</strong>
+    </dt>
+    <dd>
+    Spools the text.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:nextPage"></a>
+    <strong>DialogBox:nextPage&nbsp;()</strong>
+    </dt>
+    <dd>
+    Displays the next page.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:more"></a>
+    <strong>DialogBox:more&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the next page if exists.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        If the next page there is a true
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:isBusy"></a>
+    <strong>DialogBox:isBusy&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns in the process whether messages are displayed.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        busy
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:setType"></a>
+    <strong>DialogBox:setType&nbsp;(value)</strong>
+    </dt>
+    <dd>
+    Sets the type.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">value</span>
+       type</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:getType"></a>
+    <strong>DialogBox:getType&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the type
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        type
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:setButtons"></a>
+    <strong>DialogBox:setButtons&nbsp;(...)</strong>
+    </dt>
+    <dd>
+    Sets the Buttons.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">...</span>
+       button</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:getButtons"></a>
+    <strong>DialogBox:getButtons&nbsp;()</strong>
+    </dt>
+    <dd>
+    Sets the type
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        type
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:setTitle"></a>
+    <strong>DialogBox:setTitle&nbsp;(title)</strong>
+    </dt>
+    <dd>
+    Sets the title.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">title</span>
+       title</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:getTitle"></a>
+    <strong>DialogBox:getTitle&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the title
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        title
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:setText"></a>
+    <strong>DialogBox:setText&nbsp;(text)</strong>
+    </dt>
+    <dd>
+    Sets the text.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">text</span>
+       text</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:getText"></a>
+    <strong>DialogBox:getText&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the text.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        text
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:setTextColor"></a>
+    <strong>DialogBox:setTextColor&nbsp;(r, g, b, a)</strong>
+    </dt>
+    <dd>
+    Sets the color of the text.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">r</span>
+       red</li>
+      <li><span class="parameter">g</span>
+       green</li>
+      <li><span class="parameter">b</span>
+       blue</li>
+      <li><span class="parameter">a</span>
+       alpha</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:setTextSize"></a>
+    <strong>DialogBox:setTextSize&nbsp;(points)</strong>
+    </dt>
+    <dd>
+    Sets the size of the text.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">points</span>
+       points</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:setOnShow"></a>
+    <strong>DialogBox:setOnShow&nbsp;(func)</strong>
+    </dt>
+    <dd>
+    Sets the event listener was called to display a message box.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">func</span>
+       event listener</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:setOnHide"></a>
+    <strong>DialogBox:setOnHide&nbsp;(func)</strong>
+    </dt>
+    <dd>
+    Sets the event listener was called to hide a message box.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">func</span>
+       event listener</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "DialogBox:setOnResult"></a>
+    <strong>DialogBox:setOnResult&nbsp;(func)</strong>
+    </dt>
+    <dd>
+    Sets the event listener was called to end a message box.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">func</span>
+       event listener</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "STYLE_FONT_NAME"></a>
+    <strong>STYLE_FONT_NAME</strong>
+    </dt>
+    <dd>
+    Style: fontName
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_TEXT_COLOR"></a>
+    <strong>STYLE_TEXT_COLOR</strong>
+    </dt>
+    <dd>
+    Style : textColor
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_TEXT_SIZE"></a>
+    <strong>STYLE_TEXT_SIZE</strong>
+    </dt>
+    <dd>
+    Style : textSize
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_BUTTONS_PADDING"></a>
+    <strong>STYLE_BUTTONS_PADDING</strong>
+    </dt>
+    <dd>
+    Style : buttonsPadding
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_TITLE_PADDING"></a>
+    <strong>STYLE_TITLE_PADDING</strong>
+    </dt>
+    <dd>
+    Style : titlePadding
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_TITLE_COLOR"></a>
+    <strong>STYLE_TITLE_COLOR</strong>
+    </dt>
+    <dd>
+    Style : titleColor
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_TITLE_SIZE"></a>
+    <strong>STYLE_TITLE_SIZE</strong>
+    </dt>
+    <dd>
+    Style : titleSize
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_TITLE_FONT_NAME"></a>
+    <strong>STYLE_TITLE_FONT_NAME</strong>
+    </dt>
+    <dd>
+    Style : titleFontName
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_ICON_PADDING"></a>
+    <strong>STYLE_ICON_PADDING</strong>
+    </dt>
+    <dd>
+    Style : iconPadding
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_ICON_SCALE_FACTOR"></a>
+    <strong>STYLE_ICON_SCALE_FACTOR</strong>
+    </dt>
+    <dd>
+    Style : iconScaleFactor
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "EVENT_SHOW"></a>
+    <strong>EVENT_SHOW</strong>
+    </dt>
+    <dd>
+    Event: show
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "EVENT_HIDE"></a>
+    <strong>EVENT_HIDE</strong>
+    </dt>
+    <dd>
+    Event: hide
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "EVENT_RESULT"></a>
+    <strong>EVENT_RESULT</strong>
+    </dt>
+    <dd>
+    Event: result
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TYPE_INFO"></a>
+    <strong>TYPE_INFO</strong>
+    </dt>
+    <dd>
+    Type : Info
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TYPE_CONFIRM"></a>
+    <strong>TYPE_CONFIRM</strong>
+    </dt>
+    <dd>
+    Type : Confirm
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TYPE_WARNING"></a>
+    <strong>TYPE_WARNING</strong>
+    </dt>
+    <dd>
+    Type : Warning
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TYPE_ERROR"></a>
+    <strong>TYPE_ERROR</strong>
+    </dt>
+    <dd>
+    Type : Error
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

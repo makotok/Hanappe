@@ -1,8 +1,6 @@
 -- import
 local flower = require "flower"
-
--- module
-local M = {}
+local Config = flower.Config
 
 --------------------------------------------------------------------------------
 -- MOAI SDK
@@ -26,52 +24,62 @@ MOAISim.setBoostThreshold(0)
 -- Resources setting
 flower.Resources.addResourceDirectory("assets")
 
+-- Set the window size
+flower.setDefaultWindowSize("iPhone5", false, false)
+
 -- Set the window title
-flower.DEFAULT_WINDOW_TITLE = "Flower samples"
+Config.WINDOW_TITLE = "Flower samples"
 
--- Set the display size
-flower.setDefaultDisplaySize("iPhone5", false, false)
-
---- default width of the screen
---M.DEFAULT_SCREEN_WIDTH = 320
-
---- default height of the screen
---M.DEFAULT_SCREEN_HEIGHT = 480
-
---- default scale of the viewport
---M.DEFAULT_VIEWPORT_SCALE = 1
-
---- default y behavior; set to true to have y=0 be the bottom of the screen
-flower.DEFAULT_VIEWPORT_YFLIP = false
+-- default y behavior; set to true to have y=0 be the bottom of the screen
+Config.VIEWPORT_YFLIP = false
 
 -- Optional table of arguments for setBlendMode on new images.
 -- Empty table gives default behavior.
-flower.DEFAULT_BLEND_MODE = nil
+Config.BLEND_MODE = nil
 
 -- High quality rendering of Label
 -- When enabled, it may take a long time to display the label.
-flower.Label.HIGH_QUALITY_ENABLED = true
+Config.LABEL_HIGH_QUALITY_ENABLED = true
 
 -- Set the default font
-flower.Font.DEFAULT_FONT = "VL-PGothic.ttf"
+Config.FONT_NAME = "VL-PGothic.ttf"
 
 -- Set the default font charcodes
 -- Optimized by setting the loadable string in advance.
-flower.Font.DEFAULT_CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-"
+Config.FONT_CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789 .,:;!?()&/-"
 
 -- Default font points
-flower.Font.DEFAULT_POINTS = 24
+-- Config.FONT_POINTS = 24
 
 -- Set the texture filter of default
---flower.Texture.DEFAULT_FILTER = MOAITexture.GL_LINEAR
-flower.Texture.DEFAULT_FILTER = MOAITexture.GL_NEAREST
+--Config.TEXTURE_FILTER = MOAITexture.GL_LINEAR
+Config.TEXTURE_FILTER = MOAITexture.GL_NEAREST
 
 -- Setting of the behavior of the InputMgr
 -- Whether to fire a touch event on the desktop environment
-flower.InputMgr.TOUCH_EVENT_ENABLED = true
+Config.TOUCH_EVENT_ENABLED = true
 
 -- Whether to fire a mouse event on the desktop environment
-flower.InputMgr.MOUSE_EVENT_ENABLED = true
+Config.MOUSE_EVENT_ENABLED = true
+
+--------------------------------------------------------------------------------
+-- Logger
+--------------------------------------------------------------------------------
+
+-- info log
+flower.Logger.LOG_LEVELS.INFO = true
+
+-- warn log
+flower.Logger.LOG_LEVELS.WARN = true
+
+-- error log
+flower.Logger.LOG_LEVELS.ERROR = true
+
+-- debug log
+flower.Logger.LOG_LEVELS.DEBUG = true
+
+-- trace log
+flower.Logger.LOG_LEVELS.TRACE = true
 
 --------------------------------------------------------------------------------
 -- Debugging
@@ -83,4 +91,4 @@ flower.InputMgr.MOUSE_EVENT_ENABLED = true
 -- Start performance log
 flower.DebugUtils.startPerformanceLog()
 
-return M
+return Config
