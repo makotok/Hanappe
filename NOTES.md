@@ -1,5 +1,5 @@
 # Release notes
-## Version 3.0.0 (Update: 2015/03/09)
+## Version 3.0.0 (Update: 2015/03/22)
 
 ### Test Version
 Moai SDK Release 1.5.2
