@@ -1,0 +1,908 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Fields">Fields</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/flower.html">flower</a></li>
+  <li><a href="../modules/flower.Animation.html">flower.Animation</a></li>
+  <li><a href="../modules/flower.BitUtils.html">flower.BitUtils</a></li>
+  <li><a href="../modules/flower.Camera.html">flower.Camera</a></li>
+  <li><a href="../modules/flower.ClassFactory.html">flower.ClassFactory</a></li>
+  <li><a href="../modules/flower.Config.html">flower.Config</a></li>
+  <li><a href="../modules/flower.DebugUtils.html">flower.DebugUtils</a></li>
+  <li><a href="../modules/flower.DeckMgr.html">flower.DeckMgr</a></li>
+  <li><a href="../modules/flower.Devices.html">flower.Devices</a></li>
+  <li><a href="../modules/flower.DisplayObject.html">flower.DisplayObject</a></li>
+  <li><a href="../modules/flower.DrawableObject.html">flower.DrawableObject</a></li>
+  <li><a href="../modules/flower.DrawableRect.html">flower.DrawableRect</a></li>
+  <li><a href="../modules/flower.Event.html">flower.Event</a></li>
+  <li><a href="../modules/flower.EventDispatcher.html">flower.EventDispatcher</a></li>
+  <li><a href="../modules/flower.EventListener.html">flower.EventListener</a></li>
+  <li><a href="../modules/flower.Executors.html">flower.Executors</a></li>
+  <li><a href="../modules/flower.Font.html">flower.Font</a></li>
+  <li><a href="../modules/flower.Graphics.html">flower.Graphics</a></li>
+  <li><a href="../modules/flower.Group.html">flower.Group</a></li>
+  <li><a href="../modules/flower.Image.html">flower.Image</a></li>
+  <li><a href="../modules/flower.InputMgr.html">flower.InputMgr</a></li>
+  <li><a href="../modules/flower.Interceptor.html">flower.Interceptor</a></li>
+  <li><a href="../modules/flower.KeyCode.html">flower.KeyCode</a></li>
+  <li><a href="../modules/flower.Label.html">flower.Label</a></li>
+  <li><a href="../modules/flower.Layer.html">flower.Layer</a></li>
+  <li><a href="../modules/flower.Logger.html">flower.Logger</a></li>
+  <li><a href="../modules/flower.MapImage.html">flower.MapImage</a></li>
+  <li><a href="../modules/flower.MovieClip.html">flower.MovieClip</a></li>
+  <li><a href="../modules/flower.NineImage.html">flower.NineImage</a></li>
+  <li><a href="../modules/flower.Particle.html">flower.Particle</a></li>
+  <li><a href="../modules/flower.PropertyUtils.html">flower.PropertyUtils</a></li>
+  <li><a href="../modules/flower.RenderMgr.html">flower.RenderMgr</a></li>
+  <li><a href="../modules/flower.Resources.html">flower.Resources</a></li>
+  <li><a href="../modules/flower.Runtime.html">flower.Runtime</a></li>
+  <li><a href="../modules/flower.Scene.html">flower.Scene</a></li>
+  <li><a href="../modules/flower.SceneAnimations.html">flower.SceneAnimations</a></li>
+  <li><a href="../modules/flower.SceneMgr.html">flower.SceneMgr</a></li>
+  <li><a href="../modules/flower.SheetImage.html">flower.SheetImage</a></li>
+  <li><a href="../modules/flower.Texture.html">flower.Texture</a></li>
+  <li><a href="../modules/flower.TouchHandler.html">flower.TouchHandler</a></li>
+  <li><a href="../modules/flower.Viewport.html">flower.Viewport</a></li>
+  <li><a href="../modules/flower.Window.html">flower.Window</a></li>
+  <li><a href="../modules/flower.audio.html">flower.audio</a></li>
+  <li><a href="../modules/flower.audio.BaseSoundMgr.html">flower.audio.BaseSoundMgr</a></li>
+  <li><a href="../modules/flower.audio.MockSoundMgr.html">flower.audio.MockSoundMgr</a></li>
+  <li><a href="../modules/flower.audio.UntzSoundMgr.html">flower.audio.UntzSoundMgr</a></li>
+  <li><a href="../modules/flower.class.html">flower.class</a></li>
+  <li><a href="../modules/flower.dungeon.html">flower.dungeon</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonArea.html">flower.dungeon.DungeonArea</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonItem.html">flower.dungeon.DungeonItem</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonMap.html">flower.dungeon.DungeonMap</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonMapGenerator.html">flower.dungeon.DungeonMapGenerator</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonMapView.html">flower.dungeon.DungeonMapView</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonObject.html">flower.dungeon.DungeonObject</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonRect.html">flower.dungeon.DungeonRect</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonRoad.html">flower.dungeon.DungeonRoad</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonRoom.html">flower.dungeon.DungeonRoom</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonTiledGenerator.html">flower.dungeon.DungeonTiledGenerator</a></li>
+  <li><a href="../modules/flower.fsm.html">flower.fsm</a></li>
+  <li><a href="../modules/flower.fsm.State.html">flower.fsm.State</a></li>
+  <li><a href="../modules/flower.fsm.StateMachine.html">flower.fsm.StateMachine</a></li>
+  <li><a href="../modules/flower.math.html">flower.math</a></li>
+  <li><a href="../modules/flower.spine.html">flower.spine</a></li>
+  <li><a href="../modules/flower.spine.Animation.html">flower.spine.Animation</a></li>
+  <li><a href="../modules/flower.spine.AtlasMgr.html">flower.spine.AtlasMgr</a></li>
+  <li><a href="../modules/flower.spine.Attachment.html">flower.spine.Attachment</a></li>
+  <li><a href="../modules/flower.spine.Bone.html">flower.spine.Bone</a></li>
+  <li><a href="../modules/flower.spine.Skeleton.html">flower.spine.Skeleton</a></li>
+  <li><a href="../modules/flower.spine.Slot.html">flower.spine.Slot</a></li>
+  <li><a href="../modules/flower.spine.SpineEvent.html">flower.spine.SpineEvent</a></li>
+  <li><a href="../modules/flower.spine.SpineUtils.html">flower.spine.SpineUtils</a></li>
+  <li><a href="../modules/flower.table.html">flower.table</a></li>
+  <li><a href="../modules/flower.tasker.html">flower.tasker</a></li>
+  <li><a href="../modules/flower.tasker.AbortCommand.html">flower.tasker.AbortCommand</a></li>
+  <li><a href="../modules/flower.tasker.BaseCommand.html">flower.tasker.BaseCommand</a></li>
+  <li><a href="../modules/flower.tasker.CommandEvent.html">flower.tasker.CommandEvent</a></li>
+  <li><a href="../modules/flower.tasker.CommandExecutor.html">flower.tasker.CommandExecutor</a></li>
+  <li><a href="../modules/flower.tasker.CommandGroup.html">flower.tasker.CommandGroup</a></li>
+  <li><a href="../modules/flower.tasker.EchoCommand.html">flower.tasker.EchoCommand</a></li>
+  <li><a href="../modules/flower.tasker.FunctionCommand.html">flower.tasker.FunctionCommand</a></li>
+  <li><a href="../modules/flower.tasker.SetContextCommand.html">flower.tasker.SetContextCommand</a></li>
+  <li><a href="../modules/flower.tasker.Task.html">flower.tasker.Task</a></li>
+  <li><a href="../modules/flower.tasker.TaskContext.html">flower.tasker.TaskContext</a></li>
+  <li><a href="../modules/flower.tasker.TaskEvent.html">flower.tasker.TaskEvent</a></li>
+  <li><a href="../modules/flower.tasker.TaskExecutor.html">flower.tasker.TaskExecutor</a></li>
+  <li><a href="../modules/flower.tasker.TaskMonitor.html">flower.tasker.TaskMonitor</a></li>
+  <li><a href="../modules/flower.tiled.html">flower.tiled</a></li>
+  <li><a href="../modules/flower.tiled.IsometricLayerRenderer.html">flower.tiled.IsometricLayerRenderer</a></li>
+  <li><a href="../modules/flower.tiled.TileFlag.html">flower.tiled.TileFlag</a></li>
+  <li><a href="../modules/flower.tiled.TileLayer.html">flower.tiled.TileLayer</a></li>
+  <li><a href="../modules/flower.tiled.TileLayerRenderer.html">flower.tiled.TileLayerRenderer</a></li>
+  <li><a href="../modules/flower.tiled.TileLayerRendererFactory.html">flower.tiled.TileLayerRendererFactory</a></li>
+  <li><a href="../modules/flower.tiled.TileMap.html">flower.tiled.TileMap</a></li>
+  <li><a href="../modules/flower.tiled.TileMapImage.html">flower.tiled.TileMapImage</a></li>
+  <li><a href="../modules/flower.tiled.TileObject.html">flower.tiled.TileObject</a></li>
+  <li><a href="../modules/flower.tiled.TileObjectGroup.html">flower.tiled.TileObjectGroup</a></li>
+  <li><a href="../modules/flower.tiled.TileObjectRenderer.html">flower.tiled.TileObjectRenderer</a></li>
+  <li><a href="../modules/flower.tiled.TileObjectRendererFactory.html">flower.tiled.TileObjectRendererFactory</a></li>
+  <li><a href="../modules/flower.tiled.TileSheetImage.html">flower.tiled.TileSheetImage</a></li>
+  <li><a href="../modules/flower.tiled.Tileset.html">flower.tiled.Tileset</a></li>
+  <li><a href="../modules/flower.widget.html">flower.widget</a></li>
+  <li><a href="../modules/flower.widget.BaseItemRenderer.html">flower.widget.BaseItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.BaseTheme.html">flower.widget.BaseTheme</a></li>
+  <li><a href="../modules/flower.widget.BoxLayout.html">flower.widget.BoxLayout</a></li>
+  <li><a href="../modules/flower.widget.Button.html">flower.widget.Button</a></li>
+  <li><a href="../modules/flower.widget.CheckBox.html">flower.widget.CheckBox</a></li>
+  <li><a href="../modules/flower.widget.CheckBoxItemRenderer.html">flower.widget.CheckBoxItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.DialogBox.html">flower.widget.DialogBox</a></li>
+  <li><a href="../modules/flower.widget.FocusMgr.html">flower.widget.FocusMgr</a></li>
+  <li><a href="../modules/flower.widget.ImageButton.html">flower.widget.ImageButton</a></li>
+  <li><a href="../modules/flower.widget.ImageLabelItemRenderer.html">flower.widget.ImageLabelItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.Joystick.html">flower.widget.Joystick</a></li>
+  <li><a href="../modules/flower.widget.LabelItemRenderer.html">flower.widget.LabelItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.LayoutMgr.html">flower.widget.LayoutMgr</a></li>
+  <li><a href="../modules/flower.widget.ListBox.html">flower.widget.ListBox</a></li>
+  <li><a href="../modules/flower.widget.ListItem.html">flower.widget.ListItem</a></li>
+  <li><strong>flower.widget.ListView</strong></li>
+  <li><a href="../modules/flower.widget.ListViewLayout.html">flower.widget.ListViewLayout</a></li>
+  <li><a href="../modules/flower.widget.MsgBox.html">flower.widget.MsgBox</a></li>
+  <li><a href="../modules/flower.widget.Panel.html">flower.widget.Panel</a></li>
+  <li><a href="../modules/flower.widget.PanelView.html">flower.widget.PanelView</a></li>
+  <li><a href="../modules/flower.widget.ScrollGroup.html">flower.widget.ScrollGroup</a></li>
+  <li><a href="../modules/flower.widget.ScrollView.html">flower.widget.ScrollView</a></li>
+  <li><a href="../modules/flower.widget.SheetButton.html">flower.widget.SheetButton</a></li>
+  <li><a href="../modules/flower.widget.SheetImageLabelItemRenderer.html">flower.widget.SheetImageLabelItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.Slider.html">flower.widget.Slider</a></li>
+  <li><a href="../modules/flower.widget.Spacer.html">flower.widget.Spacer</a></li>
+  <li><a href="../modules/flower.widget.TextAlign.html">flower.widget.TextAlign</a></li>
+  <li><a href="../modules/flower.widget.TextBox.html">flower.widget.TextBox</a></li>
+  <li><a href="../modules/flower.widget.TextInput.html">flower.widget.TextInput</a></li>
+  <li><a href="../modules/flower.widget.TextView.html">flower.widget.TextView</a></li>
+  <li><a href="../modules/flower.widget.ThemeMgr.html">flower.widget.ThemeMgr</a></li>
+  <li><a href="../modules/flower.widget.UIComponent.html">flower.widget.UIComponent</a></li>
+  <li><a href="../modules/flower.widget.UIEvent.html">flower.widget.UIEvent</a></li>
+  <li><a href="../modules/flower.widget.UIGroup.html">flower.widget.UIGroup</a></li>
+  <li><a href="../modules/flower.widget.UILabel.html">flower.widget.UILabel</a></li>
+  <li><a href="../modules/flower.widget.UILayer.html">flower.widget.UILayer</a></li>
+  <li><a href="../modules/flower.widget.UILayout.html">flower.widget.UILayout</a></li>
+  <li><a href="../modules/flower.widget.UIView.html">flower.widget.UIView</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>flower.widget.ListView</code></h1>
+
+<p>List view class.</p>
+<p>
+
+ TODO: create an object only display range
+
+ <h4>Extends:</h4>
+ <ul>
+   <li><a href="flower.widget.PanelView.html">PanelView</a><l/i>
+ </ul>
+</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Release</strong>: V3.0.0</li>
+        <li><strong>Author</strong>: Makoto</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#ListView:_initInternal">ListView:_initInternal&nbsp;()</a></td>
+	<td class="summary">Initializes the internal variables.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:_createChildren">ListView:_createChildren&nbsp;()</a></td>
+	<td class="summary">Create the children objects.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:_updateItemRenderers">ListView:_updateItemRenderers&nbsp;()</a></td>
+	<td class="summary">Update the item renderers.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:_updateItemRenderer">ListView:_updateItemRenderer&nbsp;(data, index)</a></td>
+	<td class="summary">Update the item renderer.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:_removeItemRenderers">ListView:_removeItemRenderers&nbsp;()</a></td>
+	<td class="summary">Remove the item renderers.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:_removeItemRenderer">ListView:_removeItemRenderer&nbsp;(renderer)</a></td>
+	<td class="summary">Remove the item renderer.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:updateDisplay">ListView:updateDisplay&nbsp;()</a></td>
+	<td class="summary">Update the display</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:updateLayout">ListView:updateLayout&nbsp;()</a></td>
+	<td class="summary">Update the display</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:updatePriority">ListView:updatePriority&nbsp;(priority)</a></td>
+	<td class="summary">Update the order of rendering.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:invalidateItemRenderers">ListView:invalidateItemRenderers&nbsp;()</a></td>
+	<td class="summary">Invalidate item renderers.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setSelectedItem">ListView:setSelectedItem&nbsp;(item)</a></td>
+	<td class="summary">Set the selected item.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:getSelectedItem">ListView:getSelectedItem&nbsp;()</a></td>
+	<td class="summary">Return the selected item.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setSelectedItems">ListView:setSelectedItems&nbsp;(items)</a></td>
+	<td class="summary">Sets the selected items.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setDataSource">ListView:setDataSource&nbsp;(dataSource)</a></td>
+	<td class="summary">Set the dataSource.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:getDataSource">ListView:getDataSource&nbsp;()</a></td>
+	<td class="summary">Return the dataSource.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setItemRendererClass">ListView:setItemRendererClass&nbsp;(clazz)</a></td>
+	<td class="summary">Sets the ItemRenderer class.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setItemProperties">ListView:setItemProperties&nbsp;(properties)</a></td>
+	<td class="summary">Sets the ItemRenderer properties.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setItemRendererFactory">ListView:setItemRendererFactory&nbsp;(factory)</a></td>
+	<td class="summary">Sets the itemRendererFactory.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:getItemRendererFactory">ListView:getItemRendererFactory&nbsp;()</a></td>
+	<td class="summary">Returns the itemRendererFactory.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setRowHeight">ListView:setRowHeight&nbsp;(rowHeight)</a></td>
+	<td class="summary">Set the height of the row.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:getRowHeight">ListView:getRowHeight&nbsp;()</a></td>
+	<td class="summary">Return the height of the row.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setColumnCount">ListView:setColumnCount&nbsp;(columnCount)</a></td>
+	<td class="summary">Set the count of the columns.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:getColumnCount">ListView:getColumnCount&nbsp;()</a></td>
+	<td class="summary">Return the count of the columns.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setOnSelectedChanged">ListView:setOnSelectedChanged&nbsp;(func)</a></td>
+	<td class="summary">Set the event listener that is called when the selected changed.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setOnItemClick">ListView:setOnItemClick&nbsp;(func)</a></td>
+	<td class="summary">Set the event listener that is called when the item click.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:onItemRendererTouchDown">ListView:onItemRendererTouchDown&nbsp;(e)</a></td>
+	<td class="summary">This event handler is called when touch.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:onItemRendererTouchUp">ListView:onItemRendererTouchUp&nbsp;(e)</a></td>
+	<td class="summary">This event handler is called when touch.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:onItemRendererTouchCancel">ListView:onItemRendererTouchCancel&nbsp;(e)</a></td>
+	<td class="summary">This event handler is called when touch.</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_ITEM_RENDERER_FACTORY">STYLE_ITEM_RENDERER_FACTORY</a></td>
+	<td class="summary">Style: listItemFactory</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_ROW_HEIGHT">STYLE_ROW_HEIGHT</a></td>
+	<td class="summary">Style: rowHeight</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_COLUMN_COUNT">STYLE_COLUMN_COUNT</a></td>
+	<td class="summary">Style: columnCount</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#EVENT_SELECTED_CHANGED">EVENT_SELECTED_CHANGED</a></td>
+	<td class="summary">Event: selectedChanged</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#EVENT_ITEM_CLICK">EVENT_ITEM_CLICK</a></td>
+	<td class="summary">Event: itemClick</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "ListView:_initInternal"></a>
+    <strong>ListView:_initInternal&nbsp;()</strong>
+    </dt>
+    <dd>
+    Initializes the internal variables.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:_createChildren"></a>
+    <strong>ListView:_createChildren&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create the children objects.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:_updateItemRenderers"></a>
+    <strong>ListView:_updateItemRenderers&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the item renderers.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:_updateItemRenderer"></a>
+    <strong>ListView:_updateItemRenderer&nbsp;(data, index)</strong>
+    </dt>
+    <dd>
+    Update the item renderer.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">data</span>
+       data.</li>
+      <li><span class="parameter">index</span>
+       index of items.</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:_removeItemRenderers"></a>
+    <strong>ListView:_removeItemRenderers&nbsp;()</strong>
+    </dt>
+    <dd>
+    Remove the item renderers.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:_removeItemRenderer"></a>
+    <strong>ListView:_removeItemRenderer&nbsp;(renderer)</strong>
+    </dt>
+    <dd>
+    Remove the item renderer.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">renderer</span>
+       item renderer.</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:updateDisplay"></a>
+    <strong>ListView:updateDisplay&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the display
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:updateLayout"></a>
+    <strong>ListView:updateLayout&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the display
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:updatePriority"></a>
+    <strong>ListView:updatePriority&nbsp;(priority)</strong>
+    </dt>
+    <dd>
+    Update the order of rendering.
+ It is called by LayoutMgr.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">priority</span>
+       priority.</li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+        last priority
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:invalidateItemRenderers"></a>
+    <strong>ListView:invalidateItemRenderers&nbsp;()</strong>
+    </dt>
+    <dd>
+    Invalidate item renderers.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setSelectedItem"></a>
+    <strong>ListView:setSelectedItem&nbsp;(item)</strong>
+    </dt>
+    <dd>
+    Set the selected item.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">item</span>
+       selected item.</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:getSelectedItem"></a>
+    <strong>ListView:getSelectedItem&nbsp;()</strong>
+    </dt>
+    <dd>
+    Return the selected item.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        selected item.
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setSelectedItems"></a>
+    <strong>ListView:setSelectedItems&nbsp;(items)</strong>
+    </dt>
+    <dd>
+    Sets the selected items.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">items</span>
+       selected items.</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setDataSource"></a>
+    <strong>ListView:setDataSource&nbsp;(dataSource)</strong>
+    </dt>
+    <dd>
+    Set the dataSource.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">dataSource</span>
+       dataSource</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:getDataSource"></a>
+    <strong>ListView:getDataSource&nbsp;()</strong>
+    </dt>
+    <dd>
+    Return the dataSource.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        dataSource
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setItemRendererClass"></a>
+    <strong>ListView:setItemRendererClass&nbsp;(clazz)</strong>
+    </dt>
+    <dd>
+    Sets the ItemRenderer class.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">clazz</span>
+       ItemRenderer class</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setItemProperties"></a>
+    <strong>ListView:setItemProperties&nbsp;(properties)</strong>
+    </dt>
+    <dd>
+    Sets the ItemRenderer properties.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">properties</span>
+       ItemRenderer properties</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setItemRendererFactory"></a>
+    <strong>ListView:setItemRendererFactory&nbsp;(factory)</strong>
+    </dt>
+    <dd>
+    Sets the itemRendererFactory.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">factory</span>
+       itemRendererFactory</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:getItemRendererFactory"></a>
+    <strong>ListView:getItemRendererFactory&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the itemRendererFactory.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        itemRendererFactory
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setRowHeight"></a>
+    <strong>ListView:setRowHeight&nbsp;(rowHeight)</strong>
+    </dt>
+    <dd>
+    Set the height of the row.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">rowHeight</span>
+       height of the row</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:getRowHeight"></a>
+    <strong>ListView:getRowHeight&nbsp;()</strong>
+    </dt>
+    <dd>
+    Return the height of the row.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        rowHeight
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setColumnCount"></a>
+    <strong>ListView:setColumnCount&nbsp;(columnCount)</strong>
+    </dt>
+    <dd>
+    Set the count of the columns.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">columnCount</span>
+       count of the columns</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:getColumnCount"></a>
+    <strong>ListView:getColumnCount&nbsp;()</strong>
+    </dt>
+    <dd>
+    Return the count of the columns.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        columnCount
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setOnSelectedChanged"></a>
+    <strong>ListView:setOnSelectedChanged&nbsp;(func)</strong>
+    </dt>
+    <dd>
+    Set the event listener that is called when the selected changed.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">func</span>
+       selected changed event handler</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setOnItemClick"></a>
+    <strong>ListView:setOnItemClick&nbsp;(func)</strong>
+    </dt>
+    <dd>
+    Set the event listener that is called when the item click.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">func</span>
+       selected changed event handler</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:onItemRendererTouchDown"></a>
+    <strong>ListView:onItemRendererTouchDown&nbsp;(e)</strong>
+    </dt>
+    <dd>
+    This event handler is called when touch.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">e</span>
+       Touch Event</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:onItemRendererTouchUp"></a>
+    <strong>ListView:onItemRendererTouchUp&nbsp;(e)</strong>
+    </dt>
+    <dd>
+    This event handler is called when touch.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">e</span>
+       Touch Event</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:onItemRendererTouchCancel"></a>
+    <strong>ListView:onItemRendererTouchCancel&nbsp;(e)</strong>
+    </dt>
+    <dd>
+    This event handler is called when touch.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">e</span>
+       Touch Event</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "STYLE_ITEM_RENDERER_FACTORY"></a>
+    <strong>STYLE_ITEM_RENDERER_FACTORY</strong>
+    </dt>
+    <dd>
+    Style: listItemFactory
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_ROW_HEIGHT"></a>
+    <strong>STYLE_ROW_HEIGHT</strong>
+    </dt>
+    <dd>
+    Style: rowHeight
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_COLUMN_COUNT"></a>
+    <strong>STYLE_COLUMN_COUNT</strong>
+    </dt>
+    <dd>
+    Style: columnCount
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "EVENT_SELECTED_CHANGED"></a>
+    <strong>EVENT_SELECTED_CHANGED</strong>
+    </dt>
+    <dd>
+    Event: selectedChanged
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "EVENT_ITEM_CLICK"></a>
+    <strong>EVENT_ITEM_CLICK</strong>
+    </dt>
+    <dd>
+    Event: itemClick
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

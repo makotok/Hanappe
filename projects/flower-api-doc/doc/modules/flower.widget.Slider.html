@@ -1,0 +1,696 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Fields">Fields</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/flower.html">flower</a></li>
+  <li><a href="../modules/flower.Animation.html">flower.Animation</a></li>
+  <li><a href="../modules/flower.BitUtils.html">flower.BitUtils</a></li>
+  <li><a href="../modules/flower.Camera.html">flower.Camera</a></li>
+  <li><a href="../modules/flower.ClassFactory.html">flower.ClassFactory</a></li>
+  <li><a href="../modules/flower.Config.html">flower.Config</a></li>
+  <li><a href="../modules/flower.DebugUtils.html">flower.DebugUtils</a></li>
+  <li><a href="../modules/flower.DeckMgr.html">flower.DeckMgr</a></li>
+  <li><a href="../modules/flower.Devices.html">flower.Devices</a></li>
+  <li><a href="../modules/flower.DisplayObject.html">flower.DisplayObject</a></li>
+  <li><a href="../modules/flower.DrawableObject.html">flower.DrawableObject</a></li>
+  <li><a href="../modules/flower.DrawableRect.html">flower.DrawableRect</a></li>
+  <li><a href="../modules/flower.Event.html">flower.Event</a></li>
+  <li><a href="../modules/flower.EventDispatcher.html">flower.EventDispatcher</a></li>
+  <li><a href="../modules/flower.EventListener.html">flower.EventListener</a></li>
+  <li><a href="../modules/flower.Executors.html">flower.Executors</a></li>
+  <li><a href="../modules/flower.Font.html">flower.Font</a></li>
+  <li><a href="../modules/flower.Graphics.html">flower.Graphics</a></li>
+  <li><a href="../modules/flower.Group.html">flower.Group</a></li>
+  <li><a href="../modules/flower.Image.html">flower.Image</a></li>
+  <li><a href="../modules/flower.InputMgr.html">flower.InputMgr</a></li>
+  <li><a href="../modules/flower.Interceptor.html">flower.Interceptor</a></li>
+  <li><a href="../modules/flower.KeyCode.html">flower.KeyCode</a></li>
+  <li><a href="../modules/flower.Label.html">flower.Label</a></li>
+  <li><a href="../modules/flower.Layer.html">flower.Layer</a></li>
+  <li><a href="../modules/flower.Logger.html">flower.Logger</a></li>
+  <li><a href="../modules/flower.MapImage.html">flower.MapImage</a></li>
+  <li><a href="../modules/flower.MovieClip.html">flower.MovieClip</a></li>
+  <li><a href="../modules/flower.NineImage.html">flower.NineImage</a></li>
+  <li><a href="../modules/flower.Particle.html">flower.Particle</a></li>
+  <li><a href="../modules/flower.PropertyUtils.html">flower.PropertyUtils</a></li>
+  <li><a href="../modules/flower.RenderMgr.html">flower.RenderMgr</a></li>
+  <li><a href="../modules/flower.Resources.html">flower.Resources</a></li>
+  <li><a href="../modules/flower.Runtime.html">flower.Runtime</a></li>
+  <li><a href="../modules/flower.Scene.html">flower.Scene</a></li>
+  <li><a href="../modules/flower.SceneAnimations.html">flower.SceneAnimations</a></li>
+  <li><a href="../modules/flower.SceneMgr.html">flower.SceneMgr</a></li>
+  <li><a href="../modules/flower.SheetImage.html">flower.SheetImage</a></li>
+  <li><a href="../modules/flower.Texture.html">flower.Texture</a></li>
+  <li><a href="../modules/flower.TouchHandler.html">flower.TouchHandler</a></li>
+  <li><a href="../modules/flower.Viewport.html">flower.Viewport</a></li>
+  <li><a href="../modules/flower.Window.html">flower.Window</a></li>
+  <li><a href="../modules/flower.audio.html">flower.audio</a></li>
+  <li><a href="../modules/flower.audio.BaseSoundMgr.html">flower.audio.BaseSoundMgr</a></li>
+  <li><a href="../modules/flower.audio.MockSoundMgr.html">flower.audio.MockSoundMgr</a></li>
+  <li><a href="../modules/flower.audio.UntzSoundMgr.html">flower.audio.UntzSoundMgr</a></li>
+  <li><a href="../modules/flower.class.html">flower.class</a></li>
+  <li><a href="../modules/flower.dungeon.html">flower.dungeon</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonArea.html">flower.dungeon.DungeonArea</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonItem.html">flower.dungeon.DungeonItem</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonMap.html">flower.dungeon.DungeonMap</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonMapGenerator.html">flower.dungeon.DungeonMapGenerator</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonMapView.html">flower.dungeon.DungeonMapView</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonObject.html">flower.dungeon.DungeonObject</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonRect.html">flower.dungeon.DungeonRect</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonRoad.html">flower.dungeon.DungeonRoad</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonRoom.html">flower.dungeon.DungeonRoom</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonTiledGenerator.html">flower.dungeon.DungeonTiledGenerator</a></li>
+  <li><a href="../modules/flower.fsm.html">flower.fsm</a></li>
+  <li><a href="../modules/flower.fsm.State.html">flower.fsm.State</a></li>
+  <li><a href="../modules/flower.fsm.StateMachine.html">flower.fsm.StateMachine</a></li>
+  <li><a href="../modules/flower.math.html">flower.math</a></li>
+  <li><a href="../modules/flower.spine.html">flower.spine</a></li>
+  <li><a href="../modules/flower.spine.Animation.html">flower.spine.Animation</a></li>
+  <li><a href="../modules/flower.spine.AtlasMgr.html">flower.spine.AtlasMgr</a></li>
+  <li><a href="../modules/flower.spine.Attachment.html">flower.spine.Attachment</a></li>
+  <li><a href="../modules/flower.spine.Bone.html">flower.spine.Bone</a></li>
+  <li><a href="../modules/flower.spine.Skeleton.html">flower.spine.Skeleton</a></li>
+  <li><a href="../modules/flower.spine.Slot.html">flower.spine.Slot</a></li>
+  <li><a href="../modules/flower.spine.SpineEvent.html">flower.spine.SpineEvent</a></li>
+  <li><a href="../modules/flower.spine.SpineUtils.html">flower.spine.SpineUtils</a></li>
+  <li><a href="../modules/flower.table.html">flower.table</a></li>
+  <li><a href="../modules/flower.tasker.html">flower.tasker</a></li>
+  <li><a href="../modules/flower.tasker.AbortCommand.html">flower.tasker.AbortCommand</a></li>
+  <li><a href="../modules/flower.tasker.BaseCommand.html">flower.tasker.BaseCommand</a></li>
+  <li><a href="../modules/flower.tasker.CommandEvent.html">flower.tasker.CommandEvent</a></li>
+  <li><a href="../modules/flower.tasker.CommandExecutor.html">flower.tasker.CommandExecutor</a></li>
+  <li><a href="../modules/flower.tasker.CommandGroup.html">flower.tasker.CommandGroup</a></li>
+  <li><a href="../modules/flower.tasker.EchoCommand.html">flower.tasker.EchoCommand</a></li>
+  <li><a href="../modules/flower.tasker.FunctionCommand.html">flower.tasker.FunctionCommand</a></li>
+  <li><a href="../modules/flower.tasker.SetContextCommand.html">flower.tasker.SetContextCommand</a></li>
+  <li><a href="../modules/flower.tasker.Task.html">flower.tasker.Task</a></li>
+  <li><a href="../modules/flower.tasker.TaskContext.html">flower.tasker.TaskContext</a></li>
+  <li><a href="../modules/flower.tasker.TaskEvent.html">flower.tasker.TaskEvent</a></li>
+  <li><a href="../modules/flower.tasker.TaskExecutor.html">flower.tasker.TaskExecutor</a></li>
+  <li><a href="../modules/flower.tasker.TaskMonitor.html">flower.tasker.TaskMonitor</a></li>
+  <li><a href="../modules/flower.tiled.html">flower.tiled</a></li>
+  <li><a href="../modules/flower.tiled.IsometricLayerRenderer.html">flower.tiled.IsometricLayerRenderer</a></li>
+  <li><a href="../modules/flower.tiled.TileFlag.html">flower.tiled.TileFlag</a></li>
+  <li><a href="../modules/flower.tiled.TileLayer.html">flower.tiled.TileLayer</a></li>
+  <li><a href="../modules/flower.tiled.TileLayerRenderer.html">flower.tiled.TileLayerRenderer</a></li>
+  <li><a href="../modules/flower.tiled.TileLayerRendererFactory.html">flower.tiled.TileLayerRendererFactory</a></li>
+  <li><a href="../modules/flower.tiled.TileMap.html">flower.tiled.TileMap</a></li>
+  <li><a href="../modules/flower.tiled.TileMapImage.html">flower.tiled.TileMapImage</a></li>
+  <li><a href="../modules/flower.tiled.TileObject.html">flower.tiled.TileObject</a></li>
+  <li><a href="../modules/flower.tiled.TileObjectGroup.html">flower.tiled.TileObjectGroup</a></li>
+  <li><a href="../modules/flower.tiled.TileObjectRenderer.html">flower.tiled.TileObjectRenderer</a></li>
+  <li><a href="../modules/flower.tiled.TileObjectRendererFactory.html">flower.tiled.TileObjectRendererFactory</a></li>
+  <li><a href="../modules/flower.tiled.TileSheetImage.html">flower.tiled.TileSheetImage</a></li>
+  <li><a href="../modules/flower.tiled.Tileset.html">flower.tiled.Tileset</a></li>
+  <li><a href="../modules/flower.widget.html">flower.widget</a></li>
+  <li><a href="../modules/flower.widget.BaseItemRenderer.html">flower.widget.BaseItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.BaseTheme.html">flower.widget.BaseTheme</a></li>
+  <li><a href="../modules/flower.widget.BoxLayout.html">flower.widget.BoxLayout</a></li>
+  <li><a href="../modules/flower.widget.Button.html">flower.widget.Button</a></li>
+  <li><a href="../modules/flower.widget.CheckBox.html">flower.widget.CheckBox</a></li>
+  <li><a href="../modules/flower.widget.CheckBoxItemRenderer.html">flower.widget.CheckBoxItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.DialogBox.html">flower.widget.DialogBox</a></li>
+  <li><a href="../modules/flower.widget.FocusMgr.html">flower.widget.FocusMgr</a></li>
+  <li><a href="../modules/flower.widget.ImageButton.html">flower.widget.ImageButton</a></li>
+  <li><a href="../modules/flower.widget.ImageLabelItemRenderer.html">flower.widget.ImageLabelItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.Joystick.html">flower.widget.Joystick</a></li>
+  <li><a href="../modules/flower.widget.LabelItemRenderer.html">flower.widget.LabelItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.LayoutMgr.html">flower.widget.LayoutMgr</a></li>
+  <li><a href="../modules/flower.widget.ListBox.html">flower.widget.ListBox</a></li>
+  <li><a href="../modules/flower.widget.ListItem.html">flower.widget.ListItem</a></li>
+  <li><a href="../modules/flower.widget.ListView.html">flower.widget.ListView</a></li>
+  <li><a href="../modules/flower.widget.ListViewLayout.html">flower.widget.ListViewLayout</a></li>
+  <li><a href="../modules/flower.widget.MsgBox.html">flower.widget.MsgBox</a></li>
+  <li><a href="../modules/flower.widget.Panel.html">flower.widget.Panel</a></li>
+  <li><a href="../modules/flower.widget.PanelView.html">flower.widget.PanelView</a></li>
+  <li><a href="../modules/flower.widget.ScrollGroup.html">flower.widget.ScrollGroup</a></li>
+  <li><a href="../modules/flower.widget.ScrollView.html">flower.widget.ScrollView</a></li>
+  <li><a href="../modules/flower.widget.SheetButton.html">flower.widget.SheetButton</a></li>
+  <li><a href="../modules/flower.widget.SheetImageLabelItemRenderer.html">flower.widget.SheetImageLabelItemRenderer</a></li>
+  <li><strong>flower.widget.Slider</strong></li>
+  <li><a href="../modules/flower.widget.Spacer.html">flower.widget.Spacer</a></li>
+  <li><a href="../modules/flower.widget.TextAlign.html">flower.widget.TextAlign</a></li>
+  <li><a href="../modules/flower.widget.TextBox.html">flower.widget.TextBox</a></li>
+  <li><a href="../modules/flower.widget.TextInput.html">flower.widget.TextInput</a></li>
+  <li><a href="../modules/flower.widget.TextView.html">flower.widget.TextView</a></li>
+  <li><a href="../modules/flower.widget.ThemeMgr.html">flower.widget.ThemeMgr</a></li>
+  <li><a href="../modules/flower.widget.UIComponent.html">flower.widget.UIComponent</a></li>
+  <li><a href="../modules/flower.widget.UIEvent.html">flower.widget.UIEvent</a></li>
+  <li><a href="../modules/flower.widget.UIGroup.html">flower.widget.UIGroup</a></li>
+  <li><a href="../modules/flower.widget.UILabel.html">flower.widget.UILabel</a></li>
+  <li><a href="../modules/flower.widget.UILayer.html">flower.widget.UILayer</a></li>
+  <li><a href="../modules/flower.widget.UILayout.html">flower.widget.UILayout</a></li>
+  <li><a href="../modules/flower.widget.UIView.html">flower.widget.UIView</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>flower.widget.Slider</code></h1>
+
+<p>This class is an slider that can be pressed and dragged.</p>
+<p>
+
+ <h4>Extends:</h4>
+ <ul>
+   <li><a href="flower.widget.UIComponent.html">UIComponent</a><l/i>
+ </ul>
+</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Release</strong>: V3.0.0</li>
+        <li><strong>Author</strong>: Makoto</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Slider:_initInternal">Slider:_initInternal&nbsp;()</a></td>
+	<td class="summary">Initializes the internal variables.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:_initEventListeners">Slider:_initEventListeners&nbsp;()</a></td>
+	<td class="summary">Initializes the event listener.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:_createChildren">Slider:_createChildren&nbsp;()</a></td>
+	<td class="summary">Create children.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:_createBackgroundImage">Slider:_createBackgroundImage&nbsp;()</a></td>
+	<td class="summary">Create the backgroundImage.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:_createProgressImage">Slider:_createProgressImage&nbsp;()</a></td>
+	<td class="summary">Create the progressImage.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:_createThumbImage">Slider:_createThumbImage&nbsp;()</a></td>
+	<td class="summary">Create the progressImage.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:updateDisplay">Slider:updateDisplay&nbsp;()</a></td>
+	<td class="summary">Update the display.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:updateBackgroundImage">Slider:updateBackgroundImage&nbsp;()</a></td>
+	<td class="summary">Update the backgroundImage.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:updateProgressImage">Slider:updateProgressImage&nbsp;()</a></td>
+	<td class="summary">Update the progressImage.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:setValue">Slider:setValue&nbsp;(value)</a></td>
+	<td class="summary">Set the value of the current.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:getValue">Slider:getValue&nbsp;()</a></td>
+	<td class="summary">Return the value of the current.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:setBackgroundTexture">Slider:setBackgroundTexture&nbsp;(texture)</a></td>
+	<td class="summary">Sets the background texture.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:setProgressTexture">Slider:setProgressTexture&nbsp;(texture)</a></td>
+	<td class="summary">Sets the progress texture.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:setThumbTexture">Slider:setThumbTexture&nbsp;(texture)</a></td>
+	<td class="summary">Sets the thumb texture.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:setOnValueChanged">Slider:setOnValueChanged&nbsp;(func)</a></td>
+	<td class="summary">Set the event listener that is called when the user click the Slider.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:doSlide">Slider:doSlide&nbsp;(worldX)</a></td>
+	<td class="summary">Down the Slider.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:onTouchDown">Slider:onTouchDown&nbsp;(e)</a></td>
+	<td class="summary">This event handler is called when you touch the Slider.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:onTouchUp">Slider:onTouchUp&nbsp;(e)</a></td>
+	<td class="summary">This event handler is called when the Slider is released.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:onTouchMove">Slider:onTouchMove&nbsp;(e)</a></td>
+	<td class="summary">This event handler is called when you move on the Slider.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Slider:onTouchCancel">Slider:onTouchCancel&nbsp;(e)</a></td>
+	<td class="summary">This event handler is called when you cancel the touch.</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_BACKGROUND_TEXTURE">STYLE_BACKGROUND_TEXTURE</a></td>
+	<td class="summary">Style: backgroundTexture</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_PROGRESS_TEXTURE">STYLE_PROGRESS_TEXTURE</a></td>
+	<td class="summary">Style: progressTexture</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_THUMB_TEXTURE">STYLE_THUMB_TEXTURE</a></td>
+	<td class="summary">Style: thumbTexture</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#EVENT_VALUE_CHANGED">EVENT_VALUE_CHANGED</a></td>
+	<td class="summary">Event: valueChanged</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Slider:_initInternal"></a>
+    <strong>Slider:_initInternal&nbsp;()</strong>
+    </dt>
+    <dd>
+    Initializes the internal variables.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:_initEventListeners"></a>
+    <strong>Slider:_initEventListeners&nbsp;()</strong>
+    </dt>
+    <dd>
+    Initializes the event listener.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:_createChildren"></a>
+    <strong>Slider:_createChildren&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create children.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:_createBackgroundImage"></a>
+    <strong>Slider:_createBackgroundImage&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create the backgroundImage.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:_createProgressImage"></a>
+    <strong>Slider:_createProgressImage&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create the progressImage.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:_createThumbImage"></a>
+    <strong>Slider:_createThumbImage&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create the progressImage.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:updateDisplay"></a>
+    <strong>Slider:updateDisplay&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the display.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:updateBackgroundImage"></a>
+    <strong>Slider:updateBackgroundImage&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the backgroundImage.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:updateProgressImage"></a>
+    <strong>Slider:updateProgressImage&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the progressImage.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:setValue"></a>
+    <strong>Slider:setValue&nbsp;(value)</strong>
+    </dt>
+    <dd>
+    Set the value of the current.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">value</span>
+       value of the current</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:getValue"></a>
+    <strong>Slider:getValue&nbsp;()</strong>
+    </dt>
+    <dd>
+    Return the value of the current.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        value of the current
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:setBackgroundTexture"></a>
+    <strong>Slider:setBackgroundTexture&nbsp;(texture)</strong>
+    </dt>
+    <dd>
+    Sets the background texture.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">texture</span>
+       texture</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:setProgressTexture"></a>
+    <strong>Slider:setProgressTexture&nbsp;(texture)</strong>
+    </dt>
+    <dd>
+    Sets the progress texture.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">texture</span>
+       texture</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:setThumbTexture"></a>
+    <strong>Slider:setThumbTexture&nbsp;(texture)</strong>
+    </dt>
+    <dd>
+    Sets the thumb texture.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">texture</span>
+       texture</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:setOnValueChanged"></a>
+    <strong>Slider:setOnValueChanged&nbsp;(func)</strong>
+    </dt>
+    <dd>
+    Set the event listener that is called when the user click the Slider.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">func</span>
+       click event handler</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:doSlide"></a>
+    <strong>Slider:doSlide&nbsp;(worldX)</strong>
+    </dt>
+    <dd>
+    Down the Slider.
+ There is no need to call directly to the basic.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">worldX</span>
+       Touch worldX</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:onTouchDown"></a>
+    <strong>Slider:onTouchDown&nbsp;(e)</strong>
+    </dt>
+    <dd>
+    This event handler is called when you touch the Slider.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">e</span>
+       Touch Event</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:onTouchUp"></a>
+    <strong>Slider:onTouchUp&nbsp;(e)</strong>
+    </dt>
+    <dd>
+    This event handler is called when the Slider is released.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">e</span>
+       Touch Event</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:onTouchMove"></a>
+    <strong>Slider:onTouchMove&nbsp;(e)</strong>
+    </dt>
+    <dd>
+    This event handler is called when you move on the Slider.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">e</span>
+       Touch Event</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Slider:onTouchCancel"></a>
+    <strong>Slider:onTouchCancel&nbsp;(e)</strong>
+    </dt>
+    <dd>
+    This event handler is called when you cancel the touch.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">e</span>
+       Touch Event</li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "STYLE_BACKGROUND_TEXTURE"></a>
+    <strong>STYLE_BACKGROUND_TEXTURE</strong>
+    </dt>
+    <dd>
+    Style: backgroundTexture
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_PROGRESS_TEXTURE"></a>
+    <strong>STYLE_PROGRESS_TEXTURE</strong>
+    </dt>
+    <dd>
+    Style: progressTexture
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_THUMB_TEXTURE"></a>
+    <strong>STYLE_THUMB_TEXTURE</strong>
+    </dt>
+    <dd>
+    Style: thumbTexture
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "EVENT_VALUE_CHANGED"></a>
+    <strong>EVENT_VALUE_CHANGED</strong>
+    </dt>
+    <dd>
+    Event: valueChanged
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

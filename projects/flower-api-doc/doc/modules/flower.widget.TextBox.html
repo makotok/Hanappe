@@ -1,0 +1,767 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>ldoc</h1>
+
+<ul>
+  <li><a href="../index.html">Index</a></li>
+</ul>
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Fields">Fields</a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul>
+  <li><a href="../modules/flower.html">flower</a></li>
+  <li><a href="../modules/flower.Animation.html">flower.Animation</a></li>
+  <li><a href="../modules/flower.BitUtils.html">flower.BitUtils</a></li>
+  <li><a href="../modules/flower.Camera.html">flower.Camera</a></li>
+  <li><a href="../modules/flower.ClassFactory.html">flower.ClassFactory</a></li>
+  <li><a href="../modules/flower.Config.html">flower.Config</a></li>
+  <li><a href="../modules/flower.DebugUtils.html">flower.DebugUtils</a></li>
+  <li><a href="../modules/flower.DeckMgr.html">flower.DeckMgr</a></li>
+  <li><a href="../modules/flower.Devices.html">flower.Devices</a></li>
+  <li><a href="../modules/flower.DisplayObject.html">flower.DisplayObject</a></li>
+  <li><a href="../modules/flower.DrawableObject.html">flower.DrawableObject</a></li>
+  <li><a href="../modules/flower.DrawableRect.html">flower.DrawableRect</a></li>
+  <li><a href="../modules/flower.Event.html">flower.Event</a></li>
+  <li><a href="../modules/flower.EventDispatcher.html">flower.EventDispatcher</a></li>
+  <li><a href="../modules/flower.EventListener.html">flower.EventListener</a></li>
+  <li><a href="../modules/flower.Executors.html">flower.Executors</a></li>
+  <li><a href="../modules/flower.Font.html">flower.Font</a></li>
+  <li><a href="../modules/flower.Graphics.html">flower.Graphics</a></li>
+  <li><a href="../modules/flower.Group.html">flower.Group</a></li>
+  <li><a href="../modules/flower.Image.html">flower.Image</a></li>
+  <li><a href="../modules/flower.InputMgr.html">flower.InputMgr</a></li>
+  <li><a href="../modules/flower.Interceptor.html">flower.Interceptor</a></li>
+  <li><a href="../modules/flower.KeyCode.html">flower.KeyCode</a></li>
+  <li><a href="../modules/flower.Label.html">flower.Label</a></li>
+  <li><a href="../modules/flower.Layer.html">flower.Layer</a></li>
+  <li><a href="../modules/flower.Logger.html">flower.Logger</a></li>
+  <li><a href="../modules/flower.MapImage.html">flower.MapImage</a></li>
+  <li><a href="../modules/flower.MovieClip.html">flower.MovieClip</a></li>
+  <li><a href="../modules/flower.NineImage.html">flower.NineImage</a></li>
+  <li><a href="../modules/flower.Particle.html">flower.Particle</a></li>
+  <li><a href="../modules/flower.PropertyUtils.html">flower.PropertyUtils</a></li>
+  <li><a href="../modules/flower.RenderMgr.html">flower.RenderMgr</a></li>
+  <li><a href="../modules/flower.Resources.html">flower.Resources</a></li>
+  <li><a href="../modules/flower.Runtime.html">flower.Runtime</a></li>
+  <li><a href="../modules/flower.Scene.html">flower.Scene</a></li>
+  <li><a href="../modules/flower.SceneAnimations.html">flower.SceneAnimations</a></li>
+  <li><a href="../modules/flower.SceneMgr.html">flower.SceneMgr</a></li>
+  <li><a href="../modules/flower.SheetImage.html">flower.SheetImage</a></li>
+  <li><a href="../modules/flower.Texture.html">flower.Texture</a></li>
+  <li><a href="../modules/flower.TouchHandler.html">flower.TouchHandler</a></li>
+  <li><a href="../modules/flower.Viewport.html">flower.Viewport</a></li>
+  <li><a href="../modules/flower.Window.html">flower.Window</a></li>
+  <li><a href="../modules/flower.audio.html">flower.audio</a></li>
+  <li><a href="../modules/flower.audio.BaseSoundMgr.html">flower.audio.BaseSoundMgr</a></li>
+  <li><a href="../modules/flower.audio.MockSoundMgr.html">flower.audio.MockSoundMgr</a></li>
+  <li><a href="../modules/flower.audio.UntzSoundMgr.html">flower.audio.UntzSoundMgr</a></li>
+  <li><a href="../modules/flower.class.html">flower.class</a></li>
+  <li><a href="../modules/flower.dungeon.html">flower.dungeon</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonArea.html">flower.dungeon.DungeonArea</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonItem.html">flower.dungeon.DungeonItem</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonMap.html">flower.dungeon.DungeonMap</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonMapGenerator.html">flower.dungeon.DungeonMapGenerator</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonMapView.html">flower.dungeon.DungeonMapView</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonObject.html">flower.dungeon.DungeonObject</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonRect.html">flower.dungeon.DungeonRect</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonRoad.html">flower.dungeon.DungeonRoad</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonRoom.html">flower.dungeon.DungeonRoom</a></li>
+  <li><a href="../modules/flower.dungeon.DungeonTiledGenerator.html">flower.dungeon.DungeonTiledGenerator</a></li>
+  <li><a href="../modules/flower.fsm.html">flower.fsm</a></li>
+  <li><a href="../modules/flower.fsm.State.html">flower.fsm.State</a></li>
+  <li><a href="../modules/flower.fsm.StateMachine.html">flower.fsm.StateMachine</a></li>
+  <li><a href="../modules/flower.math.html">flower.math</a></li>
+  <li><a href="../modules/flower.spine.html">flower.spine</a></li>
+  <li><a href="../modules/flower.spine.Animation.html">flower.spine.Animation</a></li>
+  <li><a href="../modules/flower.spine.AtlasMgr.html">flower.spine.AtlasMgr</a></li>
+  <li><a href="../modules/flower.spine.Attachment.html">flower.spine.Attachment</a></li>
+  <li><a href="../modules/flower.spine.Bone.html">flower.spine.Bone</a></li>
+  <li><a href="../modules/flower.spine.Skeleton.html">flower.spine.Skeleton</a></li>
+  <li><a href="../modules/flower.spine.Slot.html">flower.spine.Slot</a></li>
+  <li><a href="../modules/flower.spine.SpineEvent.html">flower.spine.SpineEvent</a></li>
+  <li><a href="../modules/flower.spine.SpineUtils.html">flower.spine.SpineUtils</a></li>
+  <li><a href="../modules/flower.table.html">flower.table</a></li>
+  <li><a href="../modules/flower.tasker.html">flower.tasker</a></li>
+  <li><a href="../modules/flower.tasker.AbortCommand.html">flower.tasker.AbortCommand</a></li>
+  <li><a href="../modules/flower.tasker.BaseCommand.html">flower.tasker.BaseCommand</a></li>
+  <li><a href="../modules/flower.tasker.CommandEvent.html">flower.tasker.CommandEvent</a></li>
+  <li><a href="../modules/flower.tasker.CommandExecutor.html">flower.tasker.CommandExecutor</a></li>
+  <li><a href="../modules/flower.tasker.CommandGroup.html">flower.tasker.CommandGroup</a></li>
+  <li><a href="../modules/flower.tasker.EchoCommand.html">flower.tasker.EchoCommand</a></li>
+  <li><a href="../modules/flower.tasker.FunctionCommand.html">flower.tasker.FunctionCommand</a></li>
+  <li><a href="../modules/flower.tasker.SetContextCommand.html">flower.tasker.SetContextCommand</a></li>
+  <li><a href="../modules/flower.tasker.Task.html">flower.tasker.Task</a></li>
+  <li><a href="../modules/flower.tasker.TaskContext.html">flower.tasker.TaskContext</a></li>
+  <li><a href="../modules/flower.tasker.TaskEvent.html">flower.tasker.TaskEvent</a></li>
+  <li><a href="../modules/flower.tasker.TaskExecutor.html">flower.tasker.TaskExecutor</a></li>
+  <li><a href="../modules/flower.tasker.TaskMonitor.html">flower.tasker.TaskMonitor</a></li>
+  <li><a href="../modules/flower.tiled.html">flower.tiled</a></li>
+  <li><a href="../modules/flower.tiled.IsometricLayerRenderer.html">flower.tiled.IsometricLayerRenderer</a></li>
+  <li><a href="../modules/flower.tiled.TileFlag.html">flower.tiled.TileFlag</a></li>
+  <li><a href="../modules/flower.tiled.TileLayer.html">flower.tiled.TileLayer</a></li>
+  <li><a href="../modules/flower.tiled.TileLayerRenderer.html">flower.tiled.TileLayerRenderer</a></li>
+  <li><a href="../modules/flower.tiled.TileLayerRendererFactory.html">flower.tiled.TileLayerRendererFactory</a></li>
+  <li><a href="../modules/flower.tiled.TileMap.html">flower.tiled.TileMap</a></li>
+  <li><a href="../modules/flower.tiled.TileMapImage.html">flower.tiled.TileMapImage</a></li>
+  <li><a href="../modules/flower.tiled.TileObject.html">flower.tiled.TileObject</a></li>
+  <li><a href="../modules/flower.tiled.TileObjectGroup.html">flower.tiled.TileObjectGroup</a></li>
+  <li><a href="../modules/flower.tiled.TileObjectRenderer.html">flower.tiled.TileObjectRenderer</a></li>
+  <li><a href="../modules/flower.tiled.TileObjectRendererFactory.html">flower.tiled.TileObjectRendererFactory</a></li>
+  <li><a href="../modules/flower.tiled.TileSheetImage.html">flower.tiled.TileSheetImage</a></li>
+  <li><a href="../modules/flower.tiled.Tileset.html">flower.tiled.Tileset</a></li>
+  <li><a href="../modules/flower.widget.html">flower.widget</a></li>
+  <li><a href="../modules/flower.widget.BaseItemRenderer.html">flower.widget.BaseItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.BaseTheme.html">flower.widget.BaseTheme</a></li>
+  <li><a href="../modules/flower.widget.BoxLayout.html">flower.widget.BoxLayout</a></li>
+  <li><a href="../modules/flower.widget.Button.html">flower.widget.Button</a></li>
+  <li><a href="../modules/flower.widget.CheckBox.html">flower.widget.CheckBox</a></li>
+  <li><a href="../modules/flower.widget.CheckBoxItemRenderer.html">flower.widget.CheckBoxItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.DialogBox.html">flower.widget.DialogBox</a></li>
+  <li><a href="../modules/flower.widget.FocusMgr.html">flower.widget.FocusMgr</a></li>
+  <li><a href="../modules/flower.widget.ImageButton.html">flower.widget.ImageButton</a></li>
+  <li><a href="../modules/flower.widget.ImageLabelItemRenderer.html">flower.widget.ImageLabelItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.Joystick.html">flower.widget.Joystick</a></li>
+  <li><a href="../modules/flower.widget.LabelItemRenderer.html">flower.widget.LabelItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.LayoutMgr.html">flower.widget.LayoutMgr</a></li>
+  <li><a href="../modules/flower.widget.ListBox.html">flower.widget.ListBox</a></li>
+  <li><a href="../modules/flower.widget.ListItem.html">flower.widget.ListItem</a></li>
+  <li><a href="../modules/flower.widget.ListView.html">flower.widget.ListView</a></li>
+  <li><a href="../modules/flower.widget.ListViewLayout.html">flower.widget.ListViewLayout</a></li>
+  <li><a href="../modules/flower.widget.MsgBox.html">flower.widget.MsgBox</a></li>
+  <li><a href="../modules/flower.widget.Panel.html">flower.widget.Panel</a></li>
+  <li><a href="../modules/flower.widget.PanelView.html">flower.widget.PanelView</a></li>
+  <li><a href="../modules/flower.widget.ScrollGroup.html">flower.widget.ScrollGroup</a></li>
+  <li><a href="../modules/flower.widget.ScrollView.html">flower.widget.ScrollView</a></li>
+  <li><a href="../modules/flower.widget.SheetButton.html">flower.widget.SheetButton</a></li>
+  <li><a href="../modules/flower.widget.SheetImageLabelItemRenderer.html">flower.widget.SheetImageLabelItemRenderer</a></li>
+  <li><a href="../modules/flower.widget.Slider.html">flower.widget.Slider</a></li>
+  <li><a href="../modules/flower.widget.Spacer.html">flower.widget.Spacer</a></li>
+  <li><a href="../modules/flower.widget.TextAlign.html">flower.widget.TextAlign</a></li>
+  <li><strong>flower.widget.TextBox</strong></li>
+  <li><a href="../modules/flower.widget.TextInput.html">flower.widget.TextInput</a></li>
+  <li><a href="../modules/flower.widget.TextView.html">flower.widget.TextView</a></li>
+  <li><a href="../modules/flower.widget.ThemeMgr.html">flower.widget.ThemeMgr</a></li>
+  <li><a href="../modules/flower.widget.UIComponent.html">flower.widget.UIComponent</a></li>
+  <li><a href="../modules/flower.widget.UIEvent.html">flower.widget.UIEvent</a></li>
+  <li><a href="../modules/flower.widget.UIGroup.html">flower.widget.UIGroup</a></li>
+  <li><a href="../modules/flower.widget.UILabel.html">flower.widget.UILabel</a></li>
+  <li><a href="../modules/flower.widget.UILayer.html">flower.widget.UILayer</a></li>
+  <li><a href="../modules/flower.widget.UILayout.html">flower.widget.UILayout</a></li>
+  <li><a href="../modules/flower.widget.UIView.html">flower.widget.UIView</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>flower.widget.TextBox</code></h1>
+
+<p>It is a class that displays the text.</p>
+<p>
+
+ <h4>Extends:</h4>
+ <ul>
+   <li><a href="flower.widget.Panel.html">Panel</a><l/i>
+ </ul>
+</p>
+    <h3>Info:</h3>
+    <ul>
+        <li><strong>Release</strong>: V3.0.0</li>
+        <li><strong>Author</strong>: Makoto</li>
+    </ul>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:_initInternal">TextBox:_initInternal&nbsp;()</a></td>
+	<td class="summary">Initialize a variables</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:_createChildren">TextBox:_createChildren&nbsp;()</a></td>
+	<td class="summary">Create a children object.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:_updateTextLabel">TextBox:_updateTextLabel&nbsp;()</a></td>
+	<td class="summary">Update the TextLabel.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:updateDisplay">TextBox:updateDisplay&nbsp;()</a></td>
+	<td class="summary">Update the display objects.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:setText">TextBox:setText&nbsp;(text)</a></td>
+	<td class="summary">Sets the text.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:addText">TextBox:addText&nbsp;(text)</a></td>
+	<td class="summary">Adds the text.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:getText">TextBox:getText&nbsp;()</a></td>
+	<td class="summary">Returns the text.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:getTextLength">TextBox:getTextLength&nbsp;()</a></td>
+	<td class="summary">Returns the text length.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:setTextSize">TextBox:setTextSize&nbsp;(textSize)</a></td>
+	<td class="summary">Sets the textSize.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:getTextSize">TextBox:getTextSize&nbsp;()</a></td>
+	<td class="summary">Returns the textSize.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:setFontName">TextBox:setFontName&nbsp;(fontName)</a></td>
+	<td class="summary">Sets the fontName.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:getFontName">TextBox:getFontName&nbsp;()</a></td>
+	<td class="summary">Returns the font name.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:getFont">TextBox:getFont&nbsp;()</a></td>
+	<td class="summary">Returns the font.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:setTextAlign">TextBox:setTextAlign&nbsp;(horizontalAlign, verticalAlign)</a></td>
+	<td class="summary">Sets the text align.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:getTextAlign">TextBox:getTextAlign&nbsp;()</a></td>
+	<td class="summary">Returns the text align.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:getAlignment">TextBox:getAlignment&nbsp;()</a></td>
+	<td class="summary">Returns the text align for MOAITextBox.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:setTextColor">TextBox:setTextColor&nbsp;(red, green, blue, alpha)</a></td>
+	<td class="summary">Sets the text align.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:getTextColor">TextBox:getTextColor&nbsp;()</a></td>
+	<td class="summary">Returns the text color.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:setTextPadding">TextBox:setTextPadding&nbsp;(left, top, right, bottom)</a></td>
+	<td class="summary">Set textbox padding by label's setRect method, it will set 4 direction padding</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#TextBox:getTextPadding">TextBox:getTextPadding&nbsp;()</a></td>
+	<td class="summary">Returns the text padding.</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_FONT_NAME">STYLE_FONT_NAME</a></td>
+	<td class="summary">Style: fontName</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_TEXT_SIZE">STYLE_TEXT_SIZE</a></td>
+	<td class="summary">Style: textSize</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_TEXT_COLOR">STYLE_TEXT_COLOR</a></td>
+	<td class="summary">Style: textColor</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_TEXT_ALIGN">STYLE_TEXT_ALIGN</a></td>
+	<td class="summary">Style: textSize</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#STYLE_TEXT_PADDING">STYLE_TEXT_PADDING</a></td>
+	<td class="summary">Style: textPadding</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "TextBox:_initInternal"></a>
+    <strong>TextBox:_initInternal&nbsp;()</strong>
+    </dt>
+    <dd>
+    Initialize a variables
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:_createChildren"></a>
+    <strong>TextBox:_createChildren&nbsp;()</strong>
+    </dt>
+    <dd>
+    Create a children object.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:_updateTextLabel"></a>
+    <strong>TextBox:_updateTextLabel&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the TextLabel.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:updateDisplay"></a>
+    <strong>TextBox:updateDisplay&nbsp;()</strong>
+    </dt>
+    <dd>
+    Update the display objects.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:setText"></a>
+    <strong>TextBox:setText&nbsp;(text)</strong>
+    </dt>
+    <dd>
+    Sets the text.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">text</span>
+       text</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:addText"></a>
+    <strong>TextBox:addText&nbsp;(text)</strong>
+    </dt>
+    <dd>
+    Adds the text.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">text</span>
+       text</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:getText"></a>
+    <strong>TextBox:getText&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the text.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        text
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:getTextLength"></a>
+    <strong>TextBox:getTextLength&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the text length.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        text length
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:setTextSize"></a>
+    <strong>TextBox:setTextSize&nbsp;(textSize)</strong>
+    </dt>
+    <dd>
+    Sets the textSize.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">textSize</span>
+       textSize</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:getTextSize"></a>
+    <strong>TextBox:getTextSize&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the textSize.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        textSize
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:setFontName"></a>
+    <strong>TextBox:setFontName&nbsp;(fontName)</strong>
+    </dt>
+    <dd>
+    Sets the fontName.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">fontName</span>
+       fontName</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:getFontName"></a>
+    <strong>TextBox:getFontName&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the font name.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        font name
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:getFont"></a>
+    <strong>TextBox:getFont&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the font.
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        font
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:setTextAlign"></a>
+    <strong>TextBox:setTextAlign&nbsp;(horizontalAlign, verticalAlign)</strong>
+    </dt>
+    <dd>
+    Sets the text align.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">horizontalAlign</span>
+       horizontal align(left, center, top)</li>
+      <li><span class="parameter">verticalAlign</span>
+       vertical align(top, center, bottom)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:getTextAlign"></a>
+    <strong>TextBox:getTextAlign&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the text align.
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        horizontal align(left, center, top)</li>
+        <li>
+        vertical align(top, center, bottom)</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:getAlignment"></a>
+    <strong>TextBox:getAlignment&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the text align for MOAITextBox.
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        horizontal align</li>
+        <li>
+        vertical align</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:setTextColor"></a>
+    <strong>TextBox:setTextColor&nbsp;(red, green, blue, alpha)</strong>
+    </dt>
+    <dd>
+    Sets the text align.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">red</span>
+       red(0 ... 1)</li>
+      <li><span class="parameter">green</span>
+       green(0 ... 1)</li>
+      <li><span class="parameter">blue</span>
+       blue(0 ... 1)</li>
+      <li><span class="parameter">alpha</span>
+       alpha(0 ... 1)</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:getTextColor"></a>
+    <strong>TextBox:getTextColor&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the text color.
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        red(0 ... 1)</li>
+        <li>
+        green(0 ... 1)</li>
+        <li>
+        blue(0 ... 1)</li>
+        <li>
+        alpha(0 ... 1)</li>
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:setTextPadding"></a>
+    <strong>TextBox:setTextPadding&nbsp;(left, top, right, bottom)</strong>
+    </dt>
+    <dd>
+    Set textbox padding by label's setRect method, it will set 4 direction padding
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">left</span>
+       padding for left</li>
+      <li><span class="parameter">top</span>
+       padding for top</li>
+      <li><span class="parameter">right</span>
+       padding for right</li>
+      <li><span class="parameter">bottom</span>
+       padding for bottom</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "TextBox:getTextPadding"></a>
+    <strong>TextBox:getTextPadding&nbsp;()</strong>
+    </dt>
+    <dd>
+    Returns the text padding.
+
+
+    <h3>Returns:</h3>
+    <ol>
+        <li>
+        padding for left</li>
+        <li>
+        padding for top</li>
+        <li>
+        padding for right</li>
+        <li>
+        padding for bottom</li>
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Fields"></a>Fields</h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "STYLE_FONT_NAME"></a>
+    <strong>STYLE_FONT_NAME</strong>
+    </dt>
+    <dd>
+    Style: fontName
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_TEXT_SIZE"></a>
+    <strong>STYLE_TEXT_SIZE</strong>
+    </dt>
+    <dd>
+    Style: textSize
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_TEXT_COLOR"></a>
+    <strong>STYLE_TEXT_COLOR</strong>
+    </dt>
+    <dd>
+    Style: textColor
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_TEXT_ALIGN"></a>
+    <strong>STYLE_TEXT_ALIGN</strong>
+    </dt>
+    <dd>
+    Style: textSize
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "STYLE_TEXT_PADDING"></a>
+    <strong>STYLE_TEXT_PADDING</strong>
+    </dt>
+    <dd>
+    Style: textPadding
+
+
+
+
+
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.3</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
