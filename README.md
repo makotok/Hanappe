@@ -2,6 +2,8 @@
 
 # Hanappe Projects
 
+[![Join the chat at https://gitter.im/makotok/Hanappe](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/makotok/Hanappe?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Introduction
 Open source framework for [Moai SDK](https://github.com/moai/moai-dev).
 
