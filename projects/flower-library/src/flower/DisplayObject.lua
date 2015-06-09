@@ -26,6 +26,7 @@ DisplayObject.__moai_class = MOAIProp
 -- The constructor.
 function DisplayObject:init()
     DisplayObject.__super.init(self)
+    self.touchEnabled = true
 
     if Config.BLEND_MODE then
         self:setBlendMode(unpack(Config.BLEND_MODE))
@@ -242,6 +243,26 @@ end
 function DisplayObject:setScissorRect(scissorRect)
     DisplayObject.__index.setScissorRect(self, scissorRect)
     self.scissorRect = scissorRect
+end
+
+---
+-- Enables this object for touch events.
+-- @param value enabled
+function DisplayObject:setTouchEnabled(value)
+    if self.touchEnabled == value then
+        return
+    end
+    self.touchEnabled = value
+end
+
+---
+-- Returns the enabled for touch events.
+-- @return value enabled
+function DisplayObject:isTouchEnabled()
+    if self.parent then
+        return self.parent:isTouchEnabled() and self.touchEnabled ~= false
+    end
+    return self.touchEnabled ~= false
 end
 
 return DisplayObject
