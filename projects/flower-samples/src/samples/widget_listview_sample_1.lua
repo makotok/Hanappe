@@ -38,8 +38,11 @@ function onCreate(e)
                 itemRendererClass = widget.ImageLabelItemRenderer,
                 itemProperties = {{
                     labelField = "label",
+                    labelFunction = function(label)
+                        return "I_" .. label
+                    end,
                     imageField = "image",
-                    imageSize = {20, 20},                    
+                    imageSize = {20, 20},
                 }},
             },
             widget.ListView {

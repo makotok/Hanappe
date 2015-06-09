@@ -74,8 +74,7 @@ function ImageLabelItemRenderer:_updateTextLabel()
     self._textLabel:setVisible(self._data ~= nil)
 
     if self._data then
-        local text = self._labelField and self._data[self._labelField] or self._data
-        text = type(text) == "string" and text or tostring(text)
+        local text = self:itemToLabel(self._data)
         self._textLabel:setText(text)
     end
 end

@@ -25,6 +25,7 @@ function LabelItemRenderer:_initInternal()
     LabelItemRenderer.__super._initInternal(self)
     self._themeName = "LabelItemRenderer"
     self._labelField = nil
+    self._labelFunction = nil
 end
 
 ---
@@ -53,8 +54,7 @@ function LabelItemRenderer:_updateTextLabel()
     self._textLabel:setVisible(self._data ~= nil)
 
     if self._data then
-        local text = self._labelField and self._data[self._labelField] or self._data
-        text = type(text) == "string" and text or tostring(text)
+        local text = self:itemToLabel(self._data)
         self._textLabel:setText(text)
     end
 end
@@ -67,6 +67,19 @@ function LabelItemRenderer:updateDisplay()
 end
 
 ---
+-- Returns the label text for item.
+function LabelItemRenderer:itemToLabel(item)
+    local label = self._labelField and item[self._labelField] or item
+
+    if self._labelFunction and label  then
+        label = self._labelFunction(label)
+    end
+
+    label = type(label) == "string" and label or tostring(label)
+    return label
+end
+
+---
 -- Sets the label field of data.
 -- @param labelField field of data.
 function LabelItemRenderer:setLabelField(labelField)
@@ -74,6 +87,13 @@ function LabelItemRenderer:setLabelField(labelField)
         self._labelField = labelField
         self:invalidateDisplay()
     end    
+end
+
+function LabelItemRenderer:setLabelFunction(value)
+    if self._labelFunction ~= value then
+        self._labelFunction = value
+        self:invalidateDisplay()        
+    end
 end
 
 return LabelItemRenderer
