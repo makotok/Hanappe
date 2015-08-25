@@ -53,6 +53,10 @@ end
 ---
 -- Update the checkBox.
 function CheckBoxItemRenderer:_updateCheckBox()
+    if not self._dataIndex then
+        return
+    end
+
     self._checkBox:setSize(self:getSize())
 
     if self._data then

@@ -99,6 +99,8 @@ function ListView:_updateItemRenderer(data, index)
     renderer:setData(data)
     renderer:setDataIndex(index)
     renderer:setHostComponent(self)
+    renderer:setRowIndex(1 + math.floor(index / self:getColumnCount()))
+    renderer:setColumnIndex(1 + index % self:getColumnCount())
     renderer:addEventListener(UIEvent.TOUCH_DOWN, self.onItemRendererTouchDown, self)
     renderer:addEventListener(UIEvent.TOUCH_UP, self.onItemRendererTouchUp, self)
     renderer:addEventListener(UIEvent.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
@@ -170,6 +172,13 @@ function ListView:invalidateItemRenderers()
         self:invalidateDisplay()
         self._itemRendererChanged = true
     end
+end
+
+---
+-- Returns the current item renderers.
+-- @return current item renderers.
+function ListView:getItemRenderers()
+    return self._itemRenderers
 end
 
 ---
@@ -297,7 +306,6 @@ end
 function ListView:getRowHeight()
     return self:getStyle(ListView.STYLE_ROW_HEIGHT)
 end
-
 
 ---
 -- Set the count of the columns.

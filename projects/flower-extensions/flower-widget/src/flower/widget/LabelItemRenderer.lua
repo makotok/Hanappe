@@ -19,6 +19,9 @@ local BaseItemRenderer = require "flower.widget.BaseItemRenderer"
 -- class
 local LabelItemRenderer = class(BaseItemRenderer)
 
+--- Style: lineBreak
+LabelItemRenderer.STYLE_LINE_BREAK = "lineBreak"
+
 ---
 -- Initialize a variables
 function LabelItemRenderer:_initInternal()
@@ -50,12 +53,30 @@ end
 ---
 -- Update the textLabel.
 function LabelItemRenderer:_updateTextLabel()
+    if not self._dataIndex then
+        return
+    end
+
     self._textLabel:setSize(self:getSize())
     self._textLabel:setVisible(self._data ~= nil)
 
     if self._data then
         local text = self:itemToLabel(self._data)
-        self._textLabel:setText(text)
+        if self._textLabel:getText() ~= text then
+            self._textLabel:setText(text)
+        end
+    end
+
+    if self:getLineBreak() then
+        self._textLabel:fitHeight()
+
+        if self._textLabel:getHeight() > self:getHostComponent():getRowHeight() then
+            self:setRowHeight(self._textLabel:getHeight())
+        else
+            self:setRowHeight(nil)
+            self._textLabel:setSize(self:getSize())
+        end
+
     end
 end
 
@@ -94,6 +115,17 @@ function LabelItemRenderer:setLabelFunction(value)
         self._labelFunction = value
         self:invalidateDisplay()        
     end
+end
+
+function LabelItemRenderer:setLineBreak(value)
+    if self:getLineBreak() ~= value then
+        self:setStyle(LabelItemRenderer.STYLE_LINE_BREAK, value)
+        self:invalidateDisplay()
+    end
+end
+
+function LabelItemRenderer:getLineBreak()
+    return self:getStyle(LabelItemRenderer.STYLE_LINE_BREAK)
 end
 
 return LabelItemRenderer

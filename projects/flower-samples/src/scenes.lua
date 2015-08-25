@@ -41,6 +41,8 @@ return {
     {title = "Widget TextView", scene = "samples/widget_textview_sample", openAnime = "popIn", closeAnime = "popOut"},
     {title = "Widget ListView 1", scene = "samples/widget_listview_sample_1", openAnime = "fade", closeAnime = "fade"},
     {title = "Widget ListView 2", scene = "samples/widget_listview_sample_2", openAnime = "fade", closeAnime = "fade"},
+    {title = "Widget ListView 3", scene = "samples/widget_listview_sample_3", openAnime = "fade", closeAnime = "fade"},
+    {title = "Widget ListView 4", scene = "samples/widget_listview_sample_4", openAnime = "fade", closeAnime = "fade"},
     {title = "Spine Skeletal Animation", scene = "samples/spine_boy_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Spine Atlas", scene = "samples/spine_boy_atlas_sample", openAnime = "fade", closeAnime = "fade"},
     {title = "Spine Skins", scene = "samples/spine_goblins_sample", openAnime = "fade", closeAnime = "fade"},

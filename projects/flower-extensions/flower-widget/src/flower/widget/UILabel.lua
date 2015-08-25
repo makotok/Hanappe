@@ -129,7 +129,8 @@ end
 -- @param maxHeight (Option)maxHeight of the text.
 -- @param padding (Option)padding of the text.
 function UILabel:fitHeight(length, maxHeight, padding)
-    self:fitSize(length, self:getLabel():getWidth(), maxHeight, padding) 
+    local padLeft, padTop, padRight, padBottom = self:getTextPadding()
+    self:fitSize(length, self:getWidth() - padLeft - padRight, maxHeight, padding) 
 end
 
 ---
@@ -138,7 +139,8 @@ end
 -- @param maxWidth (Option)maxWidth of the text.
 -- @param padding (Option)padding of the text.
 function UILabel:fitWidth(length, maxWidth, padding)
-    self:fitSize(length, maxWidth, self:getLabel():getHeight(), padding) 
+    local padLeft, padTop, padRight, padBottom = self:getTextPadding()
+    self:fitSize(length, maxWidth, self:getHeight() - padTop - padBottom, padding) 
 end
 
 ---

@@ -34,6 +34,13 @@ function onCreate(e)
         parent = view,
     }
 
+    textlabel5 = widget.TextLabel {
+        text = "あいうえおかきくけこさしすせたつちてとなにぬねのまみむめも",
+        width = flower.viewWidth,
+        textResizePolicy = {"none", "auto"},
+        parent = view,
+    }
+
     resizeButton = widget.Button {
         text = "Resize",
         size = {100, 50},
