@@ -27,7 +27,7 @@ Texture.__moai_class = MOAITexture
 function Texture:init(path, filter)
     self:load(path)
     self.path = path
-    self.filter = filter or Config.TEXTURE_FILTER
+    self.filter = filter or Config.TEXTURE_DEFAULT_FILTER
 
     if self.filter then
         self:setFilter(self.filter)
