@@ -16,9 +16,9 @@ TextAlign["center"] = MOAITextBox.CENTER_JUSTIFY
 TextAlign["right"] = MOAITextBox.RIGHT_JUSTIFY
 
 --- top: MOAITextBox.LEFT_JUSTIFY
-TextAlign["top"] = MOAITextBox.LEFT_JUSTIFY
+TextAlign["top"] = MOAITextBox.TOP_JUSTIFY or MOAITextBox.LEFT_JUSTIFY
 
 --- bottom: MOAITextBox.RIGHT_JUSTIFY
-TextAlign["bottom"] = MOAITextBox.RIGHT_JUSTIFY
+TextAlign["bottom"] = MOAITextBox.BOTTOM_JUSTIFY or MOAITextBox.RIGHT_JUSTIFY
 
 return TextAlign

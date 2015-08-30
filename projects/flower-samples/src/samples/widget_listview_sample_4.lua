@@ -1,3 +1,6 @@
+---
+-- Sample to set the height for each row in the ListView.
+
 module(..., package.seeall)
 
 local dataSource = {}
@@ -13,9 +16,10 @@ function onCreate(e)
     widget.ListView {
         scene = scene,
         dataSource = {dataSource},
-        backgroundVisible = false,
+        backgroundVisible = true,
         itemProperties = {{
             labelField = "label",
+            -- To set when you want to specify the height of the row.
             rowHeightField = "rowHeight",
         }},
         onSelectedChanged = function(e)
@@ -28,6 +32,4 @@ function onCreate(e)
             print("onItemClick", e.data.label)
         end,
     }
-
-
 end

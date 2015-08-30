@@ -1,3 +1,6 @@
+---
+-- Samples for ListView to display the header and footer.
+
 module(..., package.seeall)
 
 local dataSource = {}

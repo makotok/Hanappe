@@ -1,3 +1,6 @@
+---
+-- Samples to display multiple lines of label in ListView.
+
 module(..., package.seeall)
 
 local dataSource = {}
@@ -22,9 +25,10 @@ function onCreate(e)
     widget.ListView {
         scene = scene,
         dataSource = {dataSource},
-        backgroundVisible = false,
+        backgroundVisible = true,
         itemProperties = {{
             labelField = "text",
+            -- In LabelItemRenderer, it is set if you want to multi-line display.
             lineBreak = true,
         }},
         onSelectedChanged = function(e)

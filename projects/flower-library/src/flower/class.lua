@@ -68,4 +68,15 @@ function class:__object_factory()
     return setmetatable({}, self.__interface)
 end
 
+function class:instanceOf(clazz)
+    local curClass = self.__class
+    while curClass do
+        if curClass == clazz then
+            return true
+        end
+        curClass = self.__super
+    end
+    return false
+end
+
 return class

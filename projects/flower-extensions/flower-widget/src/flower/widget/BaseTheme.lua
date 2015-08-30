@@ -196,6 +196,9 @@ local BaseTheme = {
         textPadding = {5, 0, 0, 0},
         textDisabledColor = {0.5, 0.5, 0.5, 1},
     },
+    WidgetItemRenderer = {
+        parentStyle = "LabelItemRenderer",
+    },
 }
 
 return BaseTheme

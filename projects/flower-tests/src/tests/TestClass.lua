@@ -46,3 +46,18 @@ function TestClass:test1_instance_properties()
     print("--- EventDispatcher properties ---")
     printTable(obj2)
 end
+
+---
+-- test1
+function TestClass:test2_instanceOf()
+    local obj1 = DisplayObject()
+    local obj2 = EventDispatcher()
+
+    assertTrue(obj1:instanceOf(DisplayObject))
+    assertTrue(obj1:instanceOf(EventDispatcher))
+
+    assertFalse(obj2:instanceOf(DisplayObject))
+    assertTrue(obj2:instanceOf(EventDispatcher))
+
+end
+
