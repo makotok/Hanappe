@@ -75,9 +75,10 @@ function ListView:_updateItemRenderers()
         self:_updateItemRenderer(data, i)
     end
 
-    if #self._itemRenderers > #self:getDataSource() then
-        for i = #self._itemRenderers, #self:getDataSource() do
-            self:_removeItemRenderer(self._itemRenderers[i])
+    local renderersSize = #self._itemRenderers
+    if renderersSize > self:getDataLength() then
+        for i = self:getDataLength() + 1, renderersSize do
+            self:_removeItemRenderer(self._itemRenderers[i], self:getItemAt(i))
         end
     end
 
@@ -97,6 +98,7 @@ function ListView:_updateItemRenderer(data, index)
     end
     renderer:setProperties(self._itemProperties)
     renderer:setData(data)
+    renderer:setSelected(table.indexOf(self._selectedItems, data) > 0)
     renderer:setDataIndex(index)
     renderer:setHostComponent(self)
     renderer:setRowIndex(1 + math.floor(index / self:getColumnCount()))
@@ -112,7 +114,7 @@ end
 -- Remove the item renderers.
 function ListView:_removeItemRenderers()
     for i, renderer in ipairs(self._itemRenderers) do
-        self:_removeItemRenderer(renderer)
+        self:_removeItemRenderer(renderer, renderer:getData())
     end
 
     self._itemRenderers = {}
@@ -122,14 +124,17 @@ end
 ---
 -- Remove the item renderer.
 -- @param renderer item renderer.
-function ListView:_removeItemRenderer(renderer)
+-- @param item item data.
+function ListView:_removeItemRenderer(renderer, item)
     renderer:removeEventListener(UIEvent.TOUCH_DOWN, self.onItemRendererTouchDown, self)
     renderer:removeEventListener(UIEvent.TOUCH_UP, self.onItemRendererTouchUp, self)
     renderer:removeEventListener(UIEvent.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
 
     self:removeContent(renderer)
     table.removeElement(self._itemRenderers, renderer)
-    self._itemToRendererMap[renderer:getData()] = nil
+    if item then
+        self._itemToRendererMap[item] = nil
+    end
 end
 
 ---
@@ -198,6 +203,28 @@ function ListView:getSelectedItem()
 end
 
 ---
+-- Return the selected index.
+-- @return 
+function ListView:getSelectedIndex()
+    local item = self:getSelectedItem()
+    return item and table.indexOf(self:getDataSource(), item) or -1
+end
+
+---
+-- Return the selected index.
+-- @return 
+function ListView:setSelectedIndex(index)
+    self:setSelectedItem(self:getItemAt(index))
+end
+
+---
+-- Return the selected items.
+-- @return 
+function ListView:getSelectedItems()
+    return table.copy(self._selectedItems)
+end
+
+---
 -- Sets the selected items.
 -- @param items selected items.
 function ListView:setSelectedItems(items)
@@ -239,6 +266,13 @@ function ListView:setSelectedItems(items)
 end
 
 ---
+-- Returns the item at index.
+-- @return item of the dataSource.
+function ListView:getItemAt(index)
+    return self._dataSource[index]
+end
+
+---
 -- Set the dataSource.
 -- @param dataSource dataSource
 function ListView:setDataSource(dataSource)
@@ -253,6 +287,46 @@ end
 -- @return dataSource
 function ListView:getDataSource()
     return self._dataSource
+end
+
+---
+-- Return the length of dataSource.
+-- @return length
+function ListView:getDataLength()
+    return #self._dataSource
+end
+
+---
+-- Add the item to dataSource.
+-- @param item
+-- @param index (option)insert index.
+function ListView:addItem(item, index)
+    if index then
+        table.insert(self._dataSource, index, item)
+    else
+        table.insertElement(self._dataSource, item)
+    end
+
+    self:invalidateItemRenderers()
+end
+
+---
+-- Remove the item from dataSource.
+-- @param item item
+function ListView:removeItem(item)
+    if table.removeElement(self._dataSource, item) > 0 then
+        self:invalidateItemRenderers()
+    end
+end
+
+---
+-- Remove the data from dataSource by index.
+-- @param index index
+function ListView:removeItemAt(index)
+    if index <= self:getDataLength() then
+        table.remove(self._dataSource, i)
+        self:invalidateItemRenderers()
+    end
 end
 
 ---
