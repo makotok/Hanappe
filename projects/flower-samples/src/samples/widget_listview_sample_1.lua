@@ -41,6 +41,10 @@ function onCreate(e)
                 onItemClick = function(e)
                     print("onItemClick", e.data.label)
                 end,
+                -- Set a function to be called when the item is clicked.
+                onItemEnter = function(e)
+                    print("onItemEnter", e.data.label)
+                end,
             },
             -- Samples for ImageLabelItemRenderer.
             widget.ListView {

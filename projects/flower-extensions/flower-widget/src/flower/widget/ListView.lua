@@ -38,6 +38,9 @@ ListView.EVENT_SELECTED_CHANGED = "selectedChanged"
 --- Event: itemClick
 ListView.EVENT_ITEM_CLICK = "itemClick"
 
+--- Event: itemEnter
+ListView.EVENT_ITEM_ENTER = "itemEnter"
+
 ---
 -- Initializes the internal variables.
 function ListView:_initInternal()
@@ -51,6 +54,7 @@ function ListView:_initInternal()
     self._itemToRendererMap = {}
     self._itemRendererChanged = false
     self._touchedRenderer = nil
+    self._touchedOldSelectedItem = nil
 end
 
 ---
@@ -413,6 +417,13 @@ function ListView:setOnItemClick(func)
 end
 
 ---
+-- Set the event listener that is called when the item click.
+-- @param func selected changed event handler
+function ListView:setOnItemEnter(func)
+    self:setEventListener(ListView.EVENT_ITEM_ENTER, func)
+end
+
+---
 -- This event handler is called when touch.
 -- @param e Touch Event
 function ListView:onItemRendererTouchDown(e)
@@ -422,6 +433,8 @@ function ListView:onItemRendererTouchDown(e)
 
     local renderer = e.target
     if renderer.isRenderer then
+        self._touchedOldSelectedItem = self:getSelectedItem()
+
         renderer:setPressed(true)
         self:setSelectedItem(renderer:getData())
         self._touchedRenderer = renderer
@@ -441,6 +454,10 @@ function ListView:onItemRendererTouchUp(e)
     if renderer.isRenderer then
         renderer:setPressed(false)
         self:dispatchEvent(ListView.EVENT_ITEM_CLICK, renderer:getData())
+
+        if self._touchedOldSelectedItem == renderer:getData() then
+            self:dispatchEvent(ListView.EVENT_ITEM_ENTER, renderer:getData())
+        end
     end
 end
 
