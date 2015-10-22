@@ -167,6 +167,7 @@ local BaseTheme = {
         backgroundPressedColor = {0.5, 0.5, 0.5, 0.5},
         backgroundSelectedColor = {0.5, 0.5, 0.8, 0.5},
         bottomBorderColor = {0.5, 0.5, 0.5, 0.5},
+        rightBorderColor = {0.5, 0.5, 0.5, 0.5},
     },
     LabelItemRenderer = {
         parentStyle = "BaseItemRenderer",

@@ -125,8 +125,8 @@ function ListView:_updateItemRenderer(data, index)
     renderer:setSelected(table.indexOf(self._selectedItems, data) > 0)
     renderer:setDataIndex(index)
     renderer:setHostComponent(self)
-    renderer:setRowIndex(1 + math.floor(index / self:getColumnCount()))
-    renderer:setColumnIndex(1 + index % self:getColumnCount())
+    renderer:setRowIndex(1 + math.floor((index - 1) / self:getColumnCount()))
+    renderer:setColumnIndex(1 + (index - 1) % self:getColumnCount())
     renderer:addEventListener(UIEvent.TOUCH_DOWN, self.onItemRendererTouchDown, self)
     renderer:addEventListener(UIEvent.TOUCH_UP, self.onItemRendererTouchUp, self)
     renderer:addEventListener(UIEvent.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
@@ -318,7 +318,14 @@ end
 -- Return the length of dataSource.
 -- @return data length
 function ListView:getDataLength()
-    return #self._dataSource
+    return self._dataSource and #self._dataSource or 0
+end
+
+---
+-- Return the dataSource row count .
+-- @return row count
+function ListView:getDataRowCount()
+    return math.ceil(self:getDataLength() / self:getColumnCount())
 end
 
 ---
@@ -419,7 +426,7 @@ function ListView:setRowCount(value)
 end
 
 ---
--- Return the rowCount.
+-- Return the rowCount .
 -- @return rowCount
 function ListView:getRowCount()
     return self:getStyle(ListView.STYLE_ROW_COUNT)
@@ -455,6 +462,13 @@ end
 -- @param func selected changed event handler
 function ListView:setOnSelectedChanged(func)
     self:setEventListener(ListView.EVENT_SELECTED_CHANGED, func)
+end
+
+---
+-- Set the event listener that is called when the selected changed.
+-- @param func selected changed event handler
+function ListView:setOnItemChanged(func)
+    self:setOnSelectedChanged(func)
 end
 
 ---

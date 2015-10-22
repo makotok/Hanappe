@@ -25,6 +25,9 @@ BaseItemRenderer.STYLE_BACKGROUND_SELECTED_COLOR = "backgroundSelectedColor"
 --- Style: bottomBorderColor
 BaseItemRenderer.STYLE_BOTTOM_BORDER_COLOR = "bottomBorderColor"
 
+--- Style: rightBorderColor
+BaseItemRenderer.STYLE_RIGHT_BORDER_COLOR = "rightBorderColor"
+
 --- Style: rowHeight
 BaseItemRenderer.STYLE_ROW_HEIGHT = "rowHeight"
 
@@ -89,6 +92,11 @@ function BaseItemRenderer:_updateBackground()
     -- draw bottom border
     if self:isBottomBorderVisible() then
         self._background:setPenColor(self:getBottomBorderColor()):drawLine(0, height, width, height)
+    end
+
+    -- draw right border
+    if self:isRightBorderVisible() then
+        self._background:setPenColor(self:getRightBorderColor()):drawLine(width, 0, width, height)
     end
 end
 
@@ -249,6 +257,16 @@ function BaseItemRenderer:getBottomBorderColor()
 end
 
 ---
+-- Returns the right border color.
+-- @return Red
+-- @return Green
+-- @return Blue
+-- @return Alpha
+function BaseItemRenderer:getRightBorderColor()
+    return unpack(self:getStyle(BaseItemRenderer.STYLE_RIGHT_BORDER_COLOR))
+end
+
+---
 -- Returns the background visible.
 -- @return True if display the background
 function BaseItemRenderer:isBackgroundVisible()
@@ -261,7 +279,19 @@ end
 -- @return True if display the bottom border.
 function BaseItemRenderer:isBottomBorderVisible()
     local r, g, b, a = self:getBottomBorderColor()
-    return r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0
+    local hostComponent = self:getHostComponent()
+    local visible = hostComponent and self:getRowIndex() < hostComponent:getDataRowCount()
+    return visible and (r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0)
+end
+
+---
+-- Returns the right border visible.
+-- @return True if display the bottom border.
+function BaseItemRenderer:isRightBorderVisible()
+    local r, g, b, a = self:getRightBorderColor()
+    local hostComponent = self:getHostComponent()
+    local visible = hostComponent and self:getColumnIndex() < hostComponent:getColumnCount()
+    return visible and (r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0)
 end
 
 ---
