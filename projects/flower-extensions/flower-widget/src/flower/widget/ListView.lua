@@ -1,8 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 -- List view class.
 --
--- TODO: create an object only display range
---
 -- <h4>Extends:</h4>
 -- <ul>
 --   <li><a href="flower.widget.PanelView.html">PanelView</a><l/i>
@@ -28,6 +26,9 @@ ListView.STYLE_ITEM_RENDERER_FACTORY = "itemRendererFactory"
 
 --- Style: rowHeight
 ListView.STYLE_ROW_HEIGHT = "rowHeight"
+
+--- Style: rowCount
+ListView.STYLE_ROW_COUNT = "rowCount"
 
 --- Style: columnCount
 ListView.STYLE_COLUMN_COUNT = "columnCount"
@@ -67,6 +68,25 @@ function ListView:_createChildren()
         columnCount = self:getColumnCount(),
     }
     self:setLayout(layout)
+end
+
+---
+-- TODO:LDoc
+function ListView:_updateViewHeightByRowCount()
+    if self:getRowHeight() == nil or self:getRowCount() == nil then
+        return
+    end
+
+    local rowCount = self:getRowCount()
+    local rowHeight = self:getRowHeight()
+    local pLeft, pTop, pRight, pBottom = 0, 0, 0, 0
+
+    if self:getBackgroundVisible() then
+        pLeft, pTop, pRight, pBottom = self._backgroundPanel:getContentPadding()
+    end
+
+    self:setHeight(rowCount * rowHeight + pTop + pBottom)
+
 end
 
 ---
@@ -149,7 +169,7 @@ function ListView:updateDisplay()
 end
 
 ---
--- Update the display
+-- Update the layout.
 function ListView:updateLayout()
     if self:getContentLayout() then
         self:getContentLayout():setRowHeight(self:getRowHeight())
@@ -208,22 +228,22 @@ end
 
 ---
 -- Return the selected index.
--- @return 
+-- @return selected index
 function ListView:getSelectedIndex()
     local item = self:getSelectedItem()
     return item and table.indexOf(self:getDataSource(), item) or -1
 end
 
 ---
--- Return the selected index.
--- @return 
+-- Set the selected index.
+-- @param index selected index.
 function ListView:setSelectedIndex(index)
     self:setSelectedItem(self:getItemAt(index))
 end
 
 ---
 -- Return the selected items.
--- @return 
+-- @return selected items
 function ListView:getSelectedItems()
     return table.copy(self._selectedItems)
 end
@@ -271,6 +291,7 @@ end
 
 ---
 -- Returns the item at index.
+-- @param index index of the dataSource.
 -- @return item of the dataSource.
 function ListView:getItemAt(index)
     return self._dataSource[index]
@@ -295,14 +316,14 @@ end
 
 ---
 -- Return the length of dataSource.
--- @return length
+-- @return data length
 function ListView:getDataLength()
     return #self._dataSource
 end
 
 ---
 -- Add the item to dataSource.
--- @param item
+-- @param item insert item.
 -- @param index (option)insert index.
 function ListView:addItem(item, index)
     if index then
@@ -374,6 +395,7 @@ end
 function ListView:setRowHeight(rowHeight)
     if self:getRowHeight() ~= rowHeight then
         self:setStyle(ListView.STYLE_ROW_HEIGHT, rowHeight)
+        self:_updateViewHeightByRowCount()
         self:invalidateLayout()
     end
 end
@@ -383,6 +405,24 @@ end
 -- @return rowHeight
 function ListView:getRowHeight()
     return self:getStyle(ListView.STYLE_ROW_HEIGHT)
+end
+
+---
+-- Set the rowCount.
+-- @param value rowCount
+function ListView:setRowCount(value)
+    if self:getRowCount() ~= value then
+        self:setStyle(ListView.STYLE_ROW_COUNT, value)
+        self:_updateViewHeightByRowCount()
+        self:invalidateLayout()
+    end
+end
+
+---
+-- Return the rowCount.
+-- @return rowCount
+function ListView:getRowCount()
+    return self:getStyle(ListView.STYLE_ROW_COUNT)
 end
 
 ---
@@ -400,6 +440,14 @@ end
 -- @return columnCount
 function ListView:getColumnCount()
     return self:getStyle(ListView.STYLE_COLUMN_COUNT)
+end
+
+---
+-- Set the visible of the background.
+-- @param visible visible
+function ListView:setBackgroundVisible(visible)
+    ListView.__super.setBackgroundVisible(self, visible)
+    self:_updateViewHeightByRowCount()
 end
 
 ---

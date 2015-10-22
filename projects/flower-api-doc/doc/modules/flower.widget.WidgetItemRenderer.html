@@ -143,7 +143,7 @@
   <li><a href="../modules/flower.widget.BaseTheme.html">flower.widget.BaseTheme</a></li>
   <li><a href="../modules/flower.widget.BoxLayout.html">flower.widget.BoxLayout</a></li>
   <li><a href="../modules/flower.widget.Button.html">flower.widget.Button</a></li>
-  <li><strong>flower.widget.CheckBox</strong></li>
+  <li><a href="../modules/flower.widget.CheckBox.html">flower.widget.CheckBox</a></li>
   <li><a href="../modules/flower.widget.CheckBoxItemRenderer.html">flower.widget.CheckBoxItemRenderer</a></li>
   <li><a href="../modules/flower.widget.DialogBox.html">flower.widget.DialogBox</a></li>
   <li><a href="../modules/flower.widget.FocusMgr.html">flower.widget.FocusMgr</a></li>
@@ -177,21 +177,21 @@
   <li><a href="../modules/flower.widget.UILayer.html">flower.widget.UILayer</a></li>
   <li><a href="../modules/flower.widget.UILayout.html">flower.widget.UILayout</a></li>
   <li><a href="../modules/flower.widget.UIView.html">flower.widget.UIView</a></li>
-  <li><a href="../modules/flower.widget.WidgetItemRenderer.html">flower.widget.WidgetItemRenderer</a></li>
+  <li><strong>flower.widget.WidgetItemRenderer</strong></li>
 </ul>
 
 </div>
 
 <div id="content">
 
-<h1>Module <code>flower.widget.CheckBox</code></h1>
+<h1>Module <code>flower.widget.WidgetItemRenderer</code></h1>
 
-<p>This class is an checkbox.</p>
+<p>Item renderer to display the widget.</p>
 <p>
 
  <h4>Extends:</h4>
  <ul>
-   <li><a href="flower.widget.ImageButton.html">ImageButton</a><l/i>
+   <li><a href="flower.widget.BaseItemRenderer.html">BaseItemRenderer</a><l/i>
  </ul>
 </p>
     <h3>Info:</h3>
@@ -204,20 +204,28 @@
 <h2><a href="#Functions">Functions</a></h2>
 <table class="function_list">
 	<tr>
-	<td class="name" nowrap><a href="#CheckBox:_initInternal">CheckBox:_initInternal&nbsp;()</a></td>
-	<td class="summary">Initializes the internal variables.</td>
+	<td class="name" nowrap><a href="#WidgetItemRenderer:_initInternal">WidgetItemRenderer:_initInternal&nbsp;()</a></td>
+	<td class="summary">Initialize a variables</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#CheckBox:updateButtonImage">CheckBox:updateButtonImage&nbsp;()</a></td>
-	<td class="summary">Update the buttonImage.</td>
+	<td class="name" nowrap><a href="#WidgetItemRenderer:_replaceWidget">WidgetItemRenderer:_replaceWidget&nbsp;()</a></td>
+	<td class="summary">Replace the widget.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#CheckBox:updateTextLabel">CheckBox:updateTextLabel&nbsp;()</a></td>
-	<td class="summary">Update the textLabel.</td>
+	<td class="name" nowrap><a href="#WidgetItemRenderer:_updateWidget">WidgetItemRenderer:_updateWidget&nbsp;()</a></td>
+	<td class="summary">Update the widget.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#CheckBox:getLabelContentRect">CheckBox:getLabelContentRect&nbsp;()</a></td>
-	<td class="summary">Returns the label content rect.</td>
+	<td class="name" nowrap><a href="#WidgetItemRenderer:updateDisplay">WidgetItemRenderer:updateDisplay&nbsp;()</a></td>
+	<td class="summary">Update the display objects.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#WidgetItemRenderer:setWidgetField">WidgetItemRenderer:setWidgetField&nbsp;(value)</a></td>
+	<td class="summary">Sets the widget field of data.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#WidgetItemRenderer:getWidgetFromData">WidgetItemRenderer:getWidgetFromData&nbsp;()</a></td>
+	<td class="summary">Return the widget of data.</td>
 	</tr>
 </table>
 
@@ -229,11 +237,11 @@
 
     <dl class="function">
     <dt>
-    <a name = "CheckBox:_initInternal"></a>
-    <strong>CheckBox:_initInternal&nbsp;()</strong>
+    <a name = "WidgetItemRenderer:_initInternal"></a>
+    <strong>WidgetItemRenderer:_initInternal&nbsp;()</strong>
     </dt>
     <dd>
-    Initializes the internal variables.
+    Initialize a variables
 
 
 
@@ -242,11 +250,11 @@
 
 </dd>
     <dt>
-    <a name = "CheckBox:updateButtonImage"></a>
-    <strong>CheckBox:updateButtonImage&nbsp;()</strong>
+    <a name = "WidgetItemRenderer:_replaceWidget"></a>
+    <strong>WidgetItemRenderer:_replaceWidget&nbsp;()</strong>
     </dt>
     <dd>
-    Update the buttonImage.
+    Replace the widget.
 
 
 
@@ -255,11 +263,11 @@
 
 </dd>
     <dt>
-    <a name = "CheckBox:updateTextLabel"></a>
-    <strong>CheckBox:updateTextLabel&nbsp;()</strong>
+    <a name = "WidgetItemRenderer:_updateWidget"></a>
+    <strong>WidgetItemRenderer:_updateWidget&nbsp;()</strong>
     </dt>
     <dd>
-    Update the textLabel.
+    Update the widget.
 
 
 
@@ -268,17 +276,48 @@
 
 </dd>
     <dt>
-    <a name = "CheckBox:getLabelContentRect"></a>
-    <strong>CheckBox:getLabelContentRect&nbsp;()</strong>
+    <a name = "WidgetItemRenderer:updateDisplay"></a>
+    <strong>WidgetItemRenderer:updateDisplay&nbsp;()</strong>
     </dt>
     <dd>
-    Returns the label content rect.
+    Update the display objects.
+
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "WidgetItemRenderer:setWidgetField"></a>
+    <strong>WidgetItemRenderer:setWidgetField&nbsp;(value)</strong>
+    </dt>
+    <dd>
+    Sets the widget field of data.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">value</span>
+       field of data.</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "WidgetItemRenderer:getWidgetFromData"></a>
+    <strong>WidgetItemRenderer:getWidgetFromData&nbsp;()</strong>
+    </dt>
+    <dd>
+    Return the widget of data.
 
 
     <h3>Returns:</h3>
     <ol>
 
-        content rect
+        Widget of data.
     </ol>
 
 

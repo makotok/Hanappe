@@ -71,7 +71,7 @@ end
 
 ---
 -- Sets the widget field of data.
--- @param labelField field of data.
+-- @param value field of data.
 function WidgetItemRenderer:setWidgetField(value)
     if self._widgetField ~= value then
         self._widgetField = value

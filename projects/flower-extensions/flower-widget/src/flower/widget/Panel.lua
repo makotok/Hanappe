@@ -111,4 +111,14 @@ function Panel:getContentRect()
     return self._backgroundImage:getContentRect()
 end
 
+---
+-- Returns the content padding from backgroundImage.
+-- @return paddingLeft
+-- @return paddingTop
+-- @return paddingRight
+-- @return paddingBottom
+function Panel:getContentPadding()
+    return self._backgroundImage:getContentPadding()
+end
+
 return Panel

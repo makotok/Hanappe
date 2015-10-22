@@ -117,6 +117,13 @@ end
 
 ---
 -- Sets the horizontal and vertical scroll enabled.
+-- @param value horizontal and vertical scroll is enabled.
+function ScrollView:setScrollEnabled(value)
+    self:setScrollPolicy(value, value)
+end
+
+---
+-- Sets the horizontal and vertical scroll enabled.
 -- @param horizontal horizontal scroll is enabled.
 -- @param vertical vertical scroll is enabled.
 function ScrollView:setScrollPolicy(horizontal, vertical)
