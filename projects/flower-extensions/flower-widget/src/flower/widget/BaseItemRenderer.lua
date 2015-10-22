@@ -93,7 +93,7 @@ function BaseItemRenderer:_updateBackground()
     if self:isBottomBorderVisible() then
         self._background:setPenColor(self:getBottomBorderColor()):drawLine(0, height, width, height)
     end
-
+    
     -- draw right border
     if self:isRightBorderVisible() then
         self._background:setPenColor(self:getRightBorderColor()):drawLine(width, 0, width, height)
@@ -279,9 +279,7 @@ end
 -- @return True if display the bottom border.
 function BaseItemRenderer:isBottomBorderVisible()
     local r, g, b, a = self:getBottomBorderColor()
-    local hostComponent = self:getHostComponent()
-    local visible = hostComponent and self:getRowIndex() < hostComponent:getDataRowCount()
-    return visible and (r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0)
+    return r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0
 end
 
 ---
