@@ -52,6 +52,10 @@ end
 ---
 -- Update the image.
 function ImageLabelItemRenderer:_updateImage()
+    if not self._dataIndex then
+        return
+    end
+
     self._image:setVisible(self._data ~= nil)
 
     if self._data then
@@ -69,15 +73,14 @@ end
 ---
 -- Update the textLabel.
 function ImageLabelItemRenderer:_updateTextLabel()
-    self._textLabel:setLeft(self._image:getRight())
-    self._textLabel:setSize(self:getWidth() - self._image:getWidth(), self:getHeight())
-    self._textLabel:setVisible(self._data ~= nil)
-
-    if self._data then
-        local text = self._labelField and self._data[self._labelField] or self._data
-        text = type(text) == "string" and text or tostring(text)
-        self._textLabel:setText(text)
+    if not self._dataIndex then
+        return
     end
+
+    ImageLabelItemRenderer.__super._updateTextLabel(self)
+
+    self._textLabel:setLeft(self._image:getRight())
+    self._textLabel:setWidth(self:getWidth() - self._image:getWidth())
 end
 
 ---

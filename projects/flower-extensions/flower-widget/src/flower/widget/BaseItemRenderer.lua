@@ -25,6 +25,12 @@ BaseItemRenderer.STYLE_BACKGROUND_SELECTED_COLOR = "backgroundSelectedColor"
 --- Style: bottomBorderColor
 BaseItemRenderer.STYLE_BOTTOM_BORDER_COLOR = "bottomBorderColor"
 
+--- Style: rightBorderColor
+BaseItemRenderer.STYLE_RIGHT_BORDER_COLOR = "rightBorderColor"
+
+--- Style: rowHeight
+BaseItemRenderer.STYLE_ROW_HEIGHT = "rowHeight"
+
 ---
 -- Initialize a variables
 function BaseItemRenderer:_initInternal()
@@ -32,11 +38,14 @@ function BaseItemRenderer:_initInternal()
     self.isRenderer = true
     self._data = nil
     self._dataIndex = nil
+    self._rowIndex = nil
+    self._columnIndex = nil
     self._hostComponent = nil
     self._focusEnabled = false
     self._selected = false
     self._pressed = false
     self._background = nil
+    self._rowHeightField = nil
 end
 
 ---
@@ -67,6 +76,10 @@ end
 ---
 -- Update the background objects.
 function BaseItemRenderer:_updateBackground()
+    if not self._dataIndex then
+        return
+    end
+
     local width, height = self:getSize()
     self._background:setSize(width, height)
     self._background:clear()
@@ -80,11 +93,18 @@ function BaseItemRenderer:_updateBackground()
     if self:isBottomBorderVisible() then
         self._background:setPenColor(self:getBottomBorderColor()):drawLine(0, height, width, height)
     end
+    
+    -- draw right border
+    if self:isRightBorderVisible() then
+        self._background:setPenColor(self:getRightBorderColor()):drawLine(width, 0, width, height)
+    end
 end
 
 ---
 -- Update the display objects.
 function BaseItemRenderer:updateDisplay()
+    self:setHeight(self:getRowHeight())
+
     BaseItemRenderer.__super.updateDisplay(self)
     self:_updateBackground()
 end
@@ -114,6 +134,83 @@ function BaseItemRenderer:setDataIndex(index)
         self._dataIndex = index
         self:invalidateDisplay()
     end
+end
+
+---
+-- Return the row height.
+-- @return row height
+function BaseItemRenderer:getRowHeight()
+    if self._data and self._rowHeightField and self._data[self._rowHeightField] then
+        return self._data[self._rowHeightField]
+    end
+    if self:getStyle(BaseItemRenderer.STYLE_ROW_HEIGHT) ~= nil then
+        return self:getStyle(BaseItemRenderer.STYLE_ROW_HEIGHT)
+    end
+    if self._hostComponent then
+        return self._hostComponent:getRowHeight()
+    end
+    return 0
+end
+
+---
+-- Set the row height.
+-- @param value row height.
+function BaseItemRenderer:setRowHeight(value)
+    if self:getRowHeight() ~= value then
+        self:setStyle(BaseItemRenderer.STYLE_ROW_HEIGHT, value)
+        self:invalidateLayout()
+    end
+end
+
+---
+-- Set the rowHeightField.
+-- @param value rowHeightField.
+function BaseItemRenderer:setRowHeightField(value)
+    if self._rowHeightField ~= value then
+        self._rowHeightField = value
+        self:invalidate()
+    end
+end
+
+---
+-- Return the rowHeightField.
+-- @return rowHeightField
+function BaseItemRenderer:getRowHeightField()
+    return self._rowHeightField
+end
+
+---
+-- Set the row index.
+-- @param value row index.
+function BaseItemRenderer:setRowIndex(value)
+    if self._rowIndex ~= value then
+        self._rowIndex = value
+        self:invalidateDisplay()
+    end
+end
+
+---
+-- Return the row index.
+-- @return row index.
+function BaseItemRenderer:getRowIndex()
+    return self._rowIndex
+end
+
+---
+-- Set the column index.
+-- @param value column index.
+function BaseItemRenderer:setColumnIndex(value)
+    if self._columnIndex ~= value then
+        self._columnIndex = value
+        self:invalidateDisplay()
+    end
+end
+
+---
+-- Return the column index.
+-- @return column index.
+function BaseItemRenderer:getColumnIndex()
+    return self._columnIndex
 end
 
 ---
@@ -160,6 +257,16 @@ function BaseItemRenderer:getBottomBorderColor()
 end
 
 ---
+-- Returns the right border color.
+-- @return Red
+-- @return Green
+-- @return Blue
+-- @return Alpha
+function BaseItemRenderer:getRightBorderColor()
+    return unpack(self:getStyle(BaseItemRenderer.STYLE_RIGHT_BORDER_COLOR))
+end
+
+---
 -- Returns the background visible.
 -- @return True if display the background
 function BaseItemRenderer:isBackgroundVisible()
@@ -173,6 +280,16 @@ end
 function BaseItemRenderer:isBottomBorderVisible()
     local r, g, b, a = self:getBottomBorderColor()
     return r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0
+end
+
+---
+-- Returns the right border visible.
+-- @return True if display the bottom border.
+function BaseItemRenderer:isRightBorderVisible()
+    local r, g, b, a = self:getRightBorderColor()
+    local hostComponent = self:getHostComponent()
+    local visible = hostComponent and self:getColumnIndex() < hostComponent:getColumnCount()
+    return visible and (r ~= 0 or g ~= 0 or b ~= 0 or a ~= 0)
 end
 
 ---

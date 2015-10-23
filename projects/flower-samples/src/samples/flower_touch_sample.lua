@@ -60,10 +60,17 @@ function onCreate(e)
     group2:setScissorContent(true)
     group2.name = "group2"
 
-    -- image3
+    -- image4
     image4 = flower.Image("cathead.png")
     image4.name = "image4"
     group2:addChild(image4)
+    
+    -- image5
+    image5 = flower.Image("cathead.png")
+    image5:setTouchEnabled(false)
+    image5:setPos(45, 45)
+    image5.name = "image5"
+    group:addChild(image5)
     
     -- add event listeners
     addTouchEventListeners(group)
@@ -72,6 +79,7 @@ function onCreate(e)
     addTouchEventListeners(image2)
     addTouchEventListeners(image3)
     addTouchEventListeners(image4)
+    addTouchEventListeners(image5)
 end
 
 function onStart(e)

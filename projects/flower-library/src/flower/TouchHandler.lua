@@ -117,7 +117,11 @@ function TouchHandler:dispatchTouchEvent(e, o)
     local layer = self.touchLayer
     while o do
         if o.dispatchEvent then
-            o:dispatchEvent(e)
+            if o.isTouchEnabled == nil or o:isTouchEnabled() then
+                o:dispatchEvent(e)
+            else
+                break
+            end
         end
         if e.stopFlag then
             break

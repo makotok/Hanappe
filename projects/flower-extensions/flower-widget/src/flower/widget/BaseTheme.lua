@@ -167,6 +167,7 @@ local BaseTheme = {
         backgroundPressedColor = {0.5, 0.5, 0.5, 0.5},
         backgroundSelectedColor = {0.5, 0.5, 0.8, 0.5},
         bottomBorderColor = {0.5, 0.5, 0.5, 0.5},
+        rightBorderColor = {0.5, 0.5, 0.5, 0.5},
     },
     LabelItemRenderer = {
         parentStyle = "BaseItemRenderer",
@@ -195,6 +196,9 @@ local BaseTheme = {
         textAlign = {"left", "center"},
         textPadding = {5, 0, 0, 0},
         textDisabledColor = {0.5, 0.5, 0.5, 1},
+    },
+    WidgetItemRenderer = {
+        parentStyle = "LabelItemRenderer",
     },
 }
 

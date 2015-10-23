@@ -19,12 +19,16 @@ local BaseItemRenderer = require "flower.widget.BaseItemRenderer"
 -- class
 local LabelItemRenderer = class(BaseItemRenderer)
 
+--- Style: lineBreak
+LabelItemRenderer.STYLE_LINE_BREAK = "lineBreak"
+
 ---
 -- Initialize a variables
 function LabelItemRenderer:_initInternal()
     LabelItemRenderer.__super._initInternal(self)
     self._themeName = "LabelItemRenderer"
     self._labelField = nil
+    self._labelFunction = nil
 end
 
 ---
@@ -49,13 +53,30 @@ end
 ---
 -- Update the textLabel.
 function LabelItemRenderer:_updateTextLabel()
+    if not self._dataIndex then
+        return
+    end
+
     self._textLabel:setSize(self:getSize())
     self._textLabel:setVisible(self._data ~= nil)
 
     if self._data then
-        local text = self._labelField and self._data[self._labelField] or self._data
-        text = type(text) == "string" and text or tostring(text)
-        self._textLabel:setText(text)
+        local text = self:itemToLabel(self._data)
+        if self._textLabel:getText() ~= text then
+            self._textLabel:setText(text)
+        end
+    end
+
+    if self:getLineBreak() then
+        self._textLabel:fitHeight()
+
+        if self._textLabel:getHeight() > self:getHostComponent():getRowHeight() then
+            self:setRowHeight(self._textLabel:getHeight())
+        else
+            self:setRowHeight(nil)
+            self._textLabel:setSize(self:getSize())
+        end
+
     end
 end
 
@@ -67,6 +88,19 @@ function LabelItemRenderer:updateDisplay()
 end
 
 ---
+-- Returns the label text for item.
+function LabelItemRenderer:itemToLabel(item)
+    local label = self._labelField and item[self._labelField] or item
+
+    if self._labelFunction and label  then
+        label = self._labelFunction(label)
+    end
+
+    label = type(label) == "string" and label or tostring(label)
+    return label
+end
+
+---
 -- Sets the label field of data.
 -- @param labelField field of data.
 function LabelItemRenderer:setLabelField(labelField)
@@ -74,6 +108,24 @@ function LabelItemRenderer:setLabelField(labelField)
         self._labelField = labelField
         self:invalidateDisplay()
     end    
+end
+
+function LabelItemRenderer:setLabelFunction(value)
+    if self._labelFunction ~= value then
+        self._labelFunction = value
+        self:invalidateDisplay()        
+    end
+end
+
+function LabelItemRenderer:setLineBreak(value)
+    if self:getLineBreak() ~= value then
+        self:setStyle(LabelItemRenderer.STYLE_LINE_BREAK, value)
+        self:invalidateDisplay()
+    end
+end
+
+function LabelItemRenderer:getLineBreak()
+    return self:getStyle(LabelItemRenderer.STYLE_LINE_BREAK)
 end
 
 return LabelItemRenderer

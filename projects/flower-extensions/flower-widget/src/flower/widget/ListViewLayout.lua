@@ -32,18 +32,23 @@ function ListViewLayout:update(parent)
     local children = self:getLayoutChildren(parent.children)
     local columnCount = self._columnCount
     local rowHeight = self._rowHeight
-    local rowCount = math.floor(#children / columnCount)
     local parentWidth = parent.parent:getWidth()
-    local parentHeight = rowHeight * rowCount
+    local childY = 0
+    local rowMaxHeight = 0
 
     for i, child in ipairs(children) do
         local childWidth = math.floor((parentWidth) / columnCount)
-        local childHeight = rowHeight
+        local childHeight = child.getRowHeight and child:getRowHeight() or rowHeight
         local childX = childWidth * ((i - 1) % columnCount)
-        local childY = childHeight * math.floor((i - 1) / columnCount)
+        rowMaxHeight = math.max(rowMaxHeight, childHeight)
 
         child:setSize(childWidth, childHeight)
         child:setPos(childX, childY)
+
+        if i % columnCount == 0 then
+            childY = childY + rowMaxHeight
+            rowMaxHeight = 0
+        end
     end
 end
 

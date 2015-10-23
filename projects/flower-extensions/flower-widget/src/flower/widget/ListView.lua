@@ -1,8 +1,6 @@
 ----------------------------------------------------------------------------------------------------
 -- List view class.
 --
--- TODO: create an object only display range
---
 -- <h4>Extends:</h4>
 -- <ul>
 --   <li><a href="flower.widget.PanelView.html">PanelView</a><l/i>
@@ -29,6 +27,9 @@ ListView.STYLE_ITEM_RENDERER_FACTORY = "itemRendererFactory"
 --- Style: rowHeight
 ListView.STYLE_ROW_HEIGHT = "rowHeight"
 
+--- Style: rowCount
+ListView.STYLE_ROW_COUNT = "rowCount"
+
 --- Style: columnCount
 ListView.STYLE_COLUMN_COUNT = "columnCount"
 
@@ -37,6 +38,9 @@ ListView.EVENT_SELECTED_CHANGED = "selectedChanged"
 
 --- Event: itemClick
 ListView.EVENT_ITEM_CLICK = "itemClick"
+
+--- Event: itemEnter
+ListView.EVENT_ITEM_ENTER = "itemEnter"
 
 ---
 -- Initializes the internal variables.
@@ -51,6 +55,7 @@ function ListView:_initInternal()
     self._itemToRendererMap = {}
     self._itemRendererChanged = false
     self._touchedRenderer = nil
+    self._touchedOldSelectedItem = nil
 end
 
 ---
@@ -66,6 +71,25 @@ function ListView:_createChildren()
 end
 
 ---
+-- TODO:LDoc
+function ListView:_updateViewHeightByRowCount()
+    if self:getRowHeight() == nil or self:getRowCount() == nil then
+        return
+    end
+
+    local rowCount = self:getRowCount()
+    local rowHeight = self:getRowHeight()
+    local pLeft, pTop, pRight, pBottom = 0, 0, 0, 0
+
+    if self:getBackgroundVisible() then
+        pLeft, pTop, pRight, pBottom = self._backgroundPanel:getContentPadding()
+    end
+
+    self:setHeight(rowCount * rowHeight + pTop + pBottom)
+
+end
+
+---
 -- Update the item renderers.
 function ListView:_updateItemRenderers()
     if not self._itemRendererChanged then
@@ -75,9 +99,10 @@ function ListView:_updateItemRenderers()
         self:_updateItemRenderer(data, i)
     end
 
-    if #self._itemRenderers > #self:getDataSource() then
-        for i = #self._itemRenderers, #self:getDataSource() do
-            self:_removeItemRenderer(self._itemRenderers[i])
+    local renderersSize = #self._itemRenderers
+    if renderersSize > self:getDataLength() then
+        for i = self:getDataLength() + 1, renderersSize do
+            self:_removeItemRenderer(self._itemRenderers[i], self:getItemAt(i))
         end
     end
 
@@ -97,8 +122,11 @@ function ListView:_updateItemRenderer(data, index)
     end
     renderer:setProperties(self._itemProperties)
     renderer:setData(data)
+    renderer:setSelected(table.indexOf(self._selectedItems, data) > 0)
     renderer:setDataIndex(index)
     renderer:setHostComponent(self)
+    renderer:setRowIndex(1 + math.floor((index - 1) / self:getColumnCount()))
+    renderer:setColumnIndex(1 + (index - 1) % self:getColumnCount())
     renderer:addEventListener(UIEvent.TOUCH_DOWN, self.onItemRendererTouchDown, self)
     renderer:addEventListener(UIEvent.TOUCH_UP, self.onItemRendererTouchUp, self)
     renderer:addEventListener(UIEvent.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
@@ -110,7 +138,7 @@ end
 -- Remove the item renderers.
 function ListView:_removeItemRenderers()
     for i, renderer in ipairs(self._itemRenderers) do
-        self:_removeItemRenderer(renderer)
+        self:_removeItemRenderer(renderer, renderer:getData())
     end
 
     self._itemRenderers = {}
@@ -120,14 +148,17 @@ end
 ---
 -- Remove the item renderer.
 -- @param renderer item renderer.
-function ListView:_removeItemRenderer(renderer)
+-- @param item item data.
+function ListView:_removeItemRenderer(renderer, item)
     renderer:removeEventListener(UIEvent.TOUCH_DOWN, self.onItemRendererTouchDown, self)
     renderer:removeEventListener(UIEvent.TOUCH_UP, self.onItemRendererTouchUp, self)
     renderer:removeEventListener(UIEvent.TOUCH_CANCEL, self.onItemRendererTouchCancel, self)
 
     self:removeContent(renderer)
     table.removeElement(self._itemRenderers, renderer)
-    self._itemToRendererMap[renderer:getData()] = nil
+    if item then
+        self._itemToRendererMap[item] = nil
+    end
 end
 
 ---
@@ -138,7 +169,7 @@ function ListView:updateDisplay()
 end
 
 ---
--- Update the display
+-- Update the layout.
 function ListView:updateLayout()
     if self:getContentLayout() then
         self:getContentLayout():setRowHeight(self:getRowHeight())
@@ -173,6 +204,13 @@ function ListView:invalidateItemRenderers()
 end
 
 ---
+-- Returns the current item renderers.
+-- @return current item renderers.
+function ListView:getItemRenderers()
+    return self._itemRenderers
+end
+
+---
 -- Set the selected item.
 -- @param item selected item.
 function ListView:setSelectedItem(item)
@@ -186,6 +224,28 @@ function ListView:getSelectedItem()
     if #self._selectedItems > 0 then
         return self._selectedItems[1]
     end
+end
+
+---
+-- Return the selected index.
+-- @return selected index
+function ListView:getSelectedIndex()
+    local item = self:getSelectedItem()
+    return item and table.indexOf(self:getDataSource(), item) or -1
+end
+
+---
+-- Set the selected index.
+-- @param index selected index.
+function ListView:setSelectedIndex(index)
+    self:setSelectedItem(self:getItemAt(index))
+end
+
+---
+-- Return the selected items.
+-- @return selected items
+function ListView:getSelectedItems()
+    return table.copy(self._selectedItems)
 end
 
 ---
@@ -230,6 +290,14 @@ function ListView:setSelectedItems(items)
 end
 
 ---
+-- Returns the item at index.
+-- @param index index of the dataSource.
+-- @return item of the dataSource.
+function ListView:getItemAt(index)
+    return self._dataSource[index]
+end
+
+---
 -- Set the dataSource.
 -- @param dataSource dataSource
 function ListView:setDataSource(dataSource)
@@ -244,6 +312,53 @@ end
 -- @return dataSource
 function ListView:getDataSource()
     return self._dataSource
+end
+
+---
+-- Return the length of dataSource.
+-- @return data length
+function ListView:getDataLength()
+    return self._dataSource and #self._dataSource or 0
+end
+
+---
+-- Return the dataSource row count .
+-- @return row count
+function ListView:getDataRowCount()
+    return math.ceil(self:getDataLength() / self:getColumnCount())
+end
+
+---
+-- Add the item to dataSource.
+-- @param item insert item.
+-- @param index (option)insert index.
+function ListView:addItem(item, index)
+    if index then
+        table.insert(self._dataSource, index, item)
+    else
+        table.insertElement(self._dataSource, item)
+    end
+
+    self:invalidateItemRenderers()
+end
+
+---
+-- Remove the item from dataSource.
+-- @param item item
+function ListView:removeItem(item)
+    if table.removeElement(self._dataSource, item) > 0 then
+        self:invalidateItemRenderers()
+    end
+end
+
+---
+-- Remove the data from dataSource by index.
+-- @param index index
+function ListView:removeItemAt(index)
+    if index <= self:getDataLength() then
+        table.remove(self._dataSource, i)
+        self:invalidateItemRenderers()
+    end
 end
 
 ---
@@ -287,6 +402,7 @@ end
 function ListView:setRowHeight(rowHeight)
     if self:getRowHeight() ~= rowHeight then
         self:setStyle(ListView.STYLE_ROW_HEIGHT, rowHeight)
+        self:_updateViewHeightByRowCount()
         self:invalidateLayout()
     end
 end
@@ -298,6 +414,23 @@ function ListView:getRowHeight()
     return self:getStyle(ListView.STYLE_ROW_HEIGHT)
 end
 
+---
+-- Set the rowCount.
+-- @param value rowCount
+function ListView:setRowCount(value)
+    if self:getRowCount() ~= value then
+        self:setStyle(ListView.STYLE_ROW_COUNT, value)
+        self:_updateViewHeightByRowCount()
+        self:invalidateLayout()
+    end
+end
+
+---
+-- Return the rowCount .
+-- @return rowCount
+function ListView:getRowCount()
+    return self:getStyle(ListView.STYLE_ROW_COUNT)
+end
 
 ---
 -- Set the count of the columns.
@@ -317,6 +450,14 @@ function ListView:getColumnCount()
 end
 
 ---
+-- Set the visible of the background.
+-- @param visible visible
+function ListView:setBackgroundVisible(visible)
+    ListView.__super.setBackgroundVisible(self, visible)
+    self:_updateViewHeightByRowCount()
+end
+
+---
 -- Set the event listener that is called when the selected changed.
 -- @param func selected changed event handler
 function ListView:setOnSelectedChanged(func)
@@ -324,10 +465,24 @@ function ListView:setOnSelectedChanged(func)
 end
 
 ---
+-- Set the event listener that is called when the selected changed.
+-- @param func selected changed event handler
+function ListView:setOnItemChanged(func)
+    self:setOnSelectedChanged(func)
+end
+
+---
 -- Set the event listener that is called when the item click.
 -- @param func selected changed event handler
 function ListView:setOnItemClick(func)
     self:setEventListener(ListView.EVENT_ITEM_CLICK, func)
+end
+
+---
+-- Set the event listener that is called when the item click.
+-- @param func selected changed event handler
+function ListView:setOnItemEnter(func)
+    self:setEventListener(ListView.EVENT_ITEM_ENTER, func)
 end
 
 ---
@@ -340,6 +495,8 @@ function ListView:onItemRendererTouchDown(e)
 
     local renderer = e.target
     if renderer.isRenderer then
+        self._touchedOldSelectedItem = self:getSelectedItem()
+
         renderer:setPressed(true)
         self:setSelectedItem(renderer:getData())
         self._touchedRenderer = renderer
@@ -359,6 +516,10 @@ function ListView:onItemRendererTouchUp(e)
     if renderer.isRenderer then
         renderer:setPressed(false)
         self:dispatchEvent(ListView.EVENT_ITEM_CLICK, renderer:getData())
+
+        if self._touchedOldSelectedItem == renderer:getData() then
+            self:dispatchEvent(ListView.EVENT_ITEM_ENTER, renderer:getData())
+        end
     end
 end
 

@@ -44,7 +44,10 @@ function Graphics:onDraw(index, xOff, yOff, xFlip, yFlip)
     
     MOAIGfxDevice.setPenColor(self:getColor())
     MOAIGfxDevice.setPenWidth(1)
-    MOAIGfxDevice.setPointSize(1)
+    -- TODO:Not exists for MOAI SDK V1.7.
+    if MOAIGfxDevice.setPointSize then
+        MOAIGfxDevice.setPointSize(1)
+    end
     for i, func in ipairs(self.commands) do
         func(self)
     end
@@ -282,10 +285,13 @@ end
 -- @param size
 -- @return self
 function Graphics:setPointSize(size)
-    local command = function(self)
-        MOAIGfxDevice.setPointSize(size)
+    -- TODO:Not exists for MOAI SDK V1.7.
+    if MOAIGfxDevice.setPointSize then
+        local command = function(self)
+            MOAIGfxDevice.setPointSize(size)
+        end
+        table.insert(self.commands, command)
     end
-    table.insert(self.commands, command)
     return self
 end
 
