@@ -1,5 +1,6 @@
 -- import
 local flower = require "flower"
+local Theme = require "theme"
 local Config = flower.Config
 
 --------------------------------------------------------------------------------

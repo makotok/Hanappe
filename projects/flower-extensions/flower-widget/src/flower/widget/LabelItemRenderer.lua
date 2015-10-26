@@ -110,6 +110,15 @@ function LabelItemRenderer:setLabelField(labelField)
     end    
 end
 
+---
+-- Sets the text align.
+-- @param horizontalAlign horizontal align(left, center, top)
+-- @param verticalAlign vertical align(top, center, bottom)
+function LabelItemRenderer:setTextAlign(horizontalAlign, verticalAlign)
+    self._textLabel:setTextAlign(horizontalAlign, verticalAlign)
+end
+
+
 function LabelItemRenderer:setLabelFunction(value)
     if self._labelFunction ~= value then
         self._labelFunction = value
