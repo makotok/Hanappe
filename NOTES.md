@@ -1,4 +1,24 @@
 # Release notes
+## Version 3.0.1 (Update: 2015/11/01)
+
+### Test Version
+Moai SDK Release 1.6
+Moai SDK Develop 1.7
+
+### Flower Library
+
+* Support the MOAI SDK V1.7.
+* Added touchEnabled to the DisplayObject.
+* Added the WidgetItemRenderer class.
+* Added labelFunction to the LabelItemRenderer.
+* Improved the ListView.
+* Added overrideTheme function to the ThemeMgr.
+* Added FONT_FILTER to the Config.
+
+### Hanappe Framework
+
+* Support the MOAI SDK V1.7.
+
 ## Version 3.0.0 (Update: 2015/03/22)
 
 ### Test Version
