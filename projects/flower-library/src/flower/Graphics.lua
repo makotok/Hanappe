@@ -15,6 +15,7 @@
 local class = require "flower.class"
 local table = require "flower.table"
 local Config = require "flower.Config"
+local Logger = require "flower.Logger"
 local DrawableObject = require "flower.DrawableObject"
 
 -- class
@@ -44,7 +45,7 @@ function Graphics:onDraw(index, xOff, yOff, xFlip, yFlip)
     
     MOAIGfxDevice.setPenColor(self:getColor())
     MOAIGfxDevice.setPenWidth(1)
-    -- TODO:Not exists for MOAI SDK V1.7.
+    -- In MOAI SDK V1.7 is not supported.
     if MOAIGfxDevice.setPointSize then
         MOAIGfxDevice.setPointSize(1)
     end
@@ -285,12 +286,14 @@ end
 -- @param size
 -- @return self
 function Graphics:setPointSize(size)
-    -- TODO:Not exists for MOAI SDK V1.7.
+    -- In MOAI SDK V1.7 is not supported.
     if MOAIGfxDevice.setPointSize then
         local command = function(self)
             MOAIGfxDevice.setPointSize(size)
         end
         table.insert(self.commands, command)
+    else
+        Logger.debug("MOAIGfxDevice.setPointSize is not supported from MOAI SDK V1.7.")
     end
     return self
 end

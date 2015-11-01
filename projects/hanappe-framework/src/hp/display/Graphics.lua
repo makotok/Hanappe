@@ -18,6 +18,7 @@ local table                 = require "hp/lang/table"
 local class                 = require "hp/lang/class"
 local DisplayObject         = require "hp/display/DisplayObject"
 local Resizable             = require "hp/display/Resizable"
+local Logger                = require "hp/util/Logger"
 
 -- class
 local M                     = class(DisplayObject, Resizable)
@@ -148,7 +149,10 @@ function M:init(params)
             
             MOAIGfxDevice.setPenColor(self:getRed(), self:getGreen(), self:getBlue(), self:getAlpha())
             MOAIGfxDevice.setPenWidth(1)
-            MOAIGfxDevice.setPointSize(1)
+            -- In MOAI SDK V1.7 is not supported.
+            if MOAIGfxDevice.setPointSize then
+                MOAIGfxDevice.setPointSize(1)
+            end
             for i, gfx in ipairs(self.commands) do
                 gfx(self)
             end
@@ -458,10 +462,15 @@ end
 -- @return self
 ---------------------------------------
 function M:setPointSize(size)
-    local command = function(self)
-        MOAIGfxDevice.setPointSize(size)
+    -- In MOAI SDK V1.7 is not supported.
+    if MOAIGfxDevice.setPointSize then
+        local command = function(self)
+            MOAIGfxDevice.setPointSize(size)
+        end
+        table.insert(self.commands, command)
+    else
+        Logger.debug("MOAIGfxDevice.setPointSize is not supported from MOAI SDK V1.7.")
     end
-    table.insert(self.commands, command)
     return self
 end
 
