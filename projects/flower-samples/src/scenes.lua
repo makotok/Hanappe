@@ -7,6 +7,7 @@ return {
     {title = "Flower Label 1", scene = "samples/flower_label_sample_1", openAnime = "slideRight", closeAnime = "slideLeft"},
     {title = "Flower Label 2", scene = "samples/flower_label_sample_2", openAnime = "slideRight", closeAnime = "slideLeft"},
     {title = "Flower Label 3", scene = "samples/flower_label_sample_3", openAnime = "slideRight", closeAnime = "slideLeft"},
+    {title = "Flower Label 4", scene = "samples/flower_label_sample_4", openAnime = "slideRight", closeAnime = "slideLeft"},
     {title = "Flower Group", scene = "samples/flower_group_sample", openAnime = "slideRight", closeAnime = "slideLeft"},
     {title = "Flower Graphics", scene = "samples/flower_graphics_sample", openAnime = "slideRight", closeAnime = "slideLeft"},
     {title = "Flower Scene", scene = "samples/flower_scene_sample", openAnime = "slideTop", closeAnime = "slideBottom"},

@@ -52,9 +52,13 @@ Config.FONT_CHARCODES = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz012
 -- Default font points
 -- Config.FONT_POINTS = 24
 
+-- Set the default font filter
+--Config.FONT_FILTER = MOAITexture.GL_LINEAR
+Config.FONT_FILTER = MOAITexture.GL_NEAREST
+
 -- Set the texture filter of default
---Config.TEXTURE_FILTER = MOAITexture.GL_LINEAR
-Config.TEXTURE_FILTER = MOAITexture.GL_NEAREST
+--Config.TEXTURE_DEFAULT_FILTER = MOAITexture.GL_LINEAR
+Config.TEXTURE_DEFAULT_FILTER = MOAITexture.GL_NEAREST
 
 -- Setting of the behavior of the InputMgr
 -- Whether to fire a touch event on the desktop environment
