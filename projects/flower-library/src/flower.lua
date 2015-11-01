@@ -132,9 +132,10 @@ end
 -- @param charcodes (option)Charcodes of the font
 -- @param points (option)Points of the font
 -- @param dpi (option)Dpi of the font
+-- @param filter (option)Filter of the font
 -- @return Font instance
-function flower.getFont(path, charcodes, points, dpi)
-    return flower.Resources.getFont(path, charcodes, points, dpi)
+function flower.getFont(path, charcodes, points, dpi, filter)
+    return flower.Resources.getFont(path, charcodes, points, dpi, filter)
 end
 
 ---

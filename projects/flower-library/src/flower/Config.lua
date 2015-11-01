@@ -64,4 +64,7 @@ Config.FONT_POINTS = 24
 --- Default font dpi
 Config.FONT_DPI = 72
 
+--- Default font filter
+Config.FONT_FILTER = MOAITexture.GL_LINEAR
+
 return Config

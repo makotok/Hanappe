@@ -73,8 +73,9 @@ end
 -- @param charcodes (option)Charcodes of the font
 -- @param points (option)Points of the font
 -- @param dpi (option)Dpi of the font
+-- @param filter (option)Filter of the font
 -- @return Font instance
-function Resources.getFont(path, charcodes, points, dpi)
+function Resources.getFont(path, charcodes, points, dpi, filter)
     if type(path) == "userdata" then
         return path
     end
@@ -84,10 +85,11 @@ function Resources.getFont(path, charcodes, points, dpi)
     path = Resources.getResourceFilePath(path)
     charcodes = charcodes or Config.FONT_CHARCODES
     points = points or Config.FONT_POINTS
+    filter = filter or Config.FONT_FILTER
 
-    local uid = path .. "$" .. (charcodes or "") .. "$" .. (points or "") .. "$" .. (dpi or "")
+    local uid = path .. "$" .. (charcodes or "") .. "$" .. (points or "") .. "$" .. (dpi or "") .. "$" .. (filter and tostring(filter) or "")
     if cache[uid] == nil then
-        local font = Font(path, charcodes, points, dpi)
+        local font = Font(path, charcodes, points, dpi, filter)
         font.uid = uid
         cache[uid] = font
     end

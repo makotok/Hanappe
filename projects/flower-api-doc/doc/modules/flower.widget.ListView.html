@@ -293,6 +293,10 @@
 	<td class="summary">Return the length of dataSource.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#ListView:getDataRowCount">ListView:getDataRowCount&nbsp;()</a></td>
+	<td class="summary">Return the dataSource row count .</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#ListView:addItem">ListView:addItem&nbsp;(item, index)</a></td>
 	<td class="summary">Add the item to dataSource.</td>
 	</tr>
@@ -334,7 +338,7 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#ListView:getRowCount">ListView:getRowCount&nbsp;()</a></td>
-	<td class="summary">Return the rowCount.</td>
+	<td class="summary">Return the rowCount .</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#ListView:setColumnCount">ListView:setColumnCount&nbsp;(columnCount)</a></td>
@@ -350,6 +354,10 @@
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#ListView:setOnSelectedChanged">ListView:setOnSelectedChanged&nbsp;(func)</a></td>
+	<td class="summary">Set the event listener that is called when the selected changed.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#ListView:setOnItemChanged">ListView:setOnItemChanged&nbsp;(func)</a></td>
 	<td class="summary">Set the event listener that is called when the selected changed.</td>
 	</tr>
 	<tr>
@@ -784,6 +792,24 @@
 
 </dd>
     <dt>
+    <a name = "ListView:getDataRowCount"></a>
+    <strong>ListView:getDataRowCount&nbsp;()</strong>
+    </dt>
+    <dd>
+    Return the dataSource row count .
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+        row count
+    </ol>
+
+
+
+
+</dd>
+    <dt>
     <a name = "ListView:addItem"></a>
     <strong>ListView:addItem&nbsp;(item, index)</strong>
     </dt>
@@ -970,7 +996,7 @@
     <strong>ListView:getRowCount&nbsp;()</strong>
     </dt>
     <dd>
-    Return the rowCount.
+    Return the rowCount .
 
 
     <h3>Returns:</h3>
@@ -1040,6 +1066,24 @@
     <dt>
     <a name = "ListView:setOnSelectedChanged"></a>
     <strong>ListView:setOnSelectedChanged&nbsp;(func)</strong>
+    </dt>
+    <dd>
+    Set the event listener that is called when the selected changed.
+
+    <h3>Parameters:</h3>
+    <ul>
+      <li><span class="parameter">func</span>
+       selected changed event handler</li>
+    </ul>
+
+
+
+
+
+</dd>
+    <dt>
+    <a name = "ListView:setOnItemChanged"></a>
+    <strong>ListView:setOnItemChanged&nbsp;(func)</strong>
     </dt>
     <dd>
     Set the event listener that is called when the selected changed.

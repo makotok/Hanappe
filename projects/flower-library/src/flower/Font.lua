@@ -26,12 +26,19 @@ Font.__moai_class = MOAIFont
 -- @param charcodes (option) Font charcodes
 -- @param points (option) Font points
 -- @param dpi (option) Font dpi
-function Font:init(path, charcodes, points, dpi)
+-- @param filter (option) Font filter
+function Font:init(path, charcodes, points, dpi, filter)
     self:load(path)
     self.path = path
     self.charcodes = charcodes
     self.points = points
     self.dpi = dpi
+    self.filter = filter
+
+    -- Added from V1.6
+    if self.filter and self.setFilter then
+        self:setFilter(self.filter)
+    end
 
     if charcodes and points then
         self:preloadGlyphs(charcodes, points, dpi)
