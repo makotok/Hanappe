@@ -6,13 +6,11 @@ tests = require "tests"
 require "LuaUnit"
 
 -- setting
-local screenWidth = MOAIEnvironment.horizontalResolution or 320
-local screenHeight = MOAIEnvironment.verticalResolution or 480
-local screenDpi = MOAIEnvironment.screenDpi or 120
-local viewScale = math.floor(screenDpi / 240) + 1
+local screenWidth = 320
+local screenHeight = 480
 
 -- open scene
-flower.openWindow("Flower samples", screenWidth, screenHeight, viewScale)
+flower.openWindow("Flower samples", screenWidth, screenHeight)
 
 -- run tests
 LuaUnit:setVerbosity( 1 )
