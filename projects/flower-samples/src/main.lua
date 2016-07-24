@@ -17,3 +17,7 @@ flower.openWindow()
 
 -- open scene
 flower.openScene("main_scene")
+
+-- show infos
+flower.DebugUtils.showMOAIEnvInfos()
+flower.DebugUtils.showFlowerInfos()
