@@ -21,7 +21,7 @@ function widget.showDialog(...)
 end
 
 ---
--- This class is an DialogBox
+-- Show the DialogBox to scene.
 -- @param scene scene
 -- @param params params
 function widget.showDialogBox(scene, params)

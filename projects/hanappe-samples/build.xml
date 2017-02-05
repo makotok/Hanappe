@@ -5,16 +5,19 @@
   <property name="bin.dir" value="./bin"/>
   
   <!-- Targets -->
+  
+  <!-- Init -->
+  <target name="init">
+    <mkdir dir="${bin.dir}"/>
+  </target>
+
   <!-- Clean -->
   <target name="clean">
-    <mkdir dir="${bin.dir}"/>
-    <delete>
-      <fileset dir="${bin.dir}"/>
-    </delete>
+    <delete dir="${bin.dir}"/>
   </target>
   
   <!-- Build -->
-  <target name="build" depends="clean">
+  <target name="build" depends="init">
     <copy todir="${bin.dir}" overwrite="true">
       <fileset dir="${hanappe.dir}/assets"/>
       <fileset dir="${hanappe.dir}/src"/>

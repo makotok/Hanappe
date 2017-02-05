@@ -23,6 +23,38 @@ function DebugUtils.showDebugLines()
 end
 
 ---
+-- Shows the MOAIEnvironment properties.
+function DebugUtils.showMOAIEnvInfos()
+    local moaiEnvInfos = {}
+    for k, v in pairs(MOAIEnvironment) do
+        if type(v) ~= "function" and type(v) ~= "table" then
+            local envInfo = k .. " : " .. tostring(v)
+            table.insert(moaiEnvInfos, envInfo)
+        end
+    end
+
+    table.sort(moaiEnvInfos)
+    Logger.debug("----- MOAIEnvironment Properties -----\n" .. table.concat(moaiEnvInfos, "\n"))
+    return moaiEnvInfos
+end
+
+---
+-- Shows the flower properties.
+function DebugUtils.showFlowerInfos()
+    local infos = {}
+    local localFlower = flower or require "flower"
+    for k, v in pairs(localFlower) do
+        if type(v) ~= "function" and type(v) ~= "table" then
+            local envInfo = k .. " : " .. tostring(v)
+            table.insert(infos, envInfo)
+        end
+    end
+
+    table.sort(infos)
+    Logger.debug("----- Flower Properties -----\n" .. table.concat(infos, "\n"))
+    return infos
+end
+---
 -- Shows the performance log.
 -- @param span Span of timer.
 function DebugUtils.startPerformanceLog(span)

@@ -153,6 +153,20 @@ function MsgBox:setSpoolingEnabled(enabled)
 end
 
 ---
+-- Set the event listener that is called when show popup.
+-- @param func msgHide event handler
+function MsgBox:setOnMsgShow(func)
+    self:setEventListener(UIEvent.MSG_SHOW, func)
+end
+
+---
+-- Set the event listener that is called when hide popup.
+-- @param func msgHide event handler
+function MsgBox:setOnMsgHide(func)
+    self:setEventListener(UIEvent.MSG_HIDE, func)
+end
+
+---
 -- This event handler is called when you touch the component.
 -- @param e touch event
 function MsgBox:onTouchDown(e)

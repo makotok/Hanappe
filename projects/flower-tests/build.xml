@@ -5,16 +5,18 @@
     <property name="prj.bin.dir" value="./bin"/>
 
     <!-- Targets -->
+    <!-- Init -->
+    <target name="init">
+        <mkdir dir="${prj.bin.dir}"/>
+    </target>
+
     <!-- Clean -->
     <target name="clean">
-        <mkdir dir="${prj.bin.dir}"/>
-        <delete>
-            <fileset dir="${prj.bin.dir}"/>
-        </delete>
+        <delete dir="${prj.bin.dir}"/>
     </target>
 
     <!-- Build -->
-    <target name="build" depends="clean">
+    <target name="build" depends="init">
         <copy todir="${prj.bin.dir}" overwrite="true">
             <fileset dir="${flower.lib.dir}/assets"/>
             <fileset dir="${flower.lib.dir}/src"/>

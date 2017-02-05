@@ -18,15 +18,17 @@
   <!-- Targets -->
 
   <!-- Build -->
-  <target name="build" depends="clean,copy-flower,copy-audio,copy-dungeon,copy-fsm,copy-spine,copy-tasker,copy-tiled,copy-widget,copy-project">
+  <target name="build" depends="init,copy-flower,copy-audio,copy-dungeon,copy-fsm,copy-spine,copy-tasker,copy-tiled,copy-widget,copy-project">
+  </target>
+
+  <!-- Init -->
+  <target name="init">
+    <mkdir dir="${bin.dir}"/>
   </target>
 
   <!-- Clean -->
   <target name="clean">
-    <mkdir dir="${bin.dir}"/>
-    <delete>
-      <fileset dir="${bin.dir}"/>
-    </delete>
+    <delete dir="${bin.dir}"/>
   </target>
   
   <!-- Copy project -->
